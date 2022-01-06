@@ -1,7 +1,10 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import accountReducer from 'services/account';
 
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    user: accountReducer,
+  },
   middleware: getDefaultMiddleware({
     serializableCheck: false,
   }),

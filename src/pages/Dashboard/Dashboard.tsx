@@ -1,4 +1,5 @@
 import React from 'react';
+import ConnectWallet from 'components/ConnectWallet/ConnectWallet';
 
 interface DashboardProps {
   name?: string;
@@ -11,7 +12,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         <p>Ring finance</p>
       </div>
       <div>
-        <button className={'px-4 py-2 text-sm bg-blue text-white rounded-none'}>Login</button>
+        <ConnectWallet />
       </div>
     </div>
   );

@@ -23,6 +23,7 @@
     "react-redux": "7.2.6",
     "react-router-dom": "5.3.0",
     "react-scripts": "5.0.0",
+    "react-toastify": "^8.1.0",
     "tailwindcss": "3.0.8",
     "typescript": "4.4.2",
     "web-vitals": "2.1.0",
@@ -66,14 +67,14 @@
     ]
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.9.0",
+    "@typescript-eslint/parser": "5.9.0",
     "eslint": "8.0.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-react": "7.28.0",
     "eslint-plugin-react-hooks": "4.3.0",
     "husky": "7.0.4",
-    "prettier": "2.5.1",
-    "@typescript-eslint/eslint-plugin": "5.9.0",
-    "@typescript-eslint/parser": "5.9.0"
+    "prettier": "2.5.1"
   }
 }
