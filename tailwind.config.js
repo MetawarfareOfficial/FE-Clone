@@ -10,7 +10,7 @@ module.exports = {
       },
     },
     fontSize: {
-      '5px': '5px'
+      '5px': '5px',
     },
     colors: {
       // blue: '#1fb6ff',
@@ -22,10 +22,11 @@ module.exports = {
       grayLight: '#d3dce6',
 
       blue: '#3864FF',
-      gray: { 
-        100: 'rgba(255, 255, 255, 0.79)', 
-        400: '#A4A9B7', 
-        500: '#E5E5E5' },
+      gray: {
+        100: 'rgba(255, 255, 255, 0.79)',
+        400: '#A4A9B7',
+        500: '#E5E5E5',
+      },
       black: {
         400: '#293247',
         900: '#000',
