@@ -42,7 +42,11 @@ interface ListItemCustomProps extends ListItemProps {
   active: boolean;
 }
 
-const drawerWidth = 240;
+interface ListItemIconCustomProps extends ListItemIconProps {
+  open: boolean;
+}
+
+const drawerWidth = 224;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -60,10 +64,14 @@ const closedMixin = (theme: Theme): CSSObject => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  border: 'none',
   overflow: 'unset',
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  // width: `calc(${theme.spacing(7)} + 1px)`,
+  width: '100px',
+  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(9)} + 1px)`,
+    width: '100px',
+    // width: `calc(${theme.spacing(9)} + 1px)`,
   },
 });
 
@@ -125,7 +133,7 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   width: '100%',
-  padding: '16px 18px',
+  padding: '16px 10px',
   borderRadius: '14px',
   textTransform: 'capitalize',
   marginBottom: '10px',
@@ -156,13 +164,13 @@ const SideMenus = styled(List)<ListProps>(() => ({
   padding: '0 16px',
 }));
 
-const MenuIconCustom = styled(ListItemIcon)<ListItemIconProps>(() => ({
+const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) => ({
   minWidth: 'auto',
 
   img: {
     width: '24px',
     height: '24px',
-    marginRight: '13px',
+    marginRight: open ? '13px' : '0',
   },
 }));
 
@@ -241,21 +249,21 @@ const Layout: React.FC<Props> = ({ children }) => {
         </DrawerHeader>
         <SideMenus>
           <MenuCustom active={active === 0}>
-            <MenuIconCustom>
+            <MenuIconCustom open={open}>
               {active === 0 ? <img alt="" src={HomeActIcon} /> : <img alt="" src={HomeIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="Dashboard" />}
           </MenuCustom>
 
           <MenuCustom active={active === 1}>
-            <MenuIconCustom>
+            <MenuIconCustom open={open}>
               {active === 1 ? <img alt="" src={AddActIcon} /> : <img alt="" src={AddIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="Mint Contracts" />}
           </MenuCustom>
 
           <MenuCustom active={active === 2}>
-            <MenuIconCustom>
+            <MenuIconCustom open={open}>
               {active === 2 ? <img alt="" src={SliderActIcon} /> : <img alt="" src={SliderIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="My Contracts" />}
