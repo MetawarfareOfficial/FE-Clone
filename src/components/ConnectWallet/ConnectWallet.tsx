@@ -9,6 +9,8 @@ import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { setAccount, unSetAccount } from 'services/account';
 import { styled } from '@mui/material/styles';
 import { ButtonProps, Button } from '@mui/material';
+import { errorMessage } from 'messages/errorMessages';
+import { successMessage } from 'messages/successMessages';
 
 interface Props {
   name?: string;
@@ -36,13 +38,13 @@ const ConnectWallet: React.FC<Props> = () => {
       const signMessage = await getSignerSignMessage();
 
       if (isUnsupportedChainIdError) {
-        toast.error(`Wrong network`, { hideProgressBar: true });
+        toast.error(errorMessage.META_MASK_WRONG_NETWORK, { hideProgressBar: true });
         return;
       }
 
       if (signMessage) {
         await activate(injected);
-        toast.success('Login successfully', { hideProgressBar: true });
+        toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY, { hideProgressBar: true });
       }
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
@@ -52,7 +54,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const logout = async (): Promise<void> => {
     try {
       await deactivate();
-      toast.info('Logout successfully', { hideProgressBar: true });
+      toast.info(successMessage.META_MASK_DISCONNECT_SUCCESSFULLY, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
     }
