@@ -4,13 +4,13 @@ import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { toast } from 'react-toastify';
-import { getSignerSignMessage } from 'helpers/signMessage';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { setAccount, unSetAccount } from 'services/account';
 import { styled } from '@mui/material/styles';
 import { ButtonProps, Button } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
+import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
 
 interface Props {
   name?: string;
@@ -35,13 +35,16 @@ const ConnectWallet: React.FC<Props> = () => {
 
   const login = async (): Promise<void> => {
     try {
+      if (!isMetaMaskInstalled()) {
+        toast.error(errorMessage.META_MASK_DONT_INSTALLED.message, { hideProgressBar: true });
+        return;
+      }
+      await onClickConnect();
       const signMessage = await getSignerSignMessage();
-
       if (isUnsupportedChainIdError) {
         toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true });
         return;
       }
-
       if (signMessage) {
         await activate(injected);
         toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
@@ -60,6 +63,14 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   };
 
+  const handleWrongNetWork = async () => {
+    try {
+      return await addEthereumChain();
+    } catch (ex: any) {
+      toast.error(ex.message, { hideProgressBar: true });
+    }
+  };
+
   useEffect(() => {
     if (account && active) {
       dispatch(setAccount({ address: account }));
@@ -71,9 +82,17 @@ const ConnectWallet: React.FC<Props> = () => {
   return (
     <div>
       {!active && (
-        <ButtonConnect variant="outlined" color="primary" onClick={login}>
-          Connect Wallet
-        </ButtonConnect>
+        <div>
+          {isUnsupportedChainIdError ? (
+            <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
+              Wrong network
+            </ButtonConnect>
+          ) : (
+            <ButtonConnect variant="outlined" color="primary" onClick={login}>
+              Connect Wallet
+            </ButtonConnect>
+          )}
+        </div>
       )}
       {active && (
         <div>
