@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
 import 'styles/index.css';
 import routes from 'routes/route';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { useEagerConnect, useInactiveListener } from 'hooks';
+import Layout from 'components/Layout/Layout';
+import theme from './theme';
 
 const App: React.FC<any> = () => {
   const { connector } = useWeb3React<Web3Provider>();
@@ -21,18 +24,20 @@ const App: React.FC<any> = () => {
   useInactiveListener(!triedEager || !!activatingConnector);
 
   return (
-    <div className={'container mx-auto p-4'}>
-      <React.Suspense fallback={<div>....Loading</div>}>
-        <Switch>
-          {Object.keys(routes).map((key) => {
-            //@ts-ignore
-            const route = routes[key];
-            return <route.route key={route.path} {...route} />;
-          })}
-          <Route path="*" />
-        </Switch>
-      </React.Suspense>
-    </div>
+    <React.Suspense fallback={<div>....Loading</div>}>
+      <ThemeProvider theme={theme}>
+        <Layout>
+          <Switch>
+            {Object.keys(routes).map((key) => {
+              //@ts-ignore
+              const route = routes[key];
+              return <route.route key={route.path} {...route} />;
+            })}
+            <Route path="*" />
+          </Switch>
+        </Layout>
+      </ThemeProvider>
+    </React.Suspense>
   );
 };
 

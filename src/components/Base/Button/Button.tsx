@@ -1,14 +1,18 @@
 import React from 'react';
 
 interface Props {
+  children: React.ReactNode;
+  className?: string;
   name?: string;
-  handleClick?: () => void | Promise<void>;
+  color?: string; // secondary, success, error, primary
+  variant?: string; // text, contained, outlined
+  onClick?: () => void | Promise<void>;
 }
 
-const Button: React.FC<Props> = ({ name, handleClick }) => {
+const Button: React.FC<Props> = ({ children, variant, className, onClick }) => {
   return (
-    <button className={'px-4 py-2 text-sm bg-blue text-white rounded-none'} onClick={handleClick}>
-      {name}
+    <button className={`text-sm py-3 px-5 rounded-2xl btn-${variant} ${className}`} onClick={onClick}>
+      {children}
     </button>
   );
 };
