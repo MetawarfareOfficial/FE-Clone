@@ -55,8 +55,8 @@ const ConnectWallet: React.FC<Props> = () => {
 
   return (
     <div>
-      {!active && <Button name={'Login'} handleClick={login} />}
-      {active && <Button name={'Logout'} handleClick={logout} />}
+      {!active && <Button onClick={login}>Login</Button>}
+      {active && <Button onClick={logout}>Logout</Button>}
     </div>
   );
 };
