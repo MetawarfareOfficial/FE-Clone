@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { rechartLineData } from 'components/Dashboard/data';
 import { styled } from '@mui/material/styles';
 import Statistics from 'components/Dashboard/Statistics';
