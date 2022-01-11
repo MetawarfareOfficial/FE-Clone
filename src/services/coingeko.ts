@@ -6,8 +6,8 @@ export const coinsDetail = async (id: string) => {
   try {
     const rs = await axios.get(`${COINGECKO_URL}/coins/${id}`);
     return rs?.data;
-  } catch (error) {
-    return error;
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
@@ -15,8 +15,8 @@ export const coinsHistory = async (id: string, params: object) => {
   try {
     const rs = await axios.get(`${COINGECKO_URL}/coins/${id}/market_chart`, { params });
     return rs?.data;
-  } catch (error) {
-    return error;
+  } catch (error: any) {
+    throw new Error(error);
   }
 };
 
