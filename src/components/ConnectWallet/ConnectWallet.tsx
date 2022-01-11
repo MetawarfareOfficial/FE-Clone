@@ -40,15 +40,9 @@ const ConnectWallet: React.FC<Props> = () => {
         return;
       }
       await onClickConnect();
-      const signMessage = await getSignerSignMessage();
-      if (isUnsupportedChainIdError) {
-        toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true });
-        return;
-      }
-      if (signMessage) {
-        await activate(injected);
-        toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
-      }
+      await getSignerSignMessage();
+      await activate(injected);
+      toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
     }

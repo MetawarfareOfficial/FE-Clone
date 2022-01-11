@@ -1,6 +1,6 @@
-import { addEthereumChain } from './addChain';
-import { isMetaMaskInstalled } from './isMetaMaskInstalled';
-import { onClickConnect } from './onClickConnect';
-import { getSignerSignMessage } from './signMessage';
+import { addEthereumChain } from 'helpers/addChain';
+import { isMetaMaskInstalled } from 'helpers/isMetaMaskInstalled';
+import { onClickConnect } from 'helpers/onClickConnect';
+import { getSignerSignMessage } from 'helpers/signMessage';
 
 export { addEthereumChain, isMetaMaskInstalled, onClickConnect, getSignerSignMessage };
