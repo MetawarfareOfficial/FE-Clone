@@ -5,7 +5,8 @@ import Statistics from 'components/Dashboard/Statistics';
 import TotalMinted from 'components/Dashboard/TotalMinted';
 import PriceChart from 'components/Dashboard/PriceChart';
 import { Box, Grid, ToolbarProps, Toolbar, Typography } from '@mui/material';
-import { coinsDetail, coinsHistory } from 'services/coingeko';
+// import { coinsDetail, coinsHistory } from 'services/coingeko';
+// import { useAppDispatch, useAppSelector } from 'stores/hooks';
 
 interface DashboardProps {
   name?: string;
@@ -18,9 +19,15 @@ const CustomToolbar = styled(Toolbar)<ToolbarProps>(() => ({
 }));
 
 const Dashboard: React.FC<DashboardProps> = () => {
+  // Lấy data từ store về
+  // const dispatch = useAppDispatch();
+  // const aave = useAppSelector((state) => state.coingeko.detail);
+  // const history = useAppSelector((state) => state.coingeko.history);
+  // console.log('aave===>', aave);
+  // console.log('history===>', history);
   useEffect(() => {
-    coinsDetail('aave');
-    coinsHistory('aave', { vs_currency: 'usd', days: '365' });
+    // dispatch(coinsDetail('aave'));
+    // dispatch(coinsHistory('aave', { vs_currency: 'usd', days: '365' }));
   }, []);
 
   return (
