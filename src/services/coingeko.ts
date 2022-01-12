@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { createSlice } from '@reduxjs/toolkit';
-const COINGECKO_URL = 'https://api.coingecko.com/api/v3';
+import { COINGECKO_URL } from '../../config';
 
 export const coinsDetail = async (id: string) => {
   try {
