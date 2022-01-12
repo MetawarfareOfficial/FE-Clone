@@ -1,5 +1,5 @@
 import axios from 'axios';
-const COINGECKO_URL = 'https://api.coingecko.com/api/v3';
+import { COINGECKO_URL } from '../../config';
 
 class DataCoingeckoService {
   supportedCurrencies = async (params: object) => {
