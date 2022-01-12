@@ -2,12 +2,21 @@ import React from 'react';
 
 import { Box } from '@mui/material';
 
+import { Banner, TypesReward, Tokens, ClaimRewards } from 'components/MintContract';
+
 interface Props {
   title?: string;
 }
 
 const MintContract: React.FC<Props> = () => {
-  return <Box>Mint Contract</Box>;
+  return (
+    <Box>
+      <Banner />
+      <TypesReward />
+      <Tokens />
+      <ClaimRewards />
+    </Box>
+  );
 };
 
 export default MintContract;
