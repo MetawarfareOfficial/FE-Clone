@@ -40,7 +40,7 @@ const PriceChart: React.FC<Props> = ({ data }) => {
             <ComposedChart width={732} height={520} data={data}>
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#EFE5FE" stopOpacity={1} />
+                  <stop offset="40%" stopColor="#EFE5FE" stopOpacity={1} />
                   <stop offset="100%" stopColor="#EFE5FE" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
