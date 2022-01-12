@@ -39,7 +39,7 @@ const Title = styled(Typography)<TypographyProps>(() => ({
 
 const Text = styled(Typography)<TypographyProps>(() => ({
   color: `rgba(255, 255, 255, 0.54)`,
-  margin: '15px 0',
+  margin: '0 0',
   fontSize: '18px',
   lineHeight: '27px',
   textTransform: 'uppercase',

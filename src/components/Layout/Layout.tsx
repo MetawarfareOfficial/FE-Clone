@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, LinkProps, useHistory } from 'react-router-dom';
 
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
@@ -42,7 +42,11 @@ interface ListItemCustomProps extends ListItemProps {
   active: boolean;
 }
 
-const drawerWidth = 240;
+interface ListItemIconCustomProps extends ListItemIconProps {
+  open: boolean;
+}
+
+const drawerWidth = 224;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -60,10 +64,14 @@ const closedMixin = (theme: Theme): CSSObject => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  border: 'none',
   overflow: 'unset',
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  // width: `calc(${theme.spacing(7)} + 1px)`,
+  width: '100px',
+  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(9)} + 1px)`,
+    width: '100px',
+    // width: `calc(${theme.spacing(9)} + 1px)`,
   },
 });
 
@@ -125,7 +133,7 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   width: '100%',
-  padding: '16px 18px',
+  padding: '16px 10px',
   borderRadius: '14px',
   textTransform: 'capitalize',
   marginBottom: '10px',
@@ -156,13 +164,13 @@ const SideMenus = styled(List)<ListProps>(() => ({
   padding: '0 16px',
 }));
 
-const MenuIconCustom = styled(ListItemIcon)<ListItemIconProps>(() => ({
+const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) => ({
   minWidth: 'auto',
 
   img: {
     width: '24px',
     height: '24px',
-    marginRight: '13px',
+    marginRight: open ? '13px' : '0',
   },
 }));
 
@@ -220,8 +228,9 @@ const BoxSwitch = styled(Box)<BoxProps>(() => ({
 }));
 
 const Layout: React.FC<Props> = ({ children }) => {
+  const history = useHistory();
   const [open, setOpen] = React.useState(true);
-  const [active] = React.useState(0);
+  const [active, setActive] = React.useState(0);
   const [lightMode, setLightMode] = React.useState(true);
 
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -232,6 +241,11 @@ const Layout: React.FC<Props> = ({ children }) => {
     setOpen(!open);
   };
 
+  const openMenu = (url: string, index: number) => {
+    history.push(url);
+    setActive(index);
+  };
+
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
       <Drawer variant="permanent" open={open}>
@@ -240,22 +254,22 @@ const Layout: React.FC<Props> = ({ children }) => {
           <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
         </DrawerHeader>
         <SideMenus>
-          <MenuCustom active={active === 0}>
-            <MenuIconCustom>
+          <MenuCustom active={active === 0 ? true : false} onClick={() => openMenu('/', 0)}>
+            <MenuIconCustom open={open}>
               {active === 0 ? <img alt="" src={HomeActIcon} /> : <img alt="" src={HomeIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="Dashboard" />}
           </MenuCustom>
 
-          <MenuCustom active={active === 1}>
-            <MenuIconCustom>
+          <MenuCustom active={active === 1 ? true : false} onClick={() => openMenu('/mint-contract', 1)}>
+            <MenuIconCustom open={open}>
               {active === 1 ? <img alt="" src={AddActIcon} /> : <img alt="" src={AddIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="Mint Contracts" />}
           </MenuCustom>
 
-          <MenuCustom active={active === 2}>
-            <MenuIconCustom>
+          <MenuCustom active={active === 2 ? true : false} onClick={() => openMenu('/my-contract', 2)}>
+            <MenuIconCustom open={open}>
               {active === 2 ? <img alt="" src={SliderActIcon} /> : <img alt="" src={SliderIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="My Contracts" />}
