@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, LinkProps, useHistory } from 'react-router-dom';
 
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
@@ -228,8 +228,9 @@ const BoxSwitch = styled(Box)<BoxProps>(() => ({
 }));
 
 const Layout: React.FC<Props> = ({ children }) => {
+  const history = useHistory();
   const [open, setOpen] = React.useState(true);
-  const [active] = React.useState(0);
+  const [active, setActive] = React.useState(0);
   const [lightMode, setLightMode] = React.useState(true);
 
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,6 +241,11 @@ const Layout: React.FC<Props> = ({ children }) => {
     setOpen(!open);
   };
 
+  const openMenu = (url: string, index: number) => {
+    history.push(url);
+    setActive(index);
+  };
+
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
       <Drawer variant="permanent" open={open}>
@@ -248,21 +254,21 @@ const Layout: React.FC<Props> = ({ children }) => {
           <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
         </DrawerHeader>
         <SideMenus>
-          <MenuCustom active={active === 0}>
+          <MenuCustom active={active === 0 ? true : false} onClick={() => openMenu('/', 0)}>
             <MenuIconCustom open={open}>
               {active === 0 ? <img alt="" src={HomeActIcon} /> : <img alt="" src={HomeIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="Dashboard" />}
           </MenuCustom>
 
-          <MenuCustom active={active === 1}>
+          <MenuCustom active={active === 1 ? true : false} onClick={() => openMenu('/mint-contract', 1)}>
             <MenuIconCustom open={open}>
               {active === 1 ? <img alt="" src={AddActIcon} /> : <img alt="" src={AddIcon} />}
             </MenuIconCustom>
             {open && <ListItemText primary="Mint Contracts" />}
           </MenuCustom>
 
-          <MenuCustom active={active === 2}>
+          <MenuCustom active={active === 2 ? true : false} onClick={() => openMenu('/my-contract', 2)}>
             <MenuIconCustom open={open}>
               {active === 2 ? <img alt="" src={SliderActIcon} /> : <img alt="" src={SliderIcon} />}
             </MenuIconCustom>
