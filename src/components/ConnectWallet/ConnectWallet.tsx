@@ -11,7 +11,7 @@ import { ButtonProps, Button } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
-import { authenticateUser, getToken, unAuthenticateUser } from '../../services/auth';
+import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 
 interface Props {
   name?: string;
