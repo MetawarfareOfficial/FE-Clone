@@ -26,12 +26,29 @@ const ButtonConnect = styled(Button)<ButtonProps>(() => ({
   fontWeight: 'bold',
 }));
 
+const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
+  fontSize: '14px',
+  lineHeight: '21px',
+  fontFamily: 'Poppins',
+  fontWeight: 'bold',
+  padding: '12px 24px',
+  borderRadius: '14px',
+  textTransform: 'capitalize',
+  boxShadow: 'none',
+  background: theme.palette.primary.main,
+  color: 'white',
+
+  '&:hover': {
+    opacity: 0.7,
+    boxShadow: 'none',
+    background: theme.palette.primary.main,
+  },
+}));
+
 const ConnectWallet: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const { active, account, activate, deactivate, error } = useWeb3React<Web3Provider>();
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
-
-  // const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
   const login = async (): Promise<void> => {
     try {
@@ -70,7 +87,7 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(setAccount({ address: account }));
       return;
     }
-    dispatch(unSetAccount);
+    dispatch(unSetAccount());
   }, [account, active]);
 
   return (
@@ -90,9 +107,9 @@ const ConnectWallet: React.FC<Props> = () => {
       )}
       {active && (
         <div>
-          <ButtonConnect variant="outlined" color="primary" onClick={logout}>
+          <ButtonWallet variant="outlined" color="primary" onClick={logout}>
             Disconnect Wallet
-          </ButtonConnect>
+          </ButtonWallet>
         </div>
       )}
     </div>

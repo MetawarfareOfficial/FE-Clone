@@ -32,6 +32,7 @@ import HomeActIcon from 'assets/images/home-active.svg';
 import AddActIcon from 'assets/images/add-active.svg';
 import SliderActIcon from 'assets/images/slider-active.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
+import Banner from '../Base/Banner/Banner';
 
 interface Props {
   name?: string;
@@ -295,7 +296,10 @@ const Layout: React.FC<Props> = ({ children }) => {
         </SideAction>
       </Drawer>
 
-      <MainLayout component="main">{children}</MainLayout>
+      <MainLayout component="main">
+        <Banner />
+        {children}
+      </MainLayout>
     </Box>
   );
 };

@@ -1,6 +1,8 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
+import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
+import ConnectWallet from 'components/ConnectWallet';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   text?: string;
@@ -30,18 +32,6 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   width: '479px',
 }));
 
-const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontSize: '14px',
-  color: theme.palette.primary.main,
-  fontWeight: 'bold',
-  lineHeight: '21px',
-  fontFamily: 'Poppins',
-  overflow: 'hidden',
-  width: '100%',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-}));
-
 const BoxRight = styled(Box)<BoxProps>(() => ({
   width: 'calc(100% - 479px)',
   display: 'inline-flex',
@@ -62,39 +52,33 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '14px',
+  color: theme.palette.primary.main,
+  fontWeight: 'bold',
   lineHeight: '21px',
   fontFamily: 'Poppins',
-  fontWeight: 'bold',
-  padding: '12px 24px',
-  borderRadius: '14px',
-  textTransform: 'capitalize',
-  boxShadow: 'none',
-  background: theme.palette.primary.main,
-
-  '&:hover': {
-    opacity: 0.7,
-    boxShadow: 'none',
-    background: theme.palette.primary.main,
-  },
+  overflow: 'hidden',
+  width: '100%',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
 }));
 
-const Banner: React.FC<Props> = ({ text, walletId, connected, onConnect }) => {
+const Banner: React.FC<Props> = ({ text }) => {
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+
   return (
     <BannerWrapper>
       {text && <Text>{text}</Text>}
 
       <BoxRight>
-        {connected && (
+        {currentUserAddress && (
           <Wallet>
             <span>Wallet</span>
-            <Title>{walletId}</Title>
+            <Title>{currentUserAddress}</Title>
           </Wallet>
         )}
-        <ButtonWallet variant="contained" color="primary" onClick={onConnect}>
-          {connected ? 'Disconnect' : 'Connect'} Wallet
-        </ButtonWallet>
+        <ConnectWallet />
       </BoxRight>
     </BannerWrapper>
   );

@@ -4,7 +4,6 @@ import { styled } from '@mui/material/styles';
 import Statistics from 'components/Dashboard/Statistics';
 import TotalMinted from 'components/Dashboard/TotalMinted';
 import PriceChart from 'components/Dashboard/PriceChart';
-import ConnectWallet from 'components/ConnectWallet';
 import { Box, Grid, ToolbarProps, Toolbar, Typography } from '@mui/material';
 
 interface DashboardProps {
@@ -22,7 +21,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
     <Box>
       <CustomToolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-        <ConnectWallet />
       </CustomToolbar>
 
       <Box mb="50px">
