@@ -36,10 +36,11 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect((): any => {
     const { ethereum } = window as any;
+    if (ethereum) {
+      ethereum.removeAllListeners(['networkChanged']);
+    }
 
     if (ethereum && ethereum.on && !active && !error && !suppress) {
-      ethereum.removeAllListeners(['networkChanged']);
-
       const handleConnect = async () => {};
       const handleChainChanged = async (chainId: string | number) => {
         if (chainId.toString() !== validChainId.toString()) {
