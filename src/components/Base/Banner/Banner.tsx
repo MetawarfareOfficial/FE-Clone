@@ -66,8 +66,10 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const Banner: React.FC<Props> = () => {
-  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isMintContractLocation = useLocation().pathname === '/mint-contract';
+
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const isLogin = useAppSelector((state) => state.user.isLogin);
 
   return (
     <BannerWrapper>
@@ -76,7 +78,7 @@ const Banner: React.FC<Props> = () => {
       )}
 
       <BoxRight>
-        {currentUserAddress && (
+        {currentUserAddress && isLogin && (
           <Wallet>
             <span>Wallet</span>
             <Title>{currentUserAddress}</Title>

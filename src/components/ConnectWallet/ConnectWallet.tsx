@@ -4,13 +4,14 @@ import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { toast } from 'react-toastify';
-import { useAppDispatch } from 'stores/hooks';
-import { setAccount, unSetAccount } from 'services/account';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { setAccount, setLogin, unSetAccount, unSetLogin } from 'services/account';
 import { styled } from '@mui/material/styles';
 import { ButtonProps, Button } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
+import { authenticateUser, getToken, unAuthenticateUser } from '../../services/auth';
 
 interface Props {
   name?: string;
@@ -50,6 +51,8 @@ const ConnectWallet: React.FC<Props> = () => {
   const { active, account, activate, deactivate, error } = useWeb3React<Web3Provider>();
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
 
+  const isLogin = useAppSelector((state) => state.user.isLogin);
+
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
@@ -57,8 +60,10 @@ const ConnectWallet: React.FC<Props> = () => {
         return;
       }
       await onClickConnect();
-      await getSignerSignMessage();
+      const signature = await getSignerSignMessage();
       await activate(injected);
+      if (!getToken()) dispatch(setLogin());
+      authenticateUser(signature as string);
       toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
@@ -68,6 +73,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const logout = async (): Promise<void> => {
     try {
       await deactivate();
+      unAuthenticateUser();
       toast.info(successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
@@ -90,9 +96,17 @@ const ConnectWallet: React.FC<Props> = () => {
     dispatch(unSetAccount());
   }, [account, active]);
 
+  useEffect(() => {
+    if (getToken()) {
+      dispatch(setLogin());
+      return;
+    }
+    dispatch(unSetLogin());
+  }, [getToken()]);
+
   return (
     <div>
-      {!active && (
+      {!(active && isLogin) && (
         <div>
           {isUnsupportedChainIdError ? (
             <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
@@ -105,7 +119,7 @@ const ConnectWallet: React.FC<Props> = () => {
           )}
         </div>
       )}
-      {active && (
+      {active && isLogin && (
         <div>
           <ButtonWallet variant="outlined" color="primary" onClick={logout}>
             Disconnect Wallet
