@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
 import ConnectWallet from 'components/ConnectWallet';
 import { useAppSelector } from 'stores/hooks';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   text?: string;
@@ -64,12 +65,15 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textOverflow: 'ellipsis',
 }));
 
-const Banner: React.FC<Props> = ({ text }) => {
+const Banner: React.FC<Props> = () => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const isMintContractLocation = useLocation().pathname === '/mint-contract';
 
   return (
     <BannerWrapper>
-      {text && <Text>{text}</Text>}
+      {isMintContractLocation && (
+        <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
+      )}
 
       <BoxRight>
         {currentUserAddress && (
