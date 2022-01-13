@@ -23,7 +23,7 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   margin: '0 0 35px',
 }));
 
-const Pool = styled(Paper)<PaperProps>(() => ({
+const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   borderRadius: '22px',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   padding: '26px',
@@ -33,6 +33,7 @@ const Pool = styled(Paper)<PaperProps>(() => ({
   fontFamily: 'Poppins',
   fontWeight: '500',
   color: '#293247',
+  border: `1px solid ${theme.palette.primary.main}`,
 }));
 
 const ClaimRewards: React.FC<Props> = () => {
