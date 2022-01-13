@@ -3,7 +3,10 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 interface Props {
-  title?: string;
+  text?: string;
+  walletId?: string;
+  connected?: boolean;
+  onConnect?: () => void;
 }
 
 const BannerWrapper = styled(Paper)<PaperProps>(() => ({
@@ -13,7 +16,9 @@ const BannerWrapper = styled(Paper)<PaperProps>(() => ({
   padding: '30px 22px 30px 33px',
   boxSizing: 'border-box',
   display: 'flex',
+  justifyContent: 'flex-end',
   alignItems: 'center',
+  minHeight: '119px',
 }));
 
 const Text = styled(Typography)<TypographyProps>(() => ({
@@ -75,18 +80,20 @@ const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const Banner: React.FC<Props> = () => {
+const Banner: React.FC<Props> = ({ text, walletId, connected, onConnect }) => {
   return (
     <BannerWrapper>
-      <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
+      {text && <Text>{text}</Text>}
 
       <BoxRight>
-        <Wallet>
-          <span>Wallet</span>
-          <Title>0x33434dieoewo</Title>
-        </Wallet>
-        <ButtonWallet variant="contained" color="primary">
-          Disconnect Wallet
+        {connected && (
+          <Wallet>
+            <span>Wallet</span>
+            <Title>{walletId}</Title>
+          </Wallet>
+        )}
+        <ButtonWallet variant="contained" color="primary" onClick={onConnect}>
+          {connected ? 'Disconnect' : 'Connect'} Wallet
         </ButtonWallet>
       </BoxRight>
     </BannerWrapper>
