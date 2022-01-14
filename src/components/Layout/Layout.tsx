@@ -234,6 +234,19 @@ const Layout: React.FC<Props> = ({ children }) => {
   const [active, setActive] = React.useState(0);
   const [lightMode, setLightMode] = React.useState(true);
 
+  React.useEffect(() => {
+    const url = history.location.pathname;
+    let i;
+    if (url === '/') {
+      i = 0;
+    } else if (url === '/mint-contract') {
+      i = 1;
+    } else {
+      i = 2;
+    }
+    setActive(i);
+  }, []);
+
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
   };
@@ -245,6 +258,10 @@ const Layout: React.FC<Props> = ({ children }) => {
   const openMenu = (url: string, index: number) => {
     history.push(url);
     setActive(index);
+  };
+
+  const handleRefresh = () => {
+    window.location.reload();
   };
 
   return (
@@ -279,11 +296,11 @@ const Layout: React.FC<Props> = ({ children }) => {
 
         <SideAction>
           {open ? (
-            <ButtonRefresh variant="outlined" color="primary">
+            <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
               Refresh
             </ButtonRefresh>
           ) : (
-            <ButtonIconRefresh variant="outlined" color="primary">
+            <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
               <img alt="" src={RefreshIcon} />
             </ButtonIconRefresh>
           )}
