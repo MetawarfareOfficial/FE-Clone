@@ -1,50 +1,43 @@
 import axios from 'axios';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-export type Detail = {
-  detail: object;
-};
-export type History = {
-  history: object;
+export type MyData = {
+  prices: [];
+  market_caps: [];
+  total_volumes: [];
 };
 
 const initialState = {
-  detail: <Detail | undefined>{},
-  history: <History | undefined>{},
+  data: <MyData | undefined>{},
+  error: false,
+  loading: false,
 };
+
+export const coinsPrices = createAsyncThunk('get/dataChart', async (params: object) => {
+  return await axios.get(
+    `${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}/market_chart`,
+    { params },
+  );
+});
 
 const coingekoSlice = createSlice({
   name: 'coingeko',
   initialState,
-  reducers: {
-    getDetail: (state, action: PayloadAction<any>) => {
-      state.detail = action.payload;
+  reducers: {},
+  extraReducers: {
+    [coinsPrices.pending.type]: (state) => {
+      state.loading = true;
     },
-    getHistory: (state, action: PayloadAction<any>) => {
-      state.history = action.payload;
+    [coinsPrices.fulfilled.type]: (state, action) => {
+      state.data = action.payload.data;
+      state.loading = false;
+    },
+    [coinsPrices.rejected.type]: (state) => {
+      state.error = true;
+      state.loading = false;
     },
   },
 });
-
-export const { getDetail, getHistory } = coingekoSlice.actions;
-
-export const coinsDetail = (id: string) => async (dispatch: any) => {
-  try {
-    const rs = await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${id}`);
-    dispatch(getDetail(rs?.data));
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
-
-export const coinsHistory = (id: string, params: object) => async (dispatch: any) => {
-  try {
-    const rs = await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${id}/market_chart`, { params });
-    dispatch(getHistory(rs?.data));
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
 
 const { reducer: coingekoReducer } = coingekoSlice;
 export default coingekoReducer;
