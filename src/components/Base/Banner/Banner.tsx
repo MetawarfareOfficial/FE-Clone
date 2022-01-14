@@ -4,6 +4,7 @@ import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@
 import ConnectWallet from 'components/ConnectWallet';
 import { useAppSelector } from 'stores/hooks';
 import { useLocation } from 'react-router-dom';
+import { formatUserAddress } from 'helpers';
 
 interface Props {
   text?: string;
@@ -81,7 +82,7 @@ const Banner: React.FC<Props> = () => {
         {currentUserAddress && isLogin && (
           <Wallet>
             <span>Wallet</span>
-            <Title>{currentUserAddress}</Title>
+            <Title>{formatUserAddress(currentUserAddress)}</Title>
           </Wallet>
         )}
         <ConnectWallet />
