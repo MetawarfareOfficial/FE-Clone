@@ -79,7 +79,7 @@ const TypesReward: React.FC<Props> = () => {
       <Title>Types of Reward Contracts</Title>
 
       <TypeReward
-        name="Sqaure Contract"
+        name="Square Contract"
         icon={SquareIcon}
         color="#E5E5FE"
         colorChart="#A1A1E1"
