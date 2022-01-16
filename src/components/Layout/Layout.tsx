@@ -180,6 +180,8 @@ const MainLayout = styled(Box)<BoxProps>(() => ({
   minHeight: '100vh',
   padding: '30px',
   boxSizing: 'border-box',
+  height: '100vh',
+  overflow: 'hidden',
 }));
 
 const SideAction = styled(Box)<BoxProps>(() => ({

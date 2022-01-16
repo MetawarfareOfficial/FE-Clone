@@ -41,6 +41,7 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: 'normal',
   color: '#293247',
   fontFamily: 'Poppins',
+  maxWidth: '186px',
 
   span: {
     fontWeight: 'bold',
@@ -87,7 +88,7 @@ const Tokens: React.FC<Props> = () => {
           <BoxSale>
             <Sale>20%</Sale>
             <Text>
-              <span>Token</span> in Liquidity Pool (50% 0xB, 50% AVAX)
+              <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
             </Text>
           </BoxSale>
         </Grid>
@@ -95,7 +96,7 @@ const Tokens: React.FC<Props> = () => {
           <BoxSale>
             <Sale>30%</Sale>
             <Text>
-              <span>Token</span> in Treasury Wallet (100% USDC)
+              <span>Token</span> in Treasury Wallet as 100% USDC
             </Text>
           </BoxSale>
         </Grid>
@@ -103,7 +104,7 @@ const Tokens: React.FC<Props> = () => {
           <BoxSale>
             <Sale>50%</Sale>
             <Text>
-              <span>Token</span> in Rewards Wallet (100% 0xB)
+              <span>Token</span> in Rewards Wallet as 100% 0xB
             </Text>
           </BoxSale>
         </Grid>
