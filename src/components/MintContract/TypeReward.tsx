@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 import LineChart from 'components/Base/LineChart';
+import MintContractModal from 'components/Base/MintContractModal';
+import MintStatusModal from 'components/Base/MintStatusModal';
 
 interface Props {
+  id: any;
   icon: string;
   name: string;
   value: number;
@@ -85,7 +88,25 @@ const ButtonMint = styled(Button)<ButtonProps>(() => ({
   marginLeft: '40px',
 }));
 
-const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
+const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, colorChart, dataChart }) => {
+  const [open, setOpen] = useState(false);
+  const [openStatus, setOpenStatus] = useState(false);
+  const [status, setStatus] = useState<any>(null);
+
+  const handleToggle = () => {
+    setOpen(!open);
+  };
+
+  const handleToggleStatus = () => {
+    setOpenStatus(!openStatus);
+  };
+
+  const handleSubmit = () => {
+    setOpen(false);
+    setStatus(id === 0 ? 'success' : 'failed');
+    setOpenStatus(true);
+  };
+
   return (
     <Wrapper>
       <BoxContract sx={{ backgroundColor: color }}>
@@ -105,11 +126,30 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
             <LineChart data={dataChart} color={colorChart} />
           </div>
 
-          <ButtonMint variant="outlined" color="primary">
+          <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
             Mint
           </ButtonMint>
         </BoxDetail>
       </ViewInfo>
+
+      <MintContractModal
+        icon={icon}
+        name={name}
+        maxMint={10}
+        contracts={['Name']}
+        open={open}
+        onClose={handleToggle}
+        onSubmit={handleSubmit}
+      />
+
+      <MintStatusModal
+        icon={icon}
+        name={name}
+        open={openStatus}
+        status={status}
+        text={id === 0 ? 'Rewards claimed successfully' : id === 1 ? 'Contract minting failed' : 'Insufficient Tokens'}
+        onClose={handleToggleStatus}
+      />
     </Wrapper>
   );
 };

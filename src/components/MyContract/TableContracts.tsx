@@ -22,7 +22,7 @@ interface Props {
 }
 
 const EmptyContracts = styled(Box)<BoxProps>(() => ({
-  minHeight: '600px',
+  minHeight: 'calc(100vh - 119px - 315px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -85,10 +85,28 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(() => ({
   boxShadow: '0px 23px 48px rgba(0, 0, 0, 0.06)',
   border: 'none',
   borderRadius: '20px',
+  maxHeight: 'calc(100vh - 119px - 205px)',
+
+  '&::-webkit-scrollbar-button': {
+    height: '74px',
+  },
+  '&::-webkit-scrollbar': {
+    width: '9px',
+    height: '60px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'none',
+    webkitBoxShadow: 'none',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#3864FF',
+    height: '60px',
+    outline: 'none',
+    borderRadius: '10px',
+  },
 }));
 
 const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
-  height: '600px',
   overflow: 'auto',
 }));
 
@@ -96,7 +114,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   return (
     <Box>
       <TableWrapper>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCellHeader>Mint Date</TableCellHeader>

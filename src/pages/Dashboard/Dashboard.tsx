@@ -19,6 +19,8 @@ const ButtonConnect = styled(Button)<ButtonProps>(() => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontWeight: 'bold',
+  maxHeight: '46px',
+  boxSizing: 'border-box',
 }));
 
 const CustomToolbar = styled(Toolbar)<ToolbarProps>(() => ({

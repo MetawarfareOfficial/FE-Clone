@@ -12,6 +12,8 @@ const CardBox = styled(Box)<BoxProps>(() => ({
   borderRadius: '20px',
   textAlign: 'center',
   padding: '27px',
+  boxSizing: 'border-box',
+  maxHeight: '190px',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
 }));
 

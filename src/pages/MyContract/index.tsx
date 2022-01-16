@@ -45,7 +45,7 @@ const MyContract: React.FC<Props> = () => {
         </Grid>
       </Box>
 
-      <TableContracts data={dataContracts} />
+      <TableContracts data={connected ? dataContracts : []} />
     </Box>
   );
 };
