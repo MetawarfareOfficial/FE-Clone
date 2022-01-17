@@ -1,6 +1,6 @@
 const DASHBOARD = '/';
-const MINT_CONTRACT = '/mint-contract';
-const MY_CONTRACT = '/my-contract';
+const MINT_CONTRACT = '/mint-contracts';
+const MY_CONTRACT = '/my-contracts';
 
 export default {
   DASHBOARD,

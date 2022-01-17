@@ -55,7 +55,7 @@ const TableCellContent = styled(TableCell)<TableCellProps>(() => ({
   border: 'none',
 }));
 
-const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
+const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -66,6 +66,14 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
   boxShadow: 'none',
   width: '98px',
   height: '38px',
+
+  '&:hover': {
+    cursor: 'pointed',
+    backgroundColor: theme.palette.primary.main,
+    color: '#fff',
+    opacity: 0.7,
+    boxShadow: 'none',
+  },
 }));
 
 const ButtonClaim = styled(Button)<ButtonProps>(() => ({
@@ -79,6 +87,11 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   boxShadow: 'none',
   width: '98px',
   height: '38px',
+
+  '&:hover': {
+    cursor: 'pointed',
+    opacity: 0.7,
+  },
 }));
 
 const TableWrapper = styled(TableContainer)<TableContainerProps>(() => ({
