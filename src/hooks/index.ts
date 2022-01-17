@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
+import { errorMessage } from 'messages/errorMessages';
 
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
@@ -41,23 +42,20 @@ export const useInactiveListener = (suppress = false) => {
     }
 
     if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleConnect = async () => {};
       const handleChainChanged = async (chainId: string | number) => {
         if (chainId.toString() !== validChainId.toString()) {
-          toast.error(`unsupported chainId ${chainId}`, { hideProgressBar: true });
+          toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true });
           return;
         }
       };
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const handleAccountsChanged = async (accounts: string[]) => {};
 
-      ethereum.on('connect', handleConnect);
       ethereum.on('chainChanged', handleChainChanged);
       ethereum.on('accountsChanged', handleAccountsChanged);
 
       return () => {
         if (ethereum.removeListener) {
-          ethereum.removeListener('connect', handleConnect);
           ethereum.removeListener('chainChanged', handleChainChanged);
           ethereum.removeListener('accountsChanged', handleAccountsChanged);
         }

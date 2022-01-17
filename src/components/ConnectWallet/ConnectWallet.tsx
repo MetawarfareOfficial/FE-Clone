@@ -74,15 +74,17 @@ const ConnectWallet: React.FC<Props> = () => {
     try {
       await deactivate();
       unAuthenticateUser();
+      dispatch(unSetLogin());
       toast.info(successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
     }
   };
 
-  const handleWrongNetWork = async () => {
+  const handleWrongNetWork = async (): Promise<void> => {
     try {
-      return await addEthereumChain();
+      await addEthereumChain();
+      await activate(injected);
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
     }
@@ -108,7 +110,7 @@ const ConnectWallet: React.FC<Props> = () => {
     <div>
       {!(active && isLogin) && (
         <div>
-          {isUnsupportedChainIdError ? (
+          {isUnsupportedChainIdError && isLogin ? (
             <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
               Wrong network
             </ButtonConnect>
