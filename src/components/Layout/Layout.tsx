@@ -260,6 +260,19 @@ const Layout: React.FC<Props> = ({ children }) => {
   const [open, setOpen] = React.useState(true);
   const [lightMode, setLightMode] = React.useState(true);
 
+  React.useEffect(() => {
+    const url = history.location.pathname;
+    let i;
+    if (url === '/') {
+      i = 0;
+    } else if (url === '/mint-contract') {
+      i = 1;
+    } else {
+      i = 2;
+    }
+    setActive(i);
+  }, []);
+
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
   };
@@ -272,7 +285,9 @@ const Layout: React.FC<Props> = ({ children }) => {
     history.push(url);
   };
 
-  const handleConnect = () => {};
+  const handleRefresh = () => {
+    window.location.reload();
+  };
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
@@ -316,11 +331,11 @@ const Layout: React.FC<Props> = ({ children }) => {
 
         <SideAction>
           {open ? (
-            <ButtonRefresh variant="outlined" color="primary">
+            <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
               Refresh
             </ButtonRefresh>
           ) : (
-            <ButtonIconRefresh variant="outlined" color="primary">
+            <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
               <img alt="" src={RefreshIcon} />
             </ButtonIconRefresh>
           )}
@@ -334,13 +349,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       </Drawer>
 
       <MainLayout component="main">
-        <Banner
-          // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
-          // walletId="0x33434dieoewo"
-          onConnect={handleConnect}
-          connected={false}
-          isBg={location.pathname !== '/'}
-        />
+        <Banner isBg={location.pathname !== '/'} />
         {children}
       </MainLayout>
     </Box>
