@@ -7,3 +7,23 @@ body {
   font-family: 'Poppins', sans-serif !important;
 /* font-family: 'Roboto', sans-serif; */
 }
+
+
+body::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: none;
+	background-color: none;
+}
+
+body::-webkit-scrollbar
+{
+	width: 5px;
+  background-color: none;
+}
+
+body::-webkit-scrollbar-thumb
+{
+	background-color: #3864FF;
+  border-radius: 10px;
+}
+

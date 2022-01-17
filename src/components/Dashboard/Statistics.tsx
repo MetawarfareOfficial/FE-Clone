@@ -28,6 +28,7 @@ const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'unset',
   boxShadow: '0px 13px 27px rgba(26, 38, 70, 0.09)',
   borderRadius: '14px',
+  fontFamily: 'Poppins',
 }));
 
 const Title = styled(Typography)<TypographyProps>(() => ({
@@ -46,6 +47,7 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   lineHeight: '27px',
   textTransform: 'uppercase',
   fontWeight: 'bold',
+  fontFamily: 'Poppins',
 }));
 
 const Statistics: React.FC<Props> = () => {
