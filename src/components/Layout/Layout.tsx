@@ -260,19 +260,6 @@ const Layout: React.FC<Props> = ({ children }) => {
   const [open, setOpen] = React.useState(true);
   const [lightMode, setLightMode] = React.useState(true);
 
-  React.useEffect(() => {
-    const url = history.location.pathname;
-    let i;
-    if (url === '/') {
-      i = 0;
-    } else if (url === '/mint-contract') {
-      i = 1;
-    } else {
-      i = 2;
-    }
-    setActive(i);
-  }, []);
-
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
   };
