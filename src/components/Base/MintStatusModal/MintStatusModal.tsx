@@ -21,9 +21,10 @@ import { TransitionProps } from '@mui/material/transitions';
 import CloseImg from 'assets/images/ic-times.svg';
 import SuccessGif from 'assets/images/success-white.gif';
 import ErrorGif from 'assets/images/error-white.gif';
+import PendingGif from 'assets/images/pending-white.gif';
 
 interface Props {
-  status: 'success' | 'error';
+  status: 'success' | 'error' | 'pending';
   open: boolean;
   text: string;
   icon: string;
@@ -149,9 +150,21 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
       </Header>
 
       <Content>
-        <ViewImage>{status === 'success' ? <img alt="" src={SuccessGif} /> : <img alt="" src={ErrorGif} />}</ViewImage>
+        <ViewImage>
+          {status === 'success' ? (
+            <img alt="" src={SuccessGif} />
+          ) : status === 'error' ? (
+            <img alt="" src={ErrorGif} />
+          ) : status === 'pending' ? (
+            <img alt="" src={PendingGif} />
+          ) : (
+            ''
+          )}
+        </ViewImage>
 
-        <StatusText color={{ color: status === 'success' ? '#119F19' : '#F62D33' }}>{text}</StatusText>
+        <StatusText color={{ color: status === 'success' ? '#119F19' : status === 'error' ? '#F62D33' : '#293247' }}>
+          {text}
+        </StatusText>
       </Content>
     </Wrapper>
   );
