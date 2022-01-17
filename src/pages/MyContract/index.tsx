@@ -22,7 +22,7 @@ const MyContract: React.FC<Props> = () => {
 
   return (
     <Box>
-      <Banner walletId="0x33434dieoewo" onConnect={handleConnect} />
+      <Banner connected={connected} walletId="0x33434dieoewo" onConnect={handleConnect} />
 
       <Box sx={{ width: '100%', margin: '30px 0' }}>
         <Grid container spacing={3}>
