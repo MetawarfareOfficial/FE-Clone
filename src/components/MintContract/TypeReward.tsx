@@ -88,7 +88,9 @@ const ButtonMint = styled(Button)<ButtonProps>(() => ({
   marginLeft: '40px',
 }));
 
-const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, colorChart, dataChart }) => {
+const STATUS = ['success', 'error', 'pending'];
+
+const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
@@ -103,7 +105,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
 
   const handleSubmit = () => {
     setOpen(false);
-    setStatus(id === 0 ? 'success' : 'failed');
+    setStatus(STATUS[Math.floor(Math.random() * STATUS.length)]);
     setOpenStatus(true);
   };
 
@@ -147,7 +149,15 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
         name={name}
         open={openStatus}
         status={status}
-        text={id === 0 ? 'Rewards claimed successfully' : id === 1 ? 'Contract minting failed' : 'Insufficient Tokens'}
+        text={
+          status === 'success'
+            ? 'Rewards claimed successfully'
+            : status === 'error'
+            ? 'Contract minting failed'
+            : status === 'pending'
+            ? 'Processing'
+            : 'Insufficient Tokens'
+        }
         onClose={handleToggleStatus}
       />
     </Wrapper>
