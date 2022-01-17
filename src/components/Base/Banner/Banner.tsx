@@ -6,12 +6,16 @@ interface Props {
   text?: string;
   walletId?: string;
   connected?: boolean;
-  isBg?: boolean;
+  isBg: boolean;
   onConnect?: () => void;
 }
 
+interface ButtonWalletProps extends ButtonProps {
+  isBg: boolean;
+}
+
 interface PaperCustomProps extends PaperProps {
-  isBg?: boolean;
+  isBg: boolean;
 }
 
 const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg }) => ({
@@ -67,7 +71,7 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
+const ButtonWallet = styled(Button)<ButtonWalletProps>(({ isBg, theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -76,12 +80,12 @@ const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
   borderRadius: '14px',
   textTransform: 'capitalize',
   boxShadow: 'none',
-  // background: theme.palette.primary.main,
+  background: isBg ? theme.palette.primary.main : 'unset',
 
   '&:hover': {
     opacity: 0.7,
     boxShadow: 'none',
-    background: theme.palette.primary.main,
+    background: isBg ? theme.palette.primary.main : 'unset',
   },
 }));
 
@@ -97,7 +101,7 @@ const Banner: React.FC<Props> = ({ isBg, text, walletId, connected, onConnect })
             <Title>{walletId}</Title>
           </Wallet>
         )}
-        <ButtonWallet variant={isBg ? 'contained' : 'outlined'} color="primary" onClick={onConnect}>
+        <ButtonWallet isBg={isBg} variant={isBg ? 'contained' : 'outlined'} color="primary" onClick={onConnect}>
           {connected ? 'Disconnect' : 'Connect'} Wallet
         </ButtonWallet>
       </BoxRight>
