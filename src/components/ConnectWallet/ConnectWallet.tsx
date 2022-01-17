@@ -119,7 +119,7 @@ const ConnectWallet: React.FC<Props> = () => {
     <div>
       {!(active && isLogin) && (
         <div>
-          {isUnsupportedChainIdError || isLogin ? (
+          {isUnsupportedChainIdError || getToken() ? (
             <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
               Wrong network
             </ButtonConnect>

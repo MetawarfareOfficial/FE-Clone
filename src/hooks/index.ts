@@ -4,6 +4,7 @@ import { injected } from 'connectors';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
+import { unAuthenticateUser } from 'services/auth';
 
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
@@ -53,6 +54,7 @@ export const useInactiveListener = (suppress = false) => {
 
       ethereum.on('chainChanged', handleChainChanged);
       ethereum.on('accountsChanged', handleAccountsChanged);
+      injected.on('Web3ReactDeactivate', unAuthenticateUser);
 
       return () => {
         if (ethereum.removeListener) {
