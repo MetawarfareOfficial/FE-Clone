@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
-import { Link, LinkProps, useHistory } from 'react-router-dom';
+import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 
 import MySwitch from 'components/Base/Switch';
+import Banner from 'components/Base/Banner';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -180,8 +181,8 @@ const MainLayout = styled(Box)<BoxProps>(() => ({
   minHeight: '100vh',
   padding: '30px',
   boxSizing: 'border-box',
-  height: '100vh',
-  overflow: 'hidden',
+  // height: '100vh',
+  // overflow: 'hidden',
 }));
 
 const SideAction = styled(Box)<BoxProps>(() => ({
@@ -231,6 +232,7 @@ const BoxSwitch = styled(Box)<BoxProps>(() => ({
 
 const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
+  const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [active, setActive] = React.useState(0);
   const [lightMode, setLightMode] = React.useState(true);
@@ -247,6 +249,8 @@ const Layout: React.FC<Props> = ({ children }) => {
     history.push(url);
     setActive(index);
   };
+
+  const handleConnect = () => {};
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
@@ -297,7 +301,16 @@ const Layout: React.FC<Props> = ({ children }) => {
         </SideAction>
       </Drawer>
 
-      <MainLayout component="main">{children}</MainLayout>
+      <MainLayout component="main">
+        <Banner
+          // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
+          // walletId="0x33434dieoewo"
+          onConnect={handleConnect}
+          connected={false}
+          isBg={location.pathname !== '/'}
+        />
+        {children}
+      </MainLayout>
     </Box>
   );
 };
