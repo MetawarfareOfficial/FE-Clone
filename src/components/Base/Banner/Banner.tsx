@@ -1,5 +1,9 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
+import ConnectWallet from 'components/ConnectWallet';
+import { useAppSelector } from 'stores/hooks';
+import { useLocation } from 'react-router-dom';
+import { formatUserAddress } from 'helpers';
 import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 interface Props {
@@ -89,18 +93,26 @@ const ButtonWallet = styled(Button)<ButtonWalletProps>(({ isBg, theme }) => ({
   },
 }));
 
-const Banner: React.FC<Props> = ({ isBg, text, walletId, connected, onConnect }) => {
+const Banner: React.FC<Props> = ({ isBg, connected, onConnect }) => {
+  const isMintContractLocation = useLocation().pathname === '/mint-contract';
+
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const isLogin = useAppSelector((state) => state.user.isLogin);
+
   return (
     <BannerWrapper isBg={isBg}>
-      {text && <Text>{text}</Text>}
+      {isMintContractLocation && (
+        <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
+      )}
 
       <BoxRight>
-        {connected && (
+        {currentUserAddress && isLogin && (
           <Wallet>
             <span>Wallet</span>
-            <Title>{walletId}</Title>
+            <Title>{formatUserAddress(currentUserAddress)}</Title>
           </Wallet>
         )}
+        <ConnectWallet />
         <ButtonWallet isBg={isBg} variant={isBg ? 'contained' : 'outlined'} color="primary" onClick={onConnect}>
           {connected ? 'Disconnect' : 'Connect'} Wallet
         </ButtonWallet>

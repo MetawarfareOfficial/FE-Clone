@@ -27,11 +27,11 @@ const MyContract: React.FC<Props> = () => {
             <Statistic icon={CubeIcon} color="#D2FFDB" title="CUBE" text="Contract" value="0" />
           </Grid>
           <Grid item md={3}>
-            <Statistic icon={TessIcon} color="#DBECFD" title="Tesseract" text="Contract" value="3" />
+            <Statistic icon={TessIcon} color="#DBECFD" title="Tesseracts" text="Contract" value="3" />
           </Grid>
           <Grid item md={3}>
             <Statistic
-              color={connected ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
+              color={true ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
               title="My Rewards"
               value="0.000"
             />

@@ -122,7 +122,7 @@ const TotalMinted: React.FC<Props> = () => {
             </ViewImage>
 
             <BoxHeaderContent>
-              <HeaderTitle>Square</HeaderTitle>
+              <HeaderTitle>SQUARE</HeaderTitle>
               <HeaderText>Contract</HeaderText>
             </BoxHeaderContent>
           </BoxHeader>
@@ -148,7 +148,7 @@ const TotalMinted: React.FC<Props> = () => {
             </ViewImage>
 
             <BoxHeaderContent>
-              <HeaderTitle>Cube </HeaderTitle>
+              <HeaderTitle>CUBE </HeaderTitle>
               <HeaderText>Contract</HeaderText>
             </BoxHeaderContent>
           </BoxHeader>
@@ -174,7 +174,7 @@ const TotalMinted: React.FC<Props> = () => {
             </ViewImage>
 
             <BoxHeaderContent>
-              <HeaderTitle>Tesseract</HeaderTitle>
+              <HeaderTitle>TESSERACT</HeaderTitle>
               <HeaderText>Contract</HeaderText>
             </BoxHeaderContent>
           </BoxHeader>
