@@ -48,10 +48,11 @@ const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
 
 const ConnectWallet: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
-  const { active, account, activate, deactivate, error } = useWeb3React<Web3Provider>();
+  const { active, account, activate, deactivate, error, chainId } = useWeb3React<Web3Provider>();
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
 
   const isLogin = useAppSelector((state) => state.user.isLogin);
+  // const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
   const login = async (): Promise<void> => {
     try {
@@ -64,7 +65,6 @@ const ConnectWallet: React.FC<Props> = () => {
       await activate(injected);
       if (!getToken()) dispatch(setLogin());
       authenticateUser(signature as string);
-      toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
     }
@@ -74,6 +74,8 @@ const ConnectWallet: React.FC<Props> = () => {
     try {
       await deactivate();
       unAuthenticateUser();
+      dispatch(unSetLogin());
+      dispatch(unSetAccount());
       toast.info(successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
@@ -90,12 +92,13 @@ const ConnectWallet: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    if (account && active) {
+    if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
+      toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
       return;
     }
     dispatch(unSetAccount());
-  }, [account, active]);
+  }, [account, active, chainId, isLogin]);
 
   useEffect(() => {
     if (getToken()) {
@@ -106,12 +109,11 @@ const ConnectWallet: React.FC<Props> = () => {
   }, [getToken()]);
 
   useEffect(() => {
-    if (error instanceof UnsupportedChainIdError) {
-      injected.removeListener('Web3ReactUpdate', () => {});
+    if (error?.name === 'UnsupportedChainIdError') {
       toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true });
       return;
     }
-  }, [error]);
+  }, [error?.name]);
 
   return (
     <div>
