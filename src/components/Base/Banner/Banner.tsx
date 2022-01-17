@@ -6,19 +6,28 @@ interface Props {
   text?: string;
   walletId?: string;
   connected?: boolean;
+  isBg: boolean;
   onConnect?: () => void;
 }
 
-const BannerWrapper = styled(Paper)<PaperProps>(() => ({
-  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+interface ButtonWalletProps extends ButtonProps {
+  isBg: boolean;
+}
+
+interface PaperCustomProps extends PaperProps {
+  isBg: boolean;
+}
+
+const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg }) => ({
+  boxShadow: isBg ? '0px 0px 48px rgba(0, 0, 0, 0.06)' : 'none',
   borderRadius: '22px',
-  backgroundColor: '#fff',
-  padding: '30px 22px 30px 33px',
+  backgroundColor: isBg ? '#fff' : 'unset',
+  padding: isBg ? '30px 22px 30px 33px' : 0,
   boxSizing: 'border-box',
   display: 'flex',
   justifyContent: 'flex-end',
   alignItems: 'center',
-  minHeight: '119px',
+  minHeight: isBg ? '119px' : '50px',
 }));
 
 const Text = styled(Typography)<TypographyProps>(() => ({
@@ -62,7 +71,7 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
+const ButtonWallet = styled(Button)<ButtonWalletProps>(({ isBg, theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -71,18 +80,18 @@ const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
   borderRadius: '14px',
   textTransform: 'capitalize',
   boxShadow: 'none',
-  background: theme.palette.primary.main,
+  background: isBg ? theme.palette.primary.main : 'unset',
 
   '&:hover': {
     opacity: 0.7,
     boxShadow: 'none',
-    background: theme.palette.primary.main,
+    background: isBg ? theme.palette.primary.main : 'unset',
   },
 }));
 
-const Banner: React.FC<Props> = ({ text, walletId, connected, onConnect }) => {
+const Banner: React.FC<Props> = ({ isBg, text, walletId, connected, onConnect }) => {
   return (
-    <BannerWrapper>
+    <BannerWrapper isBg={isBg}>
       {text && <Text>{text}</Text>}
 
       <BoxRight>
@@ -92,7 +101,7 @@ const Banner: React.FC<Props> = ({ text, walletId, connected, onConnect }) => {
             <Title>{walletId}</Title>
           </Wallet>
         )}
-        <ButtonWallet variant="contained" color="primary" onClick={onConnect}>
+        <ButtonWallet isBg={isBg} variant={isBg ? 'contained' : 'outlined'} color="primary" onClick={onConnect}>
           {connected ? 'Disconnect' : 'Connect'} Wallet
         </ButtonWallet>
       </BoxRight>
