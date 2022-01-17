@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
-import { Link, LinkProps, useHistory } from 'react-router-dom';
+import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 
 import MySwitch from 'components/Base/Switch';
+import Banner from 'components/Base/Banner';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -32,7 +33,6 @@ import HomeActIcon from 'assets/images/home-active.svg';
 import AddActIcon from 'assets/images/add-active.svg';
 import SliderActIcon from 'assets/images/slider-active.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
-import Banner from '../Base/Banner/Banner';
 
 interface Props {
   name?: string;
@@ -181,6 +181,8 @@ const MainLayout = styled(Box)<BoxProps>(() => ({
   minHeight: '100vh',
   padding: '30px',
   boxSizing: 'border-box',
+  // height: '100vh',
+  // overflow: 'hidden',
 }));
 
 const SideAction = styled(Box)<BoxProps>(() => ({
@@ -230,6 +232,7 @@ const BoxSwitch = styled(Box)<BoxProps>(() => ({
 
 const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
+  const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [active, setActive] = React.useState(0);
   const [lightMode, setLightMode] = React.useState(true);
@@ -314,7 +317,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       </Drawer>
 
       <MainLayout component="main">
-        <Banner />
+        <Banner isBg={location.pathname !== '/'} />
         {children}
       </MainLayout>
     </Box>

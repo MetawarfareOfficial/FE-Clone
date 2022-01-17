@@ -79,6 +79,7 @@ const TypesReward: React.FC<Props> = () => {
       <Title>Types of Reward Contracts</Title>
 
       <TypeReward
+        id={0}
         name="Square Contract"
         icon={SquareIcon}
         color="#E5E5FE"
@@ -89,6 +90,7 @@ const TypesReward: React.FC<Props> = () => {
         dataChart={data}
       />
       <TypeReward
+        id={1}
         name="Cube Contract"
         icon={CubeIcon}
         color="#D2FFDB"
@@ -99,6 +101,7 @@ const TypesReward: React.FC<Props> = () => {
         dataChart={data}
       />
       <TypeReward
+        id={2}
         name="Tesseract Contract"
         icon={TessIcon}
         color="#DBECFD"

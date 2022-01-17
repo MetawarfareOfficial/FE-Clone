@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { dataContracts } from './data';
 import { Box, Grid } from '@mui/material';
 
+// import { Banner } from 'components/Base/Banner';
 import { Statistic, TableContracts } from 'components/MyContract';
 
 import SquareIcon from 'assets/images/square.gif';
@@ -13,6 +14,8 @@ interface Props {
 }
 
 const MyContract: React.FC<Props> = () => {
+  const [connected] = useState(true);
+
   return (
     <Box>
       <Box sx={{ width: '100%', margin: '30px 0' }}>
@@ -36,7 +39,7 @@ const MyContract: React.FC<Props> = () => {
         </Grid>
       </Box>
 
-      <TableContracts data={dataContracts} />
+      <TableContracts data={connected ? dataContracts : []} />
     </Box>
   );
 };
