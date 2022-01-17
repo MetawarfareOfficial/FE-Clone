@@ -5,7 +5,7 @@ export const errorMessage = {
   },
   META_MASK_WRONG_NETWORK: {
     title: 'Metamask',
-    message: 'Unsupported chain id!',
+    message: 'Please change to Avalanche network to continue!',
   },
   META_MASK_CONNECT_ERROR: {
     title: 'Metamask',

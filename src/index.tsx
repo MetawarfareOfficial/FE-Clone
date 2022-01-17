@@ -6,6 +6,7 @@ import App from 'App';
 import reportWebVitals from 'reportWebVitals';
 import store from 'stores/store';
 import { ToastContainer } from 'react-toastify';
+import 'assets/fonts/stylesheet.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';

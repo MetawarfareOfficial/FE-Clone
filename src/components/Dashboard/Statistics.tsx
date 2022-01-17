@@ -12,6 +12,8 @@ const CardBox = styled(Box)<BoxProps>(() => ({
   borderRadius: '20px',
   textAlign: 'center',
   padding: '27px',
+  boxSizing: 'border-box',
+  maxHeight: '190px',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
 }));
 
@@ -26,6 +28,7 @@ const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'unset',
   boxShadow: '0px 13px 27px rgba(26, 38, 70, 0.09)',
   borderRadius: '14px',
+  fontFamily: 'Poppins',
 }));
 
 const Title = styled(Typography)<TypographyProps>(() => ({
@@ -44,6 +47,7 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   lineHeight: '27px',
   textTransform: 'uppercase',
   fontWeight: 'bold',
+  fontFamily: 'Poppins',
 }));
 
 const Statistics: React.FC<Props> = () => {

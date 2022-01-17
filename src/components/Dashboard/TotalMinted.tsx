@@ -50,6 +50,7 @@ const HeaderTitle = styled(Typography)<TypographyProps>(() => ({
   lineHeight: '30px',
   fontWeight: '600',
   fontFamily: 'Poppins',
+  textTransform: 'uppercase',
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(() => ({
@@ -79,12 +80,15 @@ const BoxTotal = styled(Box)<BoxTypeProps>(({ color, shadow }) => ({
 }));
 
 const BoxLeft = styled(Box)<BoxProps>(() => ({
-  padding: '14px 16px 25px',
+  padding: '12px 16px 25px',
   width: 'calc(100% - 150px)',
+  maxHeight: '174px',
+  boxSizing: 'border-box',
 }));
 
 const BoxRight = styled(Box)<BoxProps>(() => ({
   padding: '16px',
+  boxSizing: 'border-box',
   width: '150px',
   display: 'inline-flex',
   alignItems: 'center',
