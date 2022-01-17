@@ -78,6 +78,7 @@ const Text = styled(Typography)<TypographyProps>(() => ({
 }));
 
 const ButtonMint = styled(Button)<ButtonProps>(() => ({
+  fontFamily: 'Poppins',
   fontSize: '14px',
   lineHeight: '21px',
   padding: '12px',

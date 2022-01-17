@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
-
+import { menus } from './menus';
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
 import {
@@ -16,6 +16,9 @@ import {
   ListItemText,
   ListItemIcon,
   ListItemIconProps,
+  Tooltip,
+  TooltipProps,
+  tooltipClasses,
 } from '@mui/material';
 
 import MySwitch from 'components/Base/Switch';
@@ -26,12 +29,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import LogoImg from 'assets/images/logo.svg';
 import LogoIcon from 'assets/images/logo-ic.svg';
-import HomeIcon from 'assets/images/home.svg';
-import AddIcon from 'assets/images/add-circle.svg';
-import SliderIcon from 'assets/images/slider.svg';
-import HomeActIcon from 'assets/images/home-active.svg';
-import AddActIcon from 'assets/images/add-active.svg';
-import SliderActIcon from 'assets/images/slider-active.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
 
 interface Props {
@@ -41,9 +38,14 @@ interface Props {
 
 interface ListItemCustomProps extends ListItemProps {
   active: boolean;
+  open: boolean;
 }
 
 interface ListItemIconCustomProps extends ListItemIconProps {
+  open: boolean;
+}
+
+interface ListCustomProps extends ListProps {
   open: boolean;
 }
 
@@ -129,16 +131,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 }));
 
-const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active }) => ({
+const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: '100%',
-  padding: '16px 10px',
+  padding: '16px 18px',
   borderRadius: '14px',
   textTransform: 'capitalize',
   marginBottom: '10px',
+  // overflow: 'hidden',
   backgroundColor: active ? '#dbecfd88' : '#fff',
+  width: `${open ? '100%' : '56px'}`,
 
   span: {
     margin: 0,
@@ -161,8 +164,8 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active }) => ({
   },
 }));
 
-const SideMenus = styled(List)<ListProps>(() => ({
-  padding: '0 16px',
+const SideMenus = styled(List)<ListCustomProps>(({ open }) => ({
+  padding: `0 ${open ? 16 : 22}px`,
 }));
 
 const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) => ({
@@ -194,6 +197,7 @@ const SideAction = styled(Box)<BoxProps>(() => ({
 const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'none',
   fontWeight: '700',
+  fontFamily: 'Poppins',
   color: theme.palette.primary.main,
   padding: '6px 35px',
   borderRadius: '8px',
@@ -230,25 +234,31 @@ const BoxSwitch = styled(Box)<BoxProps>(() => ({
   },
 }));
 
+const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    background: '#3864FF',
+    color: '#fff',
+    padding: '11px 26px',
+    fontFamily: 'Poppins',
+    fontSize: '14px',
+    lineHeight: '26px',
+    fontWeight: 'bold',
+    boxShadow: '1px 5px 29px rgba(50, 71, 117, 0.2)',
+    borderRadius: '18px',
+    left: '15px',
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: '#3864FF',
+  },
+}));
+
 const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
-  const [active, setActive] = React.useState(0);
   const [lightMode, setLightMode] = React.useState(true);
-
-  React.useEffect(() => {
-    const url = history.location.pathname;
-    let i;
-    if (url === '/') {
-      i = 0;
-    } else if (url === '/mint-contract') {
-      i = 1;
-    } else {
-      i = 2;
-    }
-    setActive(i);
-  }, []);
 
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
@@ -258,9 +268,8 @@ const Layout: React.FC<Props> = ({ children }) => {
     setOpen(!open);
   };
 
-  const openMenu = (url: string, index: number) => {
+  const openMenu = (url: string) => {
     history.push(url);
-    setActive(index);
   };
 
   const handleRefresh = () => {
@@ -274,27 +283,37 @@ const Layout: React.FC<Props> = ({ children }) => {
           <Logo to="/">{open ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoIcon} />}</Logo>
           <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
         </DrawerHeader>
-        <SideMenus>
-          <MenuCustom active={active === 0 ? true : false} onClick={() => openMenu('/', 0)}>
-            <MenuIconCustom open={open}>
-              {active === 0 ? <img alt="" src={HomeActIcon} /> : <img alt="" src={HomeIcon} />}
-            </MenuIconCustom>
-            {open && <ListItemText primary="Dashboard" />}
-          </MenuCustom>
-
-          <MenuCustom active={active === 1 ? true : false} onClick={() => openMenu('/mint-contract', 1)}>
-            <MenuIconCustom open={open}>
-              {active === 1 ? <img alt="" src={AddActIcon} /> : <img alt="" src={AddIcon} />}
-            </MenuIconCustom>
-            {open && <ListItemText primary="Mint Contracts" />}
-          </MenuCustom>
-
-          <MenuCustom active={active === 2 ? true : false} onClick={() => openMenu('/my-contract', 2)}>
-            <MenuIconCustom open={open}>
-              {active === 2 ? <img alt="" src={SliderActIcon} /> : <img alt="" src={SliderIcon} />}
-            </MenuIconCustom>
-            {open && <ListItemText primary="My Contracts" />}
-          </MenuCustom>
+        <SideMenus open={open}>
+          {menus &&
+            menus.map((item, i) => (
+              <MenuCustom
+                key={i}
+                open={open}
+                active={location.pathname === item.path}
+                onClick={() => openMenu(item.path)}
+              >
+                <MenuIconCustom open={open}>
+                  {!open ? (
+                    <TooltipCustom title={item.name} arrow placement="right">
+                      {location.pathname === item.path ? (
+                        <img alt="" src={item.activeIcon} />
+                      ) : (
+                        <img alt="" src={item.icon} />
+                      )}
+                    </TooltipCustom>
+                  ) : (
+                    <>
+                      {location.pathname === item.path ? (
+                        <img alt="" src={item.activeIcon} />
+                      ) : (
+                        <img alt="" src={item.icon} />
+                      )}
+                    </>
+                  )}
+                </MenuIconCustom>
+                {open && <ListItemText primary={item.name} />}
+              </MenuCustom>
+            ))}
         </SideMenus>
 
         <SideAction>
