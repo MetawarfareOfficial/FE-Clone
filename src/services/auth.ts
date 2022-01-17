@@ -1,4 +1,4 @@
-const TOKEN = 'token';
+const TOKEN = `0xblock-token-${process.env.REACT_APP_NODE_ENV}`;
 
 export const authenticateUser = (token: string): void => {
   localStorage.setItem(TOKEN, token);
