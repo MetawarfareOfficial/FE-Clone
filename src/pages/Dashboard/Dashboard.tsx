@@ -12,7 +12,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = () => {
   return (
     <Box>
-      <Box mb="50px">
+      <Box mt="30px" mb="50px">
         <Statistics />
       </Box>
 

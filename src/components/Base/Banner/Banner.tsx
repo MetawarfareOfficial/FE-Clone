@@ -22,7 +22,7 @@ const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg }) => ({
   boxShadow: isBg ? '0px 0px 48px rgba(0, 0, 0, 0.06)' : 'none',
   borderRadius: '22px',
   backgroundColor: isBg ? '#fff' : 'unset',
-  padding: isBg ? '30px 22px 30px 33px' : '0 0 30px 0',
+  padding: isBg ? '30px 22px 30px 33px' : 0,
   boxSizing: 'border-box',
   display: 'flex',
   justifyContent: 'flex-end',
