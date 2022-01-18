@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   icon?: string;
@@ -12,10 +13,12 @@ interface Props {
 
 interface BoxCustomProps {
   color: string;
+  opacity?: string;
 }
 
-const Wrapper = styled(Box)<BoxCustomProps>(({ color }) => ({
+const Wrapper = styled(Box)<BoxCustomProps>(({ color, opacity }) => ({
   background: color,
+  opacity: opacity,
   padding: '20px 20px',
   borderRadius: '20px',
   boxShadow: '1px 19px 22px -16px rgba(50, 71, 117, 0.18)',
@@ -25,7 +28,7 @@ const Wrapper = styled(Box)<BoxCustomProps>(({ color }) => ({
 
 const ViewImage = styled(Box)<BoxProps>(() => ({
   width: '43px',
-  heigh: '43px',
+  height: '43px',
   marginRight: '10px',
 
   img: {
@@ -72,8 +75,11 @@ const Value = styled(Typography)<TypographyProps>(() => ({
 }));
 
 const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const opacity = currentUserAddress && Number(value) > 0 ? '1' : '0.5';
+
   return (
-    <Wrapper color={color}>
+    <Wrapper color={color} opacity={opacity}>
       {icon && (
         <ViewImage>
           <img alt="" src={icon} />
