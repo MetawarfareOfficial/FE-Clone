@@ -3,6 +3,7 @@ import PrivateRoute from 'routes/privateRoute';
 import Dashboard from 'pages/Dashboard/Dashboard';
 import MintContract from 'pages/MintContract';
 import MyContract from 'pages/MyContract';
+import Treasury from 'pages/Treasury';
 
 const routers = {
   dashboard: {
@@ -21,6 +22,12 @@ const routers = {
     exact: true,
     path: routesConst.MY_CONTRACT,
     component: MyContract,
+    route: PrivateRoute,
+  },
+  treasury: {
+    exact: true,
+    path: routesConst.TREASURY,
+    component: Treasury,
     route: PrivateRoute,
   },
 };
