@@ -1,9 +1,11 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import accountReducer from 'services/account';
+import coingekoReducer from 'services/coingeko';
 
 const store = configureStore({
   reducer: {
     user: accountReducer,
+    coingeko: coingekoReducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false,
