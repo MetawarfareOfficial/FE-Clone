@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Grid, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
 
@@ -42,29 +42,56 @@ const Detail = styled(Box)<BoxProps>(() => ({
   padding: '13px 8px',
 }));
 
+const TextNoData = styled(Typography)<TypographyProps>(() => ({
+  fontFamily: 'Roboto',
+  fontWeight: 'normal',
+  fontSize: '20px',
+  lineHeight: '23px',
+  textAlign: 'center',
+  color: '#4F4F4F',
+  width: '100%',
+  height: '100%',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '92px',
+}));
+
 const Investments: React.FC<Props> = () => {
+  const [showData, setShowData] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowData(true);
+    }, 3000);
+  }, []);
+
   return (
     <Box>
       <Title>Investments</Title>
 
       <PaperContent>
-        <Grid container spacing={'42px'}>
-          <Grid item xs={12} md={4}>
-            <Detail>
-              <TableTokens data={data} />
-            </Detail>
+        {showData ? (
+          <Grid container spacing={'42px'}>
+            <Grid item xs={12} md={4}>
+              <Detail>
+                <TableTokens data={data} />
+              </Detail>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Detail>
+                <TableTokens data={data} />
+              </Detail>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Detail>
+                <TableTokens data={data} />
+              </Detail>
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <Detail>
-              <TableTokens data={data} />
-            </Detail>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Detail>
-              <TableTokens data={data} />
-            </Detail>
-          </Grid>
-        </Grid>
+        ) : (
+          <TextNoData>No investments yet!</TextNoData>
+        )}
       </PaperContent>
     </Box>
   );
