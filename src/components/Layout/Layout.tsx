@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 import { menus } from './menus';
@@ -36,6 +36,10 @@ interface Props {
   children: React.ReactChild;
 }
 
+interface MainLayoutProps extends BoxProps {
+  open: boolean;
+}
+
 interface ListItemCustomProps extends ListItemProps {
   active: boolean;
   open: boolean;
@@ -50,6 +54,7 @@ interface ListCustomProps extends ListProps {
 }
 
 const drawerWidth = 224;
+const drawerWidthMinus = 100;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -70,10 +75,10 @@ const closedMixin = (theme: Theme): CSSObject => ({
   border: 'none',
   overflow: 'unset',
   // width: `calc(${theme.spacing(7)} + 1px)`,
-  width: '100px',
+  width: drawerWidthMinus,
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   [theme.breakpoints.up('sm')]: {
-    width: '100px',
+    width: drawerWidthMinus,
     // width: `calc(${theme.spacing(9)} + 1px)`,
   },
 });
@@ -98,6 +103,7 @@ const ToggleButton = styled(IconButton)(({ theme }) => ({
   color: '#fff',
   fontSize: '10px',
   padding: '2px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
 
   svg: {
     width: '16px',
@@ -139,6 +145,7 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
   borderRadius: '14px',
   textTransform: 'capitalize',
   marginBottom: '10px',
+  height: '56px',
   // overflow: 'hidden',
   backgroundColor: active ? '#dbecfd88' : '#fff',
   width: `${open ? '100%' : '56px'}`,
@@ -178,12 +185,13 @@ const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) 
   },
 }));
 
-const MainLayout = styled(Box)<BoxProps>(() => ({
+const MainLayout = styled(Box)<MainLayoutProps>(({ open }) => ({
   background: '#FAFBFE',
-  width: '100%',
+  // width: '100%',
   minHeight: '100vh',
   padding: '30px',
   boxSizing: 'border-box',
+  width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
   // overflow: 'hidden',
 }));
@@ -254,11 +262,33 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
+const useWindowSize = () => {
+  const [size, setSize] = useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  return size;
+};
+
 const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
   const location = useLocation();
   const [open, setOpen] = React.useState(true);
   const [lightMode, setLightMode] = React.useState(true);
+  const [width] = useWindowSize();
+
+  useEffect(() => {
+    if (width < 1200) {
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
+  }, [width]);
 
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
@@ -333,14 +363,17 @@ const Layout: React.FC<Props> = ({ children }) => {
         </SideAction>
       </Drawer>
 
-      <MainLayout component="main">
-        <Banner
-          // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
-          // walletId="0x33434dieoewo"
-          onConnect={handleConnect}
-          connected={false}
-          isBg={location.pathname !== '/'}
-        />
+      <MainLayout component="main" open={open}>
+        {location.pathname !== '/treasury' && (
+          <Banner
+            // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
+            // walletId="0x33434dieoewo"
+            onConnect={handleConnect}
+            connected={false}
+            isBg={location.pathname !== '/'}
+          />
+        )}
+
         {children}
       </MainLayout>
     </Box>
