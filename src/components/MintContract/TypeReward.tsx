@@ -29,21 +29,33 @@ const Wrapper = styled(Paper)<PaperProps>(() => ({
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
 }));
 
-const BoxContract = styled(Box)<BoxProps>(() => ({
+const BoxContract = styled(Box)<BoxProps>(({ theme }) => ({
   padding: '10px 17px',
   display: 'inline-flex',
   alignItems: 'center',
+  boxSizing: 'border-box',
   width: '286px',
   boxShadow: '0px 14px 26px -2px rgba(0, 0, 0, 0.08)',
   borderRadius: '15px',
+
+  [theme.breakpoints.down('lg')]: {
+    width: '230px',
+    padding: '10px 12px',
+    boxSizing: 'border-box',
+  },
 }));
 
-const ViewImage = styled(Box)<BoxProps>(() => ({
+const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
   width: '43px',
   height: '43px',
+
+  [theme.breakpoints.down('lg')]: {
+    width: '30px',
+    height: '30px',
+  },
 }));
 
-const Name = styled(Typography)<TypographyProps>(() => ({
+const Name = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   color: '#293247',
   fontSize: '16px',
@@ -51,15 +63,26 @@ const Name = styled(Typography)<TypographyProps>(() => ({
   textTransform: 'uppercase',
   fontWeight: 600,
   margin: '0 0 0 10px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '14px',
+    lineHeight: '20px',
+  },
 }));
 
-const ViewInfo = styled(Box)<BoxProps>(() => ({
+const ViewInfo = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'inline-flex',
   width: 'calc(100% - 286px)',
   alignItems: 'center',
   height: '100%',
   paddingLeft: '48px',
   paddingRight: '10px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('lg')]: {
+    paddingLeft: '24px',
+    width: 'calc(100% - 230px)',
+  },
 }));
 
 const BoxDetail = styled(Box)<BoxProps>(() => ({
@@ -68,16 +91,24 @@ const BoxDetail = styled(Box)<BoxProps>(() => ({
   alignItems: 'center',
 }));
 
-const Text = styled(Typography)<TypographyProps>(() => ({
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: '#293247',
   fontWeight: 500,
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
   minWidth: '114px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
+    minWidth: '40px',
+    padding: '0 12px',
+    boxSizing: 'border-box',
+  },
 }));
 
-const ButtonMint = styled(Button)<ButtonProps>(() => ({
+const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontSize: '14px',
   lineHeight: '21px',
@@ -87,6 +118,13 @@ const ButtonMint = styled(Button)<ButtonProps>(() => ({
   fontWeight: 'bold',
   textTransform: 'capitalize',
   marginLeft: '40px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '13px',
+    lineHeight: '18px',
+    width: '120px',
+    padding: '10px',
+  },
 }));
 
 const STATUS = ['success', 'error', 'pending'];
@@ -125,9 +163,9 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
         <Text>Earn {earn} 0xB/day</Text>
 
         <BoxDetail>
-          <div style={{ width: '143px', height: '37px' }}>
+          <Box sx={{ width: { md: '120px', lg: '143px' }, height: { md: '30px', lg: '37px' } }}>
             <LineChart data={dataChart} color={colorChart} />
-          </div>
+          </Box>
 
           <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
             Mint

@@ -7,7 +7,7 @@ interface Props {
   title?: string;
 }
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
@@ -16,6 +16,11 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontWeight: 'bold',
   fontFamily: 'Poppins',
   margin: '0 0 41px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+    lineHeight: '32px',
+  },
 }));
 
 const Wrapper = styled(Box)<BoxProps>(() => ({
@@ -23,7 +28,7 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
   marginTop: '35px',
 }));
 
-const BoxSale = styled(Box)<BoxProps>(() => ({
+const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   position: 'relative',
   padding: '20px 40px',
   display: 'flex',
@@ -33,6 +38,11 @@ const BoxSale = styled(Box)<BoxProps>(() => ({
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   height: '100%',
   minHeight: '123px',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '16px 24px',
+    minHeight: '100px',
+  },
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -47,9 +57,14 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontWeight: 'bold',
     color: theme.palette.primary.main,
   },
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
+  },
 }));
 
-const Sale = styled(Box)<BoxProps>(() => ({
+const Sale = styled(Box)<BoxProps>(({ theme }) => ({
   position: 'absolute',
   top: '-25px',
   left: '-18px',
@@ -68,6 +83,15 @@ const Sale = styled(Box)<BoxProps>(() => ({
   lineHeight: '27px',
   textTransform: 'uppercase',
   color: '#fff',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '14px',
+    lineHeight: '20px',
+    width: '46px',
+    height: '46px',
+    top: '-22px',
+    left: '-12px',
+  },
 }));
 
 const Tokens: React.FC<Props> = () => {
@@ -76,7 +100,7 @@ const Tokens: React.FC<Props> = () => {
       <Title>Minted Contract Tokens Distribution</Title>
 
       <Grid container spacing={4}>
-        <Grid item md={3}>
+        <Grid item xs={12} md={3} lg={3}>
           <BoxSale>
             <Sale>10%</Sale>
             <Text>
@@ -84,7 +108,7 @@ const Tokens: React.FC<Props> = () => {
             </Text>
           </BoxSale>
         </Grid>
-        <Grid item md={3}>
+        <Grid item xs={12} md={3} lg={3}>
           <BoxSale>
             <Sale>20%</Sale>
             <Text>
@@ -92,7 +116,7 @@ const Tokens: React.FC<Props> = () => {
             </Text>
           </BoxSale>
         </Grid>
-        <Grid item md={3}>
+        <Grid item xs={12} md={3} lg={3}>
           <BoxSale>
             <Sale>30%</Sale>
             <Text>
@@ -100,7 +124,7 @@ const Tokens: React.FC<Props> = () => {
             </Text>
           </BoxSale>
         </Grid>
-        <Grid item md={3}>
+        <Grid item xs={12} md={3} lg={3}>
           <BoxSale>
             <Sale>50%</Sale>
             <Text>

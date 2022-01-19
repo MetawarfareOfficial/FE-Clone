@@ -12,7 +12,7 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
   marginTop: '35px',
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
@@ -21,6 +21,11 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontWeight: 'bold',
   fontFamily: 'Poppins',
   margin: '0 0 35px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+    lineHeight: '32px',
+  },
 }));
 
 const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
@@ -28,12 +33,19 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   padding: '26px',
   textAlign: 'center',
+  boxSizing: 'border-box',
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
   fontWeight: '500',
   color: '#293247',
   border: `1px solid ${theme.palette.primary.main}`,
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '20px',
+    fontSize: '12px',
+    lineHeight: '18px',
+  },
 }));
 
 const ClaimRewards: React.FC<Props> = () => {

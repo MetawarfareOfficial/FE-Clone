@@ -18,7 +18,7 @@ interface PaperCustomProps extends PaperProps {
   isBg: boolean;
 }
 
-const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg }) => ({
+const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg, theme }) => ({
   boxShadow: isBg ? '0px 0px 48px rgba(0, 0, 0, 0.06)' : 'none',
   borderRadius: '22px',
   backgroundColor: isBg ? '#fff' : 'unset',
@@ -28,6 +28,11 @@ const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg }) => ({
   justifyContent: 'flex-end',
   alignItems: 'center',
   minHeight: isBg ? '119px' : '50px',
+
+  [theme.breakpoints.down('lg')]: {
+    minHeight: isBg ? '90px' : '40px',
+    padding: isBg ? '16px 22px 16px 24px' : 0,
+  },
 }));
 
 const Text = styled(Typography)<TypographyProps>(() => ({
