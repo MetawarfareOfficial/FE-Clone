@@ -3,10 +3,10 @@ import Statistics from 'components/Dashboard/Statistics';
 import TotalMinted from 'components/Dashboard/TotalMinted';
 import PriceChart from 'components/Dashboard/PriceChart';
 import { Box, Grid } from '@mui/material';
-import { coinsPrices } from 'services/coingeko';
+import { getCurrentPrice, getPrice30DaysAgo } from 'services/coingeko';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import useInterval from 'hooks/useInterval';
-import { params, DELAY_TIME, labelGroupDate } from 'consts/dashboard';
+import { DELAY_TIME, labelGroupDate, paramsCurrentPriceApi, paramsLast30DaysApi } from 'consts/dashboard';
 import { TokenPrice } from 'interfaces/TokenPrice';
 import _ from 'lodash';
 import moment from 'moment';
@@ -17,17 +17,21 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = () => {
   const dispatch = useAppDispatch();
-  const data = useAppSelector((state) => state.coingeko.data);
+
+  const last30DaysPrice = useAppSelector((state) => state.coingeko.last30DaysPrice);
+  const currentPrice = useAppSelector((state) => state.coingeko.currentPrice);
 
   const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
 
   useEffect(() => {
-    dispatch(coinsPrices(params));
+    dispatch(getPrice30DaysAgo(paramsLast30DaysApi));
+    dispatch(getCurrentPrice(paramsCurrentPriceApi));
   }, []);
 
   useEffect(() => {
     const _data: TokenPrice[] = [];
-    const prices = data.map((el: Array<string>) => {
+
+    const prices = last30DaysPrice.map((el: Array<string>) => {
       return {
         time: el[0],
         price: el[2],
@@ -39,11 +43,17 @@ const Dashboard: React.FC<DashboardProps> = () => {
       _data.push(maxPriceObject);
     });
 
+    _data.pop();
+    _data.push({
+      time: new Date().getTime().toString(),
+      price: currentPrice.toString(),
+    } as TokenPrice);
+
     setTokenPrices(_data);
-  }, [data]);
+  }, [last30DaysPrice, currentPrice]);
 
   useInterval(async () => {
-    await dispatch(coinsPrices(params));
+    await dispatch(getCurrentPrice(paramsCurrentPriceApi));
   }, DELAY_TIME);
 
   return (

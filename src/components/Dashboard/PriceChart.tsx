@@ -2,7 +2,7 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
 import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { labelDate, tickFormatDate } from 'consts/dashboard';
+import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatTimestamp } from 'helpers/formatTimestamp';
 
@@ -55,7 +55,8 @@ const PriceChart: React.FC<Props> = ({ data }) => {
                 color="#000000"
                 dataKey="time"
                 tickFormatter={(timestamp) => formatTimestamp(timestamp, tickFormatDate)}
-                // interval={tickFormatInterval}
+                interval={tickFormatInterval}
+                padding={{ left: 15 }}
               />
 
               <YAxis
