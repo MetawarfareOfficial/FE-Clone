@@ -4,6 +4,8 @@ import SliderIcon from 'assets/images/slider.svg';
 import HomeActIcon from 'assets/images/home-active.svg';
 import AddActIcon from 'assets/images/add-active.svg';
 import SliderActIcon from 'assets/images/slider-active.svg';
+import BankIcon from 'assets/images/bank.svg';
+import BankActIcon from 'assets/images/bank-active.svg';
 
 export const menus = [
   {
@@ -23,5 +25,11 @@ export const menus = [
     path: '/my-contracts',
     icon: SliderIcon,
     activeIcon: SliderActIcon,
+  },
+  {
+    name: 'Treasury',
+    path: '/treasury',
+    icon: BankIcon,
+    activeIcon: BankActIcon,
   },
 ];

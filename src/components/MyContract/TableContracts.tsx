@@ -98,14 +98,14 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(() => ({
   boxShadow: '0px 23px 48px rgba(0, 0, 0, 0.06)',
   border: 'none',
   borderRadius: '20px',
-  maxHeight: 'calc(100vh - 119px - 205px)',
+  maxHeight: 'calc(100vh - 119px - 212px)',
 
   '&::-webkit-scrollbar-button': {
-    height: '74px',
+    height: '9px',
   },
   '&::-webkit-scrollbar': {
     width: '9px',
-    height: '60px',
+    height: '9px',
   },
   '&::-webkit-scrollbar-track': {
     boxShadow: 'none',
@@ -113,7 +113,7 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(() => ({
   },
   '&::-webkit-scrollbar-thumb': {
     backgroundColor: '#3864FF',
-    height: '60px',
+    height: '9px',
     outline: 'none',
     borderRadius: '10px',
   },
