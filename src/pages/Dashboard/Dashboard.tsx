@@ -45,7 +45,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
     _data.pop();
     _data.push({
-      time: new Date().getTime().toString(),
+      time: '',
       price: currentPrice.toString(),
     } as TokenPrice);
 
