@@ -21,7 +21,7 @@ interface Props {
   data: Array<any>;
 }
 
-const EmptyContracts = styled(Box)<BoxProps>(() => ({
+const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
   minHeight: 'calc(100vh - 119px - 315px)',
   display: 'flex',
   alignItems: 'center',
@@ -31,9 +31,14 @@ const EmptyContracts = styled(Box)<BoxProps>(() => ({
   fontWeight: 'bold',
   fontSize: '36px',
   lineHeight: '42px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '30px',
+    lineHeight: '38px',
+  },
 }));
 
-const TableCellHeader = styled(TableCell)<TableCellProps>(() => ({
+const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: '#DBECFD',
   padding: '15px 40px',
   color: '#293247',
@@ -42,9 +47,15 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(() => ({
   lineHeight: '19px',
   fontWeight: 'bold',
   border: 'none',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '14px',
+    lineHeight: '20px',
+    padding: '12px 20px',
+  },
 }));
 
-const TableCellContent = styled(TableCell)<TableCellProps>(() => ({
+const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: '#fff',
   padding: '11px 40px',
   color: '#293247',
@@ -53,6 +64,12 @@ const TableCellContent = styled(TableCell)<TableCellProps>(() => ({
   lineHeight: '25px',
   fontWeight: '500',
   border: 'none',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '8px 20px',
+  },
 }));
 
 const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -74,9 +91,17 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
     opacity: 0.7,
     boxShadow: 'none',
   },
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '6px 8px',
+    width: '84px',
+    height: '32px',
+  },
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(() => ({
+const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -92,9 +117,17 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
     cursor: 'pointed',
     opacity: 0.7,
   },
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '6px 8px',
+    width: '84px',
+    height: '32px',
+  },
 }));
 
-const TableWrapper = styled(TableContainer)<TableContainerProps>(() => ({
+const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => ({
   boxShadow: '0px 23px 48px rgba(0, 0, 0, 0.06)',
   border: 'none',
   borderRadius: '20px',
@@ -116,6 +149,18 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(() => ({
     height: '9px',
     outline: 'none',
     borderRadius: '10px',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    maxHeight: 'calc(100vh - 260px)',
+
+    '&::-webkit-scrollbar-button': {
+      height: '4px',
+    },
+    '&::-webkit-scrollbar': {
+      width: '4px',
+      height: '4px',
+    },
   },
 }));
 

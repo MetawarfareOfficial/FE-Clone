@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import moment from 'moment';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
@@ -6,16 +6,23 @@ import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 
 
 interface Props {
   title?: string;
+  heightTotal: number;
   data: Array<any>;
 }
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: '#293247',
   margin: ' 0 0 31px',
   fontSize: '24px',
   lineHeight: '36px',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+    lineHeight: '32px',
+    margin: '0 0 20px',
+  },
 }));
 
 const ViewChart = styled(Box)<BoxProps>(() => ({
@@ -29,15 +36,24 @@ const ViewChart = styled(Box)<BoxProps>(() => ({
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
 }));
 
-const PriceChart: React.FC<Props> = ({ data }) => {
+const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
+  const [heightChart, setHeightChart] = useState(500);
+
+  useEffect(() => {
+    if (heightTotal) {
+      const newHeight = heightTotal - 85;
+      setHeightChart(newHeight);
+    }
+  }, [heightTotal]);
+
   return (
     <Box>
       <Title>Price Chart</Title>
 
       <ViewChart>
-        <div style={{ width: '100%', height: '524px', minHeight: '100%' }}>
+        <div style={{ width: '100%', height: heightChart, minHeight: '100%' }}>
           <ResponsiveContainer>
-            <ComposedChart width={732} height={540} data={data}>
+            <ComposedChart width={732} height={heightChart} data={data}>
               <defs>
                 <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="40%" stopColor="#EFE5FE" stopOpacity={1} />

@@ -62,7 +62,7 @@ const data = [
   },
 ];
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
@@ -71,6 +71,11 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontWeight: 'bold',
   fontFamily: 'Poppins',
   margin: '0 0 41px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+    lineHeight: '32px',
+  },
 }));
 
 const TypesReward: React.FC<Props> = () => {

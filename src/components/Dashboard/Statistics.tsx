@@ -7,7 +7,7 @@ interface Props {
   title?: string;
 }
 
-const CardBox = styled(Box)<BoxProps>(() => ({
+const CardBox = styled(Box)<BoxProps>(({ theme }) => ({
   background: 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)',
   borderRadius: '20px',
   textAlign: 'center',
@@ -15,6 +15,10 @@ const CardBox = styled(Box)<BoxProps>(() => ({
   boxSizing: 'border-box',
   maxHeight: '190px',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '20px',
+  },
 }));
 
 const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -29,18 +33,30 @@ const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
   boxShadow: '0px 13px 27px rgba(26, 38, 70, 0.09)',
   borderRadius: '14px',
   fontFamily: 'Poppins',
+
+  [theme.breakpoints.down('lg')]: {
+    width: '145px',
+    padding: '10px',
+    fontSize: '13px',
+    lineHeight: '19px',
+  },
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: `#FFFFFF`,
   fontFamily: 'Roboto',
   margin: '15px 0',
   fontSize: '32px',
   lineHeight: '37px',
   fontWeight: 'bold',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '28px',
+    lineHeight: '31px',
+  },
 }));
 
-const Text = styled(Typography)<TypographyProps>(() => ({
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: `rgba(255, 255, 255, 0.54)`,
   margin: '0 0',
   fontSize: '18px',
@@ -48,12 +64,17 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   textTransform: 'uppercase',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '16px',
+    lineHeight: '22px',
+  },
 }));
 
 const Statistics: React.FC<Props> = () => {
   return (
     <Box>
-      <Grid container spacing={4}>
+      <Grid container spacing={'30px'}>
         <Grid item xs={12} md={4}>
           <CardBox>
             <Text variant="h5">Token Price</Text>

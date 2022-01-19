@@ -1,7 +1,8 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 import { menus } from './menus';
+import { useWindowSize } from 'hooks/useWindowSize';
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
 import {
@@ -185,7 +186,7 @@ const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) 
   },
 }));
 
-const MainLayout = styled(Box)<MainLayoutProps>(({ open }) => ({
+const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
   background: '#FAFBFE',
   // width: '100%',
   minHeight: '100vh',
@@ -194,6 +195,10 @@ const MainLayout = styled(Box)<MainLayoutProps>(({ open }) => ({
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
   // overflow: 'hidden',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '24px',
+  },
 }));
 
 const SideAction = styled(Box)<BoxProps>(() => ({
@@ -261,19 +266,6 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
     color: '#3864FF',
   },
 }));
-
-const useWindowSize = () => {
-  const [size, setSize] = useState([0, 0]);
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
-    }
-    window.addEventListener('resize', updateSize);
-    updateSize();
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-  return size;
-};
 
 const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
