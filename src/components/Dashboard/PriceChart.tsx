@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
-import moment from 'moment';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
 import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
+import { formatPrice } from 'helpers/formatPrice';
+import { formatTimestamp } from 'helpers/formatTimestamp';
 
 interface Props {
   title?: string;
@@ -44,6 +46,7 @@ const PriceChart: React.FC<Props> = ({ data }) => {
                   <stop offset="100%" stopColor="#EFE5FE" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
+
               <XAxis
                 tickLine={false}
                 axisLine={false}
@@ -51,25 +54,27 @@ const PriceChart: React.FC<Props> = ({ data }) => {
                 fontFamily="Helvetica"
                 color="#000000"
                 dataKey="time"
-                tickFormatter={(timestamp) => moment(new Date(timestamp * 1000)).format('DD/MMM')}
+                tickFormatter={(timestamp) => formatTimestamp(timestamp, tickFormatDate)}
+                interval={tickFormatInterval}
               />
+
               <YAxis
                 axisLine={false}
-                // interval={9}
                 tickLine={false}
                 fontSize="10px"
                 fontFamily="Helvetica"
-                tickFormatter={(value) => {
-                  return value;
-                }}
                 orientation="right"
-                dataKey="close"
+                dataKey="price"
               />
-              <Tooltip />
+
+              <Tooltip
+                formatter={(value: string) => formatPrice(value)}
+                labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
+              />
 
               <Area
                 type="monotone"
-                dataKey="close"
+                dataKey="price"
                 stroke="#3864FF"
                 strokeWidth={2}
                 fillOpacity={1}

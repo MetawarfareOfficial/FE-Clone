@@ -2,9 +2,13 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
+import { TokenPrice } from 'interfaces/TokenPrice';
+import { formatPrice } from 'helpers/formatPrice';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   title?: string;
+  data?: TokenPrice;
 }
 
 const CardBox = styled(Box)<BoxProps>(() => ({
@@ -50,14 +54,16 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   fontFamily: 'Poppins',
 }));
 
-const Statistics: React.FC<Props> = () => {
+const Statistics: React.FC<Props> = ({ data }) => {
+  const history = useHistory();
+
   return (
     <Box>
       <Grid container spacing={4}>
         <Grid item xs={12} md={4}>
           <CardBox>
             <Text variant="h5">Token Price</Text>
-            <Title variant="h2">1.1029993</Title>
+            <Title variant="h2">{formatPrice(data?.price || '0')}</Title>
             <CustomButton variant="contained" color="secondary">
               Buy now
             </CustomButton>
@@ -67,7 +73,13 @@ const Statistics: React.FC<Props> = () => {
           <CardBox>
             <Text variant="h5">MY CONTRACTS</Text>
             <Title variant="h2">0/100</Title>
-            <CustomButton variant="contained" color="secondary">
+            <CustomButton
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                history.push('/mint-contracts');
+              }}
+            >
               Mint contract
             </CustomButton>
           </CardBox>
@@ -76,7 +88,13 @@ const Statistics: React.FC<Props> = () => {
           <CardBox>
             <Text variant="h5">My Rewards</Text>
             <Title variant="h2">0.000</Title>
-            <CustomButton variant="contained" color="secondary">
+            <CustomButton
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                history.push('/my-contracts');
+              }}
+            >
               Claim all
             </CustomButton>
           </CardBox>
