@@ -1,23 +1,16 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-export type MyData = {
-  prices: [];
-  market_caps: [];
-  total_volumes: [];
-};
-
 const initialState = {
-  data: <MyData | undefined>{},
+  data: [[]],
   error: false,
   loading: false,
 };
 
 export const coinsPrices = createAsyncThunk('get/dataChart', async (params: object) => {
-  return await axios.get(
-    `${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}/market_chart`,
-    { params },
-  );
+  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}/ohlc`, {
+    params,
+  });
 });
 
 const coingekoSlice = createSlice({

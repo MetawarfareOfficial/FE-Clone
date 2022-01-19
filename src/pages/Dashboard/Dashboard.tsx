@@ -6,8 +6,10 @@ import { Box, Grid } from '@mui/material';
 import { coinsPrices } from 'services/coingeko';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import useInterval from 'hooks/useInterval';
-import { params, DELAY_TIME } from 'consts/dashboard';
+import { params, DELAY_TIME, labelGroupDate } from 'consts/dashboard';
 import { TokenPrice } from 'interfaces/TokenPrice';
+import _ from 'lodash';
+import moment from 'moment';
 
 interface DashboardProps {
   name?: string;
@@ -24,13 +26,20 @@ const Dashboard: React.FC<DashboardProps> = () => {
   }, []);
 
   useEffect(() => {
-    const _tokenPrices = (data?.prices || []).map((el: Array<string>) => {
+    const _data: TokenPrice[] = [];
+    const prices = data.map((el: Array<string>) => {
       return {
         time: el[0],
-        price: el[1],
+        price: el[2],
       };
     });
-    setTokenPrices(_tokenPrices);
+    const tokenPriceGroupByDate = _.groupBy(prices, (data) => moment(data.time).format(labelGroupDate));
+    Object.keys(tokenPriceGroupByDate).map((key) => {
+      const maxPriceObject = _.maxBy(tokenPriceGroupByDate[key], 'price') as TokenPrice;
+      _data.push(maxPriceObject);
+    });
+
+    setTokenPrices(_data);
   }, [data]);
 
   useInterval(async () => {
