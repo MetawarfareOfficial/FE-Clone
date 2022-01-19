@@ -6,6 +6,7 @@ export type IAccount = {
 
 const initialState = {
   account: <IAccount | undefined>{},
+  isLogin: false,
 };
 
 export const accountSlice = createSlice({
@@ -18,10 +19,16 @@ export const accountSlice = createSlice({
     unSetAccount: (state) => {
       state.account = undefined;
     },
+    setLogin: (state) => {
+      state.isLogin = true;
+    },
+    unSetLogin: (state) => {
+      state.isLogin = false;
+    },
   },
 });
 
-export const { setAccount, unSetAccount } = accountSlice.actions;
+export const { setAccount, unSetAccount, setLogin, unSetLogin } = accountSlice.actions;
 
 const { reducer: accountReducer } = accountSlice;
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { dataContracts } from './data';
 import { Box, Grid } from '@mui/material';
 
@@ -8,13 +8,14 @@ import { Statistic, TableContracts } from 'components/MyContract';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;
 }
 
 const MyContract: React.FC<Props> = () => {
-  const [connected] = useState(true);
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
   return (
     <Box>
@@ -31,7 +32,7 @@ const MyContract: React.FC<Props> = () => {
           </Grid>
           <Grid item md={3}>
             <Statistic
-              color={connected ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
+              color={currentUserAddress ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
               title="My Rewards"
               value="0.000"
             />
@@ -39,7 +40,7 @@ const MyContract: React.FC<Props> = () => {
         </Grid>
       </Box>
 
-      <TableContracts data={connected ? dataContracts : []} />
+      <TableContracts data={currentUserAddress ? dataContracts : []} />
     </Box>
   );
 };

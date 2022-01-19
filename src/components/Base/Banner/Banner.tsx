@@ -1,6 +1,10 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
+import ConnectWallet from 'components/ConnectWallet';
+import { useAppSelector } from 'stores/hooks';
+import { useLocation } from 'react-router-dom';
+import { formatUserAddress } from 'helpers';
+import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
 
 interface Props {
   text?: string;
@@ -8,10 +12,6 @@ interface Props {
   connected?: boolean;
   isBg: boolean;
   onConnect?: () => void;
-}
-
-interface ButtonWalletProps extends ButtonProps {
-  isBg: boolean;
 }
 
 interface PaperCustomProps extends PaperProps {
@@ -71,39 +71,26 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const ButtonWallet = styled(Button)<ButtonWalletProps>(({ isBg, theme }) => ({
-  fontSize: '14px',
-  lineHeight: '21px',
-  fontFamily: 'Poppins',
-  fontWeight: 'bold',
-  padding: '12px 24px',
-  borderRadius: '14px',
-  textTransform: 'capitalize',
-  boxShadow: 'none',
-  background: isBg ? theme.palette.primary.main : 'unset',
+const Banner: React.FC<Props> = ({ isBg }) => {
+  const isMintContractLocation = useLocation().pathname === '/mint-contract';
 
-  '&:hover': {
-    opacity: 0.7,
-    boxShadow: 'none',
-    background: isBg ? theme.palette.primary.main : 'unset',
-  },
-}));
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const isLogin = useAppSelector((state) => state.user.isLogin);
 
-const Banner: React.FC<Props> = ({ isBg, text, walletId, connected, onConnect }) => {
   return (
     <BannerWrapper isBg={isBg}>
-      {text && <Text>{text}</Text>}
+      {isMintContractLocation && (
+        <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
+      )}
 
       <BoxRight>
-        {connected && (
+        {currentUserAddress && isLogin && (
           <Wallet>
             <span>Wallet</span>
-            <Title>{walletId}</Title>
+            <Title>{formatUserAddress(currentUserAddress)}</Title>
           </Wallet>
         )}
-        <ButtonWallet isBg={isBg} variant={isBg ? 'contained' : 'outlined'} color="primary" onClick={onConnect}>
-          {connected ? 'Disconnect' : 'Connect'} Wallet
-        </ButtonWallet>
+        <ConnectWallet />
       </BoxRight>
     </BannerWrapper>
   );
