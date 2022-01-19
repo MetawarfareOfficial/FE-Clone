@@ -366,7 +366,8 @@ const Layout: React.FC<Props> = ({ children }) => {
       </Drawer>
 
       <MainLayout component="main" open={open}>
-        <Banner isBg={location.pathname !== '/'} />
+        {location.pathname !== '/treasury' && <Banner isBg={location.pathname !== '/'} />}
+
         {children}
       </MainLayout>
     </Box>
