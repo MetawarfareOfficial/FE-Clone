@@ -59,8 +59,11 @@ const PriceChart: React.FC<Props> = ({ data }) => {
                 tickLine={false}
                 fontSize="10px"
                 fontFamily="Helvetica"
-                tickFormatter={(value) => `${Math.floor(value / 10e2)}`}
+                tickFormatter={(value) => {
+                  return value;
+                }}
                 orientation="right"
+                dataKey="close"
               />
               <Tooltip />
 
