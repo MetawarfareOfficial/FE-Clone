@@ -1,4 +1,4 @@
-export const zeroExABI = [
+export const zeroXBlockAbi = [
   {
     inputs: [
       { internalType: 'address[]', name: 'payees', type: 'address[]' },

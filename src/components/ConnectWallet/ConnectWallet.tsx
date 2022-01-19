@@ -5,13 +5,24 @@ import { Web3Provider } from '@ethersproject/providers';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { setAccount, setLogin, unSetAccount, unSetLogin } from 'services/account';
+import {
+  setAccount,
+  setLogin,
+  setNativeBalance,
+  setZeroXBlockBalance,
+  unSetAccount,
+  unSetLogin,
+  unSetNativeBalance,
+  unSetZeroXBlockBalance,
+} from 'services/account';
 import { styled } from '@mui/material/styles';
 import { ButtonProps, Button } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
+import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
+import { bigNumber2Number } from 'helpers/formatNumber';
 
 interface Props {
   name?: string;
@@ -52,7 +63,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
 
   const isLogin = useAppSelector((state) => state.user.isLogin);
-  // const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
   const login = async (): Promise<void> => {
     try {
@@ -91,6 +102,22 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   };
 
+  const fetchBalance = async (address: string): Promise<void> => {
+    try {
+      const nativeToken = await getBalanceNativeTokenOf(address);
+      const nativeBalance = bigNumber2Number(nativeToken);
+      dispatch(setNativeBalance(nativeBalance));
+
+      const zeroXBlockToken = await getBalanceTokenOf(address);
+      if (zeroXBlockToken[0]) {
+        const zeroXBlockBalance = bigNumber2Number(zeroXBlockToken[0]);
+        dispatch(setZeroXBlockBalance(zeroXBlockBalance));
+      }
+    } catch (e) {
+      throw error?.message;
+    }
+  };
+
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
@@ -114,6 +141,19 @@ const ConnectWallet: React.FC<Props> = () => {
       return;
     }
   }, [error?.name]);
+
+  useEffect(() => {
+    try {
+      if (currentUserAddress) {
+        fetchBalance(currentUserAddress);
+        return;
+      }
+      dispatch(unSetNativeBalance());
+      dispatch(unSetZeroXBlockBalance());
+    } catch (e) {
+      toast.error('Oop! Something went wrong', { hideProgressBar: true });
+    }
+  }, [currentUserAddress]);
 
   return (
     <div>

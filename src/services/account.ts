@@ -7,6 +7,8 @@ export type IAccount = {
 const initialState = {
   account: <IAccount | undefined>{},
   isLogin: false,
+  nativeBalance: '',
+  zeroXBlockBalance: '',
 };
 
 export const accountSlice = createSlice({
@@ -25,10 +27,31 @@ export const accountSlice = createSlice({
     unSetLogin: (state) => {
       state.isLogin = false;
     },
+    setNativeBalance: (state, action) => {
+      state.nativeBalance = action.payload;
+    },
+    unSetNativeBalance: (state) => {
+      state.nativeBalance = '';
+    },
+    setZeroXBlockBalance: (state, action) => {
+      state.zeroXBlockBalance = action.payload;
+    },
+    unSetZeroXBlockBalance: (state) => {
+      state.zeroXBlockBalance = '';
+    },
   },
 });
 
-export const { setAccount, unSetAccount, setLogin, unSetLogin } = accountSlice.actions;
+export const {
+  setAccount,
+  unSetAccount,
+  setLogin,
+  unSetLogin,
+  setNativeBalance,
+  setZeroXBlockBalance,
+  unSetNativeBalance,
+  unSetZeroXBlockBalance,
+} = accountSlice.actions;
 
 const { reducer: accountReducer } = accountSlice;
 

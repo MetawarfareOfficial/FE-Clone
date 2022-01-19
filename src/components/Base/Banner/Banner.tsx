@@ -76,6 +76,8 @@ const Banner: React.FC<Props> = ({ isBg }) => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isLogin = useAppSelector((state) => state.user.isLogin);
+  // const nativeBalance = useAppSelector((state) => state.user.nativeBalance);
+  // const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
 
   return (
     <BannerWrapper isBg={isBg}>
