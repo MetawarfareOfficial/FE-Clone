@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { getInstanceEtherJs } from 'BaseEtherJs';
-import { contractType } from '../consts/typeReward';
+import { contractType } from 'consts/typeReward';
 
 declare let window: any;
 
@@ -89,6 +89,14 @@ export const getPriceAllNode = async (): Promise<any[]> => {
     const tesseractPrice = contractWithoutSigner.functions.getNodePrice(contractType.tesseract);
 
     return await Promise.all([squarePrice, cubePrice, tesseractPrice]);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getNumberNodeOf = async (address: string): Promise<[BigNumber]> => {
+  try {
+    return contractWithoutSigner.functions.getNodeNumberOf(address);
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }

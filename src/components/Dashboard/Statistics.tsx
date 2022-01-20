@@ -5,6 +5,7 @@ import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps }
 import { TokenPrice } from 'interfaces/TokenPrice';
 import { formatPrice } from 'helpers/formatPrice';
 import { useHistory } from 'react-router-dom';
+import { useAppSelector } from '../../stores/hooks';
 
 interface Props {
   title?: string;
@@ -57,6 +58,8 @@ const Text = styled(Typography)<TypographyProps>(() => ({
 const Statistics: React.FC<Props> = ({ data }) => {
   const history = useHistory();
 
+  const nodes = useAppSelector((state) => state.contract.nodes);
+
   return (
     <Box>
       <Grid container spacing={4}>
@@ -72,7 +75,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
         <Grid item xs={12} md={4}>
           <CardBox>
             <Text variant="h5">MY CONTRACTS</Text>
-            <Title variant="h2">0/100</Title>
+            <Title variant="h2">{`${nodes}/100`}</Title>
             <CustomButton
               variant="contained"
               color="secondary"
