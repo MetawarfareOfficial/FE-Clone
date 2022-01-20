@@ -4,7 +4,10 @@ import { onClickConnect } from 'helpers/onClickConnect';
 import { getSignerSignMessage } from 'helpers/signMessage';
 import { onClickDisconnect } from 'helpers/onClickDisconnect';
 import { formatUserAddress } from './formatUserAddress';
-
+import { generateContractName } from './generateContractName';
+import { deleteArrayElementByIndex } from './deleteArrayElementByIndex';
+import { replaceArrayElementByIndex } from './replaceArrayElementByIndex';
+import { handleContractNameErrors } from './handleContractNameErrors';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -12,4 +15,8 @@ export {
   getSignerSignMessage,
   onClickDisconnect,
   formatUserAddress,
+  generateContractName,
+  deleteArrayElementByIndex,
+  replaceArrayElementByIndex,
+  handleContractNameErrors,
 };

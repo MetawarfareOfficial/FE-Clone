@@ -27,4 +27,20 @@ export const errorMessage = {
     title: 'Metamask',
     message: 'Your browser does not install Metamask!',
   },
+  CONTRACT_NAME_INVALID: {
+    title: 'Contract',
+    message: 'Please ensure the characters in the name are separated by _ only',
+  },
+  CONTRACT_NAME_EMPTY: {
+    title: 'Contract',
+    message: 'Please input the name for the contract',
+  },
+  CONTRACT_NAME_LESS_THAN_FOUR: {
+    title: 'Contract',
+    message: 'Please input more than 4 characters for the contract names',
+  },
+  CONTRACT_NAME_MORE_THAN_THIRTY_TWO: {
+    title: 'Contract',
+    message: 'Please input no more than 32 characters for the contract names',
+  },
 };
