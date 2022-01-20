@@ -7,9 +7,10 @@ import TypeReward from './TypeReward';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
-import { getRewardAPYPerNode } from 'helpers/interractiveContract';
+import { getPriceAllNode, getRewardAPYAllNode } from 'helpers/interractiveContract';
 import _ from 'lodash';
 import { formatApy } from 'helpers/formatApy';
+import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 
 interface Props {
   title?: string;
@@ -80,9 +81,12 @@ const TypesReward: React.FC<Props> = () => {
   const [squareApy, setSquareApy] = useState<string>('0.00');
   const [cubeApy, setCubeApy] = useState<string>('0.00');
   const [tesseractApy, setTesseractApy] = useState<string>('0.00');
+  const [squarePrice, setSquarePrice] = useState<number>(0);
+  const [cubePrice, setCubePrice] = useState<number>(0);
+  const [tesseractPrice, setTesseractPrice] = useState<number>(0);
 
   const fetchApy = async () => {
-    const response = await getRewardAPYPerNode();
+    const response = await getRewardAPYAllNode();
     const data = _.flatten(response);
 
     setSquareApy(formatApy(data[0]));
@@ -90,8 +94,18 @@ const TypesReward: React.FC<Props> = () => {
     setTesseractApy(formatApy(data[2]));
   };
 
+  const fetchPrice = async () => {
+    const response = await getPriceAllNode();
+    const data = _.flatten(response);
+
+    setSquarePrice(bigNumber2NumberV2(data[0]));
+    setCubePrice(bigNumber2NumberV2(data[1]));
+    setTesseractPrice(bigNumber2NumberV2(data[2]));
+  };
+
   useEffect(() => {
     fetchApy();
+    fetchPrice();
   }, []);
 
   return (
@@ -104,7 +118,7 @@ const TypesReward: React.FC<Props> = () => {
         icon={SquareIcon}
         color="#E5E5FE"
         colorChart="#A1A1E1"
-        value={5}
+        value={squarePrice}
         apy={squareApy}
         earn={0.03}
         dataChart={data}
@@ -115,7 +129,7 @@ const TypesReward: React.FC<Props> = () => {
         icon={CubeIcon}
         color="#D2FFDB"
         colorChart="#9DE6AB"
-        value={15}
+        value={cubePrice}
         apy={cubeApy}
         earn={0.16}
         dataChart={data}
@@ -126,7 +140,7 @@ const TypesReward: React.FC<Props> = () => {
         icon={TessIcon}
         color="#DBECFD"
         colorChart="#9EC5EB"
-        value={30}
+        value={tesseractPrice}
         apy={tesseractApy}
         earn={0.41}
         dataChart={data}

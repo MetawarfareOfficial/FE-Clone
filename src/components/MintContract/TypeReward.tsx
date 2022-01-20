@@ -8,8 +8,8 @@ import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
 import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
-import { createMultipleNodesWithTokens } from '../../helpers/interractiveContract';
-import { sleep } from '../../helpers/delayTime';
+import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
+import { sleep } from 'helpers/delayTime';
 
 interface Props {
   id: any;

@@ -69,14 +69,25 @@ export const getBalanceNativeTokenOf = async (address: string): Promise<BigNumbe
   }
 };
 
-export const getRewardAPYPerNode = async (): Promise<any[]> => {
+export const getRewardAPYAllNode = async (): Promise<any[]> => {
   try {
     const squareApy = contractWithoutSigner.functions.getRewardAPYPerNode(0);
     const cubeApy = contractWithoutSigner.functions.getRewardAPYPerNode(1);
     const tesseractApy = contractWithoutSigner.functions.getRewardAPYPerNode(2);
 
-    const response = await Promise.all([squareApy, cubeApy, tesseractApy]);
-    return response;
+    return await Promise.all([squareApy, cubeApy, tesseractApy]);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getPriceAllNode = async (): Promise<any[]> => {
+  try {
+    const squarePrice = contractWithoutSigner.functions.getNodePrice(0);
+    const cubePrice = contractWithoutSigner.functions.getNodePrice(1);
+    const tesseractPrice = contractWithoutSigner.functions.getNodePrice(2);
+
+    return await Promise.all([squarePrice, cubePrice, tesseractPrice]);
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
