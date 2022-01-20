@@ -318,13 +318,8 @@ const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== '
   }),
 );
 
-const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose, onSubmit, valueRequire }) => {
-  const [contracts, setContracts] = useState<Contract[]>([
-    {
-      name: generateContractName(),
-      error: null,
-    },
-  ]);
+const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
 
   const handleAddContract = (numberContracts = 1) => {
@@ -384,6 +379,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
     setContracts(newContract);
   };
 
+  useEffect(() => {
+    if (maxMint > 0) {
+      handleAddContract(1);
+    }
+  }, [maxMint]);
+
   const renderItems = () => {
     return contracts.map((item, index) => {
       return (
@@ -433,6 +434,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
           <OutlinedInputCustom
             type="number"
             value={contracts.length}
+            readOnly
             onChange={(event) => handleAddManyContracts(Number(event.target.value))}
             inputProps={{ 'aria-label': 'weight' }}
             startAdornment={
@@ -458,7 +460,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
         </BoxActions>
 
         <ButtonMint
-          disabled={contracts.filter((item) => item.error).length > 0}
+          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0}
           variant="contained"
           color="primary"
           onClick={() => {

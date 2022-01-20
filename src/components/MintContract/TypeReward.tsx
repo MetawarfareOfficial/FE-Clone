@@ -128,7 +128,8 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   };
 
   useEffect(() => {
-    const _maxMint = new BigNumber(zeroXBlockBalance).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
+    const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;
+    const _maxMint = new BigNumber(balances).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
     setMaxMint(_maxMint >= LIMIT_MAX_MINT ? LIMIT_MAX_MINT : _maxMint);
   }, [zeroXBlockBalance]);
 
