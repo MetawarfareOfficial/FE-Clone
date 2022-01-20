@@ -8,7 +8,7 @@ const initialState = {
   account: <IAccount | undefined>{},
   isLogin: false,
   nativeBalance: '',
-  zeroXBlockBalance: '',
+  zeroXBlockBalance: 0,
 };
 
 export const accountSlice = createSlice({
@@ -37,7 +37,7 @@ export const accountSlice = createSlice({
       state.zeroXBlockBalance = action.payload;
     },
     unSetZeroXBlockBalance: (state) => {
-      state.zeroXBlockBalance = '';
+      state.zeroXBlockBalance = 0;
     },
   },
 });

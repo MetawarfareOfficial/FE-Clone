@@ -319,12 +319,7 @@ const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== '
 );
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
-  const [contracts, setContracts] = useState<Contract[]>([
-    {
-      name: generateContractName(),
-      error: null,
-    },
-  ]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
 
   const handleAddContract = (numberContracts = 1) => {
@@ -383,6 +378,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     });
     setContracts(newContract);
   };
+
+  useEffect(() => {
+    if (maxMint > 0) {
+      handleAddContract(1);
+    }
+  }, []);
 
   const renderItems = () => {
     return contracts.map((item, index) => {
@@ -459,7 +460,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         </BoxActions>
 
         <ButtonMint
-          disabled={contracts.filter((item) => item.error).length > 0}
+          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0}
           variant="contained"
           color="primary"
           onClick={onSubmit}
