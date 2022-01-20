@@ -344,8 +344,8 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
     }
   };
 
-  const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const numberOfContracts = Number(event.target.value) <= maxMint ? Number(event.target.value) : maxMint;
+  const handleAddManyContracts = (value: number) => {
+    const numberOfContracts = value <= maxMint ? value : maxMint;
 
     let newContracts = [...contracts];
     if (contracts.length < numberOfContracts) {
@@ -422,7 +422,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
           <OutlinedInputCustom
             type="number"
             value={contracts.length}
-            onChange={handleChangeInput}
+            onChange={(event) => handleAddManyContracts(Number(event.target.value))}
             inputProps={{ 'aria-label': 'weight' }}
             startAdornment={
               <InputAdornment position="start" onClick={() => handleDeleteContract()}>
@@ -441,7 +441,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
             aria-describedby="outlined-weight-helper-text"
           />
 
-          <ButtonMax variant="outlined" color="primary" onClick={() => handleAddContract(maxMint)}>
+          <ButtonMax variant="outlined" color="primary" onClick={() => handleAddManyContracts(maxMint)}>
             Max
           </ButtonMax>
         </BoxActions>
