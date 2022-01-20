@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 
@@ -7,6 +7,9 @@ import TypeReward from './TypeReward';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
+import { getRewardAPYPerNode } from 'helpers/interractiveContract';
+import _ from 'lodash';
+import { formatApy } from 'helpers/formatApy';
 
 interface Props {
   title?: string;
@@ -74,6 +77,23 @@ const Title = styled(Typography)<TypographyProps>(() => ({
 }));
 
 const TypesReward: React.FC<Props> = () => {
+  const [squareApy, setSquareApy] = useState<string>('0.00');
+  const [cubeApy, setCubeApy] = useState<string>('0.00');
+  const [tesseractApy, setTesseractApy] = useState<string>('0.00');
+
+  const fetchApy = async () => {
+    const response = await getRewardAPYPerNode();
+    const data = _.flatten(response);
+
+    setSquareApy(formatApy(data[0]));
+    setCubeApy(formatApy(data[1]));
+    setTesseractApy(formatApy(data[2]));
+  };
+
+  useEffect(() => {
+    fetchApy();
+  }, []);
+
   return (
     <Wrapper>
       <Title>Types of Reward Contracts</Title>
@@ -85,7 +105,7 @@ const TypesReward: React.FC<Props> = () => {
         color="#E5E5FE"
         colorChart="#A1A1E1"
         value={5}
-        apy={250}
+        apy={squareApy}
         earn={0.03}
         dataChart={data}
       />
@@ -96,7 +116,7 @@ const TypesReward: React.FC<Props> = () => {
         color="#D2FFDB"
         colorChart="#9DE6AB"
         value={15}
-        apy={400}
+        apy={cubeApy}
         earn={0.16}
         dataChart={data}
       />
@@ -107,7 +127,7 @@ const TypesReward: React.FC<Props> = () => {
         color="#DBECFD"
         colorChart="#9EC5EB"
         value={30}
-        apy={500}
+        apy={tesseractApy}
         earn={0.41}
         dataChart={data}
       />

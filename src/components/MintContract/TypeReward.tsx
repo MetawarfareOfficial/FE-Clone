@@ -7,15 +7,16 @@ import MintContractModal from 'components/Base/MintContractModal';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
-import { contractType, LIMIT_MAX_MINT } from 'consts/typeReward';
+import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from '../../helpers/interractiveContract';
+import { sleep } from '../../helpers/delayTime';
 
 interface Props {
   id: any;
   icon: string;
   name: string;
   value: number;
-  apy: number;
+  apy: string;
   earn: number;
   color: string;
   colorChart: string;
@@ -116,8 +117,10 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
       const cType = contractType[`${key}`];
+
       setStatus(STATUS[2]);
       await createMultipleNodesWithTokens(names, cType);
+      await sleep(DELAY_TIME);
       setStatus(STATUS[0]);
     } catch (e: any) {
       setStatus(STATUS[1]);

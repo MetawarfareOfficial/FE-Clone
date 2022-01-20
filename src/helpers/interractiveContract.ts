@@ -1,18 +1,14 @@
 import { BigNumber, ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
-// import { erc20 } from 'abis/erc20';
 import { getInstanceEtherJs } from 'BaseEtherJs';
 
 declare let window: any;
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
-// const erc20Address = process.env.REACT_APP_ERC20_ADDRESS || '';
-
 const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URLS);
 const signer = window.ethereum && getInstanceEtherJs().getSigner();
 const contractWithSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, signer);
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
-// const contractErc20 = new ethers.Contract(erc20Address, erc20, provider);
 
 /** write contract **/
 export const approveToken = async (address?: string, amount?: string): Promise<void> => {
@@ -68,6 +64,19 @@ export const getBalanceTokenOf = async (address: string): Promise<[BigNumber]> =
 export const getBalanceNativeTokenOf = async (address: string): Promise<BigNumber> => {
   try {
     return provider.getBalance(address);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getRewardAPYPerNode = async (): Promise<any[]> => {
+  try {
+    const squareApy = contractWithoutSigner.functions.getRewardAPYPerNode(0);
+    const cubeApy = contractWithoutSigner.functions.getRewardAPYPerNode(1);
+    const tesseractApy = contractWithoutSigner.functions.getRewardAPYPerNode(2);
+
+    const response = await Promise.all([squareApy, cubeApy, tesseractApy]);
+    return response;
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
