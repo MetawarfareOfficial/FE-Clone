@@ -318,7 +318,7 @@ const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== '
   }),
 );
 
-const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose, onSubmit, valueRequire }) => {
+const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
   const [contracts, setContracts] = useState<Contract[]>([
     {
       name: generateContractName(),
@@ -433,6 +433,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
           <OutlinedInputCustom
             type="number"
             value={contracts.length}
+            readOnly
             onChange={(event) => handleAddManyContracts(Number(event.target.value))}
             inputProps={{ 'aria-label': 'weight' }}
             startAdornment={
