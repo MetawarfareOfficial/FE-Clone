@@ -383,7 +383,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     if (maxMint > 0) {
       handleAddContract(1);
     }
-  }, []);
+  }, [maxMint]);
 
   const renderItems = () => {
     return contracts.map((item, index) => {
