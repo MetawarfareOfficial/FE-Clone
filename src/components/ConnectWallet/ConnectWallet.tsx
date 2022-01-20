@@ -21,10 +21,10 @@ import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
-import { getBalanceNativeTokenOf, getBalanceTokenOf, getNumberNodeOf } from 'helpers/interractiveContract';
-import { bigNumber2Number, bigNumber2NumberV2 } from 'helpers/formatNumber';
-import { setNodes, unSetNodes } from 'services/contract';
-import _ from 'lodash';
+import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
+import { bigNumber2Number } from 'helpers/formatNumber';
+import { unSetNodes } from 'services/contract';
+import { useFetchNodes } from 'hooks/useFetchNodes';
 
 interface Props {
   name?: string;
@@ -120,17 +120,6 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   };
 
-  // Todo: fixme: using custom hook
-  const fetchNodesOfUser = async (address: string): Promise<void> => {
-    try {
-      const response = await getNumberNodeOf(address);
-      const nodes = bigNumber2NumberV2(_.flatten(response)[0], 1);
-      dispatch(setNodes(nodes));
-    } catch (e) {
-      throw error?.message;
-    }
-  };
-
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
@@ -159,7 +148,6 @@ const ConnectWallet: React.FC<Props> = () => {
     try {
       if (currentUserAddress) {
         fetchBalance(currentUserAddress);
-        fetchNodesOfUser(currentUserAddress);
         return;
       }
       dispatch(unSetNativeBalance());
@@ -169,6 +157,8 @@ const ConnectWallet: React.FC<Props> = () => {
       toast.error('Oop! Something went wrong', { hideProgressBar: true });
     }
   }, [currentUserAddress]);
+
+  useFetchNodes();
 
   return (
     <div>

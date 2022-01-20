@@ -10,6 +10,7 @@ import BigNumber from 'bignumber.js';
 import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
+import { useFetchNodes } from '../../hooks/useFetchNodes';
 
 interface Props {
   id: any;
@@ -98,11 +99,13 @@ const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
+  const nodes = useAppSelector((state) => state.contract.nodes);
 
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [maxMint, setMaxMint] = useState<number>(-1);
+  const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
 
   const handleToggle = () => {
     setOpen(!open);
@@ -118,10 +121,17 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
       const key = type.split(' ')[0].toLowerCase();
       const cType = contractType[`${key}`];
 
+      const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
+
+      setOpen(false);
       setStatus(STATUS[2]);
-      await createMultipleNodesWithTokens(names, cType);
+      setOpenStatus(true);
       await sleep(DELAY_TIME);
-      setStatus(STATUS[0]);
+
+      if (response.hash) {
+        setCreateNodeOk(!crtNodeOk);
+        setStatus(STATUS[0]);
+      }
     } catch (e: any) {
       setStatus(STATUS[1]);
     } finally {
@@ -133,8 +143,10 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   useEffect(() => {
     const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;
     const _maxMint = new BigNumber(balances).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
-    setMaxMint(_maxMint >= LIMIT_MAX_MINT ? LIMIT_MAX_MINT : _maxMint);
-  }, [zeroXBlockBalance]);
+    setMaxMint(_maxMint >= LIMIT_MAX_MINT - nodes ? LIMIT_MAX_MINT - nodes : _maxMint);
+  }, [zeroXBlockBalance, nodes]);
+
+  useFetchNodes(crtNodeOk);
 
   return (
     <Wrapper>

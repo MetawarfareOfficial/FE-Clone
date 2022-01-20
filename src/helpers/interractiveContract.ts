@@ -45,7 +45,7 @@ export const transferTokenTo = async (address: string, amount: string): Promise<
   }
 };
 
-export const createMultipleNodesWithTokens = async (names: string[], cType: string): Promise<void> => {
+export const createMultipleNodesWithTokens = async (names: string[], cType: string): Promise<Record<string, any>> => {
   try {
     return contractWithSigner.functions.createMultipleNodesWithTokens(names, cType.toString());
   } catch (e) {
