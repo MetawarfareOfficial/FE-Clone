@@ -1,4 +1,4 @@
-export const zeroXBlockAbi = [
+export const erc20 = [
   {
     inputs: [
       { internalType: 'address[]', name: 'payees', type: 'address[]' },
@@ -182,7 +182,7 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: '_nodeIndex', type: 'uint256' }],
+    inputs: [{ internalType: 'uint256', name: 'blocktime', type: 'uint256' }],
     name: 'cashoutReward',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -203,6 +203,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'uint256', name: 'newGasDistri', type: 'uint256' }],
+    name: 'changeGasDistribution',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
       { internalType: 'uint256', name: 'newNodePrice', type: 'uint256' },
@@ -217,7 +224,7 @@ export const zeroXBlockAbi = [
       { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
       { internalType: 'uint256', name: 'newPrice', type: 'uint256' },
     ],
-    name: 'changeRewardAPYPerNode',
+    name: 'changeRewardPerNode',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -225,16 +232,6 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'bool', name: 'newVal', type: 'bool' }],
     name: 'changeSwapLiquify',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'string[]', name: 'names', type: 'string[]' },
-      { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
-    ],
-    name: 'createMultipleNodesWithTokens',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -275,6 +272,17 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
+    name: 'distributeRewards',
+    outputs: [
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'distributionPool',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
@@ -309,6 +317,20 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'getDistributionCount',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getGasDistribution',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: 'getNodeNumberOf',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -331,6 +353,13 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
+    name: 'getNodesLastClaims',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'getNodesNames',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
@@ -340,13 +369,6 @@ export const zeroXBlockAbi = [
     inputs: [],
     name: 'getNodesRewards',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'enum ContractType', name: 'cType', type: 'uint8' }],
-    name: 'getRewardAPYPerNode',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -365,8 +387,22 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'enum ContractType', name: 'cType', type: 'uint8' }],
+    name: 'getRewardPerNode',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'getTotalCreatedNodes',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getTotalStakedReward',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -416,6 +452,7 @@ export const zeroXBlockAbi = [
     stateMutability: 'view',
     type: 'function',
   },
+  { inputs: [], name: 'publicDistributeRewards', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
     inputs: [{ internalType: 'address payable', name: 'account', type: 'address' }],
     name: 'release',
@@ -582,7 +619,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateFutureWall',
+    name: 'updateFuturWall',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

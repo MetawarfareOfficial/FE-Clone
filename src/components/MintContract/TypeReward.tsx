@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 import LineChart from 'components/Base/LineChart';
 import MintContractModal from 'components/Base/MintContractModal';
 import MintStatusModal from 'components/Base/MintStatusModal';
+import { useAppSelector } from 'stores/hooks';
+import BigNumber from 'bignumber.js';
+import { LIMIT_MAX_MINT } from 'consts/typeReward';
 
 interface Props {
   id: any;
@@ -92,9 +95,11 @@ const ButtonMint = styled(Button)<ButtonProps>(() => ({
 const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
+  const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
+  const [maxMint, setMaxMint] = useState<number>(-1);
 
   const handleToggle = () => {
     setOpen(!open);
@@ -109,6 +114,11 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setStatus(STATUS[Math.floor(Math.random() * STATUS.length)]);
     setOpenStatus(true);
   };
+
+  useEffect(() => {
+    const _maxMint = new BigNumber(zeroXBlockBalance).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
+    setMaxMint(_maxMint >= LIMIT_MAX_MINT ? LIMIT_MAX_MINT : _maxMint);
+  }, [zeroXBlockBalance]);
 
   return (
     <Wrapper>
@@ -138,7 +148,8 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
       <MintContractModal
         icon={icon}
         name={name}
-        maxMint={10}
+        maxMint={maxMint}
+        valueRequire={value}
         contracts={['Name']}
         open={open}
         onClose={handleToggle}

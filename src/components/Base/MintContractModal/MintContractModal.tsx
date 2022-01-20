@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 
 import {
@@ -37,12 +37,14 @@ import {
   handleContractNameErrors,
   replaceArrayElementByIndex,
 } from 'helpers';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   open: boolean;
   icon: string;
   name: string;
   maxMint: number;
+  valueRequire: number;
   contracts: Array<any>;
   onClose: () => void;
   onSubmit: (values: any) => void;
@@ -316,15 +318,20 @@ const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== '
   }),
 );
 
-const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose, onSubmit }) => {
+const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose, onSubmit, valueRequire }) => {
   const [contracts, setContracts] = useState<Contract[]>([
     {
       name: generateContractName(),
       error: null,
     },
   ]);
+  const [valueCost, setValueCost] = useState<number>(valueRequire);
 
   const handleAddContract = (numberContracts = 1) => {
+    if (contracts.length >= maxMint) {
+      return;
+    }
+
     const newContracts = [];
     for (let i = 0; i < numberContracts; i++) {
       newContracts.push({
@@ -394,6 +401,10 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
     });
   };
 
+  useEffect(() => {
+    setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
+  }, [contracts.length]);
+
   return (
     <Wrapper
       open={open}
@@ -453,7 +464,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
           onClick={onSubmit}
         >
           Mint <br />
-          <span>(15 0xB required)</span>
+          <span>{`${valueCost} 0xB required`}</span>
         </ButtonMint>
       </Content>
     </Wrapper>
