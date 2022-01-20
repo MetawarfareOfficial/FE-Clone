@@ -20,16 +20,23 @@ import {
   IconButtonProps,
   List,
   ListItem,
-  ListItemText,
   OutlinedInput,
   OutlinedInputProps,
   InputAdornment,
+  TextField,
+  TextFieldProps,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import CloseImg from 'assets/images/ic-times.svg';
+import {
+  deleteArrayElementByIndex,
+  generateContractName,
+  handleContractNameErrors,
+  replaceArrayElementByIndex,
+} from 'helpers';
 
 interface Props {
   open: boolean;
@@ -39,6 +46,11 @@ interface Props {
   contracts: Array<any>;
   onClose: () => void;
   onSubmit: (values: any) => void;
+}
+
+interface Contract {
+  name: string;
+  error: string | null;
 }
 
 const Wrapper = styled(Dialog)<DialogProps>(() => ({
@@ -147,11 +159,7 @@ const Content = styled(DialogContent)<DialogContentProps>(() => ({
     },
 
     li: {
-      padding: '8px 20px',
-      border: '1px solid #BDBDBD',
-      boxSizing: 'border-box',
-      borderRadius: '13px',
-      marginBottom: '8px',
+      padding: 'unset',
     },
   },
 }));
@@ -257,7 +265,7 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
   },
 }));
 
-const ButtonMint = styled('a')<any>(({ theme }) => ({
+const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
   width: '100%',
   marginTop: '21px',
   padding: '10px 29px',
@@ -272,31 +280,118 @@ const ButtonMint = styled('a')<any>(({ theme }) => ({
   fontWeight: 'bold',
   fontSize: '14px',
   lineHeight: '21px',
-
+  cursor: 'pointer',
   span: {
     color: '#BDBDBD',
     fontWeight: 'normal',
   },
+  outline: 'none',
+  border: 'none',
 }));
 
-const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose, onSubmit }) => {
-  const [value, setValue] = useState<any>(1);
+const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(
+  ({ error }) => ({
+    '.MuiInput-input': {
+      padding: '8px 20px',
+      border: `1px solid ${error ? 'red' : '#BDBDBD'}`,
+      borderRadius: '13px',
+      OutlinedInput: 'none',
+      boxSizing: 'border-box',
+      height: '39px',
+      color: '#293247',
+      marginBottom: error ? '2px' : '8px',
+    },
+    '.MuiFormHelperText-root': {
+      color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',
+      marginBottom: '4px',
+    },
+    '.MuiInput-root': {
+      '&::before': {
+        borderBottom: 'unset !important',
+      },
+      '&::after': {
+        borderBottom: 'unset !important',
+      },
+    },
+  }),
+);
 
-  const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose, onSubmit }) => {
+  const [contracts, setContracts] = useState<Contract[]>([
+    {
+      name: generateContractName(),
+      error: null,
+    },
+  ]);
+
+  const handleAddContract = (numberContracts = 1) => {
+    const newContracts = [];
+    for (let i = 0; i < numberContracts; i++) {
+      newContracts.push({
+        name: generateContractName(),
+        error: null,
+      });
+    }
+    setContracts([...contracts, ...newContracts]);
+  };
+
+  const handleDeleteContract = () => {
+    // prevent from deleting contract if contracts length = 1
+    if (contracts.length >= 2) {
+      const newContract = [...contracts];
+      newContract.splice(-1);
+      setContracts(newContract);
+    }
+  };
+
+  const handleAddManyContracts = (value: number) => {
+    const numberOfContracts = value <= maxMint ? value : maxMint;
+
+    let newContracts = [...contracts];
+    if (contracts.length < numberOfContracts) {
+      for (let i = contracts.length; i < numberOfContracts; i++) {
+        newContracts.push({
+          name: generateContractName(),
+          error: null,
+        });
+      }
+    } else {
+      for (let i = contracts.length; i > numberOfContracts; i--) {
+        newContracts = deleteArrayElementByIndex(newContracts, newContracts.length - 1);
+      }
+    }
+    setContracts([...newContracts]);
+  };
+
+  const handleContractNameChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number,
+  ) => {
+    const newName = event.target.value;
+    const error = handleContractNameErrors(newName);
+
+    const newContract = replaceArrayElementByIndex(contracts, index, {
+      name: newName,
+      error,
+    });
+    setContracts(newContract);
   };
 
   const renderItems = () => {
-    const results = [];
-    for (let i = 0; i < value; i++) {
-      results.push(
-        <ListItem>
-          <ListItemText primary="Name" />
-        </ListItem>,
+    return contracts.map((item, index) => {
+      return (
+        <ListItem key={index}>
+          <CssTextField
+            onChange={(event) => handleContractNameChange(event, index)}
+            error={!!item.error}
+            helperText={item.error}
+            value={item.name}
+            variant="standard"
+            fullWidth
+          />
+        </ListItem>
       );
-    }
-
-    return results;
+    });
   };
 
   return (
@@ -326,18 +421,18 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
         <BoxActions>
           <OutlinedInputCustom
             type="number"
-            value={value}
-            onChange={handleChangeInput}
+            value={contracts.length}
+            onChange={(event) => handleAddManyContracts(Number(event.target.value))}
             inputProps={{ 'aria-label': 'weight' }}
             startAdornment={
-              <InputAdornment position="start" onClick={() => setValue(Number(value) - 1)}>
+              <InputAdornment position="start" onClick={() => handleDeleteContract()}>
                 <IconButton>
                   <RemoveIcon />
                 </IconButton>
               </InputAdornment>
             }
             endAdornment={
-              <InputAdornment position="end" onClick={() => setValue(Number(value) + 1)}>
+              <InputAdornment position="end" onClick={() => handleAddContract(1)}>
                 <IconButton>
                   <AddIcon />
                 </IconButton>
@@ -346,12 +441,17 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
             aria-describedby="outlined-weight-helper-text"
           />
 
-          <ButtonMax variant="outlined" color="primary" onClick={() => setValue(maxMint)}>
+          <ButtonMax variant="outlined" color="primary" onClick={() => handleAddManyContracts(maxMint)}>
             Max
           </ButtonMax>
         </BoxActions>
 
-        <ButtonMint variant="contained" color="primary" onClick={onSubmit}>
+        <ButtonMint
+          disabled={contracts.filter((item) => item.error).length > 0}
+          variant="contained"
+          color="primary"
+          onClick={onSubmit}
+        >
           Mint <br />
           <span>(15 0xB required)</span>
         </ButtonMint>
