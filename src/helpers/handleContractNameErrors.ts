@@ -16,7 +16,6 @@ export const handleContractNameErrors = (contractName: string) => {
   } else if (!isValidName) {
     error = errorMessage.CONTRACT_NAME_INVALID.message;
   }
-  // need to call contract here to validate Name
 
   return error;
 };

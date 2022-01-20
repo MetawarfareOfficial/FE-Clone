@@ -6,15 +6,5 @@ const config: Config = {
 };
 
 export const generateContractName = (): string => {
-  let isValidContractName = false;
-  let contractName = '';
-  do {
-    contractName = uniqueNamesGenerator(config);
-    const existedName = false; // call api here;
-    if (!existedName) {
-      isValidContractName = true;
-    }
-  } while (!isValidContractName);
-
-  return contractName;
+  return uniqueNamesGenerator(config);
 };
