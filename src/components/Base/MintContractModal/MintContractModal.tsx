@@ -47,7 +47,7 @@ interface Props {
   valueRequire: number;
   contracts: Array<any>;
   onClose: () => void;
-  onSubmit: (values: any) => void;
+  onSubmit: (values: any, name: string) => void;
 }
 
 interface Contract {
@@ -461,7 +461,9 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
           disabled={contracts.filter((item) => item.error).length > 0}
           variant="contained"
           color="primary"
-          onClick={onSubmit}
+          onClick={() => {
+            onSubmit(contracts, name);
+          }}
         >
           Mint <br />
           <span>{`${valueCost} 0xB required`}</span>

@@ -7,7 +7,8 @@ import MintContractModal from 'components/Base/MintContractModal';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
-import { LIMIT_MAX_MINT } from 'consts/typeReward';
+import { contractType, LIMIT_MAX_MINT } from 'consts/typeReward';
+import { createMultipleNodesWithTokens } from '../../helpers/interractiveContract';
 
 interface Props {
   id: any;
@@ -96,6 +97,7 @@ const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
+
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
@@ -109,10 +111,20 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setOpenStatus(!openStatus);
   };
 
-  const handleSubmit = () => {
-    setOpen(false);
-    setStatus(STATUS[Math.floor(Math.random() * STATUS.length)]);
-    setOpenStatus(true);
+  const handleSubmit = async (params: Record<string, string>[], type: string) => {
+    try {
+      const names = params.map((item) => item.name);
+      const key = type.split(' ')[0].toLowerCase();
+      const cType = contractType[`${key}`];
+      setStatus(STATUS[2]);
+      await createMultipleNodesWithTokens(names, cType);
+      setStatus(STATUS[0]);
+    } catch (e: any) {
+      setStatus(STATUS[1]);
+    } finally {
+      setOpen(false);
+      setOpenStatus(true);
+    }
   };
 
   useEffect(() => {
