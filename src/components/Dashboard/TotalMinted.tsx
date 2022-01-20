@@ -7,6 +7,7 @@ import { BoxProps } from '@mui/material/Box';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;
@@ -110,6 +111,9 @@ const ViewImage = styled(Box)<BoxProps>(() => ({
 }));
 
 const TotalMinted: React.FC<Props> = () => {
+  const dataApy = useAppSelector((state) => state.contract.apy);
+  const dataPrice = useAppSelector((state) => state.contract.price);
+
   return (
     <Box>
       <Title>Total Minted Contracts</Title>
@@ -133,9 +137,9 @@ const TotalMinted: React.FC<Props> = () => {
 
         <BoxRight>
           <Box>
-            <Description>5 0xB</Description>
+            <Description>{`${dataPrice.square} 0xB`}</Description>
             <Description>Earn 0.03 0xB/day</Description>
-            <Description>250% APY</Description>
+            <Description>{`${dataApy.square}% APY`}</Description>
           </Box>
         </BoxRight>
       </BoxTotal>
@@ -159,9 +163,9 @@ const TotalMinted: React.FC<Props> = () => {
 
         <BoxRight>
           <Box>
-            <Description>15 0xB</Description>
+            <Description>{`${dataPrice.cube} 0xB`}</Description>
             <Description>Earn 0.16 0xB/day</Description>
-            <Description>400% APY</Description>
+            <Description>{`${dataApy.cube}% APY`}</Description>
           </Box>
         </BoxRight>
       </BoxTotal>
@@ -185,9 +189,9 @@ const TotalMinted: React.FC<Props> = () => {
 
         <BoxRight>
           <Box>
-            <Description>30 0xB</Description>
+            <Description>{`${dataPrice.tesseract} 0xB`}</Description>
             <Description>Earn 0.41 0xB/day</Description>
-            <Description>500% APY</Description>
+            <Description>{`${dataApy.tesseract}% APY`}</Description>
           </Box>
         </BoxRight>
       </BoxTotal>

@@ -30,6 +30,12 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoImg from 'assets/images/logo.svg';
 import LogoIcon from 'assets/images/logo-ic.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
+import { getPriceAllNode, getRewardAPYAllNode } from '../../helpers/interractiveContract';
+import _ from 'lodash';
+import { setApy, setPrice } from '../../services/contract';
+import { formatApy } from '../../helpers/formatApy';
+import { bigNumber2NumberV2 } from '../../helpers/formatNumber';
+import { useAppDispatch } from '../../stores/hooks';
 
 interface Props {
   name?: string;
@@ -276,19 +282,13 @@ const useWindowSize = () => {
 };
 
 const Layout: React.FC<Props> = ({ children }) => {
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const location = useLocation();
+
   const [open, setOpen] = React.useState(true);
   const [lightMode, setLightMode] = React.useState(true);
   const [width] = useWindowSize();
-
-  useEffect(() => {
-    if (width < 1200) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  }, [width]);
 
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
@@ -305,6 +305,45 @@ const Layout: React.FC<Props> = ({ children }) => {
   const handleRefresh = () => {
     window.location.reload();
   };
+
+  const fetchApy = async () => {
+    const response = await getRewardAPYAllNode();
+    const data = _.flatten(response);
+
+    dispatch(
+      setApy({
+        square: formatApy(data[0]),
+        cube: formatApy(data[1]),
+        tesseract: formatApy(data[2]),
+      }),
+    );
+  };
+
+  const fetchPrice = async () => {
+    const response = await getPriceAllNode();
+    const data = _.flatten(response);
+
+    dispatch(
+      setPrice({
+        square: bigNumber2NumberV2(data[0]),
+        cube: bigNumber2NumberV2(data[1]),
+        tesseract: bigNumber2NumberV2(data[2]),
+      }),
+    );
+  };
+
+  useEffect(() => {
+    if (width < 1200) {
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
+  }, [width]);
+
+  useEffect(() => {
+    fetchApy();
+    fetchPrice();
+  }, []);
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>

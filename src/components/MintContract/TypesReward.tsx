@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 
@@ -7,10 +7,7 @@ import TypeReward from './TypeReward';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
-import { getPriceAllNode, getRewardAPYAllNode } from 'helpers/interractiveContract';
-import _ from 'lodash';
-import { formatApy } from 'helpers/formatApy';
-import { bigNumber2NumberV2 } from 'helpers/formatNumber';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;
@@ -78,35 +75,8 @@ const Title = styled(Typography)<TypographyProps>(() => ({
 }));
 
 const TypesReward: React.FC<Props> = () => {
-  const [squareApy, setSquareApy] = useState<string>('0.00');
-  const [cubeApy, setCubeApy] = useState<string>('0.00');
-  const [tesseractApy, setTesseractApy] = useState<string>('0.00');
-  const [squarePrice, setSquarePrice] = useState<number>(0);
-  const [cubePrice, setCubePrice] = useState<number>(0);
-  const [tesseractPrice, setTesseractPrice] = useState<number>(0);
-
-  const fetchApy = async () => {
-    const response = await getRewardAPYAllNode();
-    const data = _.flatten(response);
-
-    setSquareApy(formatApy(data[0]));
-    setCubeApy(formatApy(data[1]));
-    setTesseractApy(formatApy(data[2]));
-  };
-
-  const fetchPrice = async () => {
-    const response = await getPriceAllNode();
-    const data = _.flatten(response);
-
-    setSquarePrice(bigNumber2NumberV2(data[0]));
-    setCubePrice(bigNumber2NumberV2(data[1]));
-    setTesseractPrice(bigNumber2NumberV2(data[2]));
-  };
-
-  useEffect(() => {
-    fetchApy();
-    fetchPrice();
-  }, []);
+  const dataApy = useAppSelector((state) => state.contract.apy);
+  const dataPrice = useAppSelector((state) => state.contract.price);
 
   return (
     <Wrapper>
@@ -118,8 +88,8 @@ const TypesReward: React.FC<Props> = () => {
         icon={SquareIcon}
         color="#E5E5FE"
         colorChart="#A1A1E1"
-        value={squarePrice}
-        apy={squareApy}
+        value={dataPrice.square}
+        apy={dataApy.square}
         earn={0.03}
         dataChart={data}
       />
@@ -129,8 +99,8 @@ const TypesReward: React.FC<Props> = () => {
         icon={CubeIcon}
         color="#D2FFDB"
         colorChart="#9DE6AB"
-        value={cubePrice}
-        apy={cubeApy}
+        value={dataPrice.cube}
+        apy={dataApy.cube}
         earn={0.16}
         dataChart={data}
       />
@@ -140,8 +110,8 @@ const TypesReward: React.FC<Props> = () => {
         icon={TessIcon}
         color="#DBECFD"
         colorChart="#9EC5EB"
-        value={tesseractPrice}
-        apy={tesseractApy}
+        value={dataPrice.tesseract}
+        apy={dataApy.tesseract}
         earn={0.41}
         dataChart={data}
       />

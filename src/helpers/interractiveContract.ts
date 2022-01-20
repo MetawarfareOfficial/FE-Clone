@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { getInstanceEtherJs } from 'BaseEtherJs';
+import { contractType } from '../consts/typeReward';
 
 declare let window: any;
 
@@ -46,7 +47,7 @@ export const transferTokenTo = async (address: string, amount: string): Promise<
 
 export const createMultipleNodesWithTokens = async (names: string[], cType: string): Promise<void> => {
   try {
-    return contractWithSigner.functions.createMultipleNodesWithTokens(names, cType);
+    return contractWithSigner.functions.createMultipleNodesWithTokens(names, cType.toString());
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -71,9 +72,9 @@ export const getBalanceNativeTokenOf = async (address: string): Promise<BigNumbe
 
 export const getRewardAPYAllNode = async (): Promise<any[]> => {
   try {
-    const squareApy = contractWithoutSigner.functions.getRewardAPYPerNode(0);
-    const cubeApy = contractWithoutSigner.functions.getRewardAPYPerNode(1);
-    const tesseractApy = contractWithoutSigner.functions.getRewardAPYPerNode(2);
+    const squareApy = contractWithoutSigner.functions.getRewardAPYPerNode(contractType.square);
+    const cubeApy = contractWithoutSigner.functions.getRewardAPYPerNode(contractType.cube);
+    const tesseractApy = contractWithoutSigner.functions.getRewardAPYPerNode(contractType.tesseract);
 
     return await Promise.all([squareApy, cubeApy, tesseractApy]);
   } catch (e) {
@@ -83,9 +84,9 @@ export const getRewardAPYAllNode = async (): Promise<any[]> => {
 
 export const getPriceAllNode = async (): Promise<any[]> => {
   try {
-    const squarePrice = contractWithoutSigner.functions.getNodePrice(0);
-    const cubePrice = contractWithoutSigner.functions.getNodePrice(1);
-    const tesseractPrice = contractWithoutSigner.functions.getNodePrice(2);
+    const squarePrice = contractWithoutSigner.functions.getNodePrice(contractType.square);
+    const cubePrice = contractWithoutSigner.functions.getNodePrice(contractType.cube);
+    const tesseractPrice = contractWithoutSigner.functions.getNodePrice(contractType.tesseract);
 
     return await Promise.all([squarePrice, cubePrice, tesseractPrice]);
   } catch (e) {
