@@ -15,6 +15,8 @@ import {
   Button,
   ButtonProps,
 } from '@mui/material';
+import { toast } from 'react-toastify';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;
@@ -124,6 +126,15 @@ const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
 }));
 
 const TableContracts: React.FC<Props> = ({ data }) => {
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+
+  const handleClickClaimAll = async () => {
+    try {
+    } catch (err: any) {
+      toast.error(err.message, { hideProgressBar: true });
+    }
+  };
+
   return (
     <Box>
       <TableWrapper>
@@ -137,7 +148,13 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
               <TableCellHeader align="right">
-                <ButtonClaimAll size="small" variant="contained" color="primary">
+                <ButtonClaimAll
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleClickClaimAll}
+                  disabled={!currentUserAddress}
+                >
                   Claim all
                 </ButtonClaimAll>
               </TableCellHeader>

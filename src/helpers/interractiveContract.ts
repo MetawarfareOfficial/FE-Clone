@@ -11,7 +11,7 @@ const contractWithSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, s
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
 
 /** write contract **/
-export const approveToken = async (address?: string, amount?: number): Promise<void> => {
+export const approveToken = async (address?: string, amount?: string): Promise<void> => {
   try {
     return contractWithSigner.functions.approve(address, amount);
   } catch (err: any) {
@@ -23,6 +23,30 @@ export const approveToken = async (address?: string, amount?: number): Promise<v
 export const cashOutAll = async (): Promise<void> => {
   try {
     return contractWithSigner.functions.cashoutAll();
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const publicDistributeRewards = async (): Promise<void> => {
+  try {
+    return contractWithSigner.functions.publicDistributeRewards();
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const transferTokenTo = async (address: string, amount: string): Promise<void> => {
+  try {
+    return contractWithSigner.functions.transfer(address, amount);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const createNodeWithToken = async (name: string, cType: string): Promise<void> => {
+  try {
+    return contractWithSigner.functions.createNodeWithToken(name, cType);
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
