@@ -27,6 +27,9 @@ const dataContractSlice = createSlice({
     setDataMyContracts: (state, action) => {
       state.dataMyContracts = action.payload;
     },
+    unSetDataMyContracts: (state) => {
+      state.dataMyContracts = [];
+    },
     setRewardAmount: (state, action) => {
       state.dataRewardAmount = action.payload;
     },
@@ -36,7 +39,15 @@ const dataContractSlice = createSlice({
   },
 });
 
-export const { setApy, setPrice, setNodes, unSetNodes, setDataMyContracts, setRewardAmount, unSetRewardAmount } =
-  dataContractSlice.actions;
+export const {
+  setApy,
+  setPrice,
+  setNodes,
+  unSetNodes,
+  setDataMyContracts,
+  unSetDataMyContracts,
+  setRewardAmount,
+  unSetRewardAmount,
+} = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;

@@ -15,11 +15,18 @@ import {
 } from 'helpers/interractiveContract';
 import { parseDataMyContract, zipDataMyContract } from 'helpers/zipDataMyContract';
 import { ContractResponse } from 'interfaces/MyContract';
-import { setDataMyContracts, setRewardAmount } from 'services/contract';
+import {
+  setDataMyContracts,
+  setRewardAmount,
+  unSetDataMyContracts,
+  unSetNodes,
+  unSetRewardAmount,
+} from 'services/contract';
 import useInterval from 'hooks/useInterval';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import _ from 'lodash';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
+import { resolveRequestAfterTime } from 'services/resolveRequestAfterTime';
 
 interface Props {
   title?: string;
@@ -64,9 +71,15 @@ const MyContract: React.FC<Props> = () => {
     } catch (e) {}
   };
 
-  useInterval(async () => {
-    await fetchDataContract();
-  }, 5000);
+  useEffect(() => {
+    resolveRequestAfterTime(5000);
+  }, []);
+
+  useEffect(() => {
+    dispatch(unSetDataMyContracts());
+    dispatch(unSetNodes());
+    dispatch(unSetRewardAmount());
+  }, [currentUserAddress]);
 
   useEffect(() => {
     const dataCountByType = _.countBy(dataMyContracts, 'type');
@@ -77,8 +90,18 @@ const MyContract: React.FC<Props> = () => {
         cube: `${dataCountByType['1']}`,
         tesseract: `${dataCountByType['2']}`,
       });
+      return;
     }
+    setCountMyContract({
+      square: '0',
+      cube: '0',
+      tesseract: '0',
+    });
   }, [dataMyContracts.length]);
+
+  useInterval(async () => {
+    await fetchDataContract();
+  }, 5000);
 
   return (
     <Box>

@@ -23,7 +23,7 @@ ReactDOM.render(
       <BrowserRouter>
         <React.StrictMode>
           <App />
-          <ToastContainer pauseOnHover={false} />
+          <ToastContainer pauseOnHover={false} newestOnTop={true} autoClose={3000} limit={1} />
         </React.StrictMode>
       </BrowserRouter>
     </Web3ReactProvider>

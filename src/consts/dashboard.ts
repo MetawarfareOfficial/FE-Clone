@@ -15,5 +15,5 @@ export const paramsCurrentPriceApi = {
 export const DELAY_TIME = 10000;
 export const tickFormatDate = 'DD/MMM';
 export const tickFormatInterval = 2;
-export const labelDate = 'DD-MM-YYYY';
+export const labelDate = 'DD/MM/YYYY';
 export const labelGroupDate = 'DD-MM';

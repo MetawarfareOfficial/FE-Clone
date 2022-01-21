@@ -123,7 +123,11 @@ const ConnectWallet: React.FC<Props> = () => {
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
-      toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
+      !getToken() &&
+        toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, {
+          hideProgressBar: true,
+          autoClose: 2000,
+        });
       return;
     }
     dispatch(unSetAccount());
