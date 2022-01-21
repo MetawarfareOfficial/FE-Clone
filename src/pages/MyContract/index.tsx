@@ -27,6 +27,7 @@ import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import _ from 'lodash';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import { resolveRequestAfterTime } from 'services/resolveRequestAfterTime';
+import { toast } from 'react-toastify';
 
 interface Props {
   title?: string;
@@ -81,6 +82,7 @@ const MyContract: React.FC<Props> = () => {
 
   useEffect(() => {
     currentUserAddress && resolveRequestAfterTime(5000);
+    toast.clearWaitingQueue();
   }, []);
 
   useEffect(() => {

@@ -10,6 +10,7 @@ import { DELAY_TIME, labelGroupDate, paramsCurrentPriceApi, paramsLast30DaysApi 
 import { TokenPrice } from 'interfaces/TokenPrice';
 import _ from 'lodash';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 
 interface DashboardProps {
   name?: string;
@@ -26,6 +27,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   useEffect(() => {
     dispatch(getPrice30DaysAgo(paramsLast30DaysApi));
     dispatch(getCurrentPrice(paramsCurrentPriceApi));
+    toast.clearWaitingQueue();
   }, []);
 
   useEffect(() => {

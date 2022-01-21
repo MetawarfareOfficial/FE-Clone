@@ -6,7 +6,7 @@ import { TokenPrice } from 'interfaces/TokenPrice';
 import { formatPrice } from 'helpers/formatPrice';
 import { useHistory } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import useFetchRewardAmount from '../../hooks/useFetchRewardAmount';
+import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 
 interface Props {
   title?: string;
