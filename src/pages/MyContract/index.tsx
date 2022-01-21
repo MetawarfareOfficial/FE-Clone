@@ -72,19 +72,13 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    resolveRequestAfterTime(5000);
+    currentUserAddress && resolveRequestAfterTime(5000);
   }, []);
-
-  useEffect(() => {
-    dispatch(unSetDataMyContracts());
-    dispatch(unSetNodes());
-    dispatch(unSetRewardAmount());
-  }, [currentUserAddress]);
 
   useEffect(() => {
     const dataCountByType = _.countBy(dataMyContracts, 'type');
 
-    if (dataCountByType && dataCountByType['0']) {
+    if (dataCountByType && dataCountByType['0'] && currentUserAddress) {
       setCountMyContract({
         square: `${dataCountByType['0']}`,
         cube: `${dataCountByType['1']}`,
@@ -92,12 +86,10 @@ const MyContract: React.FC<Props> = () => {
       });
       return;
     }
-    setCountMyContract({
-      square: '0',
-      cube: '0',
-      tesseract: '0',
-    });
-  }, [dataMyContracts.length]);
+    dispatch(unSetDataMyContracts());
+    dispatch(unSetNodes());
+    dispatch(unSetRewardAmount());
+  }, [dataMyContracts.length, currentUserAddress]);
 
   useInterval(async () => {
     await fetchDataContract();
