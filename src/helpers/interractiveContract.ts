@@ -94,6 +94,18 @@ export const getPriceAllNode = async (): Promise<any[]> => {
   }
 };
 
+export const getTotalNodeByType = async (): Promise<any[]> => {
+  try {
+    const squareTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.square);
+    const cubeTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.cube);
+    const tesseractTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.tesseract);
+
+    return await Promise.all([squareTotal, cubeTotal, tesseractTotal]);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
 export const getNumberNodeOf = async (address: string): Promise<[BigNumber]> => {
   try {
     return contractWithoutSigner.functions.getNodeNumberOf(address);

@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   apy: { square: '', cube: '', tesseract: '' },
   price: { square: 0, cube: 0, tesseract: 0 },
+  total: { square: 0, cube: 0, tesseract: 0 },
   nodes: 0,
   dataMyContracts: [],
   dataRewardAmount: 0,
@@ -20,6 +21,9 @@ const dataContractSlice = createSlice({
     },
     setNodes: (state, action) => {
       state.nodes = action.payload;
+    },
+    setTotal: (state, action) => {
+      state.total = action.payload;
     },
     unSetNodes: (state) => {
       state.nodes = 0;
@@ -43,6 +47,7 @@ export const {
   setApy,
   setPrice,
   setNodes,
+  setTotal,
   unSetNodes,
   setDataMyContracts,
   unSetDataMyContracts,

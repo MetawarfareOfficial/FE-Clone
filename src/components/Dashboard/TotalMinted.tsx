@@ -113,6 +113,7 @@ const ViewImage = styled(Box)<BoxProps>(() => ({
 const TotalMinted: React.FC<Props> = () => {
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
+  const dataTotal = useAppSelector((state) => state.contract.total);
 
   return (
     <Box>
@@ -131,7 +132,7 @@ const TotalMinted: React.FC<Props> = () => {
             </BoxHeaderContent>
           </BoxHeader>
 
-          <TitleBox>30</TitleBox>
+          <TitleBox>{dataTotal.square}</TitleBox>
           <TextBox>Contracts minted</TextBox>
         </BoxLeft>
 
@@ -157,7 +158,7 @@ const TotalMinted: React.FC<Props> = () => {
             </BoxHeaderContent>
           </BoxHeader>
 
-          <TitleBox>30</TitleBox>
+          <TitleBox>{dataTotal.square}</TitleBox>
           <TextBox>Contracts minted</TextBox>
         </BoxLeft>
 
@@ -183,7 +184,7 @@ const TotalMinted: React.FC<Props> = () => {
             </BoxHeaderContent>
           </BoxHeader>
 
-          <TitleBox>30</TitleBox>
+          <TitleBox>{dataTotal.tesseract}</TitleBox>
           <TextBox>Contracts minted</TextBox>
         </BoxLeft>
 
