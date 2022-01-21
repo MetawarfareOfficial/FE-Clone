@@ -158,7 +158,7 @@ const TotalMinted: React.FC<Props> = () => {
             </BoxHeaderContent>
           </BoxHeader>
 
-          <TitleBox>{dataTotal.square}</TitleBox>
+          <TitleBox>{dataTotal.cube}</TitleBox>
           <TextBox>Contracts minted</TextBox>
         </BoxLeft>
 

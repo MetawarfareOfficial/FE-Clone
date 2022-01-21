@@ -30,17 +30,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoImg from 'assets/images/logo.svg';
 import LogoIcon from 'assets/images/logo-ic.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
-import {
-  getPriceAllNode,
-  getRewardAmount,
-  getRewardAPYAllNode,
-  getTotalNodeByType,
-} from 'helpers/interractiveContract';
-import _ from 'lodash';
-import { setApy, setPrice, setRewardAmount, setTotal } from 'services/contract';
-import { formatApy } from 'helpers/formatApy';
-import { bigNumber2NumberV2 } from 'helpers/formatNumber';
-import { useAppDispatch } from 'stores/hooks';
+import useFetchInforContract from 'hooks/useFetchInforContract';
 
 interface Props {
   name?: string;
@@ -287,7 +277,6 @@ const useWindowSize = () => {
 };
 
 const Layout: React.FC<Props> = ({ children }) => {
-  const dispatch = useAppDispatch();
   const history = useHistory();
   const location = useLocation();
 
@@ -311,52 +300,6 @@ const Layout: React.FC<Props> = ({ children }) => {
     window.location.reload();
   };
 
-  const fetchApy = async () => {
-    const response = await getRewardAPYAllNode();
-    const data = _.flatten(response);
-
-    dispatch(
-      setApy({
-        square: formatApy(data[0]),
-        cube: formatApy(data[1]),
-        tesseract: formatApy(data[2]),
-      }),
-    );
-  };
-
-  const fetchPrice = async () => {
-    const response = await getPriceAllNode();
-    const data = _.flatten(response);
-
-    dispatch(
-      setPrice({
-        square: bigNumber2NumberV2(data[0]),
-        cube: bigNumber2NumberV2(data[1]),
-        tesseract: bigNumber2NumberV2(data[2]),
-      }),
-    );
-  };
-
-  const fetchTotal = async () => {
-    const response = await getTotalNodeByType();
-    const data = _.flatten(response);
-
-    dispatch(
-      setTotal({
-        square: bigNumber2NumberV2(data[0], 1),
-        cube: bigNumber2NumberV2(data[1], 1),
-        tesseract: bigNumber2NumberV2(data[2], 1),
-      }),
-    );
-  };
-
-  const fetchRewardAmount = async () => {
-    const response = await getRewardAmount();
-    const data = bigNumber2NumberV2(response[0], 1e9);
-
-    dispatch(setRewardAmount(data));
-  };
-
   useEffect(() => {
     if (width < 1200) {
       setOpen(false);
@@ -365,12 +308,7 @@ const Layout: React.FC<Props> = ({ children }) => {
     }
   }, [width]);
 
-  useEffect(() => {
-    fetchApy();
-    fetchPrice();
-    fetchTotal();
-    fetchRewardAmount();
-  }, []);
+  useFetchInforContract();
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
