@@ -34,16 +34,17 @@ interface Props {
 
 const MyContract: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
+  const defaultData = {
+    square: '0',
+    cube: '0',
+    tesseract: '0',
+  };
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
 
   const myReward = useFetchRewardAmount();
-  const [countMyContract, setCountMyContract] = useState({
-    square: '0',
-    cube: '0',
-    tesseract: '0',
-  });
+  const [countMyContract, setCountMyContract] = useState(defaultData);
 
   const fetchDataContract = async (): Promise<void> => {
     try {
@@ -71,9 +72,20 @@ const MyContract: React.FC<Props> = () => {
     } catch (e) {}
   };
 
+  const resetData = () => {
+    dispatch(unSetDataMyContracts());
+    dispatch(unSetNodes());
+    dispatch(unSetRewardAmount());
+    setCountMyContract(defaultData);
+  };
+
   useEffect(() => {
     currentUserAddress && resolveRequestAfterTime(5000);
   }, []);
+
+  useEffect(() => {
+    resetData();
+  }, [currentUserAddress]);
 
   useEffect(() => {
     const dataCountByType = _.countBy(dataMyContracts, 'type');
@@ -86,10 +98,8 @@ const MyContract: React.FC<Props> = () => {
       });
       return;
     }
-    dispatch(unSetDataMyContracts());
-    dispatch(unSetNodes());
-    dispatch(unSetRewardAmount());
-  }, [dataMyContracts.length, currentUserAddress]);
+    resetData();
+  }, [dataMyContracts.length]);
 
   useInterval(async () => {
     await fetchDataContract();
