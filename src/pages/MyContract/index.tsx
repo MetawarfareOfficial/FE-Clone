@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import { Statistic, TableContracts } from 'components/MyContract';
 
@@ -18,6 +18,8 @@ import { ContractResponse } from 'interfaces/MyContract';
 import { setDataMyContracts, setRewardAmount } from 'services/contract';
 import useInterval from 'hooks/useInterval';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
+import _ from 'lodash';
+import { formatPrice } from '../../helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -28,6 +30,14 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
+  const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
+
+  const [myReward, setMyReward] = useState('0');
+  const [countMyContract, setCountMyContract] = useState({
+    square: '0',
+    cube: '0',
+    tesseract: '0',
+  });
 
   const fetchDataContract = async (): Promise<void> => {
     try {
@@ -48,35 +58,67 @@ const MyContract: React.FC<Props> = () => {
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
       dataMyContracts.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
-      const dataRewardAmount = bigNumber2NumberV2(rewardAmount[0], 1e9);
+      const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e9);
 
       dispatch(setDataMyContracts(dataMyContracts));
-      dispatch(setRewardAmount(dataRewardAmount));
+      dispatch(setRewardAmount(dataRw));
     } catch (e) {}
   };
 
   useInterval(async () => {
     await fetchDataContract();
-  }, 1000);
+  }, 5000);
+
+  useEffect(() => {
+    const dataCountByType = _.countBy(dataMyContracts, 'type');
+
+    if (dataCountByType && dataCountByType['0']) {
+      setCountMyContract({
+        square: `${dataCountByType['0']}`,
+        cube: `${dataCountByType['1']}`,
+        tesseract: `${dataCountByType['2']}`,
+      });
+    }
+  }, [dataMyContracts.length]);
+
+  useEffect(() => {
+    if (dataRewardAmount) {
+      setMyReward(formatPrice(dataRewardAmount.toString()));
+      return;
+    }
+    setMyReward('0.00');
+  }, [dataRewardAmount]);
 
   return (
     <Box>
       <Box sx={{ width: '100%', margin: '30px 0' }}>
         <Grid container spacing={3}>
           <Grid item md={3}>
-            <Statistic icon={SquareIcon} color="#E5E5FE" title="Square" text="Contract" value="5" />
+            <Statistic
+              icon={SquareIcon}
+              color="#E5E5FE"
+              title="Square"
+              text="Contract"
+              value={countMyContract.square}
+            />
           </Grid>
           <Grid item md={3}>
-            <Statistic icon={CubeIcon} color="#D2FFDB" title="CUBE" text="Contract" value="0" />
+            <Statistic icon={CubeIcon} color="#D2FFDB" title="CUBE" text="Contract" value={countMyContract.cube} />
           </Grid>
           <Grid item md={3}>
-            <Statistic icon={TessIcon} color="#DBECFD" title="Tesseract" text="Contract" value="3" />
+            <Statistic
+              icon={TessIcon}
+              color="#DBECFD"
+              title="Tesseract"
+              text="Contract"
+              value={countMyContract.tesseract}
+            />
           </Grid>
           <Grid item md={3}>
             <Statistic
               color={currentUserAddress ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
               title="My Rewards"
-              value="0.000"
+              value={myReward}
             />
           </Grid>
         </Grid>

@@ -5,7 +5,7 @@ const initialState = {
   price: { square: 0, cube: 0, tesseract: 0 },
   nodes: 0,
   dataMyContracts: [],
-  rewardAmount: 0,
+  dataRewardAmount: 0,
 };
 
 const dataContractSlice = createSlice({
@@ -28,10 +28,10 @@ const dataContractSlice = createSlice({
       state.dataMyContracts = action.payload;
     },
     setRewardAmount: (state, action) => {
-      state.rewardAmount = action.payload;
+      state.dataRewardAmount = action.payload;
     },
     unSetRewardAmount: (state) => {
-      state.rewardAmount = 0;
+      state.dataRewardAmount = 0;
     },
   },
 });
