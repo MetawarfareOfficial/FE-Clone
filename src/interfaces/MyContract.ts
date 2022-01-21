@@ -1,4 +1,4 @@
-export interface MyContract {
+export interface MineContract {
   mintDate: string;
   name: string;
   type: string;

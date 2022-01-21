@@ -6,3 +6,7 @@ export const formatTimestamp = (timestamp: string, formatter: string): string =>
   }
   return moment(new Date()).format(formatter);
 };
+
+export const formatTimestampV2 = (timestamp: string): string => {
+  return moment.unix(Number(timestamp)).format('MMM DD YYYY');
+};

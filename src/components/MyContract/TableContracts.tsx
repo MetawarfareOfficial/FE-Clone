@@ -17,6 +17,8 @@ import {
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useAppSelector } from 'stores/hooks';
+import { formatTimestampV2 } from '../../helpers/formatTimestamp';
+import { formatPrice } from '../../helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -164,12 +166,12 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             {data.length > 0 ? (
               data.map((item, i) => (
                 <TableRow key={i}>
-                  <TableCellContent>{item.mintDate}</TableCellContent>
+                  <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
                   <TableCellContent align="center">{item.name}</TableCellContent>
                   <TableCellContent align="center">{item.type}</TableCellContent>
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>
-                  <TableCellContent align="center">{item.rewards}</TableCellContent>
+                  <TableCellContent align="center">{formatPrice(item.rewards)}</TableCellContent>
                   <TableCellContent align="right">
                     <ButtonClaim size="small" variant="outlined" color="primary">
                       Claim

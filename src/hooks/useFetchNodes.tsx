@@ -30,6 +30,7 @@ export function useFetchNodes(crtNodeOk?: boolean) {
           currentZeroXBlockPerDays: [],
           rewards: parseDataMyContract(rewards[0]),
         } as ContractResponse);
+        dataMyContracts.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
 
         dispatch(setNodes(nodes));
         dispatch(setDataMyContracts(dataMyContracts));
