@@ -146,7 +146,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             <TableRow>
               <TableCellHeader>Mint Date</TableCellHeader>
               <TableCellHeader align="center">Name</TableCellHeader>
-              <TableCellHeader align="center">Type</TableCellHeader>
+              <TableCellHeader align="left">Type</TableCellHeader>
               <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
@@ -168,8 +168,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               data.map((item, i) => (
                 <TableRow key={i}>
                   <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
-                  <TableCellContent align="center">{item.name}</TableCellContent>
-                  <TableCellContent align="center">{formatCType(item.type)}</TableCellContent>
+                  <TableCellContent sx={{ width: { xs: 'auto', lg: '200px' } }}>{item.name}</TableCellContent>
+                  <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>
                   <TableCellContent align="center">{formatPrice(item.rewards)}</TableCellContent>
