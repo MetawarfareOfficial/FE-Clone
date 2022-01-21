@@ -125,3 +125,19 @@ export const getRewardOfNodes = async (): Promise<[string]> => {
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getTypeOfNodes = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesTypes.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getRewardAmount = async (): Promise<[BigNumber]> => {
+  try {
+    return contractWithSigner.functions.getRewardAmount.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};

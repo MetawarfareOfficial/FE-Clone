@@ -6,11 +6,18 @@ import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { getNameOfNodes, getRewardOfNodes, getTimeCreatedOfNodes } from 'helpers/interractiveContract';
+import {
+  getNameOfNodes,
+  getRewardAmount,
+  getRewardOfNodes,
+  getTimeCreatedOfNodes,
+  getTypeOfNodes,
+} from 'helpers/interractiveContract';
 import { parseDataMyContract, zipDataMyContract } from 'helpers/zipDataMyContract';
 import { ContractResponse } from 'interfaces/MyContract';
-import { setDataMyContracts } from 'services/contract';
+import { setDataMyContracts, setRewardAmount } from 'services/contract';
 import useInterval from 'hooks/useInterval';
+import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 
 interface Props {
   title?: string;
@@ -24,21 +31,27 @@ const MyContract: React.FC<Props> = () => {
 
   const fetchDataContract = async (): Promise<void> => {
     try {
-      const [mintDates, names, rewards] = await Promise.all([
+      const [mintDates, names, rewards, types, rewardAmount] = await Promise.all([
         getTimeCreatedOfNodes(),
         getNameOfNodes(),
         getRewardOfNodes(),
+        getTypeOfNodes(),
+        getRewardAmount(),
       ]);
+
       const dataMyContracts = zipDataMyContract({
         mintDates: parseDataMyContract(mintDates[0]),
         names: parseDataMyContract(names[0]),
-        types: [],
+        types: parseDataMyContract(types[0]),
         initZeroXBlockPerDays: [],
         currentZeroXBlockPerDays: [],
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
       dataMyContracts.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
+      const dataRewardAmount = bigNumber2NumberV2(rewardAmount[0], 1e9);
+
       dispatch(setDataMyContracts(dataMyContracts));
+      dispatch(setRewardAmount(dataRewardAmount));
     } catch (e) {}
   };
 

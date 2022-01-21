@@ -5,6 +5,7 @@ const initialState = {
   price: { square: 0, cube: 0, tesseract: 0 },
   nodes: 0,
   dataMyContracts: [],
+  rewardAmount: 0,
 };
 
 const dataContractSlice = createSlice({
@@ -26,9 +27,16 @@ const dataContractSlice = createSlice({
     setDataMyContracts: (state, action) => {
       state.dataMyContracts = action.payload;
     },
+    setRewardAmount: (state, action) => {
+      state.rewardAmount = action.payload;
+    },
+    unSetRewardAmount: (state) => {
+      state.rewardAmount = 0;
+    },
   },
 });
 
-export const { setApy, setPrice, setNodes, unSetNodes, setDataMyContracts } = dataContractSlice.actions;
+export const { setApy, setPrice, setNodes, unSetNodes, setDataMyContracts, setRewardAmount, unSetRewardAmount } =
+  dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;

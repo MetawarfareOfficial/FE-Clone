@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js';
 import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
-import { useFetchNodes } from '../../hooks/useFetchNodes';
+import { useFetchNodes } from 'hooks/useFetchNodes';
 
 interface Props {
   id: any;

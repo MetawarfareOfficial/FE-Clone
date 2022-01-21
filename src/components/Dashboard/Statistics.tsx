@@ -5,7 +5,7 @@ import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps }
 import { TokenPrice } from 'interfaces/TokenPrice';
 import { formatPrice } from 'helpers/formatPrice';
 import { useHistory } from 'react-router-dom';
-import { useAppSelector } from '../../stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;

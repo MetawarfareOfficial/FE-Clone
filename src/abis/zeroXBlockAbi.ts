@@ -230,6 +230,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'confirmRewardUpdates',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'string[]', name: 'names', type: 'string[]' },
       { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
@@ -344,6 +351,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'getNodesTypes',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'enum ContractType', name: 'cType', type: 'uint8' }],
     name: 'getRewardAPYPerNode',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -367,6 +381,13 @@ export const zeroXBlockAbi = [
   {
     inputs: [],
     name: 'getTotalCreatedNodes',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'enum ContractType', name: '_contractType', type: 'uint8' }],
+    name: 'getTotalCreatedNodesPerContractType',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -399,6 +420,13 @@ export const zeroXBlockAbi = [
     inputs: [],
     name: 'nodeRewardManager',
     outputs: [{ internalType: 'contract NODERewardManagement', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'ownedNodesCountLimit',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -589,7 +617,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
-    name: 'updateLiquiditFee',
+    name: 'updateLiquidityFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

@@ -30,12 +30,12 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoImg from 'assets/images/logo.svg';
 import LogoIcon from 'assets/images/logo-ic.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
-import { getPriceAllNode, getRewardAPYAllNode } from '../../helpers/interractiveContract';
+import { getPriceAllNode, getRewardAPYAllNode } from 'helpers/interractiveContract';
 import _ from 'lodash';
-import { setApy, setPrice } from '../../services/contract';
-import { formatApy } from '../../helpers/formatApy';
-import { bigNumber2NumberV2 } from '../../helpers/formatNumber';
-import { useAppDispatch } from '../../stores/hooks';
+import { setApy, setPrice } from 'services/contract';
+import { formatApy } from 'helpers/formatApy';
+import { bigNumber2NumberV2 } from 'helpers/formatNumber';
+import { useAppDispatch } from 'stores/hooks';
 
 interface Props {
   name?: string;
