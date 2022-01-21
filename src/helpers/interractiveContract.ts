@@ -101,3 +101,27 @@ export const getNumberNodeOf = async (address: string): Promise<[BigNumber]> => 
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getTimeCreatedOfNodes = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesCreatime.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getNameOfNodes = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesNames.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getRewardOfNodes = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesRewards.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};

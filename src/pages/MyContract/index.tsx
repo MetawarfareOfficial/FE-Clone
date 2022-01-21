@@ -1,8 +1,5 @@
 import React from 'react';
-import { dataContracts } from './data';
 import { Box, Grid } from '@mui/material';
-
-// import { Banner } from 'components/Base/Banner';
 import { Statistic, TableContracts } from 'components/MyContract';
 
 import SquareIcon from 'assets/images/square.gif';
@@ -16,6 +13,7 @@ interface Props {
 
 const MyContract: React.FC<Props> = () => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
 
   return (
     <Box>
@@ -40,7 +38,7 @@ const MyContract: React.FC<Props> = () => {
         </Grid>
       </Box>
 
-      <TableContracts data={currentUserAddress ? dataContracts : []} />
+      <TableContracts data={currentUserAddress ? dataMyContracts : []} />
     </Box>
   );
 };
