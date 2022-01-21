@@ -162,6 +162,9 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
       height: '4px',
     },
   },
+  [theme.breakpoints.down('md')]: {
+    maxHeight: 'calc(100vh - 390px)',
+  },
 }));
 
 const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
@@ -177,7 +180,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             <TableRow>
               <TableCellHeader>Mint Date</TableCellHeader>
               <TableCellHeader align="center">Name</TableCellHeader>
-              <TableCellHeader align="center">Type</TableCellHeader>
+              <TableCellHeader align="center" sx={{ width: { xs: 'auto', lg: '200px' } }}>
+                Type
+              </TableCellHeader>
               <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
@@ -194,7 +199,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                 <TableRow key={i}>
                   <TableCellContent>{item.mintDate}</TableCellContent>
                   <TableCellContent align="center">{item.name}</TableCellContent>
-                  <TableCellContent align="center">{item.type}</TableCellContent>
+                  <TableCellContent align="center" sx={{ width: { xs: 'auto', lg: '200px' } }}>
+                    {item.type}
+                  </TableCellContent>
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>
                   <TableCellContent align="center">{item.rewards}</TableCellContent>

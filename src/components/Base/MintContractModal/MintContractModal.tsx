@@ -63,7 +63,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ViewIcon = styled(Box)<BoxProps>(() => ({
+const ViewIcon = styled(Box)<BoxProps>(({ theme }) => ({
   width: '55px',
   height: '55px',
   marginRight: '10px',
@@ -73,9 +73,14 @@ const ViewIcon = styled(Box)<BoxProps>(() => ({
   img: {
     width: '100%',
   },
+
+  [theme.breakpoints.down('lg')]: {
+    width: '42px',
+    height: '42px',
+  },
 }));
 
-const HeaderText = styled(Typography)<TypographyProps>(() => ({
+const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontSize: '18px',
   lineHeight: '27px',
@@ -83,25 +88,39 @@ const HeaderText = styled(Typography)<TypographyProps>(() => ({
   textTransform: 'uppercase',
   fontWeight: '600',
   maxWidth: '105px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '16px',
+    lineHeight: '24px',
+  },
 }));
 
-const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
+const CloseIcon = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   width: '28px',
   height: '28px',
   padding: '0',
   border: 'none',
-  marginLeft: '65px',
+  marginLeft: 'auto',
 
   img: {
     width: '100%',
   },
+
+  [theme.breakpoints.down('lg')]: {
+    width: '20px',
+    height: '20px',
+  },
 }));
 
-const Header = styled(DialogTitle)<DialogTitleProps>(() => ({
+const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '20px 21px',
   marginBottom: '20px',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '16px 21px',
+  },
 }));
 
 const Content = styled(DialogContent)<DialogContentProps>(() => ({

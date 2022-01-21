@@ -7,6 +7,7 @@ import { BoxProps } from '@mui/material/Box';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
+import SliderScroll from '../Base/SliderScroll/index';
 
 interface Props {
   title?: string;
@@ -18,6 +19,14 @@ interface BoxTypeProps extends BoxProps {
   color: string;
 }
 
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
+  padding: 0,
+
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: '15px',
+  },
+}));
+
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: '#293247',
   margin: ' 0 0 31px',
@@ -27,7 +36,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
 
   [theme.breakpoints.down('lg')]: {
-    fontSize: '20px',
+    fontSize: '19px',
     lineHeight: '32px',
     margin: '0 0 20px',
   },
@@ -84,7 +93,7 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
 
   [theme.breakpoints.down('lg')]: {
-    fontSize: '11px',
+    fontSize: '8px',
     lineHeight: '16px',
   },
 }));
@@ -103,12 +112,17 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const BoxTotal = styled(Box)<BoxTypeProps>(({ color, shadow }) => ({
+const BoxTotal = styled(Box)<BoxTypeProps>(({ color, shadow, theme }) => ({
   borderRadius: '13px',
   overflow: 'hidden',
   backgroundColor: `${color}`,
   boxShadow: `${shadow}`,
   display: 'flex',
+
+  [theme.breakpoints.down('sm')]: {
+    marginRight: '13px',
+    minWidth: '185px',
+  },
 }));
 
 const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
@@ -121,6 +135,9 @@ const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     width: 'calc(100% - 115px)',
     padding: '12px 16px 16px',
+  },
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
   },
 }));
 
@@ -135,6 +152,10 @@ const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     width: '115px',
     padding: '8px',
+  },
+  [theme.breakpoints.down('md')]: {
+    width: 0,
+    display: 'none',
   },
 }));
 
@@ -168,6 +189,48 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
 const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
   const boxRef = useRef<any>(null);
   const [width] = useWindowSize();
+  const sliderRef = useRef<any>(null);
+
+  const settings = {
+    className: 'slider variable-width',
+    dots: false,
+    arrows: false,
+    infinite: false,
+    centerMode: false,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    variableWidth: true,
+    speed: 300,
+    responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+  const scroll = (e: any) => {
+    if (sliderRef === null) {
+      return 0;
+    } else {
+      if (e.wheelDelta > 0) {
+        sliderRef.current.slickPrev();
+      } else {
+        sliderRef.current.slickNext();
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('wheel', scroll, true);
+
+    return () => {
+      window.removeEventListener('wheel', scroll, true);
+    };
+  }, []);
 
   useEffect(() => {
     if (boxRef && boxRef.current) {
@@ -177,12 +240,100 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
   }, [width]);
 
   return (
-    <Box>
+    <Wrapper>
       <Title>Total Minted Contracts</Title>
 
-      <div ref={boxRef}>
-        <Grid container spacing="30px">
-          <Grid item xs={4} md={12}>
+      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        <div ref={boxRef}>
+          <Grid container spacing={{ sm: '24px', md: '30px' }}>
+            <Grid item xs={4} md={12}>
+              <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+                <BoxLeft>
+                  <BoxHeader>
+                    <ViewImage>
+                      <img alt="" src={SquareIcon} width="100%" />
+                    </ViewImage>
+
+                    <BoxHeaderContent>
+                      <HeaderTitle>Square</HeaderTitle>
+                      <HeaderText>Contract</HeaderText>
+                    </BoxHeaderContent>
+                  </BoxHeader>
+
+                  <TitleBox>30</TitleBox>
+                  <TextBox>Contracts minted</TextBox>
+                </BoxLeft>
+
+                <BoxRight>
+                  <Box>
+                    <Description>5 0xB</Description>
+                    <Description>Earn 0.03 0xB/day</Description>
+                    <Description>250% APY</Description>
+                  </Box>
+                </BoxRight>
+              </BoxTotal>
+            </Grid>
+            <Grid item xs={4} md={12}>
+              <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+                <BoxLeft>
+                  <BoxHeader>
+                    <ViewImage>
+                      <img alt="" src={CubeIcon} width="100%" />
+                    </ViewImage>
+
+                    <BoxHeaderContent>
+                      <HeaderTitle>Cube </HeaderTitle>
+                      <HeaderText>Contract</HeaderText>
+                    </BoxHeaderContent>
+                  </BoxHeader>
+
+                  <TitleBox>30</TitleBox>
+                  <TextBox>Contracts minted</TextBox>
+                </BoxLeft>
+
+                <BoxRight>
+                  <Box>
+                    <Description>15 0xB</Description>
+                    <Description>Earn 0.16 0xB/day</Description>
+                    <Description>400% APY</Description>
+                  </Box>
+                </BoxRight>
+              </BoxTotal>
+            </Grid>
+            <Grid item xs={4} md={12}>
+              <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
+                <BoxLeft>
+                  <BoxHeader>
+                    <ViewImage>
+                      <img alt="" src={TessIcon} width="100%" />
+                    </ViewImage>
+
+                    <BoxHeaderContent>
+                      <HeaderTitle>Tesseract</HeaderTitle>
+                      <HeaderText>Contract</HeaderText>
+                    </BoxHeaderContent>
+                  </BoxHeader>
+
+                  <TitleBox>30</TitleBox>
+                  <TextBox>Contracts minted</TextBox>
+                </BoxLeft>
+
+                <BoxRight>
+                  <Box>
+                    <Description>30 0xB</Description>
+                    <Description>Earn 0.41 0xB/day</Description>
+                    <Description>500% APY</Description>
+                  </Box>
+                </BoxRight>
+              </BoxTotal>
+            </Grid>
+          </Grid>
+        </div>
+      </Box>
+
+      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+        <SliderScroll elRef={sliderRef} settings={settings}>
+          <Box>
             <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
               <BoxLeft>
                 <BoxHeader>
@@ -208,8 +359,8 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                 </Box>
               </BoxRight>
             </BoxTotal>
-          </Grid>
-          <Grid item xs={4} md={12}>
+          </Box>
+          <Box>
             <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
               <BoxLeft>
                 <BoxHeader>
@@ -235,8 +386,8 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                 </Box>
               </BoxRight>
             </BoxTotal>
-          </Grid>
-          <Grid item xs={4} md={12}>
+          </Box>
+          <Box>
             <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
               <BoxLeft>
                 <BoxHeader>
@@ -262,10 +413,10 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                 </Box>
               </BoxRight>
             </BoxTotal>
-          </Grid>
-        </Grid>
-      </div>
-    </Box>
+          </Box>
+        </SliderScroll>
+      </Box>
+    </Wrapper>
   );
 };
 

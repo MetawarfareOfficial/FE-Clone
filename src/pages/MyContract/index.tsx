@@ -20,16 +20,16 @@ const MyContract: React.FC<Props> = () => {
     <Box>
       <Box sx={{ width: '100%', margin: '30px 0' }}>
         <Grid container spacing={3}>
-          <Grid item md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <Statistic icon={SquareIcon} color="#E5E5FE" title="Square" text="Contract" value="5" />
           </Grid>
-          <Grid item md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <Statistic icon={CubeIcon} color="#D2FFDB" title="CUBE" text="Contract" value="0" />
           </Grid>
-          <Grid item md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <Statistic icon={TessIcon} color="#DBECFD" title="Tesseract" text="Contract" value="3" />
           </Grid>
-          <Grid item md={3}>
+          <Grid item xs={12} sm={6} md={3}>
             <Statistic
               color={connected ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
               title="My Rewards"

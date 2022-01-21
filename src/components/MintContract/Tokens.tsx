@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
+
+import SliderScroll from 'components/Base/SliderScroll';
 
 interface Props {
   title?: string;
@@ -21,11 +23,22 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '20px',
     lineHeight: '32px',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '21px',
+    lineHeight: '31px',
+    maxWidth: '249px',
+    margin: '0 auto 21px',
+  },
 }));
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   marginTop: '35px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: '30px',
+  },
 }));
 
 const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
@@ -42,6 +55,9 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     padding: '16px 24px',
     minHeight: '100px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    marginRight: '30px',
   },
 }));
 
@@ -94,45 +110,146 @@ const Sale = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
+const SliderItem = styled(Box)<BoxProps>(() => ({
+  paddingTop: '23px',
+  paddingLeft: '13px',
+}));
+
 const Tokens: React.FC<Props> = () => {
+  const holdingRef = useRef<any>(null);
+
+  const settings = {
+    className: 'slider variable-width',
+    dots: false,
+    arrows: false,
+    infinite: false,
+    centerMode: false,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    variableWidth: true,
+    speed: 300,
+    responsive: [
+      {
+        breakpoint: 900,
+        settings: {
+          className: 'slider variable-width',
+          dots: false,
+          arrows: false,
+          infinite: false,
+          centerMode: false,
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          variableWidth: true,
+          speed: 300,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+  const scroll = (e: any) => {
+    if (holdingRef === null) {
+      return 0;
+    } else {
+      if (e.wheelDelta > 0) {
+        holdingRef.current.slickPrev();
+      } else {
+        holdingRef.current.slickNext();
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('wheel', scroll, true);
+
+    return () => {
+      window.removeEventListener('wheel', scroll, true);
+    };
+  }, []);
+
   return (
     <Wrapper>
       <Title>Minted Contract Tokens Distribution</Title>
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={3} lg={3}>
-          <BoxSale>
-            <Sale>10%</Sale>
-            <Text>
-              <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
-            </Text>
-          </BoxSale>
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Grid container spacing={4}>
+          <Grid item xs={12} sm={6} md={3} lg={3}>
+            <BoxSale>
+              <Sale>10%</Sale>
+              <Text>
+                <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
+              </Text>
+            </BoxSale>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} lg={3}>
+            <BoxSale>
+              <Sale>20%</Sale>
+              <Text>
+                <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
+              </Text>
+            </BoxSale>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} lg={3}>
+            <BoxSale>
+              <Sale>30%</Sale>
+              <Text>
+                <span>Token</span> in Treasury Wallet as 100% USDC
+              </Text>
+            </BoxSale>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3} lg={3}>
+            <BoxSale>
+              <Sale>50%</Sale>
+              <Text>
+                <span>Token</span> in Rewards Wallet as 100% 0xB
+              </Text>
+            </BoxSale>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={3} lg={3}>
-          <BoxSale>
-            <Sale>20%</Sale>
-            <Text>
-              <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
-            </Text>
-          </BoxSale>
-        </Grid>
-        <Grid item xs={12} md={3} lg={3}>
-          <BoxSale>
-            <Sale>30%</Sale>
-            <Text>
-              <span>Token</span> in Treasury Wallet as 100% USDC
-            </Text>
-          </BoxSale>
-        </Grid>
-        <Grid item xs={12} md={3} lg={3}>
-          <BoxSale>
-            <Sale>50%</Sale>
-            <Text>
-              <span>Token</span> in Rewards Wallet as 100% 0xB
-            </Text>
-          </BoxSale>
-        </Grid>
-      </Grid>
+      </Box>
+
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        <SliderScroll elRef={holdingRef} settings={settings}>
+          <SliderItem>
+            <BoxSale>
+              <Sale>10%</Sale>
+              <Text>
+                <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
+              </Text>
+            </BoxSale>
+          </SliderItem>
+          <SliderItem>
+            <BoxSale>
+              <Sale>20%</Sale>
+              <Text>
+                <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
+              </Text>
+            </BoxSale>
+          </SliderItem>
+          <SliderItem>
+            <BoxSale>
+              <Sale>30%</Sale>
+              <Text>
+                <span>Token</span> in Treasury Wallet as 100% USDC
+              </Text>
+            </BoxSale>
+          </SliderItem>
+          <SliderItem>
+            <BoxSale>
+              <Sale>50%</Sale>
+              <Text>
+                <span>Token</span> in Rewards Wallet as 100% 0xB
+              </Text>
+            </BoxSale>
+          </SliderItem>
+        </SliderScroll>
+      </Box>
     </Wrapper>
   );
 };

@@ -19,7 +19,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   return (
     <Box>
-      <Box mt="30px" mb="45px">
+      <Box mt={{ md: 0, lg: '30px' }} mb="45px">
         <Statistics />
       </Box>
 

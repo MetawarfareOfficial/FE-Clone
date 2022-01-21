@@ -8,15 +8,6 @@ import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 
-interface Props {
-  title?: string;
-}
-
-const Wrapper = styled(Box)<BoxProps>(() => ({
-  width: '100%',
-  marginTop: '35px',
-}));
-
 const data = [
   {
     name: 'Page A',
@@ -62,6 +53,20 @@ const data = [
   },
 ];
 
+interface Props {
+  title?: string;
+}
+
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
+  width: '100%',
+  marginTop: '35px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 15px',
+  },
+}));
+
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
@@ -75,6 +80,10 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '20px',
     lineHeight: '32px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '21px',
+    lineHeight: '31px',
   },
 }));
 

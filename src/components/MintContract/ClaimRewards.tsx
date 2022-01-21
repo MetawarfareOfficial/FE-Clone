@@ -7,9 +7,14 @@ interface Props {
   title?: string;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   marginTop: '35px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 15px',
+  },
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -25,6 +30,11 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '20px',
     lineHeight: '32px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '21px',
+    lineHeight: '31px',
+    marginBottom: '28px',
   },
 }));
 
@@ -45,6 +55,11 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
     padding: '20px',
     fontSize: '12px',
     lineHeight: '18px',
+  },
+  [theme.breakpoints.down('lg')]: {
+    padding: '40px 42px 35px',
+    fontSize: '14px',
+    lineHeight: '25px',
   },
 }));
 
