@@ -6,6 +6,7 @@ import { TokenPrice } from 'interfaces/TokenPrice';
 import { formatPrice } from 'helpers/formatPrice';
 import { useHistory } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
+import useFetchRewardAmount from '../../hooks/useFetchRewardAmount';
 
 interface Props {
   title?: string;
@@ -59,6 +60,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
   const history = useHistory();
 
   const nodes = useAppSelector((state) => state.contract.nodes);
+  const myReward = useFetchRewardAmount();
 
   return (
     <Box>
@@ -90,7 +92,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
         <Grid item xs={12} md={4}>
           <CardBox>
             <Text variant="h5">My Rewards</Text>
-            <Title variant="h2">0.000</Title>
+            <Title variant="h2">{formatPrice(myReward)}</Title>
             <CustomButton
               variant="contained"
               color="secondary"

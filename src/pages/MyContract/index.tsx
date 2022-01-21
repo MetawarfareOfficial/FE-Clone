@@ -19,7 +19,7 @@ import { setDataMyContracts, setRewardAmount } from 'services/contract';
 import useInterval from 'hooks/useInterval';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import _ from 'lodash';
-import { formatPrice } from '../../helpers/formatPrice';
+import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 
 interface Props {
   title?: string;
@@ -30,9 +30,8 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
-  const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
 
-  const [myReward, setMyReward] = useState('0');
+  const myReward = useFetchRewardAmount();
   const [countMyContract, setCountMyContract] = useState({
     square: '0',
     cube: '0',
@@ -80,14 +79,6 @@ const MyContract: React.FC<Props> = () => {
       });
     }
   }, [dataMyContracts.length]);
-
-  useEffect(() => {
-    if (dataRewardAmount) {
-      setMyReward(formatPrice(dataRewardAmount.toString()));
-      return;
-    }
-    setMyReward('0.00');
-  }, [dataRewardAmount]);
 
   return (
     <Box>
