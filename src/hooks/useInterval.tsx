@@ -1,25 +1,19 @@
-import React from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
-interface CallbackType {
-  (arg: any): void;
-}
+function useInterval(callback: () => void, delay: number | null) {
+  const savedCallback = useRef(callback);
 
-const useInterval = (callback: CallbackType, delay: number): void => {
-  const savedCallback = React.useRef<any>();
-
-  React.useEffect(() => {
+  useLayoutEffect(() => {
     savedCallback.current = callback;
   }, [callback]);
 
-  React.useEffect(() => {
-    const tick = () => {
-      savedCallback.current();
-    };
-    if (delay !== null) {
-      const id = setInterval(tick, delay);
-      return () => clearInterval(id);
+  useEffect(() => {
+    if (!delay && delay !== 0) {
+      return;
     }
+    const id = setInterval(() => savedCallback.current(), delay);
+    return () => clearInterval(id);
   }, [delay]);
-};
+}
 
 export default useInterval;
