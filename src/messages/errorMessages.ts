@@ -25,7 +25,7 @@ export const errorMessage = {
   },
   META_MASK_DONT_INSTALLED: {
     title: 'Metamask',
-    message: 'Your browser does not install Metamask!',
+    message: 'Install MetaMask to connect to 0xb-finance',
   },
   CONTRACT_NAME_INVALID: {
     title: 'Contract',

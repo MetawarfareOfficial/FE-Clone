@@ -86,12 +86,13 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    window.ethereum.on('accountsChanged', () => {
-      resetData();
-      fetchDataUserContracts();
-      currentUserAddress && resolveRequestAfterTime(2000);
-      toast.clearWaitingQueue();
-    });
+    window.ethereum &&
+      window.ethereum.on('accountsChanged', () => {
+        resetData();
+        fetchDataUserContracts();
+        currentUserAddress && resolveRequestAfterTime(2000);
+        toast.clearWaitingQueue();
+      });
   }, []);
 
   useEffect(() => {

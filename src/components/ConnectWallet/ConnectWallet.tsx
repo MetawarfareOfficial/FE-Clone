@@ -16,7 +16,7 @@ import {
   unSetZeroXBlockBalance,
 } from 'services/account';
 import { styled } from '@mui/material/styles';
-import { ButtonProps, Button } from '@mui/material';
+import { ButtonProps, Button, Link, LinkProps } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
@@ -60,6 +60,30 @@ const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
+const LinkToMetamask = styled(Link)<LinkProps>(() => ({
+  textDecoration: 'none',
+  display: 'block',
+  textAlign: 'center',
+  padding: '10px',
+  background: 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%), #FFFFFF',
+  color: 'white',
+  borderRadius: '10px',
+}));
+
+const MessageMetamaskNotInstall = styled('p')(() => ({
+  textAlign: 'center',
+  margin: '5px 0',
+}));
+
+const CustomToastWithLink = () => (
+  <div>
+    <MessageMetamaskNotInstall>{errorMessage.META_MASK_DONT_INSTALLED.message}</MessageMetamaskNotInstall>
+    <LinkToMetamask href="https://metamask.io" target={'_blank'}>
+      {"Go to MetaMask's website"}
+    </LinkToMetamask>
+  </div>
+);
+
 const ConnectWallet: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const { active, account, activate, deactivate, error, chainId } = useWeb3React<Web3Provider>();
@@ -71,7 +95,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
-        toast.error(errorMessage.META_MASK_DONT_INSTALLED.message, { hideProgressBar: true });
+        toast.error(CustomToastWithLink, { hideProgressBar: true, autoClose: false });
         return;
       }
       await onClickConnect();
