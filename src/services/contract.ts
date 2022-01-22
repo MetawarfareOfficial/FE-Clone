@@ -16,14 +16,23 @@ const dataContractSlice = createSlice({
     setApy: (state, action) => {
       state.apy = action.payload;
     },
+    unSetApy: (state) => {
+      state.apy = { square: '', cube: '', tesseract: '' };
+    },
     setPrice: (state, action) => {
       state.price = action.payload;
+    },
+    unSetPrice: (state) => {
+      state.price = { square: 0, cube: 0, tesseract: 0 };
     },
     setNodes: (state, action) => {
       state.nodes = action.payload;
     },
     setTotal: (state, action) => {
       state.total = action.payload;
+    },
+    unSetTotal: (state) => {
+      state.total = { square: 0, cube: 0, tesseract: 0 };
     },
     unSetNodes: (state) => {
       state.nodes = 0;
@@ -45,9 +54,12 @@ const dataContractSlice = createSlice({
 
 export const {
   setApy,
+  unSetApy,
   setPrice,
+  unSetPrice,
   setNodes,
   setTotal,
+  unSetTotal,
   unSetNodes,
   setDataMyContracts,
   unSetDataMyContracts,

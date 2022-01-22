@@ -72,7 +72,10 @@ const MyContract: React.FC<Props> = () => {
 
       dispatch(setDataMyContracts(dataCt));
       dispatch(setRewardAmount(dataRw));
-    } catch (e) {}
+    } catch (e) {
+      dispatch(unSetDataMyContracts());
+      dispatch(unSetRewardAmount());
+    }
   };
 
   const resetData = () => {
@@ -117,7 +120,9 @@ const MyContract: React.FC<Props> = () => {
     resetData();
   }, [dataMyContracts.length]);
 
-  useInterval(fetchDataUserContracts, DELAY_TIME);
+  useInterval(() => {
+    if (dataMyContracts.length > 0) fetchDataUserContracts();
+  }, DELAY_TIME);
 
   return (
     <Box>

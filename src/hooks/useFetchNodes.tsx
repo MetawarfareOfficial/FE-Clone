@@ -17,7 +17,7 @@ export function useFetchNodes(crtNodeOk?: boolean) {
         dispatch(setNodes(nodes));
       }
     } catch (err: any) {
-      throw err?.message;
+      dispatch(unSetNodes());
     }
   };
 

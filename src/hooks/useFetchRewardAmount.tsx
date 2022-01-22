@@ -1,21 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useAppSelector } from 'stores/hooks';
-import { formatPrice } from 'helpers/formatPrice';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { getRewardAmount } from 'helpers/interractiveContract';
+import { bigNumber2NumberV2 } from 'helpers/formatNumber';
+import { setRewardAmount, unSetRewardAmount } from 'services/contract';
 
-const useFetchRewardAmount: () => string = () => {
-  const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
+const useFetchRewardAmount = () => {
+  const dispatch = useAppDispatch();
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
-  const [myReward, setMyReward] = useState('0');
+  const fetchRewardAmount = async () => {
+    try {
+      const response = await getRewardAmount();
+      const data = bigNumber2NumberV2(response[0], 1e9);
+
+      dispatch(setRewardAmount(data));
+    } catch (e) {
+      dispatch(unSetRewardAmount());
+    }
+  };
 
   useEffect(() => {
-    if (dataRewardAmount) {
-      setMyReward(formatPrice(dataRewardAmount.toString()));
-      return;
+    if (currentUserAddress) {
+      fetchRewardAmount();
     }
-    setMyReward('0.00');
-  }, [dataRewardAmount]);
-
-  return myReward;
+  }, [currentUserAddress]);
 };
 
 export default useFetchRewardAmount;
