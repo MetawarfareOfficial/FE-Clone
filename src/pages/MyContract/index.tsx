@@ -26,6 +26,8 @@ import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import _ from 'lodash';
 import { resolveRequestAfterTime } from 'services/resolveRequestAfterTime';
 import { toast } from 'react-toastify';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/myContract';
 
 interface Props {
   title?: string;
@@ -47,7 +49,7 @@ const MyContract: React.FC<Props> = () => {
 
   const [countMyContract, setCountMyContract] = useState(defaultData);
 
-  const fetchDataContractOfUser = async (): Promise<void> => {
+  const fetchDataUserContracts = async (): Promise<void> => {
     try {
       const [mintDates, names, rewards, types, rewardAmount] = await Promise.all([
         getTimeCreatedOfNodes(),
@@ -83,7 +85,7 @@ const MyContract: React.FC<Props> = () => {
   useEffect(() => {
     window.ethereum.on('accountsChanged', () => {
       resetData();
-      fetchDataContractOfUser();
+      fetchDataUserContracts();
       currentUserAddress && resolveRequestAfterTime(2000);
       toast.clearWaitingQueue();
     });
@@ -92,7 +94,7 @@ const MyContract: React.FC<Props> = () => {
   useEffect(() => {
     if (currentUserAddress) {
       if (dataMyContracts.length === 0) {
-        fetchDataContractOfUser();
+        fetchDataUserContracts();
         resolveRequestAfterTime(2000);
         toast.clearWaitingQueue();
       }
@@ -114,6 +116,8 @@ const MyContract: React.FC<Props> = () => {
     }
     resetData();
   }, [dataMyContracts.length]);
+
+  useInterval(fetchDataUserContracts, DELAY_TIME);
 
   return (
     <Box>

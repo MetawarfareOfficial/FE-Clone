@@ -156,7 +156,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   variant="contained"
                   color="primary"
                   onClick={handleClickClaimAll}
-                  disabled={!currentUserAddress}
+                  disabled={!(currentUserAddress && data.length !== 0)}
                 >
                   Claim all
                 </ButtonClaimAll>
