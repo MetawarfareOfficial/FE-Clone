@@ -22,16 +22,16 @@ import {
   unSetNodes,
   unSetRewardAmount,
 } from 'services/contract';
-import useInterval from 'hooks/useInterval';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import _ from 'lodash';
-import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import { resolveRequestAfterTime } from 'services/resolveRequestAfterTime';
 import { toast } from 'react-toastify';
 
 interface Props {
   title?: string;
 }
+
+declare let window: any;
 
 const MyContract: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
@@ -43,11 +43,11 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
+  const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
 
-  const myReward = useFetchRewardAmount();
   const [countMyContract, setCountMyContract] = useState(defaultData);
 
-  const fetchDataContract = async (): Promise<void> => {
+  const fetchDataContractOfUser = async (): Promise<void> => {
     try {
       const [mintDates, names, rewards, types, rewardAmount] = await Promise.all([
         getTimeCreatedOfNodes(),
@@ -57,7 +57,7 @@ const MyContract: React.FC<Props> = () => {
         getRewardAmount(),
       ]);
 
-      const dataMyContracts = zipDataMyContract({
+      const dataCt = zipDataMyContract({
         mintDates: parseDataMyContract(mintDates[0]),
         names: parseDataMyContract(names[0]),
         types: parseDataMyContract(types[0]),
@@ -65,10 +65,10 @@ const MyContract: React.FC<Props> = () => {
         currentZeroXBlockPerDays: [],
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
-      dataMyContracts.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
+      dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
       const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e9);
 
-      dispatch(setDataMyContracts(dataMyContracts));
+      dispatch(setDataMyContracts(dataCt));
       dispatch(setRewardAmount(dataRw));
     } catch (e) {}
   };
@@ -81,11 +81,23 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    currentUserAddress && resolveRequestAfterTime(5000);
-    toast.clearWaitingQueue();
+    window.ethereum.on('accountsChanged', () => {
+      resetData();
+      fetchDataContractOfUser();
+      currentUserAddress && resolveRequestAfterTime(2000);
+      toast.clearWaitingQueue();
+    });
   }, []);
 
   useEffect(() => {
+    if (currentUserAddress) {
+      if (dataMyContracts.length === 0) {
+        fetchDataContractOfUser();
+        resolveRequestAfterTime(2000);
+        toast.clearWaitingQueue();
+      }
+      return;
+    }
     resetData();
   }, [currentUserAddress]);
 
@@ -102,10 +114,6 @@ const MyContract: React.FC<Props> = () => {
     }
     resetData();
   }, [dataMyContracts.length]);
-
-  useInterval(async () => {
-    await fetchDataContract();
-  }, 5000);
 
   return (
     <Box>
@@ -136,7 +144,7 @@ const MyContract: React.FC<Props> = () => {
             <Statistic
               color={currentUserAddress ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
               title="My Rewards"
-              value={myReward}
+              value={`${dataRewardAmount}`}
             />
           </Grid>
         </Grid>

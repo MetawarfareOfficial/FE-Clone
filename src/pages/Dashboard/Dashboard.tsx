@@ -12,6 +12,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import useFetchInforContract from 'hooks/useFetchInforContract';
+import { useFetchNodes } from '../../hooks/useFetchNodes';
 
 interface DashboardProps {
   name?: string;
@@ -56,6 +57,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   }, [last30DaysPrice, currentPrice]);
 
   useFetchInforContract();
+  useFetchNodes();
 
   useInterval(async () => {
     await dispatch(getCurrentPrice(paramsCurrentPriceApi));

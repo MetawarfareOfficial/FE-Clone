@@ -2,6 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 import { useAppSelector } from 'stores/hooks';
+import { formatPrice } from '../../helpers/formatPrice';
 
 interface Props {
   icon?: string;
@@ -90,7 +91,7 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
         <Title>{title}</Title>
         {text && <Description>{text}</Description>}
       </Content>
-      <Value>{value}</Value>
+      <Value>{formatPrice(value)}</Value>
     </Wrapper>
   );
 };
