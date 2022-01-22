@@ -10,8 +10,8 @@ export const resolveRequestAfterTime = (time: number) => {
     resolveAfter3Sec,
     {
       pending: 'Loading....',
-      success: 'Fetch Data Successfully 👌',
+      success: 'Your contracts data is fetched successfully 👌',
     },
-    { hideProgressBar: true },
+    { hideProgressBar: true, autoClose: 2000 },
   );
 };
