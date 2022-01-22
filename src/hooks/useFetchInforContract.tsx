@@ -1,20 +1,6 @@
-import {
-  getPriceAllNode,
-  getRewardAmount,
-  getRewardAPYAllNode,
-  getTotalNodeByType,
-} from 'helpers/interractiveContract';
+import { getPriceAllNode, getRewardAPYAllNode, getTotalNodeByType } from 'helpers/interractiveContract';
 import _ from 'lodash';
-import {
-  setApy,
-  setPrice,
-  setRewardAmount,
-  setTotal,
-  unSetApy,
-  unSetPrice,
-  unSetRewardAmount,
-  unSetTotal,
-} from 'services/contract';
+import { setApy, setPrice, setTotal, unSetApy, unSetPrice, unSetTotal } from 'services/contract';
 import { formatApy } from 'helpers/formatApy';
 import { useAppDispatch } from 'stores/hooks';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
@@ -74,22 +60,10 @@ const useFetchInforContract = () => {
     }
   };
 
-  const fetchRewardAmount = async () => {
-    try {
-      const response = await getRewardAmount();
-      const data = bigNumber2NumberV2(response[0], 1e9);
-
-      dispatch(setRewardAmount(data));
-    } catch (e) {
-      dispatch(unSetRewardAmount());
-    }
-  };
-
   useEffect(() => {
     fetchApy();
     fetchPrice();
     fetchTotal();
-    fetchRewardAmount();
   }, []);
 };
 

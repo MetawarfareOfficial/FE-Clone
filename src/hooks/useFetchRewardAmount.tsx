@@ -12,17 +12,18 @@ const useFetchRewardAmount = () => {
     try {
       const response = await getRewardAmount();
       const data = bigNumber2NumberV2(response[0], 1e9);
-
-      dispatch(setRewardAmount(data));
+      if (currentUserAddress) {
+        dispatch(setRewardAmount(data));
+        return;
+      }
+      dispatch(unSetRewardAmount());
     } catch (e) {
       dispatch(unSetRewardAmount());
     }
   };
 
   useEffect(() => {
-    if (currentUserAddress) {
-      fetchRewardAmount();
-    }
+    fetchRewardAmount();
   }, [currentUserAddress]);
 };
 
