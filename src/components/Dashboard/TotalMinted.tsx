@@ -8,6 +8,7 @@ import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import { useAppSelector } from 'stores/hooks';
+import { computeEarnedTokenPerDay } from '../../helpers/computeEarnedTokenPerDay';
 
 interface Props {
   title?: string;
@@ -139,7 +140,7 @@ const TotalMinted: React.FC<Props> = () => {
         <BoxRight>
           <Box>
             <Description>{`${dataPrice.square} 0xB`}</Description>
-            <Description>Earn 0.03 0xB/day</Description>
+            <Description>{`Earn ${computeEarnedTokenPerDay(dataPrice.square, dataApy.square)} 0xB/day`}</Description>
             <Description>{`${dataApy.square}% APY`}</Description>
           </Box>
         </BoxRight>
@@ -165,7 +166,7 @@ const TotalMinted: React.FC<Props> = () => {
         <BoxRight>
           <Box>
             <Description>{`${dataPrice.cube} 0xB`}</Description>
-            <Description>Earn 0.16 0xB/day</Description>
+            <Description>{`Earn ${computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)} 0xB/day`}</Description>
             <Description>{`${dataApy.cube}% APY`}</Description>
           </Box>
         </BoxRight>
@@ -191,7 +192,10 @@ const TotalMinted: React.FC<Props> = () => {
         <BoxRight>
           <Box>
             <Description>{`${dataPrice.tesseract} 0xB`}</Description>
-            <Description>Earn 0.41 0xB/day</Description>
+            <Description>{`Earn ${computeEarnedTokenPerDay(
+              dataPrice.tesseract,
+              dataApy.tesseract,
+            )} 0xB/day`}</Description>
             <Description>{`${dataApy.tesseract}% APY`}</Description>
           </Box>
         </BoxRight>

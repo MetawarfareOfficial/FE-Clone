@@ -18,7 +18,7 @@ interface Props {
   name: string;
   value: number;
   apy: string;
-  earn: number;
+  earn: string;
   color: string;
   colorChart: string;
   dataChart: Array<any>;

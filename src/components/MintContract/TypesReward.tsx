@@ -8,6 +8,7 @@ import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import { useAppSelector } from 'stores/hooks';
+import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 
 interface Props {
   title?: string;
@@ -90,7 +91,7 @@ const TypesReward: React.FC<Props> = () => {
         colorChart="#A1A1E1"
         value={dataPrice.square}
         apy={dataApy.square}
-        earn={0.03}
+        earn={computeEarnedTokenPerDay(dataPrice.square, dataApy.square)}
         dataChart={data}
       />
       <TypeReward
@@ -101,7 +102,7 @@ const TypesReward: React.FC<Props> = () => {
         colorChart="#9DE6AB"
         value={dataPrice.cube}
         apy={dataApy.cube}
-        earn={0.16}
+        earn={computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)}
         dataChart={data}
       />
       <TypeReward
@@ -112,7 +113,7 @@ const TypesReward: React.FC<Props> = () => {
         colorChart="#9EC5EB"
         value={dataPrice.tesseract}
         apy={dataApy.tesseract}
-        earn={0.41}
+        earn={computeEarnedTokenPerDay(dataPrice.tesseract, dataApy.tesseract)}
         dataChart={data}
       />
     </Wrapper>
