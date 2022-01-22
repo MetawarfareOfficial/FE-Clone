@@ -12,7 +12,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import useFetchInforContract from 'hooks/useFetchInforContract';
-import { useFetchNodes } from '../../hooks/useFetchNodes';
+import { useFetchNodes } from 'hooks/useFetchNodes';
 
 interface DashboardProps {
   name?: string;

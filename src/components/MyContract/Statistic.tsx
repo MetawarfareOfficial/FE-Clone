@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 import { useAppSelector } from 'stores/hooks';
-import { formatPrice } from '../../helpers/formatPrice';
+import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   icon?: string;

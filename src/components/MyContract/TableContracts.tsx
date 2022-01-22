@@ -20,6 +20,7 @@ import { useAppSelector } from 'stores/hooks';
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatCType } from 'helpers/formatCType';
+import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 
 interface Props {
   title?: string;
@@ -172,7 +173,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>
-                  <TableCellContent align="center">{formatPrice(item.rewards)}</TableCellContent>
+                  <TableCellContent align="center">
+                    {formatPrice(bigNumber2NumberV3(item.rewards, 1e9))}
+                  </TableCellContent>
                   <TableCellContent align="right">
                     <ButtonClaim size="small" variant="outlined" color="primary">
                       Claim

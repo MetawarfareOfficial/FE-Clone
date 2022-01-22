@@ -25,7 +25,7 @@ import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractive
 import { bigNumber2Number } from 'helpers/formatNumber';
 import { unSetNodes, unSetRewardAmount } from 'services/contract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
-import useFetchRewardAmount from '../../hooks/useFetchRewardAmount';
+import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 
 interface Props {
   name?: string;
