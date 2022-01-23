@@ -87,17 +87,18 @@ const MyContract: React.FC<Props> = () => {
     const handleChangeAccounts = () => {
       resetData();
       fetchDataUserContracts();
-      currentUserAddress && resolveRequestAfterTime(2000);
-      toast.clearWaitingQueue();
     };
 
     if (window.ethereum) {
       window.ethereum.removeListener('accountsChanged', handleChangeAccounts);
       window.ethereum.on('accountsChanged', () => {
         handleChangeAccounts();
-        if (width < 600) {
+        if (window.innerWidth < 600) {
           window.location.reload();
+          return;
         }
+        currentUserAddress && resolveRequestAfterTime(2000);
+        toast.clearWaitingQueue();
       });
     }
   }, []);
