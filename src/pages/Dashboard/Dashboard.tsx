@@ -71,7 +71,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   return (
     <Box>
       <Box mt="30px" mb="50px">
-        <Statistics data={tokenPrices.at(-1)} />
+        <Statistics data={_.last(tokenPrices)} />
       </Box>
 
       <Grid container spacing="30px">
