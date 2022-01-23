@@ -1,12 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { statistic } from './data';
 import SliderScroll from '../Base/SliderScroll/SliderScroll';
 
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
 import { TokenPrice } from 'interfaces/TokenPrice';
-// import { useHistory } from 'react-router-dom';
-// import { useAppSelector } from 'stores/hooks';
+import { useAppSelector } from '../../stores/hooks';
+import { formatPrice } from '../../helpers/formatPrice';
+import { StatisticDashboard } from '../../interfaces/StatisticDashboard';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   title?: string;
@@ -109,12 +110,9 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const SliderItem = styled(Box)<BoxProps>(() => ({}));
 
-const Statistics: React.FC<Props> = ({}) => {
-  // const history = useHistory();
+const Statistics: React.FC<Props> = ({ data }) => {
+  const history = useHistory();
   const statsRef = useRef<any>(null);
-
-  // const nodes = useAppSelector((state) => state.contract.nodes);
-  // const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
 
   const settings = {
     className: 'slider variable-width',
@@ -158,6 +156,34 @@ const Statistics: React.FC<Props> = ({}) => {
     ],
   };
 
+  const nodes = useAppSelector((state) => state.contract.nodes);
+  const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
+
+  const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
+
+  useEffect(() => {
+    setStatistic([
+      {
+        title: 'Token Price',
+        value: data?.price ? formatPrice(data.price) : '0.00',
+        nameBtn: 'Buy now',
+        linkTo: '',
+      },
+      {
+        title: 'MY CONTRACTS',
+        value: `${nodes}/100`,
+        nameBtn: 'Mint Contract',
+        linkTo: '/mint-contracts',
+      },
+      {
+        title: 'My Rewards',
+        value: formatPrice(`${myReward}`),
+        nameBtn: 'Claim all',
+        linkTo: '/my-contracts',
+      },
+    ]);
+  }, [nodes, myReward, data?.price]);
+
   return (
     <Wrapper>
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -167,8 +193,14 @@ const Statistics: React.FC<Props> = ({}) => {
               <CardBox>
                 <Text variant="h5">{item.title}</Text>
                 <Title variant="h2">{item.value}</Title>
-                <CustomButton variant="contained" color="secondary">
-                  Buy now
+                <CustomButton
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    history.push(item.linkTo);
+                  }}
+                >
+                  {item.nameBtn}
                 </CustomButton>
               </CardBox>
             </Grid>
