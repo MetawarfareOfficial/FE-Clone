@@ -63,7 +63,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   boxSizing: 'border-box',
 
   [theme.breakpoints.down('sm')]: {
-    padding: '0 15px',
+    padding: '0 14px',
   },
 }));
 

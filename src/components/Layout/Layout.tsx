@@ -15,6 +15,7 @@ import {
   ListItem,
   ListItemProps,
   ListItemText,
+  ListItemTextProps,
   ListItemIcon,
   ListItemIconProps,
   Tooltip,
@@ -59,6 +60,10 @@ interface ListCustomProps extends ListProps {
 
 interface BoxMenuProps extends BoxProps {
   active: boolean;
+}
+
+interface ListItemTextCustomProps extends ListItemTextProps {
+  open: boolean;
 }
 
 const drawerWidth = 224;
@@ -176,6 +181,8 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
     cursor: 'pointer',
     color: '#293247',
     fontWeight: 'bold',
+    background: '#dbecfd88',
+    opacity: 0.8,
   },
 }));
 
@@ -297,34 +304,15 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 const MenusMobile = styled(Box)<BoxProps>(({ theme }) => ({
-  // width: '100%',
   display: 'none',
   alignItems: 'center',
   marginBottom: '34px',
-  // width: '660px',
-  // overflow: 'auto',
 
-  // '&::-webkit-scrollbar-button': {
-  //   height: '9px',
-  // },
-  // '&::-webkit-scrollbar': {
-  //   width: '9px',
-  //   height: '9px',
-  // },
-  // '&::-webkit-scrollbar-track': {
-  //   boxShadow: 'none',
-  //   webkitBoxShadow: 'none',
-  // },
-  // '&::-webkit-scrollbar-thumb': {
-  //   backgroundColor: '#3864FF',
-  //   height: '9px',
-  //   outline: 'none',
-  //   borderRadius: '10px',
-  // },
-
-  [theme.breakpoints.down('lg')]: {
+  [theme.breakpoints.down('md')]: {
     display: 'flex',
-    paddingLeft: '15px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: '14px',
   },
 }));
 
@@ -364,6 +352,16 @@ const LinkCustom = styled(Link)<any>(({ active }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   marginRight: '14px',
+}));
+
+const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open, theme }) => ({
+  // transition: 'width 3s linear 1s',
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  width: open ? '120px' : '0px',
+  overflow: 'hidden',
 }));
 
 const Layout: React.FC<Props> = ({ children }) => {
@@ -443,25 +441,25 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   const handleConnect = () => {};
 
-  const scroll = (e: any) => {
-    if (sliderRef === null) {
-      return 0;
-    } else {
-      if (e.wheelDelta > 0) {
-        sliderRef.current.slickPrev();
-      } else {
-        sliderRef.current.slickNext();
-      }
-    }
-  };
+  // const scroll = (e: any) => {
+  //   if (sliderRef === null) {
+  //     return 0;
+  //   } else {
+  //     if (e.wheelDelta > 0) {
+  //       sliderRef.current.slickPrev();
+  //     } else {
+  //       sliderRef.current.slickNext();
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('wheel', scroll, true);
+  // useEffect(() => {
+  //   window.addEventListener('wheel', scroll, true);
 
-    return () => {
-      window.removeEventListener('wheel', scroll, true);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('wheel', scroll, true);
+  //   };
+  // }, []);
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
@@ -510,7 +508,12 @@ const Layout: React.FC<Props> = ({ children }) => {
                     </>
                   )}
                 </MenuIconCustom>
-                {open && <ListItemText primary={item.name} />}
+                <ListItemTextCustom
+                  primary={item.name}
+                  open={open}
+                  // sx={{  }}
+                />
+                {/* {open && <ListItemText primary={item.name} />} */}
               </MenuCustom>
             ))}
         </SideMenus>

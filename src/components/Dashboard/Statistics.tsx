@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import { statistic } from './data';
 import SliderScroll from '../Base/SliderScroll/SliderScroll';
@@ -13,7 +13,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 0,
 
   [theme.breakpoints.down('sm')]: {
-    paddingLeft: '15px',
+    paddingLeft: '14px',
   },
 }));
 
@@ -30,7 +30,10 @@ const CardBox = styled(Box)<BoxProps>(({ theme }) => ({
     padding: '20px',
   },
   [theme.breakpoints.down('sm')]: {
-    marginRight: '15px',
+    marginRight: '14px',
+  },
+  [theme.breakpoints.between('xs', 'sm')]: {
+    padding: '27px 14px 12px',
   },
 }));
 
@@ -53,6 +56,13 @@ const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
     fontSize: '13px',
     lineHeight: '19px',
   },
+  [theme.breakpoints.down('sm')]: {
+    width: '129px',
+    padding: '7px',
+    fontSize: '14px',
+    lineHeight: '21px',
+    borderRadius: '9px',
+  },
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -66,6 +76,11 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '28px',
     lineHeight: '31px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '24px',
+    lineHeight: '28px',
+    margin: '15px auto 21px',
   },
 }));
 
@@ -81,6 +96,10 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
     lineHeight: '22px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
   },
 }));
 
@@ -103,32 +122,53 @@ const Statistics: React.FC<Props> = () => {
       {
         breakpoint: 600,
         settings: {
+          className: 'slider variable-width',
+          dots: false,
+          arrows: false,
+          infinite: false,
+          centerMode: false,
           slidesToShow: 2,
           slidesToScroll: 1,
+          variableWidth: true,
+          speed: 300,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          className: 'slider variable-width',
+          dots: false,
+          arrows: false,
+          infinite: false,
+          centerMode: false,
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          variableWidth: true,
+          speed: 300,
         },
       },
     ],
   };
 
-  const scroll = (e: any) => {
-    if (statsRef === null) {
-      return 0;
-    } else {
-      if (e.wheelDelta > 0) {
-        statsRef.current.slickPrev();
-      } else {
-        statsRef.current.slickNext();
-      }
-    }
-  };
+  // const scroll = (e: any) => {
+  //   if (statsRef === null) {
+  //     return 0;
+  //   } else {
+  //     if (e.wheelDelta > 0) {
+  //       statsRef.current.slickPrev();
+  //     } else {
+  //       statsRef.current.slickNext();
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('wheel', scroll, true);
+  // useEffect(() => {
+  //   window.addEventListener('wheel', scroll, true);
 
-    return () => {
-      window.removeEventListener('wheel', scroll, true);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('wheel', scroll, true);
+  //   };
+  // }, []);
 
   return (
     <Wrapper>

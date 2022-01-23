@@ -23,7 +23,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 0,
 
   [theme.breakpoints.down('sm')]: {
-    paddingLeft: '15px',
+    paddingLeft: '14px',
   },
 }));
 
@@ -40,6 +40,12 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     lineHeight: '32px',
     margin: '0 0 20px',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '24px',
+    lineHeight: '36px',
+    margin: '0 0 36px',
+    textAlign: 'center',
+  },
 }));
 
 const TitleBox = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -54,6 +60,11 @@ const TitleBox = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '40px',
     lineHeight: '48px',
     margin: '4px 5px 6px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '48px',
+    lineHeight: '56px',
+    margin: '7px 0',
   },
 }));
 
@@ -83,6 +94,10 @@ const HeaderTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '14px',
     lineHeight: '22px',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '16px',
+    lineHeight: '24px',
+  },
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -95,6 +110,10 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '8px',
     lineHeight: '16px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
   },
 }));
 
@@ -121,7 +140,7 @@ const BoxTotal = styled(Box)<BoxTypeProps>(({ color, shadow, theme }) => ({
 
   [theme.breakpoints.down('sm')]: {
     marginRight: '13px',
-    minWidth: '185px',
+    minWidth: '156px',
   },
 }));
 
@@ -137,6 +156,7 @@ const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
     padding: '12px 16px 16px',
   },
   [theme.breakpoints.down('md')]: {
+    padding: '11px 13px 13px',
     width: '100%',
   },
 }));
@@ -184,6 +204,10 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
     width: '30px',
     height: '30px',
   },
+  [theme.breakpoints.down('sm')]: {
+    width: '43px',
+    height: '43px',
+  },
 }));
 
 const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
@@ -209,28 +233,35 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
           slidesToScroll: 1,
         },
       },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
     ],
   };
 
-  const scroll = (e: any) => {
-    if (sliderRef === null) {
-      return 0;
-    } else {
-      if (e.wheelDelta > 0) {
-        sliderRef.current.slickPrev();
-      } else {
-        sliderRef.current.slickNext();
-      }
-    }
-  };
+  // const scroll = (e: any) => {
+  //   if (sliderRef === null) {
+  //     return 0;
+  //   } else {
+  //     if (e.wheelDelta > 0) {
+  //       sliderRef.current.slickPrev();
+  //     } else {
+  //       sliderRef.current.slickNext();
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('wheel', scroll, true);
+  // useEffect(() => {
+  //   window.addEventListener('wheel', scroll, true);
 
-    return () => {
-      window.removeEventListener('wheel', scroll, true);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('wheel', scroll, true);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (boxRef && boxRef.current) {

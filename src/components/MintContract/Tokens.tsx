@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
@@ -37,7 +37,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   boxSizing: 'border-box',
 
   [theme.breakpoints.down('sm')]: {
-    paddingLeft: '30px',
+    paddingLeft: '14px',
   },
 }));
 
@@ -58,6 +58,7 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     marginRight: '30px',
+    maxWidth: '265px',
   },
 }));
 
@@ -144,6 +145,20 @@ const Tokens: React.FC<Props> = () => {
         },
       },
       {
+        breakpoint: 769,
+        settings: {
+          className: 'slider variable-width',
+          dots: false,
+          arrows: false,
+          infinite: false,
+          centerMode: false,
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          variableWidth: true,
+          speed: 300,
+        },
+      },
+      {
         breakpoint: 600,
         settings: {
           slidesToShow: 1,
@@ -152,26 +167,6 @@ const Tokens: React.FC<Props> = () => {
       },
     ],
   };
-
-  const scroll = (e: any) => {
-    if (holdingRef === null) {
-      return 0;
-    } else {
-      if (e.wheelDelta > 0) {
-        holdingRef.current.slickPrev();
-      } else {
-        holdingRef.current.slickNext();
-      }
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('wheel', scroll, true);
-
-    return () => {
-      window.removeEventListener('wheel', scroll, true);
-    };
-  }, []);
 
   return (
     <Wrapper>

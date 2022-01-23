@@ -15,7 +15,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 0,
 
   [theme.breakpoints.down('sm')]: {
-    padding: '0 15px',
+    padding: '0 14px',
   },
 }));
 
@@ -32,6 +32,12 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     lineHeight: '32px',
     margin: '0 0 20px',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '24px',
+    lineHeight: '36px',
+    margin: '0 0 31px',
+    textAlign: 'center',
+  },
 }));
 
 const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
@@ -46,6 +52,10 @@ const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
 
   [theme.breakpoints.down('lg')]: {
     minHeight: '300px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    minHeight: '100px',
+    padding: '20px 0 10px 10px',
   },
 }));
 
@@ -65,7 +75,12 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
       <Title>Price Chart</Title>
 
       <ViewChart>
-        <div style={{ width: '100%', height: width > 600 ? (heightChart > 300 ? heightChart : '500px') : '320px' }}>
+        <div
+          style={{
+            width: width < 480 ? 'calc(100% + 30px)' : '100%',
+            height: width > 600 ? (heightChart > 300 ? heightChart : '500px') : width < 480 ? '200px' : '320px',
+          }}
+        >
           <ResponsiveContainer>
             <ComposedChart width={732} height={400} data={data}>
               <defs>

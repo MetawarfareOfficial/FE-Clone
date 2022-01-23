@@ -16,7 +16,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
     marginTop: '50px',
   },
   [theme.breakpoints.down('sm')]: {
-    padding: '0 15px',
+    padding: '0 14px',
   },
 }));
 
@@ -32,6 +32,11 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
 
   [theme.breakpoints.down('lg')]: {
     height: 'auto',
+  },
+  [theme.breakpoints.down('md')]: {
+    // display: 'inline-block',
+    width: '100%',
+    // padding: '12px',
   },
   [theme.breakpoints.down('sm')]: {
     display: 'inline-block',
@@ -50,6 +55,10 @@ const BoxTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '26px',
     lineHeight: '34px',
+  },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '32px',
+    lineHeight: '37px',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '32px',
@@ -70,6 +79,12 @@ const BoxText = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '12px',
     lineHeight: '18px',
+  },
+  [theme.breakpoints.down('md')]: {
+    // textAlign: 'center',
+    // margin: '0 auto 15px',
+    fontSize: '14px',
+    lineHeight: '21px',
   },
   [theme.breakpoints.down('sm')]: {
     textAlign: 'center',
@@ -92,7 +107,7 @@ const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     textAlign: 'center',
-    padding: '27px 20px 23px',
+    padding: '17px 0px 23px',
   },
 }));
 
@@ -125,7 +140,7 @@ const Statistics: React.FC<Props> = () => {
   return (
     <Wrapper>
       <Grid container spacing={{ xs: '20px', md: '24px', lg: '39px' }}>
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid item xs={12} sm={12} md={6}>
           <BoxDetail>
             <BoxLeft>
               <BoxText>Circulation Supply / Total Supply</BoxText>
@@ -134,11 +149,11 @@ const Statistics: React.FC<Props> = () => {
             <BoxRight>
               <div
                 style={{
-                  width: screenSize > 600 ? '120%' : '100%',
+                  width: screenSize > 600 ? 'calc(100% + 30px)' : 'calc(100% + 30px)',
                   // height: { md: '140px', lg: '181px' },
-                  height: screenSize > 899 ? '181px' : screenSize > 599 ? '140px' : '200px',
+                  height: screenSize > 899 ? '181px' : screenSize > 599 ? '240px' : '179px',
                   minHeight: '100%',
-                  marginLeft: screenSize > 599 ? '-35px' : '-17px',
+                  marginLeft: screenSize > 599 ? '-35px' : '-30px',
                   marginBottom: '-15px',
                 }}
               >
@@ -147,7 +162,7 @@ const Statistics: React.FC<Props> = () => {
             </BoxRight>
           </BoxDetail>
         </Grid>
-        <Grid item xs={12} sm={6} md={6}>
+        <Grid item xs={12} sm={12} md={6}>
           <BoxDetail>
             <BoxLeft>
               <BoxText>Market Cap</BoxText>
@@ -156,11 +171,11 @@ const Statistics: React.FC<Props> = () => {
             <BoxRight>
               <div
                 style={{
-                  width: screenSize > 600 ? '120%' : '100%',
+                  width: screenSize > 600 ? 'calc(100% + 30px)' : 'calc(100% + 30px)',
                   // height: { md: '140px', lg: '181px' },
-                  height: screenSize > 899 ? '181px' : screenSize > 599 ? '140px' : '200px',
+                  height: screenSize > 899 ? '181px' : screenSize > 599 ? '240px' : '179px',
                   minHeight: '100%',
-                  marginLeft: screenSize > 599 ? '-35px' : '-17px',
+                  marginLeft: screenSize > 599 ? '-35px' : '-30px',
                   marginBottom: '-15px',
                 }}
               >

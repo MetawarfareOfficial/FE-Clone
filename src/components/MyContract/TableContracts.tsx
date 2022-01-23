@@ -53,6 +53,11 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
     lineHeight: '20px',
     padding: '12px 20px',
   },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '14px',
+    lineHeight: '20px',
+    padding: '12px 12px',
+  },
 }));
 
 const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
@@ -69,6 +74,11 @@ const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
     fontSize: '12px',
     lineHeight: '16px',
     padding: '8px 20px',
+  },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '6px 12px',
   },
 }));
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps } from '@mui/material';
 
 import SwitchMode from 'components/Base/SwitchMode';
@@ -41,10 +42,12 @@ const Menus = styled(Box)<BoxProps>(() => ({
 }));
 
 const Header: React.FC<Props> = () => {
+  const [width] = useWindowSize();
   const [isBackground, setIsBackground] = useState(false);
 
   const onScroll = () => {
-    setIsBackground(window.pageYOffset > 30 ? true : false);
+    const minHeight = width > 480 ? 30 : 10;
+    setIsBackground(window.pageYOffset > minHeight ? true : false);
   };
 
   useEffect(() => {

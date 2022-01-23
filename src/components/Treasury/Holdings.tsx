@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { dataHoldings } from './data';
@@ -39,7 +39,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
     margin: '44px 0',
   },
   [theme.breakpoints.down('sm')]: {
-    paddingLeft: '15px',
+    paddingLeft: '14px',
   },
 }));
 
@@ -79,7 +79,7 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     minHeight: '140px',
     width: 'auto',
-    marginRight: '32px',
+    marginRight: '0',
   },
   [theme.breakpoints.down('sm')]: {
     minHeight: '140px',
@@ -146,34 +146,34 @@ const Holdings: React.FC<Props> = () => {
     ],
   };
 
-  const scroll = (e: any) => {
-    if (holdingRef === null) {
-      return 0;
-    } else {
-      if (e.wheelDelta > 0) {
-        holdingRef.current.slickPrev();
-      } else {
-        holdingRef.current.slickNext();
-      }
-    }
-  };
+  // const scroll = (e: any) => {
+  //   if (holdingRef === null) {
+  //     return 0;
+  //   } else {
+  //     if (e.wheelDelta > 0) {
+  //       holdingRef.current.slickPrev();
+  //     } else {
+  //       holdingRef.current.slickNext();
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener('wheel', scroll, true);
+  // useEffect(() => {
+  //   window.addEventListener('wheel', scroll, true);
 
-    return () => {
-      window.removeEventListener('wheel', scroll, true);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('wheel', scroll, true);
+  //   };
+  // }, []);
 
   return (
     <Wrapper>
       <Title>Holdings</Title>
 
-      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
         <Grid container spacing={{ xs: '24px', lg: '32px' }}>
           {dataHoldings.map((item, i) => (
-            <Grid item xs={3} sm={6} lg={3} key={i}>
+            <Grid item xs={6} sm={6} lg={3} key={i}>
               <BoxDetail>
                 <BoxHeader color={item.color}>{item.title}</BoxHeader>
 
@@ -186,19 +186,21 @@ const Holdings: React.FC<Props> = () => {
         </Grid>
       </Box>
 
-      <SliderScroll elRef={holdingRef} settings={settings}>
-        {dataHoldings.map((item, i) => (
-          <Box key={i}>
-            <BoxDetail>
-              <BoxHeader color={item.color}>{item.title}</BoxHeader>
+      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+        <SliderScroll elRef={holdingRef} settings={settings}>
+          {dataHoldings.map((item, i) => (
+            <Box key={i}>
+              <BoxDetail>
+                <BoxHeader color={item.color}>{item.title}</BoxHeader>
 
-              <BoxContent>
-                <TableTokens fontSize="12px" data={data} />
-              </BoxContent>
-            </BoxDetail>
-          </Box>
-        ))}
-      </SliderScroll>
+                <BoxContent>
+                  <TableTokens fontSize="12px" data={data} />
+                </BoxContent>
+              </BoxDetail>
+            </Box>
+          ))}
+        </SliderScroll>
+      </Box>
     </Wrapper>
   );
 };

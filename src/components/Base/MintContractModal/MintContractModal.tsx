@@ -26,10 +26,10 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 
 import CloseImg from 'assets/images/ic-times.svg';
+import MinusImg from 'assets/images/minus.svg';
+import AddImg from 'assets/images/plus.svg';
 
 interface Props {
   open: boolean;
@@ -41,7 +41,7 @@ interface Props {
   onSubmit: (values: any) => void;
 }
 
-const Wrapper = styled(Dialog)<DialogProps>(() => ({
+const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
 
   '.MuiPaper-root': {
@@ -51,6 +51,13 @@ const Wrapper = styled(Dialog)<DialogProps>(() => ({
     padding: '0',
     margin: 0,
     boxSizing: 'border-box',
+
+    [theme.breakpoints.down('sm')]: {
+      width: '317px',
+    },
+    '@media (max-width: 320px)': {
+      width: '300px',
+    },
   },
 }));
 
@@ -78,6 +85,10 @@ const ViewIcon = styled(Box)<BoxProps>(({ theme }) => ({
     width: '42px',
     height: '42px',
   },
+  [theme.breakpoints.down('lg')]: {
+    width: '55px',
+    height: '55px',
+  },
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -92,6 +103,10 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
     lineHeight: '24px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '18px',
+    lineHeight: '27px',
   },
 }));
 
@@ -110,6 +125,10 @@ const CloseIcon = styled(IconButton)<IconButtonProps>(({ theme }) => ({
     width: '20px',
     height: '20px',
   },
+  [theme.breakpoints.down('sm')]: {
+    width: '28px',
+    height: '28px',
+  },
 }));
 
 const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
@@ -121,19 +140,27 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     padding: '16px 21px',
   },
+  [theme.breakpoints.down('lg')]: {
+    padding: '20px 21px',
+  },
 }));
 
-const Content = styled(DialogContent)<DialogContentProps>(() => ({
+const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   padding: '20px 13px 20px 21px',
   // marginBottom: '21px',
 
-  '.MuiDialogContentText-root': {
+  'p.MuiDialogContentText-root': {
     color: '#828282',
     fontFamily: 'Poppins',
     fontSize: '12px',
     lineHeight: '18px',
     marginBottom: '8px',
     textTransform: 'capitalize',
+
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '12px',
+      lineHeight: '18px',
+    },
   },
 
   '.MuiListItemText-root': {
@@ -145,6 +172,11 @@ const Content = styled(DialogContent)<DialogContentProps>(() => ({
     fontFamily: 'Poppins',
     fontSize: '14px',
     lineHeight: '21px',
+
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '14px',
+      lineHeight: '21px',
+    },
   },
 
   ul: {
@@ -171,6 +203,10 @@ const Content = styled(DialogContent)<DialogContentProps>(() => ({
       boxSizing: 'border-box',
       borderRadius: '13px',
       marginBottom: '8px',
+
+      [theme.breakpoints.down('sm')]: {
+        padding: '12px 20px',
+      },
     },
   },
 }));
@@ -293,8 +329,10 @@ const ButtonMint = styled('a')<any>(({ theme }) => ({
   lineHeight: '21px',
 
   span: {
-    color: '#BDBDBD',
+    // color: '#c7c7c7',
+    opacity: '0.7',
     fontWeight: 'normal',
+    fontSize: '13px',
   },
 }));
 
@@ -309,7 +347,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
     const results = [];
     for (let i = 0; i < value; i++) {
       results.push(
-        <ListItem>
+        <ListItem key={i}>
           <ListItemText primary="Name" />
         </ListItem>,
       );
@@ -351,14 +389,14 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint, onClose
             startAdornment={
               <InputAdornment position="start" onClick={() => setValue(Number(value) - 1)}>
                 <IconButton>
-                  <RemoveIcon />
+                  <img width={18} alt="" src={MinusImg} />
                 </IconButton>
               </InputAdornment>
             }
             endAdornment={
               <InputAdornment position="end" onClick={() => setValue(Number(value) + 1)}>
                 <IconButton>
-                  <AddIcon />
+                  <img width={18} alt="" src={AddImg} />
                 </IconButton>
               </InputAdornment>
             }

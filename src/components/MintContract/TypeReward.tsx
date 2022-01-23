@@ -28,7 +28,7 @@ const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
   borderRadius: '24px',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
 
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     display: 'inline-block',
     width: '100%',
     padding: '22px 31px 26px',
@@ -49,7 +49,7 @@ const BoxContract = styled(Box)<BoxProps>(({ theme }) => ({
     padding: '10px 12px',
     boxSizing: 'border-box',
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     width: '100%',
     justifyContent: 'center',
   },
@@ -64,8 +64,13 @@ const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     width: 'calc(100% - 230px)',
   },
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    marginTop: '24px',
+  },
   [theme.breakpoints.down('sm')]: {
     width: '100%',
+    marginTop: '0',
   },
 }));
 
@@ -77,7 +82,7 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
     width: '30px',
     height: '30px',
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     width: '43px',
     height: '43px',
   },
@@ -96,7 +101,7 @@ const Name = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '14px',
     lineHeight: '20px',
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     fontSize: '16px',
     lineHeight: '24px',
   },
@@ -139,12 +144,14 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
   marginLeft: 'auto',
   display: 'inline-flex',
   alignItems: 'center',
+  boxSizing: 'border-box',
 
   [theme.breakpoints.down('sm')]: {
     display: 'block',
     width: '50%',
     padding: '0',
     float: 'right',
+    paddingLeft: '20px',
   },
 }));
 
@@ -207,7 +214,7 @@ const ButtonMintMobile = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'capitalize',
   marginLeft: '40px',
   width: '100%',
-  margin: ' 27px 0 0',
+  margin: ' 14px 0 0',
   display: 'none',
 
   [theme.breakpoints.down('sm')]: {

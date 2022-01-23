@@ -13,7 +13,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   boxSizing: 'border-box',
 
   [theme.breakpoints.down('sm')]: {
-    padding: '0 15px',
+    padding: '0 14px',
   },
 }));
 
@@ -58,6 +58,11 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   },
   [theme.breakpoints.down('lg')]: {
     padding: '40px 42px 35px',
+    fontSize: '14px',
+    lineHeight: '25px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '38px 42px 35px',
     fontSize: '14px',
     lineHeight: '25px',
   },
