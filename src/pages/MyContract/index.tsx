@@ -110,9 +110,9 @@ const MyContract: React.FC<Props> = () => {
 
     if (dataCountByType && dataCountByType['0'] && currentUserAddress) {
       setCountMyContract({
-        square: `${dataCountByType['0']}`,
-        cube: `${dataCountByType['1']}`,
-        tesseract: `${dataCountByType['2']}`,
+        square: `${dataCountByType['0'] || 0}`,
+        cube: `${dataCountByType['1'] || 0}`,
+        tesseract: `${dataCountByType['2'] || 0}`,
       });
       return;
     }
