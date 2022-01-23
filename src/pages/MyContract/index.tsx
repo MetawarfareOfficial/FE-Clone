@@ -84,13 +84,22 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    window.ethereum &&
+    const handleChangeAccounts = () => {
+      resetData();
+      fetchDataUserContracts();
+      currentUserAddress && resolveRequestAfterTime(2000);
+      toast.clearWaitingQueue();
+    };
+
+    if (window.ethereum) {
+      window.ethereum.removeListener('accountsChanged', handleChangeAccounts);
       window.ethereum.on('accountsChanged', () => {
-        resetData();
-        fetchDataUserContracts();
-        currentUserAddress && resolveRequestAfterTime(2000);
-        toast.clearWaitingQueue();
+        handleChangeAccounts();
+        if (width < 600) {
+          window.location.reload();
+        }
       });
+    }
   }, []);
 
   useEffect(() => {
@@ -120,7 +129,7 @@ const MyContract: React.FC<Props> = () => {
   }, [dataMyContracts.length]);
 
   useInterval(() => {
-    fetchDataUserContracts();
+    if (dataMyContracts.length > 0) fetchDataUserContracts();
   }, DELAY_TIME);
 
   return (
