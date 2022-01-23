@@ -31,7 +31,7 @@ const TableCustom = styled(TableContainer)<TableContainerProps>(() => ({
   width: '100%',
 }));
 
-const TableHeaderText = styled(TableCell)<TableCellCustomProps>(({ fontSize }) => ({
+const TableHeaderText = styled(TableCell)<TableCellCustomProps>(({ fontSize, theme }) => ({
   fontFamily: 'Roboto',
   fontWeight: 'normal',
   fontSize: fontSize || '14px',
@@ -39,9 +39,20 @@ const TableHeaderText = styled(TableCell)<TableCellCustomProps>(({ fontSize }) =
   padding: '7px',
   color: ' #BDBDBD',
   border: 'none',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '14px',
+    padding: '5px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '14px',
+    lineHeight: '16px',
+    padding: '7px',
+  },
 }));
 
-const TableContentText = styled(TableCell)(() => ({
+const TableContentText = styled(TableCell)(({ theme }) => ({
   fontFamily: 'Roboto',
   fontWeight: 'normal',
   fontSize: '14px',
@@ -49,13 +60,29 @@ const TableContentText = styled(TableCell)(() => ({
   padding: '7px',
   color: ' #293247',
   border: 'none',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '14px',
+    padding: '5px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '14px',
+    lineHeight: '16px',
+    padding: '7px',
+  },
 }));
 
-const ViewCoin = styled('img')`
-  width: 22px;
-  height: 22px;
-  margin-right: 10px;
-`;
+const ViewCoin = styled('img')(({ theme }) => ({
+  width: '22px',
+  height: '22px',
+  marginRight: '10px',
+
+  [theme.breakpoints.down('lg')]: {
+    width: '18px',
+    height: '18px',
+  },
+}));
 
 const TextToken = styled('div')`
   display: flex;

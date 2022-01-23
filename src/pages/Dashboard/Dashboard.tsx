@@ -25,6 +25,11 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const currentPrice = useAppSelector((state) => state.coingeko.currentPrice);
 
   const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
+  const [heightTotal, setHeightTotal] = useState<any>(null);
+
+  const handleChangeHeightTotal = (height: number) => {
+    setHeightTotal(height);
+  };
 
   useEffect(() => {
     dispatch(getPrice30DaysAgo(paramsLast30DaysApi));
@@ -69,12 +74,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
         <Statistics data={tokenPrices.at(-1)} />
       </Box>
 
-      <Grid container spacing={4}>
+      <Grid container spacing="30px">
         <Grid item xs={12} md={4}>
-          <TotalMinted />
+          <TotalMinted onChangeHeight={handleChangeHeightTotal} />
         </Grid>
         <Grid item xs={12} md={8}>
-          <PriceChart data={tokenPrices} />
+          <PriceChart heightTotal={heightTotal} data={tokenPrices} />
         </Grid>
       </Grid>
     </Box>

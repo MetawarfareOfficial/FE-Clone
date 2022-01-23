@@ -7,12 +7,17 @@ interface Props {
   title?: string;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   marginTop: '35px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 14px',
+  },
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
@@ -21,6 +26,16 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontWeight: 'bold',
   fontFamily: 'Poppins',
   margin: '0 0 35px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+    lineHeight: '32px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '21px',
+    lineHeight: '31px',
+    marginBottom: '28px',
+  },
 }));
 
 const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
@@ -28,12 +43,29 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   padding: '26px',
   textAlign: 'center',
+  boxSizing: 'border-box',
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
   fontWeight: '500',
   color: '#293247',
   border: `1px solid ${theme.palette.primary.main}`,
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '20px',
+    fontSize: '12px',
+    lineHeight: '18px',
+  },
+  [theme.breakpoints.down('lg')]: {
+    padding: '40px 42px 35px',
+    fontSize: '14px',
+    lineHeight: '25px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '38px 42px 35px',
+    fontSize: '14px',
+    lineHeight: '25px',
+  },
 }));
 
 const ClaimRewards: React.FC<Props> = () => {

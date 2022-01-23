@@ -1126,4 +1126,19 @@ const rechartLineData = [
   },
 ];
 
-export { rechartLineData, dataChart };
+const statistic = [
+  {
+    title: 'Token Price',
+    value: '1.1029993',
+  },
+  {
+    title: 'MY CONTRACTS',
+    value: '0/100',
+  },
+  {
+    title: 'My Rewards',
+    value: '0.000',
+  },
+];
+
+export { rechartLineData, dataChart, statistic };
