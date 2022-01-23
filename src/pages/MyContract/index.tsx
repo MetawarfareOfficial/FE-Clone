@@ -120,7 +120,7 @@ const MyContract: React.FC<Props> = () => {
   }, [dataMyContracts.length]);
 
   useInterval(() => {
-    if (dataMyContracts.length > 0) fetchDataUserContracts();
+    fetchDataUserContracts();
   }, DELAY_TIME);
 
   return (
