@@ -13,6 +13,7 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import useFetchInforContract from 'hooks/useFetchInforContract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
+import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 
 interface DashboardProps {
   name?: string;
@@ -63,6 +64,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   useFetchInforContract();
   useFetchNodes();
+  useMobileChangeAccountMetamask();
 
   useInterval(async () => {
     await dispatch(getCurrentPrice(paramsCurrentPriceApi));

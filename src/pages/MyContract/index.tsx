@@ -26,6 +26,7 @@ import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/myContract';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { TableContracts, ListContracts, Stats } from 'components/MyContract';
+import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 
 interface Props {
   title?: string;
@@ -87,19 +88,13 @@ const MyContract: React.FC<Props> = () => {
     const handleChangeAccounts = () => {
       resetData();
       fetchDataUserContracts();
+      currentUserAddress && resolveRequestAfterTime(2000);
+      toast.clearWaitingQueue();
     };
 
     if (window.ethereum) {
       window.ethereum.removeListener('accountsChanged', handleChangeAccounts);
-      window.ethereum.on('accountsChanged', () => {
-        handleChangeAccounts();
-        if (window.innerWidth < 600) {
-          window.location.reload();
-          return;
-        }
-        currentUserAddress && resolveRequestAfterTime(2000);
-        toast.clearWaitingQueue();
-      });
+      window.ethereum.on('accountsChanged', handleChangeAccounts);
     }
   }, []);
 
@@ -128,6 +123,8 @@ const MyContract: React.FC<Props> = () => {
     }
     resetData();
   }, [dataMyContracts.length]);
+
+  useMobileChangeAccountMetamask();
 
   useInterval(() => {
     if (dataMyContracts.length > 0) fetchDataUserContracts();
