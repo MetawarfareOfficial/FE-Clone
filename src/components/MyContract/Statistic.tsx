@@ -1,30 +1,61 @@
 import React from 'react';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 
 interface Props {
-  icon?: string;
+  icon?: any;
   title: string;
   value: string;
   color: string;
   text?: string;
+  disabled?: boolean;
 }
 
 interface BoxCustomProps {
   color: string;
+  disabled?: boolean;
 }
 
-const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme }) => ({
+interface TypographyCustomProps extends TypographyProps {
+  rewards: boolean | any;
+}
+
+const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, disabled }) => ({
   background: color,
   padding: '20px 20px',
   borderRadius: '20px',
   boxShadow: '1px 19px 22px -16px rgba(50, 71, 117, 0.18)',
   display: 'flex',
   alignItems: 'center',
+  boxSizing: 'border-box',
+  opacity: disabled ? 0.4 : 1,
 
   [theme.breakpoints.down('lg')]: {
     padding: '12px 14px',
   },
+}));
+
+const WrapperMobile = styled(Box)<BoxCustomProps>(({ color, theme, disabled }) => ({
+  width: '100%',
+  display: 'none',
+  background: color,
+  padding: '16px 13px 21px 20px',
+  borderRadius: '20px',
+  boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.11)',
+  boxSizing: 'border-box',
+  height: '100%',
+  opacity: disabled ? 0.4 : 1,
+
+  [theme.breakpoints.down('sm')]: {
+    display: 'inline-block',
+  },
+}));
+
+const BoxHeader = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '24px',
 }));
 
 const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
@@ -39,6 +70,11 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     width: '30px',
     height: '30px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '58px',
+    height: '58px',
+    marginRight: '9px',
   },
 }));
 
@@ -57,6 +93,10 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '15px',
     lineHeight: '22px',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '20px',
+    lineHeight: '30px',
+  },
 }));
 
 const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -71,6 +111,10 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     fontSize: '10px',
     lineHeight: '14px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
   },
 }));
 
@@ -98,22 +142,58 @@ const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
-  return (
-    <Wrapper color={color}>
-      {icon && (
-        <ViewImage>
-          <img alt="" src={icon} />
-        </ViewImage>
-      )}
+const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards }) => ({
+  color: '#293247',
+  boxSizing: 'border-box',
+  fontFamily: 'Roboto',
+  fontWeight: 'bold',
+  fontSize: rewards ? '24px' : '36px',
+  lineHeight: rewards ? '28px' : '42px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 'cal(100% - 67px)',
+  // whiteSpace: 'nowrap',
+  // overflow: 'hidden !important',
+  // textOverflow: 'ellipsis',
+}));
 
-      <Content>
-        <Title>{title}</Title>
-        {text && <Description>{text}</Description>}
-      </Content>
-      <Value>{value}</Value>
-    </Wrapper>
-  );
+const Statistic: React.FC<Props> = ({ icon, title, value, color, text, disabled }) => {
+  const [width] = useWindowSize();
+
+  if (width < 600) {
+    return (
+      <WrapperMobile color={color} disabled={disabled}>
+        <BoxHeader>
+          <ViewImage>
+            <img alt="" src={icon} />
+          </ViewImage>
+          <TotalMobile rewards={title === 'Rewards' ? true : false}>{value}</TotalMobile>
+        </BoxHeader>
+
+        <Content>
+          <Title>{title}</Title>
+          {text && <Description>{text}</Description>}
+        </Content>
+      </WrapperMobile>
+    );
+  } else {
+    return (
+      <Wrapper color={color} disabled={disabled}>
+        {icon && (
+          <ViewImage>
+            <img alt="" src={icon} />
+          </ViewImage>
+        )}
+
+        <Content>
+          <Title>{title}</Title>
+          {text && <Description>{text}</Description>}
+        </Content>
+        <Value>{value}</Value>
+      </Wrapper>
+    );
+  }
 };
 
 export default Statistic;

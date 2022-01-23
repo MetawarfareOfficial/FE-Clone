@@ -18,7 +18,7 @@ interface Props {
   dataChart: Array<any>;
 }
 
-const Wrapper = styled(Paper)<PaperProps>(() => ({
+const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
   width: '100%',
   marginBottom: '15px',
   padding: '12px',
@@ -27,6 +27,12 @@ const Wrapper = styled(Paper)<PaperProps>(() => ({
   alignItems: 'center',
   borderRadius: '24px',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+
+  [theme.breakpoints.down('md')]: {
+    display: 'inline-block',
+    width: '100%',
+    padding: '22px 31px 26px',
+  },
 }));
 
 const BoxContract = styled(Box)<BoxProps>(({ theme }) => ({
@@ -43,6 +49,29 @@ const BoxContract = styled(Box)<BoxProps>(({ theme }) => ({
     padding: '10px 12px',
     boxSizing: 'border-box',
   },
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    justifyContent: 'center',
+  },
+}));
+
+const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
+  display: 'block',
+  // width: '100%',
+  boxSizing: 'border-box',
+  width: 'calc(100% - 286px)',
+
+  [theme.breakpoints.down('lg')]: {
+    width: 'calc(100% - 230px)',
+  },
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    marginTop: '24px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    marginTop: '0',
+  },
 }));
 
 const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
@@ -52,6 +81,10 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     width: '30px',
     height: '30px',
+  },
+  [theme.breakpoints.down('md')]: {
+    width: '43px',
+    height: '43px',
   },
 }));
 
@@ -68,27 +101,58 @@ const Name = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '14px',
     lineHeight: '20px',
   },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '16px',
+    lineHeight: '24px',
+  },
 }));
 
 const ViewInfo = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'inline-flex',
-  width: 'calc(100% - 286px)',
+  width: '100%',
   alignItems: 'center',
   height: '100%',
   paddingLeft: '48px',
   paddingRight: '10px',
   boxSizing: 'border-box',
+  overflow: 'hidden',
 
   [theme.breakpoints.down('lg')]: {
     paddingLeft: '24px',
-    width: 'calc(100% - 230px)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    display: 'inline-block',
+    padding: '0',
+    marginTop: '27px',
   },
 }));
 
-const BoxDetail = styled(Box)<BoxProps>(() => ({
+const Info = styled(Box)<BoxProps>(({ theme }) => ({
+  display: 'inline-flex',
+  width: '100%',
+  alignItems: 'center',
+
+  [theme.breakpoints.down('sm')]: {
+    width: '50%',
+    float: 'left',
+    display: 'inline-block',
+  },
+}));
+
+const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
   marginLeft: 'auto',
   display: 'inline-flex',
   alignItems: 'center',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    display: 'block',
+    width: '50%',
+    padding: '0',
+    float: 'right',
+    paddingLeft: '20px',
+  },
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -106,6 +170,13 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
     padding: '0 12px',
     boxSizing: 'border-box',
   },
+  [theme.breakpoints.down('sm')]: {
+    padding: '0',
+    width: '100%',
+    fontSize: '14px',
+    lineHeight: '21px',
+    marginBottom: '7px',
+  },
 }));
 
 const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -118,6 +189,7 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
   fontWeight: 'bold',
   textTransform: 'capitalize',
   marginLeft: '40px',
+  // display: 'inline-flex',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '13px',
@@ -125,7 +197,45 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
     width: '120px',
     padding: '10px',
   },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    margin: ' 27px 0 0',
+    display: 'none',
+  },
 }));
+
+const ButtonMintMobile = styled(Button)<ButtonProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
+  fontSize: '14px',
+  lineHeight: '22px',
+  padding: '9px 12px',
+  borderRadius: ' 14px',
+  fontWeight: 'bold',
+  textTransform: 'capitalize',
+  marginLeft: '40px',
+  width: '100%',
+  margin: ' 14px 0 0',
+  display: 'none',
+
+  [theme.breakpoints.down('sm')]: {
+    display: 'block',
+  },
+}));
+
+const ViewChart = styled('div')`
+  width: 143px;
+  height: 37px;
+
+  @media (max-width: 900px) {
+    width: 120px;
+    height: 30px;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+    height: 60px;
+  }
+`;
 
 const STATUS = ['success', 'error', 'pending'];
 
@@ -157,21 +267,29 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
         <Name>{name}</Name>
       </BoxContract>
 
-      <ViewInfo>
-        <Text>{value} 0xB</Text>
-        <Text>{apy}% APY</Text>
-        <Text>Earn {earn} 0xB/day</Text>
+      <BoxContent>
+        <ViewInfo>
+          <Info>
+            <Text>{value} 0xB</Text>
+            <Text>{apy}% APY</Text>
+            <Text>Earn {earn} 0xB/day</Text>
+          </Info>
 
-        <BoxDetail>
-          <Box sx={{ width: { md: '120px', lg: '143px' }, height: { md: '30px', lg: '37px' } }}>
-            <LineChart data={dataChart} color={colorChart} />
-          </Box>
+          <BoxDetail>
+            <ViewChart>
+              <LineChart data={dataChart} color={colorChart} />
+            </ViewChart>
 
-          <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
-            Mint
-          </ButtonMint>
-        </BoxDetail>
-      </ViewInfo>
+            <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
+              Mint
+            </ButtonMint>
+          </BoxDetail>
+        </ViewInfo>
+
+        <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle}>
+          Mint
+        </ButtonMintMobile>
+      </BoxContent>
 
       <MintContractModal
         icon={icon}
