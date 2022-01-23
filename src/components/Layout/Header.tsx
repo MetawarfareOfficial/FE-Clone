@@ -3,12 +3,9 @@ import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps } from '@mui/material';
-
 import SwitchMode from 'components/Base/SwitchMode';
-// import WalletButton from 'components/Base/WalletButton';
-
 import LogoImg from 'assets/images/logo.svg';
-import ConnectWallet from '../ConnectWallet';
+import ConnectWallet from 'components/ConnectWallet';
 
 interface Props {
   title?: string;

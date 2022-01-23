@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { IconButton, IconButtonProps } from '@mui/material';
+import { IconButton } from '@mui/material';
 
 import LightWallet from 'assets/images/light-wallet.svg';
 
@@ -9,8 +9,12 @@ interface Props {
   onChange: (value: any) => void;
 }
 
-const ButtonMode = styled(IconButton)<IconButtonProps>(() => ({
-  background: ' #DADADA',
+interface IconButtonCustomProps {
+  bgColor: string;
+}
+
+const ButtonMode = styled(IconButton)<IconButtonCustomProps>(({ bgColor }) => ({
+  background: bgColor,
   boxShadow: '0px 12px 11px -10px rgba(0, 0, 0, 0.25)',
   boxSizing: 'border-box',
   borderRadius: '10px',
@@ -29,9 +33,11 @@ const ButtonMode = styled(IconButton)<IconButtonProps>(() => ({
   },
 }));
 
-const WalletButton: React.FC<Props> = ({ onChange }) => {
+const WalletButton: React.FC<Props> = ({ onChange, mode }) => {
+  const bgColor = mode === 'logout' ? '#3864FF' : '#DADADA';
+
   return (
-    <ButtonMode onClick={onChange}>
+    <ButtonMode onClick={onChange} bgColor={bgColor}>
       <img alt="" src={LightWallet} />
     </ButtonMode>
   );

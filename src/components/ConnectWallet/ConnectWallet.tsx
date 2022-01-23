@@ -26,6 +26,8 @@ import { bigNumber2Number } from 'helpers/formatNumber';
 import { unSetNodes, unSetRewardAmount } from 'services/contract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
+import WalletButton from 'components/Base/WalletButton';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 interface Props {
   name?: string;
@@ -86,6 +88,7 @@ const CustomToastWithLink = () => (
 
 const ConnectWallet: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
+  const [width] = useWindowSize();
   const { active, account, activate, deactivate, error, chainId } = useWeb3React<Web3Provider>();
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
 
@@ -191,30 +194,42 @@ const ConnectWallet: React.FC<Props> = () => {
   useFetchNodes();
   useFetchRewardAmount();
 
-  return (
-    <div>
-      {!(active && isLogin) && (
-        <div>
-          {isUnsupportedChainIdError || getToken() ? (
-            <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
-              Wrong network
-            </ButtonConnect>
-          ) : (
-            <ButtonConnect variant="outlined" color="primary" onClick={login}>
-              Connect Wallet
-            </ButtonConnect>
-          )}
-        </div>
-      )}
-      {active && isLogin && (
-        <div>
-          <ButtonWallet variant="outlined" color="primary" onClick={logout}>
-            Disconnect Wallet
-          </ButtonWallet>
-        </div>
-      )}
-    </div>
-  );
+  if (width < 600) {
+    return (
+      <div>
+        {currentUserAddress ? (
+          <WalletButton onChange={logout} mode={'logout'} />
+        ) : (
+          <WalletButton onChange={login} mode={'login'} />
+        )}
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        {!(active && isLogin) && (
+          <div>
+            {isUnsupportedChainIdError || getToken() ? (
+              <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
+                Wrong network
+              </ButtonConnect>
+            ) : (
+              <ButtonConnect variant="outlined" color="primary" onClick={login}>
+                Connect Wallet
+              </ButtonConnect>
+            )}
+          </div>
+        )}
+        {active && isLogin && (
+          <div>
+            <ButtonWallet variant="outlined" color="primary" onClick={logout}>
+              Disconnect Wallet
+            </ButtonWallet>
+          </div>
+        )}
+      </div>
+    );
+  }
 };
 
 export default ConnectWallet;
