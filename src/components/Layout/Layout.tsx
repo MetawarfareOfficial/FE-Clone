@@ -1,7 +1,8 @@
-import React, { useState, useLayoutEffect, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { styled, Theme, CSSObject } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 import { menus } from './menus';
+import { useWindowSize } from 'hooks/useWindowSize';
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
 import {
@@ -14,6 +15,7 @@ import {
   ListItem,
   ListItemProps,
   ListItemText,
+  ListItemTextProps,
   ListItemIcon,
   ListItemIconProps,
   Tooltip,
@@ -21,8 +23,11 @@ import {
   tooltipClasses,
 } from '@mui/material';
 
-import MySwitch from 'components/Base/Switch';
+// import MySwitch from 'components/Base/Switch';
+import SwitchMode from 'components/Base/SwitchMode';
 import Banner from 'components/Base/Banner';
+import Header from './Header';
+import SliderScroll from 'components/Base/SliderScroll';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -51,6 +56,14 @@ interface ListItemIconCustomProps extends ListItemIconProps {
 }
 
 interface ListCustomProps extends ListProps {
+  open: boolean;
+}
+
+interface BoxMenuProps extends BoxProps {
+  active: boolean;
+}
+
+interface ListItemTextCustomProps extends ListItemTextProps {
   open: boolean;
 }
 
@@ -169,11 +182,17 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
     cursor: 'pointer',
     color: '#293247',
     fontWeight: 'bold',
+    background: '#dbecfd88',
+    opacity: 0.8,
   },
 }));
 
-const SideMenus = styled(List)<ListCustomProps>(({ open }) => ({
+const SideMenus = styled(List)<ListCustomProps>(({ open, theme }) => ({
   padding: `0 ${open ? 16 : 22}px`,
+
+  [theme.breakpoints.down('md')]: {
+    // display: 'none',
+  },
 }));
 
 const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) => ({
@@ -186,7 +205,7 @@ const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) 
   },
 }));
 
-const MainLayout = styled(Box)<MainLayoutProps>(({ open }) => ({
+const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
   background: '#FAFBFE',
   // width: '100%',
   minHeight: '100vh',
@@ -195,6 +214,18 @@ const MainLayout = styled(Box)<MainLayoutProps>(({ open }) => ({
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
   // overflow: 'hidden',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '24px',
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: '96px 24px 24px',
+    width: '100%',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '96px 0 24px',
+    width: '100%',
+  },
 }));
 
 const SideAction = styled(Box)<BoxProps>(() => ({
@@ -245,7 +276,7 @@ const BoxSwitch = styled(Box)<BoxProps>(() => ({
 
 const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
-))(() => ({
+))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     background: '#3864FF',
     color: '#fff',
@@ -261,32 +292,149 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   [`& .${tooltipClasses.arrow}`]: {
     color: '#3864FF',
   },
+
+  [theme.breakpoints.down('lg')]: {
+    [`& .${tooltipClasses.tooltip}`]: {
+      padding: '8px 20px',
+      fontSize: '12px',
+      lineHeight: '22px',
+      borderRadius: '10px',
+      left: '10px',
+    },
+  },
 }));
 
-const useWindowSize = () => {
-  const [size, setSize] = useState([0, 0]);
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
-    }
-    window.addEventListener('resize', updateSize);
-    updateSize();
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-  return size;
-};
+const MenusMobile = styled(Box)<BoxProps>(({ theme }) => ({
+  display: 'none',
+  alignItems: 'center',
+  marginBottom: '34px',
+
+  [theme.breakpoints.down('md')]: {
+    display: 'flex',
+  },
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: '14px',
+  },
+}));
+
+const MenuItem = styled(Box)<BoxMenuProps>(({ active }) => ({
+  border: `1px solid ${active ? '#3864FF' : '#A4A9B7'}`,
+  boxSizing: 'border-box',
+  borderRadius: '14px',
+  background: active ? '#3864FF' : 'unset',
+  padding: '10px 19px',
+  minWidth: '135px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  a: {
+    color: active ? '#fff' : '#A4A9B7',
+    fontFamily: 'Poppins',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    lineHeight: '25px',
+    textDecoration: 'none',
+  },
+
+  ['&:hover']: {
+    opacity: '0.7',
+    cursor: 'pointer',
+  },
+}));
+
+const LinkCustom = styled(Link)<any>(({ active }) => ({
+  color: active ? '#fff' : '#A4A9B7',
+  fontFamily: 'Poppins',
+  fontWeight: 'bold',
+  fontSize: '14px',
+  lineHeight: '25px',
+  textDecoration: 'none',
+  display: 'inline-flex',
+  alignItems: 'center',
+  marginRight: '14px',
+}));
+
+const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open, theme }) => ({
+  // transition: 'width 3s linear 1s',
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  width: open ? '120px' : '0px',
+  overflow: 'hidden',
+}));
 
 const Layout: React.FC<Props> = ({ children }) => {
+  const sliderRef = useRef<any>(null);
   const history = useHistory();
   const location = useLocation();
 
   const [open, setOpen] = React.useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lightMode, setLightMode] = React.useState(true);
   const [width] = useWindowSize();
 
   const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(event.target.checked);
   };
+
+  const settings = {
+    className: 'slider variable-width',
+    dots: false,
+    arrows: false,
+    infinite: false,
+    centerMode: false,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    variableWidth: true,
+    speed: 300,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          className: 'slider variable-width',
+          dots: false,
+          arrows: false,
+          infinite: false,
+          centerMode: false,
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          variableWidth: true,
+          speed: 300,
+        },
+      },
+      {
+        breakpoint: 900,
+        settings: {
+          className: 'slider variable-width',
+          dots: false,
+          arrows: false,
+          infinite: false,
+          centerMode: false,
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          variableWidth: true,
+          speed: 300,
+        },
+      },
+      {
+        breakpoint: 680,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
+  useEffect(() => {
+    if (width < 1200) {
+      setOpen(false);
+    } else {
+      setOpen(true);
+    }
+  }, [width]);
 
   const handleToggle = () => {
     setOpen(!open);
@@ -310,13 +458,45 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   useFetchInforContract();
 
+  // const scroll = (e: any) => {
+  //   if (sliderRef === null) {
+  //     return 0;
+  //   } else {
+  //     if (e.wheelDelta > 0) {
+  //       sliderRef.current.slickPrev();
+  //     } else {
+  //       sliderRef.current.slickNext();
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener('wheel', scroll, true);
+
+  //   return () => {
+  //     window.removeEventListener('wheel', scroll, true);
+  //   };
+  // }, []);
+
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
-      <Drawer variant="permanent" open={open}>
+      <Header />
+
+      <Drawer
+        variant="permanent"
+        open={open}
+        sx={{
+          display: {
+            md: 'block',
+            xs: 'none',
+          },
+        }}
+      >
         <DrawerHeader>
           <Logo to="/">{open ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoIcon} />}</Logo>
           <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
         </DrawerHeader>
+
         <SideMenus open={open}>
           {menus &&
             menus.map((item, i) => (
@@ -345,7 +525,12 @@ const Layout: React.FC<Props> = ({ children }) => {
                     </>
                   )}
                 </MenuIconCustom>
-                {open && <ListItemText primary={item.name} />}
+                <ListItemTextCustom
+                  primary={item.name}
+                  open={open}
+                  // sx={{  }}
+                />
+                {/* {open && <ListItemText primary={item.name} />} */}
               </MenuCustom>
             ))}
         </SideMenus>
@@ -363,14 +548,34 @@ const Layout: React.FC<Props> = ({ children }) => {
 
           <BoxSwitch>
             {open && <label>Light</label>}
-            <MySwitch checked={lightMode} onChange={handleChangeMode} />
+            {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
+            <SwitchMode mode="light" onChange={handleChangeMode} />
             {open && <label>Dark</label>}
           </BoxSwitch>
         </SideAction>
       </Drawer>
 
       <MainLayout component="main" open={open}>
-        {location.pathname !== '/treasury' && <Banner isBg={location.pathname !== '/'} />}
+        <MenusMobile>
+          <SliderScroll elRef={sliderRef} settings={settings}>
+            {menus &&
+              menus.map((item, i) => (
+                <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                  <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                </LinkCustom>
+              ))}
+          </SliderScroll>
+        </MenusMobile>
+
+        {location.pathname !== '/treasury' && width > 899 && (
+          <Banner
+            // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
+            // walletId="0x33434dieoewo"
+            // onConnect={handleConnect}
+            // connected={false}
+            isBg={location.pathname !== '/'}
+          />
+        )}
 
         {children}
       </MainLayout>

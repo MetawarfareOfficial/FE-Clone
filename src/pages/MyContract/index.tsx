@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid } from '@mui/material';
-import { Statistic, TableContracts } from 'components/MyContract';
+import { Box } from '@mui/material';
 
-import SquareIcon from 'assets/images/square.gif';
-import CubeIcon from 'assets/images/cube.gif';
-import TessIcon from 'assets/images/tess.gif';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import {
   getNameOfNodes,
@@ -28,6 +24,8 @@ import { resolveRequestAfterTime } from 'services/resolveRequestAfterTime';
 import { toast } from 'react-toastify';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/myContract';
+import { useWindowSize } from 'hooks/useWindowSize';
+import { TableContracts, ListContracts, Stats } from 'components/MyContract';
 
 interface Props {
   title?: string;
@@ -45,8 +43,8 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
-  const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
 
+  const [width] = useWindowSize();
   const [countMyContract, setCountMyContract] = useState(defaultData);
 
   const fetchDataUserContracts = async (): Promise<void> => {
@@ -127,40 +125,13 @@ const MyContract: React.FC<Props> = () => {
 
   return (
     <Box>
-      <Box sx={{ width: '100%', margin: '30px 0' }}>
-        <Grid container spacing={3}>
-          <Grid item md={3}>
-            <Statistic
-              icon={SquareIcon}
-              color="#E5E5FE"
-              title="Square"
-              text="Contract"
-              value={countMyContract.square}
-            />
-          </Grid>
-          <Grid item md={3}>
-            <Statistic icon={CubeIcon} color="#D2FFDB" title="CUBE" text="Contract" value={countMyContract.cube} />
-          </Grid>
-          <Grid item md={3}>
-            <Statistic
-              icon={TessIcon}
-              color="#DBECFD"
-              title="Tesseract"
-              text="Contract"
-              value={countMyContract.tesseract}
-            />
-          </Grid>
-          <Grid item md={3}>
-            <Statistic
-              color={currentUserAddress ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)' : '#fff'}
-              title="My Rewards"
-              value={`${dataRewardAmount}`}
-            />
-          </Grid>
-        </Grid>
-      </Box>
+      <Stats countMyContract={countMyContract} />
 
-      <TableContracts data={currentUserAddress ? dataMyContracts : []} />
+      {width < 600 ? (
+        <ListContracts data={currentUserAddress ? dataMyContracts : []} />
+      ) : (
+        <TableContracts data={currentUserAddress ? dataMyContracts : []} />
+      )}
     </Box>
   );
 };

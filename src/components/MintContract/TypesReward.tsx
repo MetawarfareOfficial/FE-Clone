@@ -10,15 +10,6 @@ import TessIcon from 'assets/images/tess.gif';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 
-interface Props {
-  title?: string;
-}
-
-const Wrapper = styled(Box)<BoxProps>(() => ({
-  width: '100%',
-  marginTop: '35px',
-}));
-
 const data = [
   {
     name: 'Page A',
@@ -64,7 +55,21 @@ const data = [
   },
 ];
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+interface Props {
+  title?: string;
+}
+
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
+  width: '100%',
+  marginTop: '35px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 14px',
+  },
+}));
+
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
@@ -73,6 +78,15 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontWeight: 'bold',
   fontFamily: 'Poppins',
   margin: '0 0 41px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+    lineHeight: '32px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '21px',
+    lineHeight: '31px',
+  },
 }));
 
 const TypesReward: React.FC<Props> = () => {
