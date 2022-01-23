@@ -1,7 +1,7 @@
 import React from 'react';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
+import { Box, BoxProps, Typography, TypographyProps, Tooltip } from '@mui/material';
 import { useAppSelector } from 'stores/hooks';
 import { formatPrice } from 'helpers/formatPrice';
 
@@ -129,12 +129,15 @@ const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: 'bold',
   fontSize: '20px',
   lineHeight: '23px',
-  display: 'inline-flex',
+  display: 'inline-block',
   alignItems: 'center',
   justifyContent: 'center',
   marginLeft: 'auto',
   boxShadow: '0px 4px 17px rgba(0, 0, 0, 0.13)',
   borderRadius: '12px',
+  // whiteSpace: 'nowrap',
+  // overflow: 'hidden !important',
+  // textOverflow: 'ellipsis',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
@@ -151,13 +154,13 @@ const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards }) => (
   fontWeight: 'bold',
   fontSize: rewards ? '24px' : '36px',
   lineHeight: rewards ? '28px' : '42px',
-  display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: 'cal(100% - 67px)',
-  // whiteSpace: 'nowrap',
-  // overflow: 'hidden !important',
-  // textOverflow: 'ellipsis',
+  display: 'inline-block',
+  width: 'calc(100% - 67px)',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 }));
 
 const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
@@ -172,9 +175,11 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
           <ViewImage>
             <img alt="" src={icon} />
           </ViewImage>
-          <TotalMobile rewards={title === 'Rewards'}>
-            {title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}
-          </TotalMobile>
+          <Tooltip title={title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}>
+            <TotalMobile rewards={title === 'Rewards'}>
+              {title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}
+            </TotalMobile>
+          </Tooltip>
         </BoxHeader>
 
         <Content>

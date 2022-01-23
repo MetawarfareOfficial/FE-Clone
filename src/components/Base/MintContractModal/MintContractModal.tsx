@@ -205,7 +205,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
     },
 
     li: {
-      padding: '8px 20px',
+      padding: '7px 20px',
       border: '1px solid #BDBDBD',
       boxSizing: 'border-box',
       borderRadius: '13px',
@@ -335,26 +335,27 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   cursor: 'pointer',
-  span: {
-    color: '#BDBDBD',
-    fontWeight: 'normal',
-    fontSize: '13px',
-  },
   outline: 'none',
   border: 'none',
+  span: {
+    // color: '#BDBDBD',
+    fontWeight: 'normal',
+    fontSize: '13px',
+    opacity: '0.7',
+  },
 }));
 
 const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(
   ({ error }) => ({
     '.MuiInput-input': {
-      padding: '8px 20px',
-      border: `1px solid ${error ? 'red' : '#BDBDBD'}`,
-      borderRadius: '13px',
+      // padding: '8px 20px',
+      // border: `1px solid ${error ? 'red' : '#BDBDBD'}`,
+      // borderRadius: '13px',
       OutlinedInput: 'none',
       boxSizing: 'border-box',
-      height: '39px',
+      // height: '39px',
       color: '#293247',
-      marginBottom: error ? '2px' : '8px',
+      // marginBottom: error ? '2px' : '8px',
     },
     '.MuiFormHelperText-root': {
       color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',

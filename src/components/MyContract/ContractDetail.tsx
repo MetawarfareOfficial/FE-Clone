@@ -1,6 +1,8 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps } from '@mui/material';
+import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps, Tooltip } from '@mui/material';
+
+import { formatTimestampV2 } from 'helpers/formatTimestamp';
 
 interface Props {
   mintDate: string;
@@ -36,6 +38,9 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   fontSize: '14px',
   lineHeight: '26px',
   color: '#293247',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 }));
 
 const ButtonClaim = styled(Button)<ButtonProps>(() => ({
@@ -63,37 +68,49 @@ const ContractDetail: React.FC<Props> = ({ mintDate, type, initial, name, reward
         <Grid item xs={4}>
           <Box>
             <Title>Mint Date</Title>
-            <Text>{mintDate}</Text>
+            <Tooltip title={formatTimestampV2(mintDate)}>
+              <Text>{formatTimestampV2(mintDate)}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Type</Title>
-            <Text>{type}</Text>
+            <Tooltip title={type}>
+              <Text>{type}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Initial 0xB/day </Title>
-            <Text>{initial}</Text>
+            <Tooltip title={initial}>
+              <Text>{initial}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Name</Title>
-            <Text>{name}</Text>
+            <Tooltip title={name}>
+              <Text>{name}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Rewards</Title>
-            <Text>{rewards}</Text>
+            <Tooltip title={rewards}>
+              <Text>{rewards}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Current 0xB/day</Title>
-            <Text>{current}</Text>
+            <Tooltip title={current}>
+              <Text>{current}</Text>
+            </Tooltip>
           </Box>
         </Grid>
       </Grid>
