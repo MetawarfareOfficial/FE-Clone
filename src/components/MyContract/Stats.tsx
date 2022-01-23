@@ -9,8 +9,8 @@ import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import RewardsIcon from 'assets/images/rewards.gif';
-import { CountMyContract } from '../../interfaces/CountMyContract';
-import { useAppSelector } from '../../stores/hooks';
+import { CountMyContract } from 'interfaces/CountMyContract';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   countMyContract: CountMyContract;

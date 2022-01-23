@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import SliderScroll from '../Base/SliderScroll/SliderScroll';
+import SliderScroll from 'components/Base/SliderScroll/SliderScroll';
 
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
 import { TokenPrice } from 'interfaces/TokenPrice';
-import { useAppSelector } from '../../stores/hooks';
-import { formatPrice } from '../../helpers/formatPrice';
-import { StatisticDashboard } from '../../interfaces/StatisticDashboard';
+import { useAppSelector } from 'stores/hooks';
+import { formatPrice } from 'helpers/formatPrice';
+import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
 interface Props {

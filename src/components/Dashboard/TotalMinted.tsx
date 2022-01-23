@@ -9,7 +9,7 @@ import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
-import SliderScroll from '../Base/SliderScroll/index';
+import SliderScroll from 'components/Base/SliderScroll/index';
 
 interface Props {
   title?: string;

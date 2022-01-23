@@ -5,9 +5,10 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps } from '@mui/material';
 
 import SwitchMode from 'components/Base/SwitchMode';
-import WalletButton from 'components/Base/WalletButton';
+// import WalletButton from 'components/Base/WalletButton';
 
 import LogoImg from 'assets/images/logo.svg';
+import ConnectWallet from '../ConnectWallet';
 
 interface Props {
   title?: string;
@@ -60,7 +61,7 @@ const Header: React.FC<Props> = () => {
 
   const handleChangeMode = () => {};
 
-  const handleWallet = () => {};
+  // const handleWallet = () => {};
 
   return (
     <WrapperHeader
@@ -77,7 +78,7 @@ const Header: React.FC<Props> = () => {
 
       <Menus>
         <SwitchMode mode="light" onChange={handleChangeMode} />
-        <WalletButton onChange={handleWallet} />
+        <ConnectWallet />
       </Menus>
     </WrapperHeader>
   );
