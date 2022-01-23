@@ -393,15 +393,18 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                   </BoxHeaderContent>
                 </BoxHeader>
 
-                <TitleBox>30</TitleBox>
+                <TitleBox>{dataTotal.square}</TitleBox>
                 <TextBox>Contracts minted</TextBox>
               </BoxLeft>
 
               <BoxRight>
                 <Box>
-                  <Description>5 0xB</Description>
-                  <Description>Earn 0.03 0xB/day</Description>
-                  <Description>250% APY</Description>
+                  <Description>{`${dataPrice.square} 0xB`}</Description>
+                  <Description>{`Earn ${computeEarnedTokenPerDay(
+                    dataPrice.square,
+                    dataApy.square,
+                  )} 0xB/day`}</Description>
+                  <Description>{`${dataApy.square}% APY`}</Description>
                 </Box>
               </BoxRight>
             </BoxTotal>
@@ -420,15 +423,15 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                   </BoxHeaderContent>
                 </BoxHeader>
 
-                <TitleBox>30</TitleBox>
+                <TitleBox>{dataTotal.cube}</TitleBox>
                 <TextBox>Contracts minted</TextBox>
               </BoxLeft>
 
               <BoxRight>
                 <Box>
-                  <Description>15 0xB</Description>
-                  <Description>Earn 0.16 0xB/day</Description>
-                  <Description>400% APY</Description>
+                  <Description>{`${dataPrice.cube} 0xB`}</Description>
+                  <Description>{`Earn ${computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)} 0xB/day`}</Description>
+                  <Description>{`${dataApy.cube}% APY`}</Description>
                 </Box>
               </BoxRight>
             </BoxTotal>
@@ -447,15 +450,18 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                   </BoxHeaderContent>
                 </BoxHeader>
 
-                <TitleBox>30</TitleBox>
+                <TitleBox>{dataTotal.tesseract}</TitleBox>
                 <TextBox>Contracts minted</TextBox>
               </BoxLeft>
 
               <BoxRight>
                 <Box>
-                  <Description>30 0xB</Description>
-                  <Description>Earn 0.41 0xB/day</Description>
-                  <Description>500% APY</Description>
+                  <Description>{`${dataPrice.tesseract} 0xB`}</Description>
+                  <Description>{`Earn ${computeEarnedTokenPerDay(
+                    dataPrice.tesseract,
+                    dataApy.tesseract,
+                  )} 0xB/day`}</Description>
+                  <Description>{`${dataApy.tesseract}% APY`}</Description>
                 </Box>
               </BoxRight>
             </BoxTotal>
