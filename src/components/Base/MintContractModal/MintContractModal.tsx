@@ -27,6 +27,8 @@ import {
   TextFieldProps,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 import CloseImg from 'assets/images/ic-times.svg';
 import {
@@ -36,8 +38,6 @@ import {
   replaceArrayElementByIndex,
 } from 'helpers';
 import BigNumber from 'bignumber.js';
-import MinusImg from 'assets/images/minus.svg';
-import AddImg from 'assets/images/plus.svg';
 
 interface Props {
   open: boolean;
@@ -55,7 +55,7 @@ interface Contract {
   error: string | null;
 }
 
-const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
+const Wrapper = styled(Dialog)<DialogProps>(() => ({
   background: 'rgba(165, 199, 251, 0.38)',
 
   '.MuiPaper-root': {
@@ -65,13 +65,6 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     padding: '0',
     margin: 0,
     boxSizing: 'border-box',
-
-    [theme.breakpoints.down('sm')]: {
-      width: '317px',
-    },
-    '@media (max-width: 320px)': {
-      width: '300px',
-    },
   },
 }));
 
@@ -343,8 +336,7 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
   lineHeight: '21px',
   cursor: 'pointer',
   span: {
-    // color: '#c7c7c7',
-    opacity: '0.7',
+    color: '#BDBDBD',
     fontWeight: 'normal',
     fontSize: '13px',
   },
@@ -501,14 +493,14 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             startAdornment={
               <InputAdornment position="start" onClick={() => handleDeleteContract()}>
                 <IconButton>
-                  <img width={18} alt="" src={MinusImg} />
+                  <RemoveIcon />
                 </IconButton>
               </InputAdornment>
             }
             endAdornment={
               <InputAdornment position="end" onClick={() => handleAddContract(1)}>
                 <IconButton>
-                  <img width={18} alt="" src={AddImg} />
+                  <AddIcon />
                 </IconButton>
               </InputAdornment>
             }

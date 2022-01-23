@@ -172,7 +172,9 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
           <ViewImage>
             <img alt="" src={icon} />
           </ViewImage>
-          <TotalMobile rewards={title === 'Rewards' ? true : false}>{value}</TotalMobile>
+          <TotalMobile rewards={title === 'Rewards'}>
+            {title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}
+          </TotalMobile>
         </BoxHeader>
 
         <Content>
@@ -194,7 +196,7 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
           <Title>{title}</Title>
           {text && <Description>{text}</Description>}
         </Content>
-        <Value>{formatPrice(value)}</Value>
+        <Value>{title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}</Value>
       </Wrapper>
     );
   }

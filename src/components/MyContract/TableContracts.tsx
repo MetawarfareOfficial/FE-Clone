@@ -205,9 +205,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             <TableRow>
               <TableCellHeader>Mint Date</TableCellHeader>
               <TableCellHeader align="center">Name</TableCellHeader>
-              <TableCellHeader align="center" sx={{ width: { xs: 'auto', lg: '200px' } }}>
-                Type
-              </TableCellHeader>
+              <TableCellHeader align="left">Type</TableCellHeader>
               <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>

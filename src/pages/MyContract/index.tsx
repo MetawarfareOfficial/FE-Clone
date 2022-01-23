@@ -43,10 +43,8 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
-  // const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
 
   const [width] = useWindowSize();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [countMyContract, setCountMyContract] = useState(defaultData);
 
   const fetchDataUserContracts = async (): Promise<void> => {
@@ -127,7 +125,7 @@ const MyContract: React.FC<Props> = () => {
 
   return (
     <Box>
-      <Stats connected={true} />
+      <Stats countMyContract={countMyContract} />
 
       {width < 600 ? (
         <ListContracts data={currentUserAddress ? dataMyContracts : []} />
