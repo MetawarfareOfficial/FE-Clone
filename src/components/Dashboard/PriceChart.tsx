@@ -101,7 +101,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 color="#000000"
                 dataKey="time"
                 tickFormatter={(timestamp) => formatTimestamp(timestamp, tickFormatDate)}
-                interval={tickFormatInterval}
+                interval={heightTotal < 600 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
               />
 
