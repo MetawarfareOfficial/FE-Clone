@@ -52,7 +52,10 @@ const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
   borderRadius: '14px',
   textTransform: 'capitalize',
   boxShadow: 'none',
-  background: theme.palette.primary.main,
+  background:
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.main
+      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   color: 'white',
 
   '&:hover': {
@@ -222,7 +225,7 @@ const ConnectWallet: React.FC<Props> = () => {
         )}
         {active && isLogin && (
           <div>
-            <ButtonWallet variant="outlined" color="primary" onClick={logout}>
+            <ButtonWallet variant="contained" color="primary" onClick={logout}>
               Disconnect Wallet
             </ButtonWallet>
           </div>

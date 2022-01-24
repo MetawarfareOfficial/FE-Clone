@@ -1,7 +1,19 @@
-import { createTheme } from '@mui/material/styles';
+import React from 'react';
+// import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
+export const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+
+export const themeConfig = {
   palette: {
+    mode: 'light',
+    common: {
+      black: '#171717',
+      white: '#fff',
+    },
+    // background: {
+    //   black: '#171717',
+    //   white: '#fff',
+    // },
     primary: {
       light: '#3864FF',
       main: '#3864FF',
@@ -18,6 +30,6 @@ const theme = createTheme({
       primary: '#3864FF',
     },
   },
-});
+};
 
-export default theme;
+// export default themeConfig;

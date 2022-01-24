@@ -247,7 +247,7 @@ const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
-  const nodes = useAppSelector((state) => state.contract.nodes);
+  const nodes = useAppSelector((state: any) => state.contract.nodes);
 
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
