@@ -9,6 +9,8 @@ import { formatPrice } from 'helpers/formatPrice';
 import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
+import TokenBg from 'assets/images/bg-token.png';
+
 interface Props {
   title?: string;
   data?: TokenPrice;
@@ -23,12 +25,16 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const CardBox = styled(Box)<BoxProps>(({ theme }) => ({
-  background: 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)',
+  background:
+    theme.palette.mode === 'light'
+      ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+      : `url(${TokenBg}) no-repeat center -2px`,
   borderRadius: '20px',
   textAlign: 'center',
   padding: '27px',
   boxSizing: 'border-box',
   maxHeight: '190px',
+  backdropFilter: 'blur(111px)',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
 
   [theme.breakpoints.down('lg')]: {
@@ -43,8 +49,11 @@ const CardBox = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
-  // color: `#293247`,
-  backgroundColor: `${theme.palette.secondary}`,
+  color: theme.palette.mode === 'light' ? `#293247` : '#fff',
+  background:
+    theme.palette.mode === 'light'
+      ? `${theme.palette.secondary}`
+      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   padding: '12px',
   width: '176px',
   fontSize: '14px',
@@ -90,7 +99,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: `rgba(255, 255, 255, 0.54)`,
+  color: theme.palette.mode === 'light' ? `rgba(255, 255, 255, 0.54)` : '#656567',
   margin: '0 0',
   fontSize: '18px',
   lineHeight: '27px',

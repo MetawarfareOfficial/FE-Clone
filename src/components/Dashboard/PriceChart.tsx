@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 // import moment from 'moment';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
-import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatTimestamp } from 'helpers/formatTimestamp';
@@ -23,7 +23,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   margin: ' 0 0 31px',
   fontSize: '24px',
   lineHeight: '36px',
@@ -44,7 +44,11 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
-  backgroundColor: '#fff',
+  background:
+    theme.palette.mode === 'light'
+      ? '#fff'
+      : 'linear-gradient(0deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03))',
+  // backdropFilter: theme.palette.mode === 'light' ? 'unset' : 'blur(279px)',
   borderRadius: '26px',
   padding: '35px 0 20px 30px',
   boxSizing: 'border-box',
@@ -64,6 +68,7 @@ const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
 
 const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
   const [width] = useWindowSize();
+  const theme = useTheme();
   const [heightChart, setHeightChart] = useState(500);
 
   useEffect(() => {
@@ -87,9 +92,17 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
           <ResponsiveContainer>
             <ComposedChart width={732} height={400} data={data}>
               <defs>
-                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="40%" stopColor="#EFE5FE" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#EFE5FE" stopOpacity={0.1} />
+                <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor={theme.palette.mode === 'light' ? '#EFE5FE' : '#29445C'}
+                    stopOpacity={1}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={theme.palette.mode === 'light' ? '#EFE5FE' : '#29445C'}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
 
@@ -114,6 +127,8 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 dataKey="price"
               />
 
+              {theme.palette.mode === 'dark' && <CartesianGrid stroke="#1D1D1D" strokeOpacity={0.7} />}
+
               <Tooltip
                 formatter={(value: string) => formatPrice(value)}
                 labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
@@ -122,10 +137,10 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
               <Area
                 type="monotone"
                 dataKey="price"
-                stroke="#3864FF"
+                stroke={theme.palette.mode === 'light' ? '#3864FF' : '#2978F4'}
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#colorUv)"
+                fill="url(#colorPrice)"
               />
             </ComposedChart>
           </ResponsiveContainer>

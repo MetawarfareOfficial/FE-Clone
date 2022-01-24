@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { styled, Theme, CSSObject } from '@mui/material/styles';
+import { styled, Theme, CSSObject, useTheme } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 import { menus } from './menus';
+import { ColorModeContext } from 'theme';
 import { useWindowSize } from 'hooks/useWindowSize';
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
@@ -34,6 +35,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import LogoImg from 'assets/images/logo.svg';
 import LogoIcon from 'assets/images/logo-ic.svg';
+import LogoDarkImg from 'assets/images/logo-dark.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
 
@@ -76,6 +78,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
+  background: theme.palette.mode === 'dark' ? '#171717' : '#fff',
   overflow: 'unset',
   border: 'none',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
@@ -109,7 +112,10 @@ const DrawerHeader = styled('div')(() => ({
 const ToggleButton = styled(IconButton)(({ theme }) => ({
   width: '18px',
   height: '18px',
-  backgroundColor: `${theme.palette.primary.light}`,
+  background:
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.light
+      : `linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)`,
   borderRadius: '50%',
   zIndex: 200,
   position: 'absolute',
@@ -151,7 +157,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 }));
 
-const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => ({
+const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open, theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -161,7 +167,7 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
   marginBottom: '10px',
   height: '56px',
   // overflow: 'hidden',
-  backgroundColor: active ? '#dbecfd88' : '#fff',
+  backgroundColor: active ? (theme.palette.mode === 'light' ? '#dbecfd88' : '#212121') : 'unset',
   width: `${open ? '100%' : '56px'}`,
 
   span: {
@@ -170,7 +176,13 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
     lineHeight: '26px',
     fontFamily: 'Poppins',
     fontWeight: active ? 'bold' : 'normal',
-    color: active ? '#293247' : '#A4A9B7',
+    color: active
+      ? theme.palette.mode === 'light'
+        ? '#293247'
+        : '#fff'
+      : theme.palette.mode === 'light'
+      ? '#A4A9B7'
+      : 'rgba(164, 169, 183, 0.56)',
   },
 
   svg: {
@@ -206,7 +218,7 @@ const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) 
 }));
 
 const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
-  background: '#FAFBFE',
+  background: theme.palette.mode === 'light' ? '#FAFBFE' : '#1e1e1e',
   // width: '100%',
   minHeight: '100vh',
   padding: '30px',
@@ -238,7 +250,8 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'none',
   fontWeight: '700',
   fontFamily: 'Poppins',
-  color: theme.palette.primary.main,
+  color: theme.palette.primary[theme.palette.mode],
+  borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
   padding: '6px 35px',
   borderRadius: '8px',
   marginBottom: '20px',
@@ -247,7 +260,7 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 
 const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
-  color: theme.palette.primary.main,
+  color: theme.palette.primary[theme.palette.mode],
   marginBottom: '20px',
   minWidth: '34px',
   width: '34px',
@@ -260,14 +273,14 @@ const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const BoxSwitch = styled(Box)<BoxProps>(() => ({
+const BoxSwitch = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 
   label: {
     fontSize: '10px',
-    color: '#A4A9B7',
+    color: theme.palette.mode === 'dark' ? '#A4A9B7' : '#A4A9B7',
     lineHeight: '18px',
     textTransform: 'capitalize',
     fontFamily: 'Poppins',
@@ -371,12 +384,16 @@ const Layout: React.FC<Props> = ({ children }) => {
   const location = useLocation();
 
   const [open, setOpen] = React.useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [lightMode, setLightMode] = React.useState(true);
   const [width] = useWindowSize();
+  const theme = useTheme();
+  const colorMode = React.useContext<any>(ColorModeContext);
 
-  const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLightMode(event.target.checked);
+  // const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setLightMode(event.target.checked);
+  // };
+
+  const handleChangeMode = () => {
+    colorMode.toggleColorMode();
   };
 
   const settings = {
@@ -493,7 +510,17 @@ const Layout: React.FC<Props> = ({ children }) => {
         }}
       >
         <DrawerHeader>
-          <Logo to="/">{open ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoIcon} />}</Logo>
+          <Logo to="/">
+            {open ? (
+              theme.palette.mode === 'light' ? (
+                <img alt="" src={LogoImg} />
+              ) : (
+                <img alt="" src={LogoDarkImg} />
+              )
+            ) : (
+              <img alt="" src={LogoIcon} />
+            )}
+          </Logo>
           <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
         </DrawerHeader>
 
@@ -549,7 +576,7 @@ const Layout: React.FC<Props> = ({ children }) => {
           <BoxSwitch>
             {open && <label>Light</label>}
             {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
-            <SwitchMode mode="light" onChange={handleChangeMode} />
+            <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
             {open && <label>Dark</label>}
           </BoxSwitch>
         </SideAction>
@@ -567,15 +594,18 @@ const Layout: React.FC<Props> = ({ children }) => {
           </SliderScroll>
         </MenusMobile>
 
-        {location.pathname !== '/treasury' && width > 899 && (
-          <Banner
-            // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
-            // walletId="0x33434dieoewo"
-            // onConnect={handleConnect}
-            // connected={false}
-            isBg={location.pathname !== '/'}
-          />
-        )}
+        {
+          // location.pathname !== '/treasury' &&
+          width > 899 && (
+            <Banner
+              // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
+              // walletId="0x33434dieoewo"
+              // onConnect={handleConnect}
+              // connected={false}
+              isBg={location.pathname !== '/'}
+            />
+          )
+        }
 
         {children}
       </MainLayout>

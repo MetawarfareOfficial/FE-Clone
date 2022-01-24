@@ -1,12 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, Typography, TypographyProps, Grid } from '@mui/material';
 import { BoxProps } from '@mui/material/Box';
 
 import SquareIcon from 'assets/images/square.gif';
+import SquareDarkIcon from 'assets/images/square-dark.gif';
 import CubeIcon from 'assets/images/cube.gif';
+import CubeDarkIcon from 'assets/images/cube-dark.gif';
 import TessIcon from 'assets/images/tess.gif';
+import TessDarkIcon from 'assets/images/tess-dark.gif';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 import SliderScroll from 'components/Base/SliderScroll/index';
@@ -30,7 +33,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   margin: ' 0 0 31px',
   fontSize: '24px',
   lineHeight: '36px',
@@ -71,7 +74,7 @@ const TitleBox = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const TextBox = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#000',
+  color: theme.palette.mode === 'light' ? '#000' : 'rgba(255, 255, 255, 0.46)',
   fontSize: '14px',
   lineHeight: '21px',
   fontWeight: 'normal',
@@ -85,7 +88,7 @@ const TextBox = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const HeaderTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#080A0F',
   fontSize: '20px',
   lineHeight: '30px',
   fontWeight: '600',
@@ -103,7 +106,7 @@ const HeaderTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: 'rgba(41, 50, 71, 0.35)',
+  color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.35)' : 'rgba(255, 255, 255, 0.42)',
   fontSize: '12px',
   lineHeight: '18px',
   fontWeight: 'normal',
@@ -120,7 +123,7 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#000000',
+  color: theme.palette.mode === 'light' ? '#000000' : '#080A0F',
   margin: '5px 0',
   fontSize: '13px',
   lineHeight: '20px',
@@ -136,7 +139,7 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
 const BoxTotal = styled(Box)<BoxTypeProps>(({ color, shadow, theme }) => ({
   borderRadius: '13px',
   overflow: 'hidden',
-  backgroundColor: `${color}`,
+  background: `${color}`,
   boxShadow: `${shadow}`,
   display: 'flex',
 
@@ -216,6 +219,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
   const boxRef = useRef<any>(null);
   const [width] = useWindowSize();
   const sliderRef = useRef<any>(null);
+  const theme = useTheme();
 
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
@@ -249,26 +253,6 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
     ],
   };
 
-  // const scroll = (e: any) => {
-  //   if (sliderRef === null) {
-  //     return 0;
-  //   } else {
-  //     if (e.wheelDelta > 0) {
-  //       sliderRef.current.slickPrev();
-  //     } else {
-  //       sliderRef.current.slickNext();
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('wheel', scroll, true);
-
-  //   return () => {
-  //     window.removeEventListener('wheel', scroll, true);
-  //   };
-  // }, []);
-
   useEffect(() => {
     if (boxRef && boxRef.current) {
       const height = boxRef.current.clientHeight;
@@ -284,11 +268,14 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
         <div ref={boxRef}>
           <Grid container spacing={{ sm: '24px', md: '30px' }}>
             <Grid item xs={4} md={12}>
-              <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+              <BoxTotal
+                color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
+                shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+              >
                 <BoxLeft>
                   <BoxHeader>
                     <ViewImage>
-                      <img alt="" src={SquareIcon} width="100%" />
+                      <img alt="" src={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon} width="100%" />
                     </ViewImage>
 
                     <BoxHeaderContent>
@@ -314,11 +301,14 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
               </BoxTotal>
             </Grid>
             <Grid item xs={4} md={12}>
-              <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+              <BoxTotal
+                color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
+                shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+              >
                 <BoxLeft>
                   <BoxHeader>
                     <ViewImage>
-                      <img alt="" src={CubeIcon} width="100%" />
+                      <img alt="" src={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon} width="100%" />
                     </ViewImage>
 
                     <BoxHeaderContent>
@@ -344,11 +334,19 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
               </BoxTotal>
             </Grid>
             <Grid item xs={4} md={12}>
-              <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
+              <BoxTotal
+                color={
+                  theme.palette.mode === 'light'
+                    ? '#DBECFD'
+                    : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+                }
+                shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                sx={{ margin: 0 }}
+              >
                 <BoxLeft>
                   <BoxHeader>
                     <ViewImage>
-                      <img alt="" src={TessIcon} width="100%" />
+                      <img alt="" src={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon} width="100%" />
                     </ViewImage>
 
                     <BoxHeaderContent>
