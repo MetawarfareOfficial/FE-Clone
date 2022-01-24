@@ -111,9 +111,9 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 axisLine={false}
                 fontSize="10px"
                 fontFamily="Helvetica"
-                color="#000000"
+                color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 dataKey="time"
-                tickFormatter={(timestamp) => formatTimestamp(timestamp, tickFormatDate)}
+                tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate)}
                 interval={heightTotal < 600 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
               />
@@ -122,6 +122,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 axisLine={false}
                 tickLine={false}
                 fontSize="10px"
+                color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 fontFamily="Helvetica"
                 orientation="right"
                 dataKey="price"

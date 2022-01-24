@@ -602,7 +602,7 @@ const Layout: React.FC<Props> = ({ children }) => {
               // walletId="0x33434dieoewo"
               // onConnect={handleConnect}
               // connected={false}
-              isBg={location.pathname !== '/'}
+              isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true}
             />
           )
         }

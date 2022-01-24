@@ -10,10 +10,10 @@ interface Props {
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
-  marginTop: '79px',
+  marginTop: '30px',
 
   [theme.breakpoints.down('lg')]: {
-    marginTop: '50px',
+    marginTop: '30px',
   },
   [theme.breakpoints.down('sm')]: {
     padding: '0 14px',
@@ -94,6 +94,34 @@ const BoxText = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
+const BoxText2 = styled(Typography)<TypographyProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
+  fontWeight: 'bold',
+  fontSize: '18px',
+  lineHeight: '27px',
+  textTransform: 'uppercase',
+  color: '#C5D9FF',
+  maxWidth: '163px',
+  marginBottom: '15px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '16px',
+    lineHeight: '22px',
+  },
+  [theme.breakpoints.down('md')]: {
+    // textAlign: 'center',
+    // margin: '0 auto 15px',
+    fontSize: '18px',
+    lineHeight: '27px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    textAlign: 'center',
+    margin: '0 auto 15px',
+    fontSize: '18px',
+    lineHeight: '27px',
+  },
+}));
+
 const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
   width: 'calc(100% - 290px)',
   padding: '30px',
@@ -165,7 +193,7 @@ const Statistics: React.FC<Props> = () => {
         <Grid item xs={12} sm={12} md={6}>
           <BoxDetail>
             <BoxLeft>
-              <BoxText>Market Cap</BoxText>
+              <BoxText2>Market Cap</BoxText2>
               <BoxTitle>1.3 Million</BoxTitle>
             </BoxLeft>
             <BoxRight>
