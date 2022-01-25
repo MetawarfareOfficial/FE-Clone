@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import {
   Box,
@@ -15,12 +15,18 @@ import {
   Button,
   ButtonProps,
 } from '@mui/material';
-import { toast } from 'react-toastify';
 import { useAppSelector } from 'stores/hooks';
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
+import { claimAllNodes, claimNodeByNode } from '../../helpers/interractiveContract';
+import MintStatusModal from '../Base/MintStatusModal';
+import SquareIcon from 'assets/images/square.gif';
+import CubeIcon from 'assets/images/cube.gif';
+import TessIcon from 'assets/images/tess.gif';
+import { sleep } from '../../helpers/delayTime';
+import { DELAY_TIME } from '../../consts/typeReward';
 
 interface Props {
   title?: string;
@@ -183,6 +189,8 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
   },
 }));
 
+const STATUS = ['success', 'error', 'pending'];
+
 const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
   overflow: 'auto',
 }));
@@ -190,10 +198,55 @@ const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
 const TableContracts: React.FC<Props> = ({ data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
+  const [openStatus, setOpenStatus] = useState(false);
+  const [status, setStatus] = useState<any>(null);
+  const [claimType, setClaimType] = useState<string>('');
+  const [icon, setIcon] = useState<string>('');
+
+  const handleToggleStatus = () => {
+    setOpenStatus(!openStatus);
+  };
+
+  const processModal = (type: string) => {
+    setStatus(STATUS[2]);
+    setOpenStatus(true);
+    setClaimType(type);
+  };
+
+  const processIcon = (cType: string) => {
+    if (cType === '0') {
+      setIcon(SquareIcon);
+      return;
+    }
+
+    if (cType === '1') {
+      setIcon(CubeIcon);
+      return;
+    }
+
+    setIcon(TessIcon);
+  };
+
   const handleClickClaimAll = async () => {
     try {
+      processModal('All');
+      const response: Record<string, any> = await claimAllNodes();
+      await sleep(DELAY_TIME);
+      if (response.hash) setStatus(STATUS[0]);
     } catch (err: any) {
-      toast.error(err.message, { hideProgressBar: true });
+      setStatus(STATUS[1]);
+    }
+  };
+
+  const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
+    try {
+      processModal(formatCType(cType));
+      processIcon(cType);
+      const response: Record<string, any> = await claimNodeByNode(nodeIndex);
+      await sleep(DELAY_TIME);
+      if (response.hash) setStatus(STATUS[0]);
+    } catch (e) {
+      setStatus(STATUS[1]);
     }
   };
 
@@ -235,7 +288,14 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                     {formatPrice(bigNumber2NumberV3(item.rewards, 1e9))}
                   </TableCellContent>
                   <TableCellContent align="right">
-                    <ButtonClaim size="small" variant="outlined" color="primary">
+                    <ButtonClaim
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => {
+                        handleClickClaimNodeByNode(1, item.type);
+                      }}
+                    >
                       Claim
                     </ButtonClaim>
                   </TableCellContent>
@@ -244,12 +304,30 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={7}>
-                  <EmptyContracts>No contracts yet!</EmptyContracts>
+                  <EmptyContracts>
+                    {currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}
+                  </EmptyContracts>
                 </TableCell>
               </TableRow>
             )}
           </CustomTableBody>
         </Table>
+        <MintStatusModal
+          icon={icon}
+          name={claimType}
+          open={openStatus}
+          status={status}
+          text={
+            status === 'success'
+              ? 'Rewards claimed successfully'
+              : status === 'error'
+              ? 'Rewards claiming failed'
+              : status === 'pending'
+              ? 'Processing'
+              : 'Insufficient Tokens'
+          }
+          onClose={handleToggleStatus}
+        />
       </TableWrapper>
     </Box>
   );

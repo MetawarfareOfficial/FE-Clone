@@ -347,7 +347,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
         status={status}
         text={
           status === 'success'
-            ? 'Rewards claimed successfully'
+            ? 'Contract minted successfully'
             : status === 'error'
             ? 'Contract minting failed'
             : status === 'pending'
