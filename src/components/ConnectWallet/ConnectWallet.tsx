@@ -154,15 +154,16 @@ const ConnectWallet: React.FC<Props> = () => {
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
-      !getToken() &&
+      !currentUserAddress &&
         toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, {
           hideProgressBar: true,
           autoClose: 2000,
+          toastId: 2,
         });
       return;
     }
     dispatch(unSetAccount());
-  }, [account, active, chainId, isLogin]);
+  }, [account, active, chainId, isLogin, currentUserAddress]);
 
   useEffect(() => {
     if (getToken()) {
@@ -174,7 +175,7 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useEffect(() => {
     if (error?.name === 'UnsupportedChainIdError') {
-      toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true });
+      toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true, toastId: 1 });
       return;
     }
   }, [error?.name]);
