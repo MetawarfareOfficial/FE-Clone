@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
@@ -98,6 +98,8 @@ const ConnectWallet: React.FC<Props> = () => {
   const isLogin = useAppSelector((state) => state.user.isLogin);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
+  const [isFirstTimeClickLogin, setIsFirstTimeClickLogin] = useState(false);
+
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
@@ -109,6 +111,7 @@ const ConnectWallet: React.FC<Props> = () => {
       await activate(injected);
       if (!getToken()) dispatch(setLogin());
       authenticateUser(signature as string);
+      setIsFirstTimeClickLogin(true);
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
     }
@@ -123,6 +126,8 @@ const ConnectWallet: React.FC<Props> = () => {
       toast.info(successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
     } catch (ex: any) {
       toast.error(ex.message, { hideProgressBar: true });
+    } finally {
+      setIsFirstTimeClickLogin(false);
     }
   };
 
@@ -154,7 +159,7 @@ const ConnectWallet: React.FC<Props> = () => {
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
-      !currentUserAddress &&
+      isFirstTimeClickLogin &&
         toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, {
           hideProgressBar: true,
           autoClose: 2000,
