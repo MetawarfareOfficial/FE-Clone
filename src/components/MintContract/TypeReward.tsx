@@ -256,6 +256,11 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
 
   const handleToggle = () => {
+    if (new BigNumber(zeroXBlockBalance).isEqualTo(0)) {
+      setStatus('');
+      setOpenStatus(true);
+      return;
+    }
     setOpen(!open);
   };
 

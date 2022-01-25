@@ -158,7 +158,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
           ) : status === 'pending' ? (
             <img alt="" src={PendingGif} />
           ) : (
-            ''
+            <img alt="" src={ErrorGif} />
           )}
         </ViewImage>
 
