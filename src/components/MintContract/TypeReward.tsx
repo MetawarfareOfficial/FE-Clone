@@ -11,7 +11,7 @@ import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
-import { setIsCreatingNodes, unSetIsCreatingNodes } from '../../services/contract';
+import { setIsCreatingNodes, unSetIsCreatingNodes } from 'services/contract';
 
 interface Props {
   id: any;

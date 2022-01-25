@@ -20,16 +20,16 @@ import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
-import { claimAllNodes, claimNodeByNode } from '../../helpers/interractiveContract';
-import MintStatusModal from '../Base/MintStatusModal';
+import { claimAllNodes, claimNodeByNode } from 'helpers/interractiveContract';
+import MintStatusModal from 'components/Base/MintStatusModal';
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
-import { sleep } from '../../helpers/delayTime';
-import { DELAY_TIME } from '../../consts/typeReward';
+import { sleep } from 'helpers/delayTime';
+import { DELAY_TIME } from 'consts/typeReward';
 import { toast } from 'react-toastify';
-import { errorMessage } from '../../messages/errorMessages';
-import { setIsClaimingReward, unSetIsClaimingReward } from '../../services/contract';
+import { errorMessage } from 'messages/errorMessages';
+import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 
 interface Props {
   title?: string;

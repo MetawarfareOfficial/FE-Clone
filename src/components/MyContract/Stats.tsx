@@ -3,7 +3,7 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Grid } from '@mui/material';
 
-import Statistic from './Statistic';
+import Statistic from 'components/MyContract/Statistic';
 
 import SquareIcon from 'assets/images/square.gif';
 import CubeIcon from 'assets/images/cube.gif';

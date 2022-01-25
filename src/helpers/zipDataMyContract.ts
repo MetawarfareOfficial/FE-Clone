@@ -1,9 +1,9 @@
 import { ContractResponse, MineContract } from 'interfaces/MyContract';
 import { zipWith } from 'lodash';
-import { computeEarnedTokenPerDay } from './computeEarnedTokenPerDay';
-import { bigNumber2NumberV3 } from './formatNumber';
-import { ContractPrice } from '../interfaces/ContractPrice';
-import { ContractApy } from '../interfaces/ContractApy';
+import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
+import { bigNumber2NumberV3 } from 'helpers/formatNumber';
+import { ContractPrice } from 'interfaces/ContractPrice';
+import { ContractApy } from 'interfaces/ContractApy';
 
 export const parseDataMyContract = (data: string) => {
   return data.split('#');

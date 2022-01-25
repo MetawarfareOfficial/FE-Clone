@@ -3,9 +3,10 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps, Tooltip } from '@mui/material';
 
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
-import { formatCType } from '../../helpers/formatCType';
-import { formatPrice } from '../../helpers/formatPrice';
-import { bigNumber2NumberV3 } from '../../helpers/formatNumber';
+import { formatCType } from 'helpers/formatCType';
+import { formatPrice } from 'helpers/formatPrice';
+import { bigNumber2NumberV3 } from 'helpers/formatNumber';
+import { useAppSelector } from '../../stores/hooks';
 
 interface Props {
   mintDate: string;
@@ -14,6 +15,8 @@ interface Props {
   name: string;
   rewards: number;
   current: number;
+  nodeIndex: number;
+  onClaimClick: (arg1: number, arg2: string) => void;
 }
 
 const Wrapper = styled(Box)<BoxProps>(() => ({
@@ -64,7 +67,18 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const ContractDetail: React.FC<Props> = ({ mintDate, type, initial, name, rewards, current }) => {
+const ContractDetail: React.FC<Props> = ({
+  mintDate,
+  type,
+  initial,
+  name,
+  rewards,
+  current,
+  nodeIndex,
+  onClaimClick,
+}) => {
+  const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
+
   return (
     <Wrapper>
       <Grid container spacing="19px">
@@ -118,7 +132,16 @@ const ContractDetail: React.FC<Props> = ({ mintDate, type, initial, name, reward
         </Grid>
       </Grid>
 
-      <ButtonClaim size="small" variant="outlined" color="primary" fullWidth>
+      <ButtonClaim
+        size="small"
+        variant="outlined"
+        color="primary"
+        fullWidth
+        disabled={isClaimingReward}
+        onClick={() => {
+          onClaimClick(nodeIndex, type);
+        }}
+      >
         Claim
       </ButtonClaim>
     </Wrapper>

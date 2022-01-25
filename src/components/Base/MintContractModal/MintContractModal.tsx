@@ -38,8 +38,8 @@ import {
   replaceArrayElementByIndex,
 } from 'helpers';
 import BigNumber from 'bignumber.js';
-import { useAppSelector } from '../../../stores/hooks';
-import { errorMessage } from '../../../messages/errorMessages';
+import { useAppSelector } from 'stores/hooks';
+import { errorMessage } from 'messages/errorMessages';
 
 interface Props {
   open: boolean;
