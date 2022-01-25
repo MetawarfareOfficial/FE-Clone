@@ -39,6 +39,7 @@ import {
 } from 'helpers';
 import BigNumber from 'bignumber.js';
 import { useAppSelector } from '../../../stores/hooks';
+import { errorMessage } from '../../../messages/errorMessages';
 
 interface Props {
   open: boolean;
@@ -453,6 +454,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   ) => {
     const newName = event.target.value;
     const error = handleContractNameErrors(newName);
+
+    if (error === errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message) {
+      event.preventDefault();
+      return;
+    }
 
     const newContract = replaceArrayElementByIndex(contracts, index, {
       name: newName,
