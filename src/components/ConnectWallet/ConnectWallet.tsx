@@ -197,7 +197,7 @@ const ConnectWallet: React.FC<Props> = () => {
   useFetchNodes();
   useFetchRewardAmount();
 
-  if (width < 600) {
+  if (width < 900) {
     return (
       <div>
         {currentUserAddress ? (

@@ -62,7 +62,9 @@ const BoxContract = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
-  display: 'block',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   // width: '100%',
   boxSizing: 'border-box',
   width: 'calc(100% - 286px)',
@@ -77,6 +79,7 @@ const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     marginTop: '0',
+    display: 'inline-block',
   },
 }));
 
@@ -115,20 +118,22 @@ const Name = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const ViewInfo = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'inline-flex',
-  width: '100%',
+  width: 'calc(100% - 158px)',
   alignItems: 'center',
+  justifyContent: 'center',
   height: '100%',
   paddingLeft: '48px',
   paddingRight: '10px',
   boxSizing: 'border-box',
   overflow: 'hidden',
+  margin: '0 auto',
 
   [theme.breakpoints.down('lg')]: {
     paddingLeft: '24px',
   },
   [theme.breakpoints.down('sm')]: {
     width: '100%',
-    display: 'inline-block',
+    // display: 'inline-block',
     padding: '0',
     marginTop: '27px',
   },
@@ -136,30 +141,31 @@ const ViewInfo = styled(Box)<BoxProps>(({ theme }) => ({
 
 const Info = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'inline-flex',
-  width: '100%',
+  // width: '100%',
+  width: '65%',
   alignItems: 'center',
 
   [theme.breakpoints.down('sm')]: {
     width: '50%',
-    float: 'left',
+    // float: 'left',
     display: 'inline-block',
   },
 }));
 
-const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
-  marginLeft: 'auto',
-  display: 'inline-flex',
-  alignItems: 'center',
-  boxSizing: 'border-box',
+// const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
+//   marginLeft: 'auto',
+//   display: 'inline-flex',
+//   alignItems: 'center',
+//   boxSizing: 'border-box',
 
-  [theme.breakpoints.down('sm')]: {
-    display: 'block',
-    width: '50%',
-    padding: '0',
-    float: 'right',
-    paddingLeft: '20px',
-  },
-}));
+//   [theme.breakpoints.down('sm')]: {
+//     display: 'block',
+//     width: '50%',
+//     padding: '0',
+//     float: 'right',
+//     paddingLeft: '20px',
+//   },
+// }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: '#293247',
@@ -168,7 +174,11 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   lineHeight: '21px',
   fontFamily: 'Poppins',
   minWidth: '114px',
+  width: 'auto',
 
+  [theme.breakpoints.up('xl')]: {
+    width: '30%',
+  },
   [theme.breakpoints.down('lg')]: {
     fontSize: '12px',
     lineHeight: '18px',
@@ -194,9 +204,11 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
   borderRadius: ' 14px',
   fontWeight: 'bold',
   textTransform: 'capitalize',
-  marginLeft: '40px',
+  // marginLeft: 'auto',
+  // marginLeft: '40px',
   // display: 'inline-flex',
 
+  [theme.breakpoints.up('xl')]: {},
   [theme.breakpoints.down('lg')]: {
     fontSize: '13px',
     lineHeight: '18px',
@@ -206,39 +218,43 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     margin: ' 27px 0 0',
-    display: 'none',
-  },
-}));
-
-const ButtonMintMobile = styled(Button)<ButtonProps>(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontSize: '14px',
-  lineHeight: '22px',
-  padding: '9px 12px',
-  borderRadius: ' 14px',
-  fontWeight: 'bold',
-  textTransform: 'capitalize',
-  marginLeft: '40px',
-  width: '100%',
-  margin: ' 14px 0 0',
-  display: 'none',
-
-  [theme.breakpoints.down('sm')]: {
     display: 'block',
   },
 }));
+
+// const ButtonMintMobile = styled(Button)<ButtonProps>(({ theme }) => ({
+//   fontFamily: 'Poppins',
+//   fontSize: '14px',
+//   lineHeight: '22px',
+//   padding: '9px 12px',
+//   borderRadius: ' 14px',
+//   fontWeight: 'bold',
+//   textTransform: 'capitalize',
+//   marginLeft: '40px',
+//   width: '100%',
+//   margin: ' 14px 0 0',
+//   display: 'none',
+
+//   [theme.breakpoints.down('sm')]: {
+//     display: 'block',
+//   },
+// }));
 
 const ViewChart = styled('div')`
   width: 143px;
   height: 37px;
 
+  @media (min-width: 1441px) {
+    width: 200px;
+    height: 60px;
+  }
   @media (max-width: 900px) {
     width: 120px;
     height: 30px;
   }
 
   @media (max-width: 600px) {
-    width: 100%;
+    width: 50%;
     height: 60px;
   }
 `;
@@ -309,11 +325,15 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
         <ViewInfo>
           <Info>
             <Text>{value} 0xB</Text>
-            <Text>{apy}% APY</Text>
+            <Text>{apy}% APR</Text>
             <Text>Earn {earn} 0xB/day</Text>
           </Info>
 
-          <BoxDetail>
+          <ViewChart>
+            <LineChart data={dataChart} color={colorChart} />
+          </ViewChart>
+
+          {/* <BoxDetail>
             <ViewChart>
               <LineChart data={dataChart} color={colorChart} />
             </ViewChart>
@@ -321,12 +341,16 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
             <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
               Mint
             </ButtonMint>
-          </BoxDetail>
+          </BoxDetail> */}
         </ViewInfo>
 
-        <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle}>
+        <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
           Mint
-        </ButtonMintMobile>
+        </ButtonMint>
+
+        {/* <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle}>
+          Mint
+        </ButtonMintMobile> */}
       </BoxContent>
 
       <MintContractModal

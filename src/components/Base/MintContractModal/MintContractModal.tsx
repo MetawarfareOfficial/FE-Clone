@@ -231,6 +231,11 @@ const ButtonMax = styled(Button)<ButtonProps>(() => ({
   lineHeight: '21px',
   textTransform: 'capitalize',
   marginLeft: 'auto',
+
+  '&:hover': {
+    opacity: 0.7,
+    cursor: 'pointer',
+  },
 }));
 
 const BoxActions = styled(Box)<BoxProps>(() => ({
@@ -290,6 +295,11 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
     alignItems: 'center',
     justifyContent: 'center',
 
+    '&:hover': {
+      opacity: 0.7,
+      cursor: 'pointer',
+    },
+
     button: {
       color: `${theme.palette.primary.main}`,
       padding: 0,
@@ -311,6 +321,11 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
+
+    '&:hover': {
+      opacity: 0.7,
+      cursor: 'pointer',
+    },
 
     button: {
       color: '#fff',
@@ -342,6 +357,11 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
     fontWeight: 'normal',
     fontSize: '13px',
     opacity: '0.7',
+  },
+
+  '&:hover': {
+    opacity: 0.7,
+    cursor: 'pointer',
   },
 }));
 

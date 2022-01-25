@@ -34,7 +34,7 @@ const ButtonMode = styled(IconButton)<IconButtonCustomProps>(({ bgColor }) => ({
 }));
 
 const WalletButton: React.FC<Props> = ({ onChange, mode }) => {
-  const bgColor = mode === 'logout' ? '#3864FF' : '#DADADA';
+  const bgColor = mode === 'logout' ? '#3864FF' : '#E0E0E0';
 
   return (
     <ButtonMode onClick={onChange} bgColor={bgColor}>
