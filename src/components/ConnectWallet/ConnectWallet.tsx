@@ -201,10 +201,19 @@ const ConnectWallet: React.FC<Props> = () => {
   if (width < 900) {
     return (
       <div>
-        {currentUserAddress ? (
-          <WalletButton onChange={logout} mode={'logout'} />
-        ) : (
-          <WalletButton onChange={login} mode={'login'} />
+        {!(active && isLogin) && (
+          <div>
+            {isUnsupportedChainIdError || getToken() ? (
+              <WalletButton onChange={handleWrongNetWork} mode={'login'} />
+            ) : (
+              <WalletButton onChange={login} mode={'login'} />
+            )}
+          </div>
+        )}
+        {active && isLogin && (
+          <div>
+            <WalletButton onChange={logout} mode={'logout'} />
+          </div>
         )}
       </div>
     );
