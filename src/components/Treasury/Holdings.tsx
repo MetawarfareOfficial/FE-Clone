@@ -73,6 +73,9 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
   minHeight: '167px',
   boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.05)',
 
+  [theme.breakpoints.up('xl')]: {
+    minHeight: '200px',
+  },
   [theme.breakpoints.down('lg')]: {
     minHeight: '140px',
   },

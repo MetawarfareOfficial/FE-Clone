@@ -81,7 +81,7 @@ const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
   height: '28px',
   padding: '0',
   border: 'none',
-  marginLeft: '65px',
+  marginLeft: 'auto',
 
   img: {
     width: '100%',

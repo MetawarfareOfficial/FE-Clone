@@ -169,13 +169,19 @@ const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
 const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   padding: '14px',
   boxSizing: 'border-box',
-  width: '150px',
+  minWidth: '150px',
+  width: '40%',
   display: 'inline-flex',
   alignItems: 'center',
   backgroundColor: 'rgba(255, 255, 255, 0.21)',
 
+  [theme.breakpoints.down('xl')]: {
+    width: 'auto',
+  },
+
   [theme.breakpoints.down('lg')]: {
     width: '115px',
+    minWidth: '115px',
     padding: '8px',
   },
   [theme.breakpoints.down('md')]: {
@@ -295,7 +301,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       dataPrice.square,
                       dataApy.square,
                     )} 0xB/day`}</Description>
-                    <Description>{`${dataApy.square}% APY`}</Description>
+                    <Description>{`${dataApy.square}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
@@ -328,7 +334,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       dataPrice.cube,
                       dataApy.cube,
                     )} 0xB/day`}</Description>
-                    <Description>{`${dataApy.cube}% APY`}</Description>
+                    <Description>{`${dataApy.cube}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
@@ -366,7 +372,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       dataPrice.tesseract,
                       dataApy.tesseract,
                     )} 0xB/day`}</Description>
-                    <Description>{`${dataApy.tesseract}% APY`}</Description>
+                    <Description>{`${dataApy.tesseract}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
@@ -402,7 +408,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     dataPrice.square,
                     dataApy.square,
                   )} 0xB/day`}</Description>
-                  <Description>{`${dataApy.square}% APY`}</Description>
+                  <Description>{`${dataApy.square}% APR`}</Description>
                 </Box>
               </BoxRight>
             </BoxTotal>
@@ -429,7 +435,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                 <Box>
                   <Description>{`${dataPrice.cube} 0xB`}</Description>
                   <Description>{`Earn ${computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)} 0xB/day`}</Description>
-                  <Description>{`${dataApy.cube}% APY`}</Description>
+                  <Description>{`${dataApy.cube}% APR`}</Description>
                 </Box>
               </BoxRight>
             </BoxTotal>
@@ -459,7 +465,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     dataPrice.tesseract,
                     dataApy.tesseract,
                   )} 0xB/day`}</Description>
-                  <Description>{`${dataApy.tesseract}% APY`}</Description>
+                  <Description>{`${dataApy.tesseract}% APR`}</Description>
                 </Box>
               </BoxRight>
             </BoxTotal>

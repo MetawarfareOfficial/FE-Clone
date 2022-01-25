@@ -52,7 +52,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
 
 const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: '#DBECFD',
-  padding: '15px 40px',
+  padding: '15px 36px',
   color: '#293247',
   fontFamily: 'Roboto',
   fontSize: '16px',
@@ -74,7 +74,7 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
 
 const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: '#fff',
-  padding: '11px 40px',
+  padding: '11px 36px',
   color: '#293247',
   fontFamily: 'Poppins',
   fontSize: '14px',
@@ -257,7 +257,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
           <TableHead>
             <TableRow>
               <TableCellHeader>Mint Date</TableCellHeader>
-              <TableCellHeader align="center">Name</TableCellHeader>
+              <TableCellHeader align="left">Name</TableCellHeader>
               <TableCellHeader align="left">Type</TableCellHeader>
               <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
@@ -280,7 +280,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               data.map((item, i) => (
                 <TableRow key={i}>
                   <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
-                  <TableCellContent sx={{ width: { xs: 'auto', lg: '200px' } }}>{item.name}</TableCellContent>
+                  <TableCellContent align="left">{item.name}</TableCellContent>
                   <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>

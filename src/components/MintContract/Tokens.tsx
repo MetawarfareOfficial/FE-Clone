@@ -192,7 +192,7 @@ const Tokens: React.FC<Props> = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={3}>
             <BoxSale>
-              <Sale>30%</Sale>
+              <Sale>20%</Sale>
               <Text>
                 <span>Token</span> in Treasury Wallet as 100% USDC
               </Text>
@@ -229,7 +229,7 @@ const Tokens: React.FC<Props> = () => {
           </SliderItem>
           <SliderItem>
             <BoxSale>
-              <Sale>30%</Sale>
+              <Sale>20%</Sale>
               <Text>
                 <span>Token</span> in Treasury Wallet as 100% USDC
               </Text>

@@ -34,7 +34,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import LogoImg from 'assets/images/logo.svg';
-import LogoIcon from 'assets/images/logo-ic.svg';
+// import LogoIcon from 'assets/images/logo-ic.svg';
 import LogoDarkImg from 'assets/images/logo-dark.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
@@ -69,15 +69,21 @@ interface ListItemTextCustomProps extends ListItemTextProps {
   open: boolean;
 }
 
+interface LogoProps extends LinkProps {
+  open: boolean;
+}
+
 const drawerWidth = 224;
 const drawerWidthMinus = 100;
+const transition = 'width 1s ease-in-out ';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
+  // transition: theme.transitions.create('width', {
+  //   easing: theme.transitions.easing.easeInOut,
+  //   duration: theme.transitions.duration.enteringScreen,
+  // }),
+  transition: transition,
   background: theme.palette.mode === 'dark' ? '#171717' : '#fff',
   overflow: 'unset',
   border: 'none',
@@ -85,10 +91,11 @@ const openedMixin = (theme: Theme): CSSObject => ({
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
+  // transition: theme.transitions.create('width', {
+  //   easing: theme.transitions.easing.sharp,
+  //   duration: theme.transitions.duration.leavingScreen,
+  // }),
+  transition: transition,
   border: 'none',
   overflow: 'unset',
   // width: `calc(${theme.spacing(7)} + 1px)`,
@@ -100,11 +107,11 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
-const DrawerHeader = styled('div')(() => ({
+const DrawerHeader = styled('div')<any>(({ open }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '38px 34px',
+  padding: open ? '38px 34px' : '38px 31px',
   position: 'relative',
   marginBottom: '22px',
 }));
@@ -135,11 +142,13 @@ const ToggleButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const Logo = styled(Link)<LinkProps>(() => ({
+const Logo = styled(Link)<LogoProps>(({ open }) => ({
   display: 'inline-flex',
-  maxWidth: '155px',
+  width: open ? '155px' : '50px',
   alignItem: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
+  overflow: 'hidden',
+  transition: transition,
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -366,6 +375,18 @@ const LinkCustom = styled(Link)<any>(({ active }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   marginRight: '14px',
+  outline: 'none',
+  width: 'auto !important',
+
+  '&:focus': {
+    outline: 'none',
+  },
+  '&:active': {
+    outline: 'none',
+  },
+  '&:focus-visible': {
+    outline: 'none',
+  },
 }));
 
 const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open, theme }) => ({
@@ -509,17 +530,15 @@ const Layout: React.FC<Props> = ({ children }) => {
           },
         }}
       >
-        <DrawerHeader>
-          <Logo to="/">
-            {open ? (
-              theme.palette.mode === 'light' ? (
-                <img alt="" src={LogoImg} />
-              ) : (
-                <img alt="" src={LogoDarkImg} />
-              )
-            ) : (
-              <img alt="" src={LogoIcon} />
-            )}
+        <DrawerHeader open={open}>
+          <Logo open={open} to="/">
+            {
+              // open ? (
+              theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
+              // ) : (
+              //   <img alt="" src={LogoIcon} />
+              // )
+            }
           </Logo>
           <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
         </DrawerHeader>

@@ -9,6 +9,10 @@ interface Props {
   title?: string;
 }
 
+interface BoxLeftProps extends BoxProps {
+  isMarket: boolean;
+}
+
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   marginTop: '30px',
 
@@ -30,6 +34,9 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
   height: '190px',
   boxSizing: 'border-box',
 
+  [theme.breakpoints.up('xl')]: {
+    height: 'auto',
+  },
   [theme.breakpoints.down('lg')]: {
     height: 'auto',
   },
@@ -122,11 +129,14 @@ const BoxText2 = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
+const BoxLeft = styled(Box)<BoxLeftProps>(({ theme, isMarket }) => ({
   width: 'calc(100% - 290px)',
-  padding: '30px',
+  padding: isMarket ? '30px 47px' : '30px',
   boxSizing: 'border-box',
 
+  [theme.breakpoints.up('xl')]: {
+    width: '50%',
+  },
   [theme.breakpoints.down('lg')]: {
     width: '50%',
     padding: '20px',
@@ -146,7 +156,11 @@ const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '17px',
   padding: '10px 28px 10px 5px',
   boxSizing: 'border-box',
+  position: 'relative',
 
+  [theme.breakpoints.up('xl')]: {
+    width: '50%',
+  },
   [theme.breakpoints.down('lg')]: {
     width: '50%',
     paddingRight: '15px',
@@ -155,6 +169,19 @@ const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
   },
+}));
+
+const TitleChart = styled(Typography)<TypographyProps>(() => ({
+  position: 'absolute',
+  zIndex: '2',
+  top: '16px',
+  left: '42px',
+  fontFamily: 'Roboto',
+  fontWeight: 'normal',
+  fontSize: '12px',
+  lineHeight: '14px',
+  textAlign: 'center',
+  color: '#000000',
 }));
 
 const Statistics: React.FC<Props> = () => {
@@ -170,7 +197,7 @@ const Statistics: React.FC<Props> = () => {
       <Grid container spacing={{ xs: '20px', md: '24px', lg: '39px' }}>
         <Grid item xs={12} sm={12} md={6}>
           <BoxDetail>
-            <BoxLeft>
+            <BoxLeft isMarket={false}>
               <BoxText>Circulation Supply / Total Supply</BoxText>
               <BoxTitle>20.3K / 1.0M</BoxTitle>
             </BoxLeft>
@@ -179,12 +206,22 @@ const Statistics: React.FC<Props> = () => {
                 style={{
                   width: screenSize > 600 ? 'calc(100% + 30px)' : 'calc(100% + 30px)',
                   // height: { md: '140px', lg: '181px' },
-                  height: screenSize > 899 ? '181px' : screenSize > 599 ? '240px' : '179px',
+                  height:
+                    screenSize > 2559
+                      ? '270px'
+                      : screenSize > 1560
+                      ? '220px'
+                      : screenSize > 899
+                      ? '181px'
+                      : screenSize > 599
+                      ? '240px'
+                      : '179px',
                   minHeight: '100%',
                   marginLeft: screenSize > 599 ? '-35px' : '-30px',
                   marginBottom: '-15px',
                 }}
               >
+                <TitleChart>Last 30 Days</TitleChart>
                 <AreaChartCustom id="colorUv" color="#E5F5FE" data={rechartLineData} />
               </div>
             </BoxRight>
@@ -192,7 +229,7 @@ const Statistics: React.FC<Props> = () => {
         </Grid>
         <Grid item xs={12} sm={12} md={6}>
           <BoxDetail>
-            <BoxLeft>
+            <BoxLeft isMarket={true}>
               <BoxText2>Market Cap</BoxText2>
               <BoxTitle>1.3 Million</BoxTitle>
             </BoxLeft>
@@ -201,12 +238,22 @@ const Statistics: React.FC<Props> = () => {
                 style={{
                   width: screenSize > 600 ? 'calc(100% + 30px)' : 'calc(100% + 30px)',
                   // height: { md: '140px', lg: '181px' },
-                  height: screenSize > 899 ? '181px' : screenSize > 599 ? '240px' : '179px',
+                  height:
+                    screenSize > 2559
+                      ? '270px'
+                      : screenSize > 1560
+                      ? '220px'
+                      : screenSize > 899
+                      ? '181px'
+                      : screenSize > 599
+                      ? '240px'
+                      : '179px',
                   minHeight: '100%',
                   marginLeft: screenSize > 599 ? '-35px' : '-30px',
                   marginBottom: '-15px',
                 }}
               >
+                <TitleChart>Last 30 Days</TitleChart>
                 <AreaChartCustom id="colorUv2" data={rechartLineData} color="#E5E8FE" />
               </div>
             </BoxRight>
