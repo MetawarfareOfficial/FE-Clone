@@ -75,7 +75,7 @@ interface LogoProps extends LinkProps {
 
 const drawerWidth = 224;
 const drawerWidthMinus = 100;
-const transition = 'width 1s ease-in-out ';
+const transition = 'width 1s ease-in-out';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -235,6 +235,7 @@ const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
   // overflow: 'hidden',
+  transition: transition,
 
   [theme.breakpoints.down('lg')]: {
     padding: '24px',
