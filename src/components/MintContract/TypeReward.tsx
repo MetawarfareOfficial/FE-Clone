@@ -322,6 +322,11 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setMaxMint(_maxMint >= LIMIT_MAX_MINT - nodes ? LIMIT_MAX_MINT - nodes : _maxMint);
   }, [zeroXBlockBalance, nodes]);
 
+  useEffect(() => {
+    setOpen(false);
+    setOpenStatus(false);
+  }, [currentUserAddress]);
+
   useFetchNodes(crtNodeOk);
 
   return (
