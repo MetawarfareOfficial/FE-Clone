@@ -224,8 +224,14 @@ const Statistics: React.FC<Props> = ({ data }) => {
               <CardBox>
                 <Text variant="h5">{item.title}</Text>
                 <Title variant="h2">{item.value}</Title>
-                <CustomButton variant="contained" color="secondary">
-                  Buy now
+                <CustomButton
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    history.push(item.linkTo);
+                  }}
+                >
+                  {item.nameBtn}
                 </CustomButton>
               </CardBox>
             </SliderItem>
