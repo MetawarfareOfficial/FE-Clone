@@ -43,4 +43,8 @@ export const errorMessage = {
     title: 'Contract',
     message: 'Please input no more than 32 characters for the contract names',
   },
+  REWARDS_NOT_READY: {
+    title: 'Claim reward',
+    message: 'Your reward is not ready yet',
+  },
 };

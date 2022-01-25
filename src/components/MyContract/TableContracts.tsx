@@ -15,7 +15,7 @@ import {
   Button,
   ButtonProps,
 } from '@mui/material';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatCType } from 'helpers/formatCType';
@@ -27,6 +27,9 @@ import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import { sleep } from '../../helpers/delayTime';
 import { DELAY_TIME } from '../../consts/typeReward';
+import { toast } from 'react-toastify';
+import { errorMessage } from '../../messages/errorMessages';
+import { setIsClaimingReward, unSetIsClaimingReward } from '../../services/contract';
 
 interface Props {
   title?: string;
@@ -196,7 +199,10 @@ const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
 }));
 
 const TableContracts: React.FC<Props> = ({ data }) => {
+  const dispatch = useAppDispatch();
+
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
 
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
@@ -230,11 +236,16 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const handleClickClaimAll = async () => {
     try {
       processModal('All');
+      dispatch(setIsClaimingReward());
+
       const response: Record<string, any> = await claimAllNodes();
       await sleep(DELAY_TIME);
+
       if (response.hash) setStatus(STATUS[0]);
     } catch (err: any) {
       setStatus(STATUS[1]);
+    } finally {
+      dispatch(unSetIsClaimingReward());
     }
   };
 
@@ -242,11 +253,19 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     try {
       processModal(formatCType(cType));
       processIcon(cType);
+      dispatch(setIsClaimingReward());
+
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       await sleep(DELAY_TIME);
+
       if (response.hash) setStatus(STATUS[0]);
-    } catch (e) {
+    } catch (e: any) {
+      if (e.code === -32603) {
+        toast.error(errorMessage.REWARDS_NOT_READY.message, { hideProgressBar: true });
+      }
       setStatus(STATUS[1]);
+    } finally {
+      dispatch(unSetIsClaimingReward());
     }
   };
 
@@ -268,7 +287,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   variant="contained"
                   color="primary"
                   onClick={handleClickClaimAll}
-                  disabled={!(currentUserAddress && data.length !== 0)}
+                  disabled={!(currentUserAddress && data.length !== 0 && !isClaimingReward)}
                 >
                   Claim all
                 </ButtonClaimAll>
@@ -293,8 +312,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        handleClickClaimNodeByNode(1, item.type);
+                        handleClickClaimNodeByNode(data.length - i - 1, item.type);
                       }}
+                      disabled={isClaimingReward}
                     >
                       Claim
                     </ButtonClaim>
