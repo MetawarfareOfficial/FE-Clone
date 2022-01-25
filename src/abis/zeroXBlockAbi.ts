@@ -338,6 +338,13 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
+    name: 'getNodesInitialAPY',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'getNodesNames',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',

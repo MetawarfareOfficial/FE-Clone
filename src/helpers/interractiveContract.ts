@@ -153,3 +153,11 @@ export const getRewardAmount = async (): Promise<[BigNumber]> => {
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getInitApyOfNodes = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesInitialAPY.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};

@@ -3,13 +3,21 @@ import { Box } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import {
+  getInitApyOfNodes,
   getNameOfNodes,
+  getPriceAllNode,
   getRewardAmount,
+  getRewardAPYAllNode,
   getRewardOfNodes,
   getTimeCreatedOfNodes,
   getTypeOfNodes,
 } from 'helpers/interractiveContract';
-import { parseDataMyContract, zipDataMyContract } from 'helpers/zipDataMyContract';
+import {
+  parseDataCurrentApy,
+  parseDataInitApy,
+  parseDataMyContract,
+  zipDataMyContract,
+} from 'helpers/zipDataMyContract';
 import { ContractResponse } from 'interfaces/MyContract';
 import {
   setDataMyContracts,
@@ -27,6 +35,7 @@ import { DELAY_TIME } from 'consts/myContract';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { TableContracts, ListContracts, Stats } from 'components/MyContract';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
+import { formatApyV3 } from 'helpers/formatApy';
 
 interface Props {
   title?: string;
@@ -50,20 +59,37 @@ const MyContract: React.FC<Props> = () => {
 
   const fetchDataUserContracts = async (): Promise<void> => {
     try {
-      const [mintDates, names, rewards, types, rewardAmount] = await Promise.all([
+      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentApy] = await Promise.all([
         getTimeCreatedOfNodes(),
         getNameOfNodes(),
         getRewardOfNodes(),
         getTypeOfNodes(),
         getRewardAmount(),
+        getInitApyOfNodes(),
+        getPriceAllNode(),
+        getRewardAPYAllNode(),
       ]);
+
+      const dataPrices = _.flatten(prices);
+      const _prices = {
+        square: bigNumber2NumberV2(dataPrices[0]),
+        cube: bigNumber2NumberV2(dataPrices[1]),
+        tesseract: bigNumber2NumberV2(dataPrices[2]),
+      };
+
+      const dataCurrentApy = _.flatten(currentApy);
+      const _currentApy = {
+        square: formatApyV3(dataCurrentApy[0]),
+        cube: formatApyV3(dataCurrentApy[1]),
+        tesseract: formatApyV3(dataCurrentApy[2]),
+      };
 
       const dataCt = zipDataMyContract({
         mintDates: parseDataMyContract(mintDates[0]),
         names: parseDataMyContract(names[0]),
         types: parseDataMyContract(types[0]),
-        initZeroXBlockPerDays: [],
-        currentZeroXBlockPerDays: [],
+        initZeroXBlockPerDays: parseDataInitApy(types[0], initApy[0], _prices),
+        currentZeroXBlockPerDays: parseDataCurrentApy(types[0], _currentApy, _prices),
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
       dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
