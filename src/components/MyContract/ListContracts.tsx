@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Button, ButtonProps } from '@mui/material';
 
 import ContractDetail from './ContractDetail';
+import { useAppSelector } from '../../stores/hooks';
 
 interface Props {
   data: Array<any>;
@@ -62,6 +63,8 @@ const EmptyContracts = styled(Box)<BoxProps>(() => ({
 }));
 
 const ListContracts: React.FC<Props> = ({ data }) => {
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+
   return (
     <Wrapper>
       <Actions>
@@ -84,7 +87,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
             />
           ))
         ) : (
-          <EmptyContracts>No contracts yet!</EmptyContracts>
+          <EmptyContracts>{currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}</EmptyContracts>
         )}
       </Box>
     </Wrapper>

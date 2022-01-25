@@ -38,6 +38,7 @@ import {
   replaceArrayElementByIndex,
 } from 'helpers';
 import BigNumber from 'bignumber.js';
+import { useAppSelector } from '../../../stores/hooks';
 
 interface Props {
   open: boolean;
@@ -205,14 +206,21 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
     },
 
     li: {
-      padding: '7px 20px',
-      border: '1px solid #BDBDBD',
-      boxSizing: 'border-box',
-      borderRadius: '13px',
+      padding: 0,
+      // padding: '7px 20px',
+      // border: '1px solid #BDBDBD',
+
       marginBottom: '8px',
 
-      [theme.breakpoints.down('sm')]: {
-        padding: '12px 20px',
+      ['.MuiInput-root']: {
+        padding: '7px 20px',
+        border: '1px solid #BDBDBD',
+        boxSizing: 'border-box',
+        borderRadius: '13px',
+
+        [theme.breakpoints.down('sm')]: {
+          padding: '12px 20px',
+        },
       },
     },
   },
@@ -334,14 +342,14 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
   },
 }));
 
-const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
+const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   width: '100%',
   marginTop: '21px',
   padding: '10px 29px',
   height: '60px',
   textAlign: 'center',
   borderRadius: '14px',
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: disabled ? 'rgba(0, 0, 0, 0.26)' : theme.palette.primary.main,
   color: '#fff',
   display: 'inline-block',
   boxSizing: 'border-box',
@@ -365,34 +373,34 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(
-  ({ error }) => ({
-    '.MuiInput-input': {
-      // padding: '8px 20px',
-      // border: `1px solid ${error ? 'red' : '#BDBDBD'}`,
-      // borderRadius: '13px',
-      OutlinedInput: 'none',
-      boxSizing: 'border-box',
-      // height: '39px',
-      color: '#293247',
-      // marginBottom: error ? '2px' : '8px',
+const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(({ error }) => ({
+  '.MuiInput-input': {
+    // padding: '8px 20px',
+    // border: `1px solid ${error ? 'red' : '#BDBDBD'}`,
+    // borderRadius: '13px',
+    OutlinedInput: 'none',
+    boxSizing: 'border-box',
+    // height: '39px',
+    color: '#293247',
+    // marginBottom: error ? '2px' : '8px',
+  },
+  '.MuiFormHelperText-root': {
+    color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',
+    marginBottom: '4px',
+  },
+  '.MuiInput-root': {
+    '&::before': {
+      borderBottom: 'unset !important',
     },
-    '.MuiFormHelperText-root': {
-      color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',
-      marginBottom: '4px',
+    '&::after': {
+      borderBottom: 'unset !important',
     },
-    '.MuiInput-root': {
-      '&::before': {
-        borderBottom: 'unset !important',
-      },
-      '&::after': {
-        borderBottom: 'unset !important',
-      },
-    },
-  }),
-);
+  },
+}));
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
+  const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
+
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
 
@@ -463,7 +471,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     return contracts.map((item, index) => {
       return (
         <ListItem key={index}>
-          <CssTextField
+          <TextName
             onChange={(event) => handleContractNameChange(event, index)}
             error={!!item.error}
             helperText={item.error}
@@ -534,7 +542,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         </BoxActions>
 
         <ButtonMint
-          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0}
+          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0 || isCreatingNodes}
           variant="contained"
           color="primary"
           onClick={() => {

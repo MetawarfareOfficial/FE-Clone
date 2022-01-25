@@ -81,7 +81,7 @@ const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
   height: '28px',
   padding: '0',
   border: 'none',
-  marginLeft: '65px',
+  marginLeft: 'auto',
 
   img: {
     width: '100%',
@@ -158,7 +158,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
           ) : status === 'pending' ? (
             <img alt="" src={PendingGif} />
           ) : (
-            ''
+            <img alt="" src={ErrorGif} />
           )}
         </ViewImage>
 

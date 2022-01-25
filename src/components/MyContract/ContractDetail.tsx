@@ -3,6 +3,9 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps, Tooltip } from '@mui/material';
 
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
+import { formatCType } from '../../helpers/formatCType';
+import { formatPrice } from '../../helpers/formatPrice';
+import { bigNumber2NumberV3 } from '../../helpers/formatNumber';
 
 interface Props {
   mintDate: string;
@@ -76,8 +79,8 @@ const ContractDetail: React.FC<Props> = ({ mintDate, type, initial, name, reward
         <Grid item xs={4}>
           <Box>
             <Title>Type</Title>
-            <Tooltip title={type}>
-              <Text>{type}</Text>
+            <Tooltip title={formatCType(type)}>
+              <Text>{formatCType(type)}</Text>
             </Tooltip>
           </Box>
         </Grid>
@@ -100,8 +103,8 @@ const ContractDetail: React.FC<Props> = ({ mintDate, type, initial, name, reward
         <Grid item xs={4}>
           <Box>
             <Title>Rewards</Title>
-            <Tooltip title={rewards}>
-              <Text>{rewards}</Text>
+            <Tooltip title={formatPrice(bigNumber2NumberV3(`${rewards}`, 1e9))}>
+              <Text>{formatPrice(bigNumber2NumberV3(`${rewards}`, 1e9))}</Text>
             </Tooltip>
           </Box>
         </Grid>

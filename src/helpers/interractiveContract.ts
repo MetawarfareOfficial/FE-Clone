@@ -53,6 +53,22 @@ export const createMultipleNodesWithTokens = async (names: string[], cType: stri
   }
 };
 
+export const claimAllNodes = async () => {
+  try {
+    return contractWithSigner.functions.cashoutAll();
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const claimNodeByNode = async (nodeIndex: number) => {
+  try {
+    return contractWithSigner.functions.cashoutReward(nodeIndex);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
 /** read contract **/
 export const getBalanceTokenOf = async (address: string): Promise<[BigNumber]> => {
   try {
@@ -149,6 +165,14 @@ export const getTypeOfNodes = async (): Promise<[string]> => {
 export const getRewardAmount = async (): Promise<[BigNumber]> => {
   try {
     return contractWithSigner.functions.getRewardAmount.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getInitApyOfNodes = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesInitialAPY.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
