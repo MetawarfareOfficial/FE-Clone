@@ -5,12 +5,13 @@ import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, 
 import LineChart from 'components/Base/LineChart';
 import MintContractModal from 'components/Base/MintContractModal';
 import MintStatusModal from 'components/Base/MintStatusModal';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
 import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
+import { setIsCreatingNodes, unSetIsCreatingNodes } from '../../services/contract';
 
 interface Props {
   id: any;
@@ -246,6 +247,8 @@ const ViewChart = styled('div')`
 const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
+  const dispatch = useAppDispatch();
+
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
@@ -271,6 +274,8 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
 
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
     try {
+      dispatch(setIsCreatingNodes());
+
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
       const cType = contractType[`${key}`];
@@ -291,6 +296,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     } finally {
       setOpen(false);
       setOpenStatus(true);
+      dispatch(unSetIsCreatingNodes());
     }
   };
 

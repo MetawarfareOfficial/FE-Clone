@@ -38,6 +38,7 @@ import {
   replaceArrayElementByIndex,
 } from 'helpers';
 import BigNumber from 'bignumber.js';
+import { useAppSelector } from '../../../stores/hooks';
 
 interface Props {
   open: boolean;
@@ -319,14 +320,14 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
   },
 }));
 
-const ButtonMint = styled('button')<ButtonProps>(({ theme }) => ({
+const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   width: '100%',
   marginTop: '21px',
   padding: '10px 29px',
   height: '60px',
   textAlign: 'center',
   borderRadius: '14px',
-  backgroundColor: theme.palette.primary.main,
+  backgroundColor: disabled ? 'rgba(0, 0, 0, 0.26)' : theme.palette.primary.main,
   color: '#fff',
   display: 'inline-block',
   boxSizing: 'border-box',
@@ -373,6 +374,8 @@ const CssTextField = styled(TextField, { shouldForwardProp: (prop) => prop !== '
 );
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
+  const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
+
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
 
@@ -514,7 +517,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         </BoxActions>
 
         <ButtonMint
-          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0}
+          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0 || isCreatingNodes}
           variant="contained"
           color="primary"
           onClick={() => {

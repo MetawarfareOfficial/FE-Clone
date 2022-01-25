@@ -7,6 +7,7 @@ const initialState = {
   nodes: 0,
   dataMyContracts: [],
   dataRewardAmount: 0,
+  isCreatingNodes: false,
 };
 
 const dataContractSlice = createSlice({
@@ -49,6 +50,12 @@ const dataContractSlice = createSlice({
     unSetRewardAmount: (state) => {
       state.dataRewardAmount = 0;
     },
+    setIsCreatingNodes: (state) => {
+      state.isCreatingNodes = true;
+    },
+    unSetIsCreatingNodes: (state) => {
+      state.isCreatingNodes = false;
+    },
   },
 });
 
@@ -65,6 +72,8 @@ export const {
   unSetDataMyContracts,
   setRewardAmount,
   unSetRewardAmount,
+  setIsCreatingNodes,
+  unSetIsCreatingNodes,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;
