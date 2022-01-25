@@ -248,6 +248,7 @@ const STATUS = ['success', 'error', 'pending'];
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
@@ -323,13 +324,13 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
               <LineChart data={dataChart} color={colorChart} />
             </ViewChart>
 
-            <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
+            <ButtonMint variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
               Mint
             </ButtonMint>
           </BoxDetail>
         </ViewInfo>
 
-        <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle}>
+        <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
           Mint
         </ButtonMintMobile>
       </BoxContent>
