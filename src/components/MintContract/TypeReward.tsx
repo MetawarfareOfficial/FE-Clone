@@ -342,7 +342,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
         <ViewInfo>
           <Info>
             <Text>{value} 0xB</Text>
-            <Text>{apy}% APR</Text>
+            <Text>{Number(apy)}% APR</Text>
             <Text>Earn {earn} 0xB/day</Text>
           </Info>
 
