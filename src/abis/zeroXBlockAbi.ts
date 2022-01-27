@@ -240,16 +240,6 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      { internalType: 'string', name: 'name', type: 'string' },
-      { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
-    ],
-    name: 'createNodeWithTokens',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'deadWallet',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],

@@ -111,6 +111,7 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
+    fetchDataUserContracts();
     const handleChangeAccounts = () => {
       resetData();
       fetchDataUserContracts();
@@ -159,6 +160,8 @@ const MyContract: React.FC<Props> = () => {
   return (
     <Box>
       <Stats countMyContract={countMyContract} />
+
+      {/*<div>{currentUserAddress}</div>*/}
 
       {width < 600 ? (
         <ListContracts data={currentUserAddress ? dataMyContracts : []} />

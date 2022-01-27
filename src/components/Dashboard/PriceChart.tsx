@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
-// import moment from 'moment';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
 import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatTimestamp } from 'helpers/formatTimestamp';
+import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
 
 interface Props {
   title?: string;
@@ -131,7 +131,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
               {theme.palette.mode === 'dark' && <CartesianGrid stroke="#1D1D1D" strokeOpacity={0.7} />}
 
               <Tooltip
-                formatter={(value: string) => formatPrice(value)}
+                formatter={(value: string, name: string) => [formatPrice(value), convertCamelCaseToPascalCase(name)]}
                 labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
               />
 
