@@ -58,6 +58,7 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     marginRight: '30px',
     maxWidth: '265px',
+    height: '123px',
   },
 }));
 
@@ -118,6 +119,8 @@ const Sale = styled(Box)<BoxProps>(({ theme }) => ({
 const SliderItem = styled(Box)<BoxProps>(() => ({
   paddingTop: '23px',
   paddingLeft: '13px',
+  boxSizing: 'border-box',
+  position: 'relative',
 }));
 
 const Tokens: React.FC<Props> = () => {
