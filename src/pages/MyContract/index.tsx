@@ -161,6 +161,8 @@ const MyContract: React.FC<Props> = () => {
     <Box>
       <Stats countMyContract={countMyContract} />
 
+      <div>{currentUserAddress}</div>
+
       {width < 600 ? (
         <ListContracts data={currentUserAddress ? dataMyContracts : []} />
       ) : (
