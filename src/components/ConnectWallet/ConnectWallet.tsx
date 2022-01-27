@@ -28,6 +28,7 @@ import { useFetchNodes } from 'hooks/useFetchNodes';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
+import useMobileChangeAccountMetamask from '../../hooks/useMobileChangeAccountMetamask';
 
 interface Props {
   name?: string;
@@ -202,6 +203,7 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useFetchNodes();
   useFetchRewardAmount();
+  useMobileChangeAccountMetamask();
 
   if (width < 900) {
     return (
