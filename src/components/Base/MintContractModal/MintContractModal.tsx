@@ -456,8 +456,24 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     const newName = event.target.value;
     const error = handleContractNameErrors(newName);
 
-    if (error === errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message) {
-      event.preventDefault();
+    if (
+      JSON.stringify(contracts[index]) ===
+      JSON.stringify({ ...contracts[index], error: errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message })
+    ) {
+      if (event.target.value.length < contracts[index].name.length) {
+        const newContract = replaceArrayElementByIndex(contracts, index, {
+          ...contracts[index],
+          error,
+        });
+        setContracts(newContract);
+      }
+      return;
+    } else if (error === errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message) {
+      const newContract = replaceArrayElementByIndex(contracts, index, {
+        ...contracts[index],
+        error,
+      });
+      setContracts(newContract);
       return;
     }
 

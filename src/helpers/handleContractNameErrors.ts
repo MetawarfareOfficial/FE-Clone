@@ -3,7 +3,7 @@ import { errorMessage } from 'messages/errorMessages';
 export const handleContractNameErrors = (contractName: string) => {
   let error = null;
 
-  const alphaAndNumericReg = new RegExp(/^([A-Za-z0-9]+\_*)+[A-Za-z0-9]+$/);
+  const alphaAndNumericReg = new RegExp(/^([A-Za-z0-9]+\_)+[A-Za-z0-9]+$/);
 
   const isValidName = alphaAndNumericReg.test(contractName);
 
