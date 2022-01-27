@@ -85,6 +85,10 @@ const TextBox = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '12px',
     lineHeight: '18px',
   },
+
+  [theme.breakpoints.down('sm')]: {
+    color: '#000',
+  },
 }));
 
 const HeaderTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -119,6 +123,7 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: '12px',
     lineHeight: '18px',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.35)' : 'rgba(41, 50, 71, 0.35)',
   },
 }));
 
@@ -229,60 +234,6 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
   const dataTotal = useAppSelector((state) => state.contract.total);
-
-  useEffect(() => {
-    const slider: any = document.querySelector('.totalContacts');
-    let isDown = false;
-    let startX: any = null;
-    let scrollLeft: any = null;
-
-    slider.addEventListener('mousedown', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-
-    // mobile
-    slider.addEventListener('touchstart', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.changedTouches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('touchcancel', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchend', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchmove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.changedTouches[0].pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-  }, []);
 
   useEffect(() => {
     if (boxRef && boxRef.current) {
@@ -407,16 +358,18 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-        {/* <SliderScroll elRef={sliderRef} settings={settings}> */}
-        <div className="grid-item main">
-          <div className="items totalContacts">
-            <div className="item item1">
+        <div className="scroll-area scroll-area--horizontal">
+          <div className="scroll-area__body">
+            <div className="scroll-area__column item1">
               <Box>
-                <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+                <BoxTotal
+                  color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
+                  shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                >
                   <BoxLeft>
                     <BoxHeader>
                       <ViewImage>
-                        <img alt="" src={SquareIcon} width="100%" />
+                        <img alt="" src={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon} width="100%" />
                       </ViewImage>
 
                       <BoxHeaderContent>
@@ -445,11 +398,14 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
 
             <div className="item item2">
               <Box>
-                <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+                <BoxTotal
+                  color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
+                  shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                >
                   <BoxLeft>
                     <BoxHeader>
                       <ViewImage>
-                        <img alt="" src={CubeIcon} width="100%" />
+                        <img alt="" src={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon} width="100%" />
                       </ViewImage>
 
                       <BoxHeaderContent>
@@ -478,11 +434,19 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
 
             <div className="item item3">
               <Box>
-                <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
+                <BoxTotal
+                  color={
+                    theme.palette.mode === 'light'
+                      ? '#DBECFD'
+                      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+                  }
+                  shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                  sx={{ margin: 0 }}
+                >
                   <BoxLeft>
                     <BoxHeader>
                       <ViewImage>
-                        <img alt="" src={TessIcon} width="100%" />
+                        <img alt="" src={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon} width="100%" />
                       </ViewImage>
 
                       <BoxHeaderContent>
@@ -510,7 +474,6 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
             </div>
           </div>
         </div>
-        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );

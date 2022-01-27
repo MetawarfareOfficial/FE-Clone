@@ -72,11 +72,11 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   return (
     <Box>
-      <Box mt="30px" mb="50px">
+      <Box mt={{ xs: '28px', md: '30px' }} mb={{ xs: '34px', md: '50px' }}>
         <Statistics data={_.last(tokenPrices)} />
       </Box>
 
-      <Grid container spacing="30px">
+      <Grid container spacing={{ xs: '15px', md: '30px' }}>
         <Grid item xs={12} md={4}>
           <TotalMinted onChangeHeight={handleChangeHeightTotal} />
         </Grid>

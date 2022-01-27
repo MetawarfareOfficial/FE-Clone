@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 import LineChart from 'components/Base/LineChart';
@@ -36,6 +36,7 @@ const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
   alignItems: 'center',
   borderRadius: '24px',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.03)',
 
   [theme.breakpoints.down('md')]: {
     display: 'inline-block',
@@ -102,7 +103,7 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
 
 const Name = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#131722',
   fontSize: '16px',
   lineHeight: '24px',
   textTransform: 'uppercase',
@@ -155,23 +156,8 @@ const Info = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-// const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
-//   marginLeft: 'auto',
-//   display: 'inline-flex',
-//   alignItems: 'center',
-//   boxSizing: 'border-box',
-
-//   [theme.breakpoints.down('sm')]: {
-//     display: 'block',
-//     width: '50%',
-//     padding: '0',
-//     float: 'right',
-//     paddingLeft: '20px',
-//   },
-// }));
-
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontWeight: 500,
   fontSize: '14px',
   lineHeight: '21px',
@@ -207,9 +193,14 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
   borderRadius: ' 14px',
   fontWeight: 'bold',
   textTransform: 'capitalize',
-  // marginLeft: 'auto',
-  // marginLeft: '40px',
-  // display: 'inline-flex',
+  color: theme.palette.primary[theme.palette.mode],
+  border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
+
+  '&:hover': {
+    color: theme.palette.primary[theme.palette.mode],
+    border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
+    opacity: 0.7,
+  },
 
   [theme.breakpoints.up('xl')]: {},
   [theme.breakpoints.down('lg')]: {
@@ -224,24 +215,6 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
     display: 'block',
   },
 }));
-
-// const ButtonMintMobile = styled(Button)<ButtonProps>(({ theme }) => ({
-//   fontFamily: 'Poppins',
-//   fontSize: '14px',
-//   lineHeight: '22px',
-//   padding: '9px 12px',
-//   borderRadius: ' 14px',
-//   fontWeight: 'bold',
-//   textTransform: 'capitalize',
-//   marginLeft: '40px',
-//   width: '100%',
-//   margin: ' 14px 0 0',
-//   display: 'none',
-
-//   [theme.breakpoints.down('sm')]: {
-//     display: 'block',
-//   },
-// }));
 
 const ViewChart = styled('div')`
   width: 143px;
@@ -266,6 +239,7 @@ const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
@@ -343,7 +317,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
 
   return (
     <Wrapper>
-      <BoxContract sx={{ backgroundColor: color }}>
+      <BoxContract sx={{ background: color }}>
         <ViewImage>
           <img alt="" src={icon} width="100%" />
         </ViewImage>
@@ -359,28 +333,13 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
           </Info>
 
           <ViewChart>
-            <LineChart data={dataChart} color={colorChart} />
+            <LineChart data={dataChart} color={theme.palette.mode === 'light' ? colorChart : '#3864FF'} />
           </ViewChart>
-
-          {/* <BoxDetail>
-            <ViewChart>
-              <LineChart data={dataChart} color={colorChart} />
-            </ViewChart>
-
-            <ButtonMint variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
-              Mint
-            </ButtonMint>
-          </BoxDetail> */}
         </ViewInfo>
 
         <ButtonMint variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
           Mint
         </ButtonMint>
-
-        {/* <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle}>
-        <ButtonMintMobile variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
-          Mint
-        </ButtonMintMobile> */}
       </BoxContent>
 
       <MintContractModal

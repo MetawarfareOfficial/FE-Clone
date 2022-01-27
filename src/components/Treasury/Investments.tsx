@@ -49,7 +49,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
-  background: ' #FFFFFF',
+  background: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.03)',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   borderRadius: '22px',
   padding: '17px 25px',
@@ -64,7 +64,7 @@ const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
 }));
 
 const Detail = styled(Box)<BoxProps>(({ theme }) => ({
-  background: '#F9F9FB',
+  background: theme.palette.mode === 'light' ? '#F9F9FB' : '#1A1A1A',
   borderRadius: '11px',
   padding: '13px 8px',
 

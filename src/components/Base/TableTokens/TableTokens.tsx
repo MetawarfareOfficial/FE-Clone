@@ -37,7 +37,7 @@ const TableHeaderText = styled(TableCell)<TableCellCustomProps>(({ fontSize, the
   fontSize: fontSize || '14px',
   lineHeight: '16px',
   padding: '7px',
-  color: ' #BDBDBD',
+  color: theme.palette.mode === 'light' ? '#BDBDBD' : '#4F4F4F',
   border: 'none',
 
   [theme.breakpoints.down('lg')]: {
@@ -58,7 +58,7 @@ const TableContentText = styled(TableCell)(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '16px',
   padding: '7px',
-  color: ' #293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   border: 'none',
 
   [theme.breakpoints.down('lg')]: {
