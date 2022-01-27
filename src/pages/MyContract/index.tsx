@@ -111,6 +111,7 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
+    fetchDataUserContracts();
     const handleChangeAccounts = () => {
       resetData();
       fetchDataUserContracts();
