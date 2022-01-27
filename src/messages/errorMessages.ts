@@ -37,11 +37,11 @@ export const errorMessage = {
   },
   CONTRACT_NAME_LESS_THAN_FOUR: {
     title: 'Contract',
-    message: 'Please input more than 4 characters for the contract names',
+    message: 'Please input more than 4 characters for the contract name',
   },
   CONTRACT_NAME_MORE_THAN_THIRTY_TWO: {
     title: 'Contract',
-    message: 'Please input no more than 32 characters for the contract names',
+    message: 'Please input no more than 32 characters for the contract name',
   },
   REWARDS_NOT_READY: {
     title: 'Claim reward',
