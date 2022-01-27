@@ -7,7 +7,7 @@ const useMobileChangeAccountMetamask = () => {
     if (window.ethereum) {
       window.ethereum.removeListener('accountsChanged', () => {});
       window.ethereum.on('accountsChanged', () => {
-        // if (window.innerWidth < 600) window.location.reload();
+        if (window.innerWidth < 600) window.location.reload();
       });
     }
   }, []);
