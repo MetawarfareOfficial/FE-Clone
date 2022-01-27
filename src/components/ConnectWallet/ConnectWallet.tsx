@@ -206,7 +206,7 @@ const ConnectWallet: React.FC<Props> = () => {
   if (width < 900) {
     return (
       <div>
-        {!(active && isLogin && currentUserAddress) && (
+        {!(active && isLogin) && (
           <div>
             {isUnsupportedChainIdError || getToken() ? (
               <WalletButton onChange={handleWrongNetWork} mode={'login'} />
