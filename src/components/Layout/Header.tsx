@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps } from '@mui/material';
 import SwitchMode from 'components/Base/SwitchMode';
 import LogoImg from 'assets/images/logo.svg';
+import LogoDarkImg from 'assets/images/logo-dark.svg';
 import ConnectWallet from 'components/ConnectWallet';
 
 interface Props {
   title?: string;
+  onChangeMode: () => void;
 }
 
 const WrapperHeader = styled(Box)<BoxProps>(({ theme }) => ({
@@ -39,7 +41,8 @@ const Menus = styled(Box)<BoxProps>(() => ({
   alignItems: 'center',
 }));
 
-const Header: React.FC<Props> = () => {
+const Header: React.FC<Props> = ({ onChangeMode }) => {
+  const theme = useTheme();
   const [width] = useWindowSize();
   const [isBackground, setIsBackground] = useState(false);
 
@@ -56,25 +59,27 @@ const Header: React.FC<Props> = () => {
     };
   }, []);
 
-  const handleChangeMode = () => {};
-
   // const handleWallet = () => {};
 
   return (
     <WrapperHeader
       sx={{
-        background: isBackground ? '#fff' : 'unset',
-        boxShadow: isBackground ? '0px 2px 5px 0px rgba(181,181,181,1)' : 'unset',
+        background: isBackground ? (theme.palette.mode === 'light' ? '#fff' : '#1E1E1E') : 'unset',
+        boxShadow: isBackground
+          ? theme.palette.mode === 'light'
+            ? '0px 2px 5px 0px rgba(181,181,181,1)'
+            : '0px 2px 5px 0px #1a1919'
+          : 'unset',
       }}
     >
       <Link to="/">
         <ViewLogo>
-          <img alt="" src={LogoImg} />
+          <img alt="" src={theme.palette.mode === 'light' ? LogoImg : LogoDarkImg} />
         </ViewLogo>
       </Link>
 
       <Menus>
-        <SwitchMode mode="light" onChange={handleChangeMode} />
+        <SwitchMode mode="light" onChange={onChangeMode} />
         <ConnectWallet />
       </Menus>
     </WrapperHeader>

@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'styles/menus.css';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
+
+import bgBox from 'assets/images/bg-box.png';
 
 interface Props {
   title?: string;
@@ -12,7 +14,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   textTransform: 'capitalize',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
@@ -47,9 +49,11 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   alignItems: 'center',
   borderRadius: '22px',
   boxSizing: 'border-box',
-  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+  boxShadow: theme.palette.mode === 'light' ? '0px 0px 48px rgba(0, 0, 0, 0.06)' : 'unset',
   height: '100%',
   minHeight: '123px',
+  background: theme.palette.mode === 'light' ? '#fff' : `url(${bgBox}) no-repeat center center `,
+  backgroundSize: theme.palette.mode === 'light' ? 'unset' : 'cover',
 
   [theme.breakpoints.down('lg')]: {
     padding: '16px 24px',
@@ -66,13 +70,13 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontWeight: 'normal',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
   maxWidth: '186px',
 
   span: {
     fontWeight: 'bold',
-    color: theme.palette.primary.main,
+    color: theme.palette.mode === 'light' ? theme.palette.primary.main : '#579AFF',
   },
 
   [theme.breakpoints.down('lg')]: {
@@ -95,7 +99,10 @@ const Sale = styled(Box)<BoxProps>(({ theme }) => ({
   height: '57px',
   borderRadius: '15px',
   boxShadow: '0px 14px 26px -2px rgba(0, 0, 0, 0.14)',
-  background: 'linear-gradient(112.15deg, #A5C7FB -10.8%, #C0CAFF 107.36%)',
+  background:
+    theme.palette.mode === 'light'
+      ? 'linear-gradient(112.15deg, #A5C7FB -10.8%, #C0CAFF 107.36%)'
+      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -124,59 +131,6 @@ const SliderItem = styled(Box)<BoxProps>(() => ({
 }));
 
 const Tokens: React.FC<Props> = () => {
-  useEffect(() => {
-    const slider: any = document.querySelector('.tokens');
-    let isDown = false;
-    let startX: any = null;
-    let scrollLeft: any = null;
-
-    slider.addEventListener('mousedown', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-    // mobile
-    slider.addEventListener('touchstart', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.changedTouches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('touchcancel', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchend', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchmove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.changedTouches[0].pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-  }, []);
-
   return (
     <Wrapper>
       <Title>Minted Contract Tokens Distribution</Title>
@@ -221,9 +175,9 @@ const Tokens: React.FC<Props> = () => {
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
         {/* <SliderScroll elRef={holdingRef} settings={settings}> */}
 
-        <div className="grid-item main">
-          <div className="items tokens">
-            <div className="item item1">
+        <div className="scroll-area scroll-area--horizontal">
+          <div className="scroll-area__body">
+            <div className="scroll-area__column item1">
               <SliderItem>
                 <BoxSale>
                   <Sale>10%</Sale>
@@ -234,7 +188,7 @@ const Tokens: React.FC<Props> = () => {
               </SliderItem>
             </div>
 
-            <div className="item item2">
+            <div className="scroll-area__column item2">
               <SliderItem>
                 <BoxSale>
                   <Sale>20%</Sale>
@@ -245,7 +199,7 @@ const Tokens: React.FC<Props> = () => {
               </SliderItem>
             </div>
 
-            <div className="item item3">
+            <div className="scroll-area__column item3">
               <SliderItem>
                 <BoxSale>
                   <Sale>20%</Sale>
@@ -256,7 +210,7 @@ const Tokens: React.FC<Props> = () => {
               </SliderItem>{' '}
             </div>
 
-            <div className="item item4">
+            <div className="scroll-area__column item4">
               <SliderItem>
                 <BoxSale>
                   <Sale>50%</Sale>

@@ -39,3 +39,60 @@
   
   
 }
+
+
+/* ================================ */
+
+.scroll-area {
+	overflow: hidden;
+	position: relative;
+}
+
+.scroll-area .scroll-area__body {
+	position: relative;
+  z-index: 5;
+  padding-bottom: 24px;
+}
+
+.scroll-area--horizontal .scroll-area__body {
+	display: block;
+	overflow-x: auto;
+	white-space: nowrap;
+	-webkit-overflow-scrolling: touch;
+-ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.scroll-area--horizontal .scroll-area__body::-webkit-scrollbar {
+	display: none;
+}
+
+
+	
+.scroll-area__column {
+	display: inline-block;
+	vertical-align: top;
+	white-space: nowrap;
+	/* text-align: center;
+	background: #fff; */
+}
+
+
+/* .scroll-area__column a {
+	text-decoration: none;
+	color: #576b95;
+}
+
+
+.scroll-area__column a span {
+    color: #8d949e;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    padding: 15px 14px;
+    text-align: center;
+}
+.scroll-area__column a span.selected {
+	border-bottom: 2px solid #3578e5;
+	color: #3578e5;
+} */

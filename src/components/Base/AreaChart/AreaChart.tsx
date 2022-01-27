@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { useTheme } from '@mui/material/styles';
 import { ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 import { formatTimestamp } from 'helpers/formatTimestamp';
 import { labelDate } from 'consts/dashboard';
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }) => {
+  const theme = useTheme();
   const MaxDataValue = Math.max(...data.map((item) => item[dataKey]));
 
   const getMaxYAxixValue = (MaxDataValue: number) => {
@@ -35,7 +37,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           axisLine={false}
           fontSize="10px"
           fontFamily="Poppins"
-          color="#000000"
+          color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           dataKey="time"
           tickFormatter={(timestamp) => moment(timestamp).format('MMM D')}
         />
@@ -43,6 +45,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           axisLine={false}
           domain={[0, getMaxYAxixValue(MaxDataValue)]}
           tickLine={false}
+          color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           fontSize="10px"
           fontFamily="Poppins"
           tickFormatter={(value) => `${formatBigNumber(Number(value))}`}

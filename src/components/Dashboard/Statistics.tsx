@@ -42,6 +42,8 @@ const CardBox = styled(Box)<BoxProps>(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     marginRight: '14px',
+    borderRadius: '14px',
+    boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.11)',
   },
   [theme.breakpoints.between('xs', 'sm')]: {
     padding: '27px 14px 12px',
@@ -133,60 +135,6 @@ const Statistics: React.FC<Props> = ({ data }) => {
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
 
   useEffect(() => {
-    const slider: any = document.querySelector('.itemsStats');
-    let isDown = false;
-    let startX: any = null;
-    let scrollLeft: any = null;
-
-    slider.addEventListener('mousedown', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-
-    // mobile
-    slider.addEventListener('touchstart', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.changedTouches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('touchcancel', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchend', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchmove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.changedTouches[0].pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-  }, []);
-
-  useEffect(() => {
     setStatistic([
       {
         title: 'Token Price',
@@ -234,11 +182,10 @@ const Statistics: React.FC<Props> = ({ data }) => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-        {/* <SliderScroll elRef={statsRef} settings={settings}> */}
-        <div className="grid-item main">
-          <div className="items itemsStats">
+        <div className="scroll-area scroll-area--horizontal">
+          <div className="scroll-area__body">
             {statistic.map((item, i) => (
-              <div key={i} className={`item item${i + 1}`}>
+              <div key={i} className={`scroll-area__column item${i + 1}`}>
                 <SliderItem key={i}>
                   <CardBox>
                     <Text variant="h5">{item.title}</Text>
@@ -258,7 +205,6 @@ const Statistics: React.FC<Props> = ({ data }) => {
             ))}
           </div>
         </div>
-        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );

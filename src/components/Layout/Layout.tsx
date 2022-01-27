@@ -79,10 +79,7 @@ const transition = 'width 1s ease-in-out';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
-  // transition: theme.transitions.create('width', {
-  //   easing: theme.transitions.easing.easeInOut,
-  //   duration: theme.transitions.duration.enteringScreen,
-  // }),
+
   transition: transition,
   background: theme.palette.mode === 'dark' ? '#171717' : '#fff',
   overflow: 'unset',
@@ -91,10 +88,6 @@ const openedMixin = (theme: Theme): CSSObject => ({
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
-  // transition: theme.transitions.create('width', {
-  //   easing: theme.transitions.easing.sharp,
-  //   duration: theme.transitions.duration.leavingScreen,
-  // }),
   transition: transition,
   border: 'none',
   overflow: 'unset',
@@ -201,10 +194,10 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open, theme 
 
   '&:hover': {
     cursor: 'pointer',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     fontWeight: 'bold',
-    background: '#dbecfd88',
-    opacity: 0.8,
+    background: theme.palette.mode === 'light' ? '#dbecfd88' : '#2121217d',
+    // opacity: 0.8,
   },
 }));
 
@@ -230,7 +223,7 @@ const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
   background: theme.palette.mode === 'light' ? '#FAFBFE' : '#1e1e1e',
   // width: '100%',
   minHeight: '100vh',
-  padding: '30px',
+  padding: '25px 30px',
   boxSizing: 'border-box',
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
@@ -330,7 +323,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 const MenusMobile = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'none',
   alignItems: 'center',
-  marginBottom: '34px',
+  marginBottom: '10px',
 
   [theme.breakpoints.down('md')]: {
     display: 'flex',
@@ -340,11 +333,20 @@ const MenusMobile = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const MenuItem = styled(Box)<BoxMenuProps>(({ active }) => ({
-  border: `1px solid ${active ? '#3864FF' : '#A4A9B7'}`,
+const MenuItem = styled(Box)<BoxMenuProps>(({ active, theme }) => ({
+  border: theme.palette.mode === 'light' ? `1px solid ${active ? '#3864FF' : '#A4A9B7'}` : 'unset',
   boxSizing: 'border-box',
   borderRadius: '14px',
-  background: active ? '#3864FF' : 'unset',
+  // background: active ? '#3864FF' : theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.09)',
+  // background: active ? '#3864FF' : theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.09)',
+  background:
+    theme.palette.mode === 'light'
+      ? active
+        ? '#3864FF'
+        : 'unset'
+      : active
+      ? 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+      : 'rgba(255, 255, 255, 0.09)',
   padding: '10px 19px',
   minWidth: '135px',
   display: 'inline-flex',
@@ -352,7 +354,7 @@ const MenuItem = styled(Box)<BoxMenuProps>(({ active }) => ({
   justifyContent: 'center',
 
   a: {
-    color: active ? '#fff' : '#A4A9B7',
+    color: active ? '#fff' : theme.palette.mode === 'light' ? '#A4A9B7' : '#fff',
     fontFamily: 'Poppins',
     fontWeight: 'bold',
     fontSize: '14px',
@@ -409,64 +411,6 @@ const Layout: React.FC<Props> = ({ children }) => {
   const theme = useTheme();
   const colorMode = React.useContext<any>(ColorModeContext);
 
-  useEffect(() => {
-    const slider: any = document.querySelector('.items');
-    let isDown = false;
-    let startX: any = null;
-    let scrollLeft: any = null;
-
-    slider.addEventListener('mousedown', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-
-    // mobile
-    slider.addEventListener('touchstart', (e: any) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.changedTouches[0].pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('touchcancel', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchend', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('touchmove', (e: any) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.changedTouches[0].pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      // console.log(walk);
-    });
-  }, []);
-
-  // const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setLightMode(event.target.checked);
-  // };
-
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
   };
@@ -503,7 +447,7 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
-      <Header />
+      <Header onChangeMode={handleChangeMode} />
 
       <Drawer
         variant="permanent"
@@ -541,7 +485,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                   {!open ? (
                     <TooltipCustom title={item.name} arrow placement="right">
                       {location.pathname === item.path ? (
-                        <img alt="" src={item.activeIcon} />
+                        <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
                       ) : (
                         <img alt="" src={item.icon} />
                       )}
@@ -549,7 +493,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                   ) : (
                     <>
                       {location.pathname === item.path ? (
-                        <img alt="" src={item.activeIcon} />
+                        <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
                       ) : (
                         <img alt="" src={item.icon} />
                       )}
@@ -588,13 +532,11 @@ const Layout: React.FC<Props> = ({ children }) => {
 
       <MainLayout component="main" open={open}>
         <MenusMobile>
-          {/* <SliderScroll elRef={sliderRef} settings={settings}> */}
-
-          <div className="grid-item main">
-            <div className="items">
+          <div className="scroll-area scroll-area--horizontal">
+            <div className="scroll-area__body">
               {menus &&
                 menus.map((item, i) => (
-                  <div key={i} className={`item item${i + 1}`}>
+                  <div key={i} className={`scroll-area__column item${i + 1}`}>
                     <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
                       <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
                     </LinkCustom>

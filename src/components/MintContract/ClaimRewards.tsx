@@ -3,6 +3,8 @@ import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
 
+// import bgBorder from 'assets/images/bg-box-gradient.png';
+
 interface Props {
   title?: string;
 }
@@ -21,7 +23,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   textTransform: 'capitalize',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
@@ -48,8 +50,11 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   lineHeight: '21px',
   fontFamily: 'Poppins',
   fontWeight: '500',
-  color: '#293247',
-  border: `1px solid ${theme.palette.primary.main}`,
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  border: theme.palette.mode === 'light' ? `1px solid ${theme.palette.primary.main}` : 'none',
+  background: theme.palette.mode === 'light' ? '#fff' : `rgba(255, 255, 255, 0.03)`,
+  // theme.palette.mode === 'light' ? '#fff' : `url(${bgBorder}) no-repeat center center`,
+  backgroundSize: '107%',
 
   [theme.breakpoints.down('lg')]: {
     padding: '20px',
