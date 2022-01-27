@@ -9,6 +9,7 @@ const initialState = {
   dataRewardAmount: 0,
   isCreatingNodes: false,
   isClaimingReward: false,
+  insuffBalance: false,
 };
 
 const dataContractSlice = createSlice({
@@ -63,6 +64,12 @@ const dataContractSlice = createSlice({
     unSetIsClaimingReward: (state) => {
       state.isClaimingReward = false;
     },
+    setInsuffBalance: (state) => {
+      state.insuffBalance = true;
+    },
+    unSetInsuffBalance: (state) => {
+      state.insuffBalance = false;
+    },
   },
 });
 
@@ -83,6 +90,8 @@ export const {
   unSetIsCreatingNodes,
   setIsClaimingReward,
   unSetIsClaimingReward,
+  setInsuffBalance,
+  unSetInsuffBalance,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;

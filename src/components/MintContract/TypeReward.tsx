@@ -11,7 +11,7 @@ import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
-import { setIsCreatingNodes, unSetIsCreatingNodes } from 'services/contract';
+import { setInsuffBalance, setIsCreatingNodes, unSetInsuffBalance, unSetIsCreatingNodes } from 'services/contract';
 
 interface Props {
   id: any;
@@ -276,11 +276,6 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
 
   const handleToggle = () => {
-    if (new BigNumber(zeroXBlockBalance).isEqualTo(0)) {
-      setStatus('');
-      setOpenStatus(true);
-      return;
-    }
     setOpen(!open);
   };
 
@@ -290,7 +285,16 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
 
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
     try {
+      if (new BigNumber(zeroXBlockBalance).isLessThan(15)) {
+        setOpen(false);
+        setStatus('');
+        setOpenStatus(true);
+        dispatch(setInsuffBalance());
+        return;
+      }
+
       dispatch(setIsCreatingNodes());
+      dispatch(unSetInsuffBalance());
 
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
@@ -325,6 +329,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   useEffect(() => {
     setOpen(false);
     setOpenStatus(false);
+    dispatch(unSetInsuffBalance());
   }, [currentUserAddress]);
 
   useFetchNodes(crtNodeOk);

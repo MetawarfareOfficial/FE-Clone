@@ -401,6 +401,7 @@ const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'erro
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
   const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
+  const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
@@ -548,7 +549,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         </BoxActions>
 
         <ButtonMint
-          disabled={contracts.length <= 0 || contracts.filter((item) => item.error).length > 0 || isCreatingNodes}
+          disabled={
+            contracts.length <= 0 ||
+            contracts.filter((item) => item.error).length > 0 ||
+            isCreatingNodes ||
+            isInsuffBalances
+          }
           variant="contained"
           color="primary"
           onClick={() => {
