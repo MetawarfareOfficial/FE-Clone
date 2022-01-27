@@ -399,9 +399,16 @@ const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'erro
   },
 }));
 
+const BoxError = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  marginTop: '21px',
+}));
+
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
   const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
   const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
+  const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
@@ -564,12 +571,17 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
           </ButtonMax>
         </BoxActions>
 
+        <BoxError color={'#F62D33'}>
+          {isInsuffBalances ? 'Insufficient Tokens' : isLimitNodes ? 'You can not mint more than 100 contracts' : ''}
+        </BoxError>
+
         <ButtonMint
           disabled={
             contracts.length <= 0 ||
             contracts.filter((item) => item.error).length > 0 ||
             isCreatingNodes ||
-            isInsuffBalances
+            isInsuffBalances ||
+            isLimitNodes
           }
           variant="contained"
           color="primary"

@@ -10,6 +10,7 @@ const initialState = {
   isCreatingNodes: false,
   isClaimingReward: false,
   insuffBalance: false,
+  isLimitOwnedNodes: false,
 };
 
 const dataContractSlice = createSlice({
@@ -70,6 +71,12 @@ const dataContractSlice = createSlice({
     unSetInsuffBalance: (state) => {
       state.insuffBalance = false;
     },
+    setIsLimitOwnedNodes: (state) => {
+      state.isLimitOwnedNodes = true;
+    },
+    unSetIsLimitOwnedNodes: (state) => {
+      state.isLimitOwnedNodes = false;
+    },
   },
 });
 
@@ -92,6 +99,8 @@ export const {
   unSetIsClaimingReward,
   setInsuffBalance,
   unSetInsuffBalance,
+  setIsLimitOwnedNodes,
+  unSetIsLimitOwnedNodes,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;

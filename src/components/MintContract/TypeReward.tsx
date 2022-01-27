@@ -11,7 +11,14 @@ import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
-import { setInsuffBalance, setIsCreatingNodes, unSetInsuffBalance, unSetIsCreatingNodes } from 'services/contract';
+import {
+  setInsuffBalance,
+  setIsCreatingNodes,
+  setIsLimitOwnedNodes,
+  unSetInsuffBalance,
+  unSetIsCreatingNodes,
+  unSetIsLimitOwnedNodes,
+} from 'services/contract';
 import { computedRewardRatioPerYear } from '../../helpers/computedRewardRatioPerYear';
 import { RewardRatioChart } from '../../interfaces/RewardRatioChart';
 
@@ -280,19 +287,31 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
 
   const handleToggle = () => {
     setOpen(!open);
+    dispatch(unSetInsuffBalance());
+    dispatch(unSetIsLimitOwnedNodes());
   };
 
   const handleToggleStatus = () => {
     setOpenStatus(!openStatus);
   };
 
+  const closeMintModalAndShowStatus = () => {
+    setOpen(false);
+    setOpenStatus(true);
+    dispatch(unSetIsCreatingNodes());
+  };
+
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
     try {
       if (new BigNumber(zeroXBlockBalance).isLessThan(15)) {
-        setOpen(false);
-        setStatus('');
-        setOpenStatus(true);
+        setOpen(true);
         dispatch(setInsuffBalance());
+        return;
+      }
+
+      if (nodes === LIMIT_MAX_MINT) {
+        setOpen(true);
+        dispatch(setIsLimitOwnedNodes());
         return;
       }
 
@@ -304,22 +323,18 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
 
       const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
 
-      setOpen(false);
       setStatus(STATUS[2]);
-      setOpenStatus(true);
       await sleep(DELAY_TIME);
 
       if (response.hash) {
         setCreateNodeOk(!crtNodeOk);
         setStatus(STATUS[0]);
       }
+
+      closeMintModalAndShowStatus();
     } catch (e: any) {
       setStatus(STATUS[1]);
-    } finally {
-      setOpen(false);
-      setOpenStatus(true);
-      dispatch(unSetInsuffBalance());
-      dispatch(unSetIsCreatingNodes());
+      closeMintModalAndShowStatus();
     }
   };
 
