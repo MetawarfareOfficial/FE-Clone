@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { rechartLineData } from 'components/Dashboard/data';
 import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { useWindowSize } from 'hooks/useWindowSize';
 import AreaChartCustom from 'components/Base/AreaChart';
+
+// import BgBox from 'assets/images/bg-trea.png';
 
 interface Props {
   title?: string;
@@ -25,7 +27,12 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
-  background: 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%), #FFFFFF',
+  background:
+    theme.palette.mode === 'light'
+      ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%), #FFFFFF'
+      : 'rgba(255, 255, 255, 0.03)',
+  // : `url(${BgBox}) no-repeat center -2px`,
+  backgroundSize: '103%',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
   borderRadius: '20px',
   display: 'flex',
@@ -79,7 +86,7 @@ const BoxText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   textTransform: 'uppercase',
-  color: '#C5D9FF',
+  color: theme.palette.mode === 'light' ? '#C5D9FF' : '#656567',
   maxWidth: '163px',
   marginBottom: '15px',
 
@@ -107,7 +114,7 @@ const BoxText2 = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '18px',
   lineHeight: '27px',
   textTransform: 'uppercase',
-  color: '#C5D9FF',
+  color: theme.palette.mode === 'light' ? '#C5D9FF' : '#656567',
   maxWidth: '163px',
   marginBottom: '15px',
 
@@ -151,8 +158,8 @@ const BoxLeft = styled(Box)<BoxLeftProps>(({ theme, isMarket }) => ({
 
 const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   width: '290px',
-  background: '#FFFFFF',
-  boxShadow: '0px 4px 26px rgba(0, 0, 0, 0.12)',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#212121',
+  boxShadow: theme.palette.mode === 'light' ? '0px 4px 26px rgba(0, 0, 0, 0.12)' : 'none',
   borderRadius: '17px',
   padding: '10px 28px 10px 5px',
   boxSizing: 'border-box',
@@ -171,7 +178,7 @@ const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const TitleChart = styled(Typography)<TypographyProps>(() => ({
+const TitleChart = styled(Typography)<TypographyProps>(({ theme }) => ({
   position: 'absolute',
   zIndex: '2',
   top: '16px',
@@ -181,11 +188,12 @@ const TitleChart = styled(Typography)<TypographyProps>(() => ({
   fontSize: '12px',
   lineHeight: '14px',
   textAlign: 'center',
-  color: '#000000',
+  color: theme.palette.mode === 'light' ? '#000000' : '#4F4F4F',
 }));
 
 const Statistics: React.FC<Props> = () => {
   const [width] = useWindowSize();
+  const theme = useTheme();
   const [screenSize, setScreenSize] = useState(width);
 
   useEffect(() => {
@@ -222,7 +230,11 @@ const Statistics: React.FC<Props> = () => {
                 }}
               >
                 <TitleChart>Last 30 Days</TitleChart>
-                <AreaChartCustom id="colorUv" color="#E5F5FE" data={rechartLineData} />
+                <AreaChartCustom
+                  id="colorUv"
+                  color={theme.palette.mode === 'light' ? '#E5F5FE' : '#29445C'}
+                  data={rechartLineData}
+                />
               </div>
             </BoxRight>
           </BoxDetail>
@@ -254,7 +266,11 @@ const Statistics: React.FC<Props> = () => {
                 }}
               >
                 <TitleChart>Last 30 Days</TitleChart>
-                <AreaChartCustom id="colorUv2" data={rechartLineData} color="#E5E8FE" />
+                <AreaChartCustom
+                  id="colorUv2"
+                  data={rechartLineData}
+                  color={theme.palette.mode === 'light' ? '#E5E8FE' : '#56CCF2'}
+                />
               </div>
             </BoxRight>
           </BoxDetail>

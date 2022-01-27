@@ -33,7 +33,7 @@ interface Props {
   name?: string;
 }
 
-const ButtonConnect = styled(Button)<ButtonProps>(() => ({
+const ButtonConnect = styled(Button)<ButtonProps>(({ theme }) => ({
   textDecoration: 'none',
   borderRadius: '14px',
   padding: '12px 20px',
@@ -41,6 +41,14 @@ const ButtonConnect = styled(Button)<ButtonProps>(() => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontWeight: 'bold',
+  color: theme.palette.primary[theme.palette.mode],
+  border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
+
+  '&:hover': {
+    color: theme.palette.primary[theme.palette.mode],
+    border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
+    opacity: 0.7,
+  },
 }));
 
 const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({

@@ -21,8 +21,11 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   lineHeight: '29px',
   fontFamily: 'Poppins',
   fontWeight: '600',
-  color: '#293247',
-  border: `1px solid ${theme.palette.primary.main}`,
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  border: theme.palette.mode === 'light' ? `1px solid ${theme.palette.primary.main}` : 'none',
+  background: theme.palette.mode === 'light' ? '#fff' : `rgba(255, 255, 255, 0.03)`,
+  // color: '#293247',
+  // border: `1px solid ${theme.palette.primary.main}`,
   margin: '0 14px 42px',
 }));
 

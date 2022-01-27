@@ -6,6 +6,7 @@ import {
   Table,
   TableHead,
   TableRow,
+  TableRowProps,
   TableCell,
   TableCellProps,
   TableBody,
@@ -41,7 +42,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#E0E0E0',
+  color: theme.palette.mode === 'light' ? '#E0E0E0' : '#6B6B6B',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
   fontSize: '36px',
@@ -54,9 +55,9 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
-  backgroundColor: '#DBECFD',
-  padding: '15px 36px',
-  color: '#293247',
+  backgroundColor: theme.palette.mode === 'light' ? '#DBECFD' : '#37393A',
+  padding: '15px 30px',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Roboto',
   fontSize: '16px',
   lineHeight: '19px',
@@ -76,14 +77,18 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
 }));
 
 const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
-  backgroundColor: '#fff',
-  padding: '11px 36px',
-  color: '#293247',
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'unset',
+  padding: '11px 30px',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
   fontSize: '14px',
   lineHeight: '25px',
   fontWeight: '500',
   border: 'none',
+  maxWidth: '160px',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '12px',
@@ -108,11 +113,24 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   boxShadow: 'none',
   width: '98px',
   height: '38px',
+  color: theme.palette.mode === 'light' ? `#293247` : '#fff',
+  background:
+    theme.palette.mode === 'light'
+      ? `${theme.palette.secondary}`
+      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+
+  '&:disabled': {
+    background: theme.palette.mode === 'light' ? '#BCCBE2' : '#4F4F4F',
+    color: theme.palette.mode === 'light' ? '#fff' : '#828282',
+  },
 
   '&:hover': {
     cursor: 'pointed',
-    backgroundColor: theme.palette.primary.main,
-    color: '#fff',
+    color: theme.palette.mode === 'light' ? `#293247` : '#fff',
+    background:
+      theme.palette.mode === 'light'
+        ? `${theme.palette.secondary}`
+        : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
     opacity: 0.7,
     boxShadow: 'none',
   },
@@ -137,6 +155,8 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   boxShadow: 'none',
   width: '98px',
   height: '38px',
+  color: theme.palette.primary[theme.palette.mode],
+  border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
 
   '&:hover': {
     cursor: 'pointed',
@@ -196,6 +216,19 @@ const STATUS = ['success', 'error', 'pending'];
 
 const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
   overflow: 'auto',
+}));
+
+const TableRowCustom = styled(TableRow)<TableRowProps>(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#292929',
+  },
+  '&:nth-of-type(even)': {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#262626',
+  },
+}));
+
+const TableRowNoData = styled(TableRow)<TableRowProps>(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.03)',
 }));
 
 const TableContracts: React.FC<Props> = ({ data }) => {
@@ -297,7 +330,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
           <CustomTableBody>
             {data.length > 0 ? (
               data.map((item, i) => (
-                <TableRow key={i}>
+                <TableRowCustom key={i}>
                   <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
                   <TableCellContent align="left">{item.name}</TableCellContent>
                   <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
@@ -319,16 +352,16 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                       Claim
                     </ButtonClaim>
                   </TableCellContent>
-                </TableRow>
+                </TableRowCustom>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={7}>
+              <TableRowNoData>
+                <TableCellContent colSpan={7}>
                   <EmptyContracts>
                     {currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}
                   </EmptyContracts>
-                </TableCell>
-              </TableRow>
+                </TableCellContent>
+              </TableRowNoData>
             )}
           </CustomTableBody>
         </Table>

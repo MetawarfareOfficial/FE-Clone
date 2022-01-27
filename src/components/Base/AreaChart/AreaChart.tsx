@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { useTheme } from '@mui/material/styles';
 import { ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
 }
 
 const AreaChartCustom: React.FC<Props> = ({ id, data, color }) => {
+  const theme = useTheme();
+
   return (
     <ResponsiveContainer>
       <ComposedChart width={732} height={540} data={data}>
@@ -24,7 +27,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color }) => {
           axisLine={false}
           fontSize="10px"
           fontFamily="Poppins"
-          color="#000000"
+          color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           dataKey="time"
           tickFormatter={(timestamp) => moment(new Date(timestamp * 1000)).format('MMM D')}
         />
@@ -32,6 +35,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color }) => {
           axisLine={false}
           // interval={9}
           tickLine={false}
+          color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           fontSize="10px"
           fontFamily="Poppins"
           tickFormatter={(value) => `${Math.floor(value / 10e2)}`}

@@ -122,7 +122,7 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
   padding: '13px 18px',
-  backgroundColor: '#fff',
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.19)',
   color: '#293247',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
