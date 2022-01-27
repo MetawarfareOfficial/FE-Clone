@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import 'styles/menus.css';
 import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, Typography, TypographyProps, Grid } from '@mui/material';
@@ -12,7 +13,6 @@ import TessIcon from 'assets/images/tess.gif';
 import TessDarkIcon from 'assets/images/tess-dark.gif';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
-import SliderScroll from 'components/Base/SliderScroll/index';
 
 interface Props {
   title?: string;
@@ -224,40 +224,65 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
 const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
   const boxRef = useRef<any>(null);
   const [width] = useWindowSize();
-  const sliderRef = useRef<any>(null);
   const theme = useTheme();
 
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
   const dataTotal = useAppSelector((state) => state.contract.total);
 
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
+  useEffect(() => {
+    const slider: any = document.querySelector('.totalContacts');
+    let isDown = false;
+    let startX: any = null;
+    let scrollLeft: any = null;
+
+    slider.addEventListener('mousedown', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+
+    // mobile
+    slider.addEventListener('touchstart', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.changedTouches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchcancel', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchmove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.changedTouches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+  }, []);
 
   useEffect(() => {
     if (boxRef && boxRef.current) {
@@ -382,95 +407,110 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-        <SliderScroll elRef={sliderRef} settings={settings}>
-          <Box>
-            <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
-              <BoxLeft>
-                <BoxHeader>
-                  <ViewImage>
-                    <img alt="" src={SquareIcon} width="100%" />
-                  </ViewImage>
+        {/* <SliderScroll elRef={sliderRef} settings={settings}> */}
+        <div className="grid-item main">
+          <div className="items totalContacts">
+            <div className="item item1">
+              <Box>
+                <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+                  <BoxLeft>
+                    <BoxHeader>
+                      <ViewImage>
+                        <img alt="" src={SquareIcon} width="100%" />
+                      </ViewImage>
 
-                  <BoxHeaderContent>
-                    <HeaderTitle>Square</HeaderTitle>
-                    <HeaderText>Contract</HeaderText>
-                  </BoxHeaderContent>
-                </BoxHeader>
+                      <BoxHeaderContent>
+                        <HeaderTitle>Square</HeaderTitle>
+                        <HeaderText>Contract</HeaderText>
+                      </BoxHeaderContent>
+                    </BoxHeader>
 
-                <TitleBox>{dataTotal.square}</TitleBox>
-                <TextBox>Contracts minted</TextBox>
-              </BoxLeft>
+                    <TitleBox>{dataTotal.square}</TitleBox>
+                    <TextBox>Contracts minted</TextBox>
+                  </BoxLeft>
 
-              <BoxRight>
-                <Box>
-                  <Description>{`${dataPrice.square} 0xB`}</Description>
-                  <Description>{`Earn ${computeEarnedTokenPerDay(
-                    dataPrice.square,
-                    dataApy.square,
-                  )} 0xB/day`}</Description>
-                  <Description>{`${dataApy.square}% APR`}</Description>
-                </Box>
-              </BoxRight>
-            </BoxTotal>
-          </Box>
-          <Box>
-            <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
-              <BoxLeft>
-                <BoxHeader>
-                  <ViewImage>
-                    <img alt="" src={CubeIcon} width="100%" />
-                  </ViewImage>
+                  <BoxRight>
+                    <Box>
+                      <Description>{`${dataPrice.square} 0xB`}</Description>
+                      <Description>{`Earn ${computeEarnedTokenPerDay(
+                        dataPrice.square,
+                        dataApy.square,
+                      )} 0xB/day`}</Description>
+                      <Description>{`${dataApy.square}% APR`}</Description>
+                    </Box>
+                  </BoxRight>
+                </BoxTotal>
+              </Box>
+            </div>
 
-                  <BoxHeaderContent>
-                    <HeaderTitle>Cube </HeaderTitle>
-                    <HeaderText>Contract</HeaderText>
-                  </BoxHeaderContent>
-                </BoxHeader>
+            <div className="item item2">
+              <Box>
+                <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+                  <BoxLeft>
+                    <BoxHeader>
+                      <ViewImage>
+                        <img alt="" src={CubeIcon} width="100%" />
+                      </ViewImage>
 
-                <TitleBox>{dataTotal.cube}</TitleBox>
-                <TextBox>Contracts minted</TextBox>
-              </BoxLeft>
+                      <BoxHeaderContent>
+                        <HeaderTitle>Cube </HeaderTitle>
+                        <HeaderText>Contract</HeaderText>
+                      </BoxHeaderContent>
+                    </BoxHeader>
 
-              <BoxRight>
-                <Box>
-                  <Description>{`${dataPrice.cube} 0xB`}</Description>
-                  <Description>{`Earn ${computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)} 0xB/day`}</Description>
-                  <Description>{`${dataApy.cube}% APR`}</Description>
-                </Box>
-              </BoxRight>
-            </BoxTotal>
-          </Box>
-          <Box>
-            <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
-              <BoxLeft>
-                <BoxHeader>
-                  <ViewImage>
-                    <img alt="" src={TessIcon} width="100%" />
-                  </ViewImage>
+                    <TitleBox>{dataTotal.cube}</TitleBox>
+                    <TextBox>Contracts minted</TextBox>
+                  </BoxLeft>
 
-                  <BoxHeaderContent>
-                    <HeaderTitle>Tesseract</HeaderTitle>
-                    <HeaderText>Contract</HeaderText>
-                  </BoxHeaderContent>
-                </BoxHeader>
+                  <BoxRight>
+                    <Box>
+                      <Description>{`${dataPrice.cube} 0xB`}</Description>
+                      <Description>{`Earn ${computeEarnedTokenPerDay(
+                        dataPrice.cube,
+                        dataApy.cube,
+                      )} 0xB/day`}</Description>
+                      <Description>{`${dataApy.cube}% APR`}</Description>
+                    </Box>
+                  </BoxRight>
+                </BoxTotal>
+              </Box>
+            </div>
 
-                <TitleBox>{dataTotal.tesseract}</TitleBox>
-                <TextBox>Contracts minted</TextBox>
-              </BoxLeft>
+            <div className="item item3">
+              <Box>
+                <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
+                  <BoxLeft>
+                    <BoxHeader>
+                      <ViewImage>
+                        <img alt="" src={TessIcon} width="100%" />
+                      </ViewImage>
 
-              <BoxRight>
-                <Box>
-                  <Description>{`${dataPrice.tesseract} 0xB`}</Description>
-                  <Description>{`Earn ${computeEarnedTokenPerDay(
-                    dataPrice.tesseract,
-                    dataApy.tesseract,
-                  )} 0xB/day`}</Description>
-                  <Description>{`${dataApy.tesseract}% APR`}</Description>
-                </Box>
-              </BoxRight>
-            </BoxTotal>
-          </Box>
-        </SliderScroll>
+                      <BoxHeaderContent>
+                        <HeaderTitle>Tesseract</HeaderTitle>
+                        <HeaderText>Contract</HeaderText>
+                      </BoxHeaderContent>
+                    </BoxHeader>
+
+                    <TitleBox>{dataTotal.tesseract}</TitleBox>
+                    <TextBox>Contracts minted</TextBox>
+                  </BoxLeft>
+
+                  <BoxRight>
+                    <Box>
+                      <Description>{`${dataPrice.tesseract} 0xB`}</Description>
+                      <Description>{`Earn ${computeEarnedTokenPerDay(
+                        dataPrice.tesseract,
+                        dataApy.tesseract,
+                      )} 0xB/day`}</Description>
+                      <Description>{`${dataApy.tesseract}% APR`}</Description>
+                    </Box>
+                  </BoxRight>
+                </BoxTotal>
+              </Box>
+            </div>
+          </div>
+        </div>
+        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );

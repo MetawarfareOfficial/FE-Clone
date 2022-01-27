@@ -1,9 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
+import 'styles/menus.css';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
-
-import SliderScroll from 'components/Base/SliderScroll';
 
 interface Props {
   title?: string;
@@ -79,6 +78,11 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '12px',
     lineHeight: '18px',
   },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
+    whiteSpace: 'normal',
+  },
 }));
 
 const Sale = styled(Box)<BoxProps>(({ theme }) => ({
@@ -117,56 +121,58 @@ const SliderItem = styled(Box)<BoxProps>(() => ({
 }));
 
 const Tokens: React.FC<Props> = () => {
-  const holdingRef = useRef<any>(null);
+  useEffect(() => {
+    const slider: any = document.querySelector('.tokens');
+    let isDown = false;
+    let startX: any = null;
+    let scrollLeft: any = null;
 
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 900,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 769,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
+    slider.addEventListener('mousedown', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+    // mobile
+    slider.addEventListener('touchstart', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.changedTouches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchcancel', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchmove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.changedTouches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+  }, []);
 
   return (
     <Wrapper>
@@ -210,40 +216,56 @@ const Tokens: React.FC<Props> = () => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        <SliderScroll elRef={holdingRef} settings={settings}>
-          <SliderItem>
-            <BoxSale>
-              <Sale>10%</Sale>
-              <Text>
-                <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
-              </Text>
-            </BoxSale>
-          </SliderItem>
-          <SliderItem>
-            <BoxSale>
-              <Sale>20%</Sale>
-              <Text>
-                <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
-              </Text>
-            </BoxSale>
-          </SliderItem>
-          <SliderItem>
-            <BoxSale>
-              <Sale>20%</Sale>
-              <Text>
-                <span>Token</span> in Treasury Wallet as 100% USDC
-              </Text>
-            </BoxSale>
-          </SliderItem>
-          <SliderItem>
-            <BoxSale>
-              <Sale>50%</Sale>
-              <Text>
-                <span>Token</span> in Rewards Wallet as 100% 0xB
-              </Text>
-            </BoxSale>
-          </SliderItem>
-        </SliderScroll>
+        {/* <SliderScroll elRef={holdingRef} settings={settings}> */}
+
+        <div className="grid-item main">
+          <div className="items tokens">
+            <div className="item item1">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>10%</Sale>
+                  <Text>
+                    <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
+                  </Text>
+                </BoxSale>
+              </SliderItem>
+            </div>
+
+            <div className="item item2">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>20%</Sale>
+                  <Text>
+                    <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
+                  </Text>
+                </BoxSale>
+              </SliderItem>
+            </div>
+
+            <div className="item item3">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>20%</Sale>
+                  <Text>
+                    <span>Token</span> in Treasury Wallet as 100% USDC
+                  </Text>
+                </BoxSale>
+              </SliderItem>{' '}
+            </div>
+
+            <div className="item item4">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>50%</Sale>
+                  <Text>
+                    <span>Token</span> in Rewards Wallet as 100% 0xB
+                  </Text>
+                </BoxSale>
+              </SliderItem>
+            </div>
+          </div>
+        </div>
+        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );
