@@ -12,6 +12,8 @@ import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import { setInsuffBalance, setIsCreatingNodes, unSetInsuffBalance, unSetIsCreatingNodes } from 'services/contract';
+import { computedRewardRatioPerYear } from '../../helpers/computedRewardRatioPerYear';
+import { RewardRatioChart } from '../../interfaces/RewardRatioChart';
 
 interface Props {
   id: any;
@@ -22,7 +24,7 @@ interface Props {
   earn: string;
   color: string;
   colorChart: string;
-  dataChart: Array<any>;
+  // dataChart: Array<any>;
 }
 
 const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
@@ -262,7 +264,7 @@ const ViewChart = styled('div')`
 
 const STATUS = ['success', 'error', 'pending'];
 
-const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart, dataChart }) => {
+const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart }) => {
   const dispatch = useAppDispatch();
 
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
@@ -274,6 +276,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [status, setStatus] = useState<any>(null);
   const [maxMint, setMaxMint] = useState<number>(-1);
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
+  const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
 
   const handleToggle = () => {
     setOpen(!open);
@@ -331,6 +334,10 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setOpenStatus(false);
     dispatch(unSetInsuffBalance());
   }, [currentUserAddress]);
+
+  useEffect(() => {
+    setDataChart(computedRewardRatioPerYear(earn));
+  }, [earn]);
 
   useFetchNodes(crtNodeOk);
 
