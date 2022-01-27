@@ -23,7 +23,7 @@ import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMes
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { bigNumber2Number } from 'helpers/formatNumber';
-import { unSetNodes, unSetRewardAmount } from 'services/contract';
+import { unSetInsuffBalance, unSetIsLimitOwnedNodes, unSetNodes, unSetRewardAmount } from 'services/contract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
@@ -204,6 +204,8 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(unSetZeroXBlockBalance());
       dispatch(unSetNodes());
       dispatch(unSetRewardAmount());
+      dispatch(unSetIsLimitOwnedNodes());
+      dispatch(unSetInsuffBalance());
     } catch (e) {
       toast.error('Oop! Something went wrong', { hideProgressBar: true });
     }
