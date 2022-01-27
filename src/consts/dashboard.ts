@@ -12,7 +12,7 @@ export const paramsCurrentPriceApi = {
   sparkline: false,
 };
 
-export const DELAY_TIME = 10000;
+export const DELAY_TIME = 20000;
 export const tickFormatDate = 'DD/MMM';
 export const tickFormatInterval = 2;
 export const labelDate = 'MM/DD/YYYY';

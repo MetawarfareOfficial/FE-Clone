@@ -235,7 +235,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimAll = async () => {
     try {
-      processModal('All');
+      processModal('ALL CONTRACT');
+      processIcon('');
       dispatch(setIsClaimingReward());
 
       const response: Record<string, any> = await claimAllNodes();
