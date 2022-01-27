@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
+import 'styles/menus.css';
 import { styled, Theme, CSSObject, useTheme } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 import { menus } from './menus';
@@ -28,7 +29,6 @@ import {
 import SwitchMode from 'components/Base/SwitchMode';
 import Banner from 'components/Base/Banner';
 import Header from './Header';
-import SliderScroll from 'components/Base/SliderScroll';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -401,7 +401,6 @@ const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open
 }));
 
 const Layout: React.FC<Props> = ({ children }) => {
-  const sliderRef = useRef<any>(null);
   const history = useHistory();
   const location = useLocation();
 
@@ -410,61 +409,66 @@ const Layout: React.FC<Props> = ({ children }) => {
   const theme = useTheme();
   const colorMode = React.useContext<any>(ColorModeContext);
 
+  useEffect(() => {
+    const slider: any = document.querySelector('.items');
+    let isDown = false;
+    let startX: any = null;
+    let scrollLeft: any = null;
+
+    slider.addEventListener('mousedown', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+
+    // mobile
+    slider.addEventListener('touchstart', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.changedTouches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchcancel', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchmove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.changedTouches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+  }, []);
+
   // const handleChangeMode = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   setLightMode(event.target.checked);
   // };
 
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
-  };
-
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 900,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 680,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
   };
 
   useEffect(() => {
@@ -496,26 +500,6 @@ const Layout: React.FC<Props> = ({ children }) => {
   }, [width]);
 
   useFetchInforContract();
-
-  // const scroll = (e: any) => {
-  //   if (sliderRef === null) {
-  //     return 0;
-  //   } else {
-  //     if (e.wheelDelta > 0) {
-  //       sliderRef.current.slickPrev();
-  //     } else {
-  //       sliderRef.current.slickNext();
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('wheel', scroll, true);
-
-  //   return () => {
-  //     window.removeEventListener('wheel', scroll, true);
-  //   };
-  // }, []);
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
@@ -604,14 +588,21 @@ const Layout: React.FC<Props> = ({ children }) => {
 
       <MainLayout component="main" open={open}>
         <MenusMobile>
-          <SliderScroll elRef={sliderRef} settings={settings}>
-            {menus &&
-              menus.map((item, i) => (
-                <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
-                  <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
-                </LinkCustom>
-              ))}
-          </SliderScroll>
+          {/* <SliderScroll elRef={sliderRef} settings={settings}> */}
+
+          <div className="grid-item main">
+            <div className="items">
+              {menus &&
+                menus.map((item, i) => (
+                  <div key={i} className={`item item${i + 1}`}>
+                    <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                      <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                    </LinkCustom>
+                  </div>
+                ))}
+            </div>
+          </div>
+          {/* </SliderScroll> */}
         </MenusMobile>
 
         {

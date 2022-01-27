@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useEffect } from 'react';
+import 'styles/menus.css';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { dataHoldings } from './data';
 import TableTokens from 'components/Base/TableTokens';
-import SliderScroll from 'components/Base/SliderScroll';
 
 import USDCoin from 'assets/images/coin-usd.svg';
 import USD1Coin from 'assets/images/coin-usd.svg';
@@ -112,42 +112,59 @@ const BoxContent = styled(Box)<BoxProps>(() => ({
 }));
 
 const Holdings: React.FC<Props> = () => {
-  const holdingRef = useRef<any>(null);
+  useEffect(() => {
+    const slider: any = document.querySelector('.itemsStats');
+    let isDown = false;
+    let startX: any = null;
+    let scrollLeft: any = null;
 
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 900,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
+    slider.addEventListener('mousedown', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+
+    // mobile
+    slider.addEventListener('touchstart', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.changedTouches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchcancel', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchmove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.changedTouches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+  }, []);
 
   // const scroll = (e: any) => {
   //   if (holdingRef === null) {
@@ -190,19 +207,23 @@ const Holdings: React.FC<Props> = () => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-        <SliderScroll elRef={holdingRef} settings={settings}>
-          {dataHoldings.map((item, i) => (
-            <Box key={i}>
-              <BoxDetail>
-                <BoxHeader color={item.color}>{item.title}</BoxHeader>
+        {/* <SliderScroll elRef={holdingRef} settings={settings}> */}
+        <div className="grid-item main">
+          <div className="items itemsStats">
+            {dataHoldings.map((item, i) => (
+              <div key={i} className={`item item${i + 1}`}>
+                <BoxDetail>
+                  <BoxHeader color={item.color}>{item.title}</BoxHeader>
 
-                <BoxContent>
-                  <TableTokens fontSize="12px" data={data} />
-                </BoxContent>
-              </BoxDetail>
-            </Box>
-          ))}
-        </SliderScroll>
+                  <BoxContent>
+                    <TableTokens fontSize="12px" data={data} />
+                  </BoxContent>
+                </BoxDetail>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );
