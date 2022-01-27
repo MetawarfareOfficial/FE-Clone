@@ -577,11 +577,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
         <ButtonMint
           disabled={
-            contracts.length <= 0 ||
-            contracts.filter((item) => item.error).length > 0 ||
-            isCreatingNodes ||
-            isInsuffBalances ||
-            isLimitNodes
+            contracts.filter((item) => item.error).length > 0 || isCreatingNodes || isInsuffBalances || isLimitNodes
           }
           variant="contained"
           color="primary"
