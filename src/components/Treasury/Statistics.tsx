@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { rechartLineData } from 'components/Dashboard/data';
 import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { useWindowSize } from 'hooks/useWindowSize';
 import AreaChartCustom from 'components/Base/AreaChart';
+import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
+import { formatBigNumber } from 'helpers/formatBigNumber';
 
 interface Props {
   title?: string;
@@ -188,6 +189,9 @@ const Statistics: React.FC<Props> = () => {
   const [width] = useWindowSize();
   const [screenSize, setScreenSize] = useState(width);
 
+  const { circulatingSupply, circulatingSupplyHistory, totalSupply, marketCap, marketCapHistory } =
+    useFetchMarketCapData();
+
   useEffect(() => {
     setScreenSize(width);
   }, [width]);
@@ -199,7 +203,9 @@ const Statistics: React.FC<Props> = () => {
           <BoxDetail>
             <BoxLeft isMarket={false}>
               <BoxText>Circulation Supply / Total Supply</BoxText>
-              <BoxTitle>20.3K / 1.0M</BoxTitle>
+              <BoxTitle>
+                {formatBigNumber(circulatingSupply)} / {formatBigNumber(totalSupply)}
+              </BoxTitle>
             </BoxLeft>
             <BoxRight>
               <div
@@ -222,7 +228,12 @@ const Statistics: React.FC<Props> = () => {
                 }}
               >
                 <TitleChart>Last 30 Days</TitleChart>
-                <AreaChartCustom id="colorUv" color="#E5F5FE" data={rechartLineData} />
+                <AreaChartCustom
+                  dataKey="circulationSupply"
+                  id="colorUv"
+                  color="#E5F5FE"
+                  data={circulatingSupplyHistory}
+                />
               </div>
             </BoxRight>
           </BoxDetail>
@@ -231,7 +242,7 @@ const Statistics: React.FC<Props> = () => {
           <BoxDetail>
             <BoxLeft isMarket={true}>
               <BoxText2>Market Cap</BoxText2>
-              <BoxTitle>1.3 Million</BoxTitle>
+              <BoxTitle>{formatBigNumber(marketCap)}</BoxTitle>
             </BoxLeft>
             <BoxRight>
               <div
@@ -254,7 +265,7 @@ const Statistics: React.FC<Props> = () => {
                 }}
               >
                 <TitleChart>Last 30 Days</TitleChart>
-                <AreaChartCustom id="colorUv2" data={rechartLineData} color="#E5E8FE" />
+                <AreaChartCustom dataKey="marketCap" id="colorUv2" data={marketCapHistory} color="#E5E8FE" />
               </div>
             </BoxRight>
           </BoxDetail>
