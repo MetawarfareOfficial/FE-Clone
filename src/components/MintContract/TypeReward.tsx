@@ -297,7 +297,6 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
       }
 
       dispatch(setIsCreatingNodes());
-      dispatch(unSetInsuffBalance());
 
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
@@ -319,6 +318,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     } finally {
       setOpen(false);
       setOpenStatus(true);
+      dispatch(unSetInsuffBalance());
       dispatch(unSetIsCreatingNodes());
     }
   };
