@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import 'styles/menus.css';
 import { styled } from '@mui/material/styles';
-import SliderScroll from 'components/Base/SliderScroll/SliderScroll';
 
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
 import { TokenPrice } from 'interfaces/TokenPrice';
@@ -77,6 +77,12 @@ const CustomButton = styled(Button)<ButtonProps>(({ theme }) => ({
     lineHeight: '21px',
     borderRadius: '9px',
   },
+
+  '&:hover': {
+    cursor: 'pointer',
+    opacity: 0.7,
+    boxShadow: 'none',
+  },
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -121,54 +127,64 @@ const SliderItem = styled(Box)<BoxProps>(() => ({}));
 
 const Statistics: React.FC<Props> = ({ data }) => {
   const history = useHistory();
-  const statsRef = useRef<any>(null);
-
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 2,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 600,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-    ],
-  };
-
   const nodes = useAppSelector((state) => state.contract.nodes);
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
 
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
+
+  useEffect(() => {
+    const slider: any = document.querySelector('.itemsStats');
+    let isDown = false;
+    let startX: any = null;
+    let scrollLeft: any = null;
+
+    slider.addEventListener('mousedown', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+
+    // mobile
+    slider.addEventListener('touchstart', (e: any) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.changedTouches[0].pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchcancel', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchend', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('touchmove', (e: any) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.changedTouches[0].pageX - slider.offsetLeft;
+      const walk = (x - startX) * 3; //scroll-fast
+      slider.scrollLeft = scrollLeft - walk;
+      // console.log(walk);
+    });
+  }, []);
 
   useEffect(() => {
     setStatistic([
@@ -218,25 +234,31 @@ const Statistics: React.FC<Props> = ({ data }) => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-        <SliderScroll elRef={statsRef} settings={settings}>
-          {statistic.map((item, i) => (
-            <SliderItem key={i}>
-              <CardBox>
-                <Text variant="h5">{item.title}</Text>
-                <Title variant="h2">{item.value}</Title>
-                <CustomButton
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    history.push(item.linkTo);
-                  }}
-                >
-                  {item.nameBtn}
-                </CustomButton>
-              </CardBox>
-            </SliderItem>
-          ))}
-        </SliderScroll>
+        {/* <SliderScroll elRef={statsRef} settings={settings}> */}
+        <div className="grid-item main">
+          <div className="items itemsStats">
+            {statistic.map((item, i) => (
+              <div key={i} className={`item item${i + 1}`}>
+                <SliderItem key={i}>
+                  <CardBox>
+                    <Text variant="h5">{item.title}</Text>
+                    <Title variant="h2">{item.value}</Title>
+                    <CustomButton
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        history.push(item.linkTo);
+                      }}
+                    >
+                      {item.nameBtn}
+                    </CustomButton>
+                  </CardBox>
+                </SliderItem>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );

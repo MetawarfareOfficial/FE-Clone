@@ -44,7 +44,7 @@ const Root = styled('span')`
     border-radius: 16px;
     background-color: #fff;
     position: relative;
-    transition: all 200ms ease;
+    transition: 0.7s ease-in-out;
   }
 
   &.${switchUnstyledClasses.focusVisible} .${switchUnstyledClasses.thumb} {
