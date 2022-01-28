@@ -235,7 +235,7 @@ const Statistics: React.FC<Props> = () => {
                   marginBottom: '-15px',
                 }}
               >
-                <TitleChart>Last 30 Days</TitleChart>
+                <TitleChart>1 Month</TitleChart>
                 <AreaChartCustom
                   id="colorUv"
                   color={theme.palette.mode === 'light' ? '#E5F5FE' : '#29445C'}
@@ -250,7 +250,7 @@ const Statistics: React.FC<Props> = () => {
           <BoxDetail>
             <BoxLeft isMarket={true}>
               <BoxText2>Market Cap</BoxText2>
-              <BoxTitle>{formatBigNumber(marketCap)}</BoxTitle>
+              <BoxTitle>{formatBigNumber(marketCap, false)}</BoxTitle>
             </BoxLeft>
             <BoxRight>
               <div
@@ -272,7 +272,7 @@ const Statistics: React.FC<Props> = () => {
                   marginBottom: '-15px',
                 }}
               >
-                <TitleChart>Last 30 Days</TitleChart>
+                <TitleChart>1 Month</TitleChart>
                 <AreaChartCustom
                   id="colorUv2"
                   dataKey="marketCap"
