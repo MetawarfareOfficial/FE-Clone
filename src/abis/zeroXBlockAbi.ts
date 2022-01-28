@@ -265,6 +265,13 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
+    name: 'developmentFee',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'developmentFundPool',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
@@ -274,13 +281,6 @@ export const zeroXBlockAbi = [
     inputs: [],
     name: 'enableCashout',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'futureFee',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -383,6 +383,13 @@ export const zeroXBlockAbi = [
     name: 'increaseAllowance',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'liquidityPool',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -620,6 +627,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
+    name: 'updateDevelopmentFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
     name: 'updateDevelopmentFundWall',
     outputs: [],
@@ -628,14 +642,14 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
-    name: 'updateFutureFee',
+    name: 'updateLiquidityFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
-    name: 'updateLiquidityFee',
+    inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
+    name: 'updateLiquidityWall',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
