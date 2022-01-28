@@ -352,6 +352,7 @@ const MenuItem = styled(Box)<BoxMenuProps>(({ active, theme }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+  overflow: 'hidden',
 
   a: {
     color: active ? '#fff' : theme.palette.mode === 'light' ? '#A4A9B7' : '#fff',
@@ -365,6 +366,17 @@ const MenuItem = styled(Box)<BoxMenuProps>(({ active, theme }) => ({
   ['&:hover']: {
     opacity: '0.7',
     cursor: 'pointer',
+  },
+  ['&:focus']: {
+    opacity: '0.7',
+    cursor: 'pointer',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    ['&:hover']: {
+      opacity: '1',
+      cursor: 'pointer',
+    },
   },
 }));
 

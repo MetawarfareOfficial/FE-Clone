@@ -61,7 +61,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     marginBottom: '36px',
     fontSize: '24px',
     lineHeight: '36px',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#828282',
   },
 }));
 
@@ -140,7 +140,9 @@ const Holdings: React.FC<Props> = () => {
             {dataHoldings.map((item, i) => (
               <div key={i} className={`scroll-area__column item${i + 1}`}>
                 <BoxDetail>
-                  <BoxHeader color={item.color}>{item.title}</BoxHeader>
+                  <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
+                    {item.title}
+                  </BoxHeader>
 
                   <BoxContent>
                     <TableTokens fontSize="12px" data={data} />

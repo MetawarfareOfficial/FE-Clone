@@ -19,37 +19,37 @@ interface Props {
   onClaimClick: (arg1: number, arg2: string) => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   boxSizing: 'border-box',
   overflow: 'hidden',
   padding: '28px 14px 14px',
-  background: '#FFFFFF',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.1)',
   borderRadius: '14px',
   marginBottom: '7px',
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Roboto',
   fontWeight: 'normal',
   fontSize: '12px',
   lineHeight: '14px',
-  color: '#A4A9B7',
+  color: theme.palette.mode === 'light' ? '#A4A9B7' : ' #828282',
 }));
 
-const Text = styled(Typography)<TypographyProps>(() => ({
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontWeight: '500',
   fontSize: '14px',
   lineHeight: '26px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   whiteSpace: 'nowrap',
   overflow: 'hidden !important',
   textOverflow: 'ellipsis',
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(() => ({
+const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -60,6 +60,8 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   boxShadow: 'none',
   height: '36px',
   marginTop: '15px',
+  color: theme.palette.mode === 'light' ? theme.palette.primary.light : '#fff',
+  border: `1px solid ${theme.palette.mode === 'light' ? theme.palette.primary.light : '#fff'}`,
 
   '&:hover': {
     cursor: 'pointed',

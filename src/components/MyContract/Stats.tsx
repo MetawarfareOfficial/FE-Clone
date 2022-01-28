@@ -12,6 +12,7 @@ import CubeDarkIcon from 'assets/images/cube-dark.gif';
 import TessIcon from 'assets/images/tess.gif';
 import TessDarkIcon from 'assets/images/tess-dark.gif';
 import RewardsIcon from 'assets/images/rewards.gif';
+import RewardsDarkIcon from 'assets/images/rewards-dark.gif';
 import { CountMyContract } from 'interfaces/CountMyContract';
 import { useAppSelector } from 'stores/hooks';
 
@@ -79,11 +80,13 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
                   : theme.palette.mode === 'light'
                   ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
                   : 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
-                : '#fff'
+                : theme.palette.mode === 'light'
+                ? '#fff'
+                : '#262626'
             }
             title={width < 600 ? 'Rewards' : 'My Rewards'}
             value={`${dataRewardAmount}`}
-            icon={width < 600 ? RewardsIcon : null}
+            icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
           />
         </Grid>
       </Grid>
