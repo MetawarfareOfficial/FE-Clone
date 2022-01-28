@@ -1,19 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Grid, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
 
 import TableTokens from 'components/Base/TableTokens';
 
-import BitcoinCoin from 'assets/images/coin-bitcoin.svg';
-
-const data = [
-  {
-    icon: BitcoinCoin,
-    name: 'Bitcoin',
-    amount: 23,
-    value: 22234,
-  },
-];
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { fetchInvestments } from 'services/investments';
+import { toast } from 'react-toastify';
 
 interface Props {
   title?: string;
@@ -98,12 +91,17 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const Investments: React.FC<Props> = () => {
-  const [showData, setShowData] = useState(false);
+  const dispatch = useAppDispatch();
+  const { error, status, investments } = useAppSelector((state) => state.investments);
 
   useEffect(() => {
-    setTimeout(() => {
-      setShowData(true);
-    }, 3000);
+    if (error) {
+      toast.error(error, { hideProgressBar: true, autoClose: 2000 });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    dispatch(fetchInvestments());
   }, []);
 
   return (
@@ -111,23 +109,15 @@ const Investments: React.FC<Props> = () => {
       <Title>Investments</Title>
 
       <PaperContent>
-        {showData ? (
+        {status === 'succeeded' && investments ? (
           <Grid container spacing={{ xs: '12px', md: '24px', lg: '42px' }}>
-            <Grid item xs={12} sm={4}>
-              <Detail>
-                <TableTokens data={data} />
-              </Detail>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Detail>
-                <TableTokens data={data} />
-              </Detail>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Detail>
-                <TableTokens data={data} />
-              </Detail>
-            </Grid>
+            {investments.map((data) => (
+              <Grid key={data.tokenName} item xs={12} sm={4}>
+                <Detail>
+                  <TableTokens data={[data]} />
+                </Detail>
+              </Grid>
+            ))}
           </Grid>
         ) : (
           <TextNoData>No investments yet!</TextNoData>
