@@ -17,11 +17,6 @@ interface Props {
 
 const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }) => {
   const theme = useTheme();
-  const MaxDataValue = Math.max(...data.map((item) => item[dataKey]));
-
-  const getMaxYAxixValue = (MaxDataValue: number) => {
-    return Math.round(MaxDataValue + MaxDataValue / 3);
-  };
 
   return (
     <ResponsiveContainer>
@@ -33,6 +28,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           </linearGradient>
         </defs>
         <XAxis
+          tickCount={5}
           tickLine={false}
           axisLine={false}
           fontSize="10px"
@@ -42,8 +38,12 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           tickFormatter={(timestamp) => moment(timestamp).format('MMM D')}
         />
         <YAxis
+          tick={{
+            dx: 5,
+          }}
+          tickCount={6}
           axisLine={false}
-          domain={[0, getMaxYAxixValue(MaxDataValue)]}
+          domain={['auto', 'auto']}
           tickLine={false}
           color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           fontSize="10px"
