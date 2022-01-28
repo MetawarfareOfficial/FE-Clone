@@ -8,6 +8,7 @@ import { generateContractName } from './generateContractName';
 import { deleteArrayElementByIndex } from './deleteArrayElementByIndex';
 import { replaceArrayElementByIndex } from './replaceArrayElementByIndex';
 import { handleContractNameErrors } from './handleContractNameErrors';
+import { getJsonDataFromString } from './getJsonDataFromString';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -19,4 +20,5 @@ export {
   deleteArrayElementByIndex,
   replaceArrayElementByIndex,
   handleContractNameErrors,
+  getJsonDataFromString,
 };
