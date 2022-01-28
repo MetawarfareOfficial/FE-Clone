@@ -77,7 +77,7 @@ const Wallet = styled(Box)<BoxProps>(() => ({
 }));
 
 const Banner: React.FC<Props> = ({ isBg }) => {
-  const isMintContractLocation = useLocation().pathname === '/mint-contract';
+  const isMintContractLocation = useLocation().pathname === '/mint-contracts';
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isLogin = useAppSelector((state) => state.user.isLogin);
