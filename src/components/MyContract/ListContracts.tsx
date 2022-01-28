@@ -44,6 +44,10 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   width: '99px',
   height: '38px',
   boxSizing: 'border-box',
+  background:
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.light
+      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
 
   '&:hover': {
     cursor: 'pointed',
@@ -55,11 +59,12 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
 
   '&:disabled': {
     color: '#fff',
-    background: '#E0E0E0',
+    background:
+      theme.palette.mode === 'light' ? '#E0E0E0' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   },
 }));
 
-const EmptyContracts = styled(Box)<BoxProps>(() => ({
+const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
   minHeight: '192px',
   display: 'flex',
   alignItems: 'center',
@@ -67,10 +72,11 @@ const EmptyContracts = styled(Box)<BoxProps>(() => ({
   color: '#E0E0E0',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
-  fontSize: '28px',
+  fontSize: '24px',
   lineHeight: '33px',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.1)',
   borderRadius: '14px',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
 }));
 
 const STATUS = ['success', 'error', 'pending'];
