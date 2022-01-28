@@ -117,7 +117,7 @@ export const useFetchMarketCapData = () => {
     return {
       last30DaysCirculatingSupply,
       last30DaysMarketCapsWithDailyValue,
-      totalSupply: get(currentMarketData, 'total_supply', 0),
+      totalSupply: currentMarketData.total_supply || 0,
       marketCap: get(currentMarketData, 'market_cap.usd', 0),
     };
   };
