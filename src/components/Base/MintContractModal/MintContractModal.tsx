@@ -403,6 +403,7 @@ const BoxError = styled(Box)<BoxProps>(() => ({
   display: 'flex',
   alignItems: 'center',
   marginTop: '21px',
+  fontSize: '12px',
 }));
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {

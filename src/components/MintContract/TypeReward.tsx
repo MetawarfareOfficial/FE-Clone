@@ -263,32 +263,24 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setOpen(!open);
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
+
+    if (new BigNumber(zeroXBlockBalance).isLessThan(15)) {
+      dispatch(setInsuffBalance());
+      return;
+    }
+
+    if (nodes === LIMIT_MAX_MINT) {
+      dispatch(setIsLimitOwnedNodes());
+      return;
+    }
   };
 
   const handleToggleStatus = () => {
     setOpenStatus(!openStatus);
   };
 
-  const closeMintModalAndShowStatus = () => {
-    setOpen(false);
-    setOpenStatus(true);
-    dispatch(unSetIsCreatingNodes());
-  };
-
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
     try {
-      if (new BigNumber(zeroXBlockBalance).isLessThan(15)) {
-        setOpen(true);
-        dispatch(setInsuffBalance());
-        return;
-      }
-
-      if (nodes === LIMIT_MAX_MINT) {
-        setOpen(true);
-        dispatch(setIsLimitOwnedNodes());
-        return;
-      }
-
       dispatch(setIsCreatingNodes());
 
       const names = params.map((item) => item.name);
@@ -297,18 +289,21 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
 
       const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
 
+      setOpen(false);
       setStatus(STATUS[2]);
+      setOpenStatus(true);
       await sleep(DELAY_TIME);
 
       if (response.hash) {
         setCreateNodeOk(!crtNodeOk);
         setStatus(STATUS[0]);
       }
-
-      closeMintModalAndShowStatus();
     } catch (e: any) {
       setStatus(STATUS[1]);
-      closeMintModalAndShowStatus();
+    } finally {
+      setOpen(false);
+      setOpenStatus(true);
+      dispatch(unSetIsCreatingNodes());
     }
   };
 
