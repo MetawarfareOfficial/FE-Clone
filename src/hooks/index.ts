@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
-import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
 import { unAuthenticateUser } from 'services/auth';
+import { customToast } from 'helpers';
 
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
@@ -45,7 +45,10 @@ export const useInactiveListener = (suppress = false) => {
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = async (chainId: string | number) => {
         if (chainId.toString() !== validChainId.toString()) {
-          toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true });
+          customToast({
+            message: errorMessage.META_MASK_WRONG_NETWORK.message,
+            type: 'error',
+          });
           return;
         }
       };

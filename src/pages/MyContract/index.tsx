@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box } from '@mui/material';
 
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
@@ -28,14 +28,14 @@ import {
 } from 'services/contract';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import _ from 'lodash';
-import { resolveRequestAfterTime } from 'services/resolveRequestAfterTime';
-import { toast } from 'react-toastify';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/myContract';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { TableContracts, ListContracts, Stats } from 'components/MyContract';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 import { formatApyV3 } from 'helpers/formatApy';
+import { customToast } from 'helpers';
+import { toast } from 'react-toastify';
 
 interface Props {
   title?: string;
@@ -53,6 +53,8 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
+
+  const toastRef = useRef<any>();
 
   const [width] = useWindowSize();
   const [countMyContract, setCountMyContract] = useState(defaultData);
@@ -114,9 +116,14 @@ const MyContract: React.FC<Props> = () => {
     fetchDataUserContracts();
     const handleChangeAccounts = () => {
       resetData();
-      fetchDataUserContracts();
-      currentUserAddress && resolveRequestAfterTime(2000);
-      toast.clearWaitingQueue();
+      toastRef.current = customToast({
+        promise: {
+          callback: fetchDataUserContracts,
+          pendingMessage: 'Loading...',
+          successMessage: 'Your contracts data is fetched successfully 👌',
+        },
+      });
+      toast.clearWaitingQueue(toastRef.current);
     };
 
     if (window.ethereum) {
@@ -128,9 +135,14 @@ const MyContract: React.FC<Props> = () => {
   useEffect(() => {
     if (currentUserAddress) {
       if (dataMyContracts.length === 0) {
-        fetchDataUserContracts();
-        resolveRequestAfterTime(2000);
-        toast.clearWaitingQueue();
+        toastRef.current = customToast({
+          promise: {
+            callback: fetchDataUserContracts,
+            pendingMessage: 'Loading...',
+            successMessage: 'Your contracts data is fetched successfully 👌',
+          },
+        });
+        toast.clearWaitingQueue(toastRef.current);
       }
       return;
     }

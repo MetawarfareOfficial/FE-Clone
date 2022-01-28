@@ -6,7 +6,7 @@ import TableTokens from 'components/Base/TableTokens';
 
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { fetchInvestments } from 'services/investments';
-import { toast } from 'react-toastify';
+import { customToast } from 'helpers';
 
 interface Props {
   title?: string;
@@ -96,7 +96,10 @@ const Investments: React.FC<Props> = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error, { hideProgressBar: true, autoClose: 2000 });
+      customToast({
+        message: error,
+        type: 'error',
+      });
     }
   }, [error]);
 

@@ -28,9 +28,9 @@ import CubeIcon from 'assets/images/cube.gif';
 import TessIcon from 'assets/images/tess.gif';
 import { sleep } from 'helpers/delayTime';
 import { DELAY_TIME } from 'consts/typeReward';
-import { toast } from 'react-toastify';
 import { errorMessage } from 'messages/errorMessages';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
+import { customToast } from 'helpers';
 
 interface Props {
   title?: string;
@@ -295,7 +295,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       if (response.hash) setStatus(STATUS[0]);
     } catch (e: any) {
       if (e.code === -32603) {
-        toast.error(errorMessage.REWARDS_NOT_READY.message, { hideProgressBar: true });
+        customToast({
+          message: errorMessage.REWARDS_NOT_READY.message,
+          type: 'error',
+        });
       }
       setStatus(STATUS[1]);
     } finally {
