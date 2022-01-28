@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 import LineChart from 'components/Base/LineChart';
@@ -246,7 +246,6 @@ const STATUS = ['success', 'error', 'pending'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart }) => {
   const dispatch = useAppDispatch();
-  const theme = useTheme();
 
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
@@ -348,7 +347,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
           </Info>
 
           <ViewChart>
-            <LineChart data={dataChart} color={theme.palette.mode === 'light' ? colorChart : '#3864FF'} />
+            <LineChart data={dataChart} color={colorChart} />
           </ViewChart>
         </ViewInfo>
 

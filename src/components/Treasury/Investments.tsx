@@ -44,7 +44,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     textAlign: 'center',
     fontSize: '24px',
     lineHeight: '36px',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#828282',
   },
 }));
 

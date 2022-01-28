@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
-
 import TypeReward from './TypeReward';
 
 import SquareIcon from 'assets/images/square.gif';
@@ -49,6 +49,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const TypesReward: React.FC<Props> = () => {
   const theme = useTheme();
+  const [width] = useWindowSize();
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
 
@@ -61,7 +62,7 @@ const TypesReward: React.FC<Props> = () => {
         name="Square Contract"
         icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon}
         color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
-        colorChart="#A1A1E1"
+        colorChart={theme.palette.mode === 'light' ? '#A1A1E1' : width < 600 ? '#934EA0' : '#3864FF'}
         value={dataPrice.square}
         apy={dataApy.square}
         earn={computeEarnedTokenPerDay(dataPrice.square, dataApy.square)}
@@ -71,7 +72,8 @@ const TypesReward: React.FC<Props> = () => {
         name="Cube Contract"
         icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
         color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
-        colorChart="#9DE6AB"
+        // colorChart="#9DE6AB"
+        colorChart={theme.palette.mode === 'light' ? '#9DE6AB' : width < 600 ? '#4F9F96' : '#3864FF'}
         value={dataPrice.cube}
         apy={dataApy.cube}
         earn={computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)}
@@ -83,7 +85,8 @@ const TypesReward: React.FC<Props> = () => {
         color={
           theme.palette.mode === 'light' ? '#DBECFD' : 'linear-gradient(125.46deg, #2978F4 42.78%, #23ABF8 129.61%)'
         }
-        colorChart="#9EC5EB"
+        // colorChart="#9EC5EB"
+        colorChart={theme.palette.mode === 'light' ? '#9EC5EB' : width < 600 ? '#5B71C4' : '#3864FF'}
         value={dataPrice.tesseract}
         apy={dataApy.tesseract}
         earn={computeEarnedTokenPerDay(dataPrice.tesseract, dataApy.tesseract)}
