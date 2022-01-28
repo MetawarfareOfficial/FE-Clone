@@ -5,6 +5,9 @@ import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material'
 import { dataHoldings } from './data';
 import TableTokens from 'components/Base/TableTokens';
 
+// import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
+// import { bigNumber2Number } from 'helpers/formatNumber';
+
 import USDCoin from 'assets/images/coin-usd.svg';
 import USD1Coin from 'assets/images/coin-usd.svg';
 
@@ -113,6 +116,48 @@ const BoxContent = styled(Box)<BoxProps>(() => ({
 
 const Holdings: React.FC<Props> = () => {
   const theme = useTheme();
+
+  // const treasuryWallet = async (address: string): Promise<void> => {
+  //   const nativeToken = await getBalanceNativeTokenOf(address);
+  //   const zeroXBlockToken = await getBalanceTokenOf(address);
+  //   const amountAVAX = bigNumber2Number(nativeToken);
+  //   if (zeroXBlockToken[0]) {
+  //     const amountZeroXB = bigNumber2Number(zeroXBlockToken[0]);
+  //   }
+  // };
+
+  // const liquidityWallet = async (address: string): Promise<void> => {
+  //   const nativeToken = await getBalanceNativeTokenOf(address);
+  //   const zeroXBlockToken = await getBalanceTokenOf(address);
+  //   const amountAVAX = bigNumber2Number(nativeToken);
+  //   if (zeroXBlockToken[0]) {
+  //     const amountZeroXB = bigNumber2Number(zeroXBlockToken[0]);
+  //   }
+  // };
+
+  // const rewardsWallet = async (address: string): Promise<void> => {
+  //   const nativeToken = await getBalanceNativeTokenOf(address);
+  //   const zeroXBlockToken = await getBalanceTokenOf(address);
+  //   const amountAVAX = bigNumber2Number(nativeToken);
+  //   if (zeroXBlockToken[0]) {
+  //     const amountZeroXB = bigNumber2Number(zeroXBlockToken[0]);
+  //   }
+  // };
+
+  // const devMarketingWallet = async (address: string): Promise<void> => {
+  //   const nativeToken = await getBalanceNativeTokenOf(address);
+  //   const zeroXBlockToken = await getBalanceTokenOf(address);
+  //   const amountAVAX = bigNumber2Number(nativeToken);
+  //   if (zeroXBlockToken[0]) {
+  //     const amountZeroXB = bigNumber2Number(zeroXBlockToken[0]);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   treasuryWallet('0x3e513b088339aB233d0F712910f4c60E402cd408');
+  //   rewardsWallet('0x3299dcc8A7f12E12C3D4F81E3a348055c0A4c381');
+  //   devMarketingWallet('0x55fF2DF220Ab057D70cb745da9eb47Ba59df5dc1');
+  // }, []);
 
   return (
     <Wrapper>
