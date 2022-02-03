@@ -22,12 +22,12 @@ import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMes
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { bigNumber2Number } from 'helpers/formatNumber';
-import { unSetInsuffBalance, unSetIsLimitOwnedNodes, unSetNodes, unSetRewardAmount } from 'services/contract';
+import { unSetNodes, unSetRewardAmount } from 'services/contract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
-import useMobileChangeAccountMetamask from '../../hooks/useMobileChangeAccountMetamask';
+import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 
 interface Props {
   name?: string;
@@ -111,11 +111,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
-        customToast({
-          message: CustomToastWithLink,
-          type: 'error',
-          autoClose: false,
-        });
+        customToast({ message: CustomToastWithLink, type: 'error', autoClose: false });
         return;
       }
       await onClickConnect();
@@ -125,10 +121,7 @@ const ConnectWallet: React.FC<Props> = () => {
       authenticateUser(signature as string);
       setIsFirstTimeClickLogin(true);
     } catch (ex: any) {
-      customToast({
-        message: ex.message,
-        type: 'error',
-      });
+      customToast({ message: ex.message, type: 'error' });
     }
   };
 
@@ -223,8 +216,6 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(unSetZeroXBlockBalance());
       dispatch(unSetNodes());
       dispatch(unSetRewardAmount());
-      dispatch(unSetIsLimitOwnedNodes());
-      dispatch(unSetInsuffBalance());
     } catch (e) {
       customToast({
         message: 'Oop! Something went wrong',
