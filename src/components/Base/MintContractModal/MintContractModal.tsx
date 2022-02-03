@@ -32,6 +32,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 
 import CloseImg from 'assets/images/ic-times.svg';
 import {
+  customToast,
   deleteArrayElementByIndex,
   generateContractName,
   handleContractNameErrors,
@@ -515,6 +516,10 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     });
   };
 
+  const handleBackdropClick = () => {
+    customToast({ message: errorMessage.FINISH_MINT_CONTRACT.message, type: 'error', toastId: 3 });
+  };
+
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
   }, [contracts.length]);
@@ -524,13 +529,14 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
       open={open}
       TransitionComponent={Transition}
       keepMounted
-      onClose={onClose}
       aria-describedby="alert-dialog-slide-description"
+      onBackdropClick={handleBackdropClick}
     >
       <Header>
         <ViewIcon>
           <img alt="" src={icon} />
         </ViewIcon>
+
         <HeaderText>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>

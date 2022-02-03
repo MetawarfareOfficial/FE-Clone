@@ -114,6 +114,7 @@ const ConnectWallet: React.FC<Props> = () => {
         customToast({
           message: CustomToastWithLink,
           type: 'error',
+          autoClose: false,
         });
         return;
       }
