@@ -9,6 +9,7 @@ import { deleteArrayElementByIndex } from './deleteArrayElementByIndex';
 import { replaceArrayElementByIndex } from './replaceArrayElementByIndex';
 import { handleContractNameErrors } from './handleContractNameErrors';
 import { getJsonDataFromString } from './getJsonDataFromString';
+import { customToast } from './customToast';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -21,4 +22,5 @@ export {
   replaceArrayElementByIndex,
   handleContractNameErrors,
   getJsonDataFromString,
+  customToast,
 };

@@ -3,7 +3,6 @@ import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
 import { UnsupportedChainIdError } from '@web3-react/core';
-import { toast } from 'react-toastify';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import {
   setAccount,
@@ -19,7 +18,7 @@ import { styled } from '@mui/material/styles';
 import { ButtonProps, Button, Link, LinkProps } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
-import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
+import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage, customToast } from 'helpers';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { bigNumber2Number } from 'helpers/formatNumber';
@@ -112,7 +111,10 @@ const ConnectWallet: React.FC<Props> = () => {
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
-        toast.error(CustomToastWithLink, { hideProgressBar: true, autoClose: false });
+        customToast({
+          message: CustomToastWithLink,
+          type: 'error',
+        });
         return;
       }
       await onClickConnect();
@@ -122,7 +124,10 @@ const ConnectWallet: React.FC<Props> = () => {
       authenticateUser(signature as string);
       setIsFirstTimeClickLogin(true);
     } catch (ex: any) {
-      toast.error(ex.message, { hideProgressBar: true });
+      customToast({
+        message: ex.message,
+        type: 'error',
+      });
     }
   };
 
@@ -132,9 +137,15 @@ const ConnectWallet: React.FC<Props> = () => {
       unAuthenticateUser();
       dispatch(unSetLogin());
       dispatch(unSetAccount());
-      toast.info(successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message, { hideProgressBar: true });
+      customToast({
+        message: successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message,
+        type: 'info',
+      });
     } catch (ex: any) {
-      toast.error(ex.message, { hideProgressBar: true });
+      customToast({
+        message: ex.message,
+        type: 'error',
+      });
     } finally {
       setIsFirstTimeClickLogin(false);
     }
@@ -145,7 +156,10 @@ const ConnectWallet: React.FC<Props> = () => {
       await addEthereumChain();
       await activate(injected);
     } catch (ex: any) {
-      toast.error(ex.message, { hideProgressBar: true });
+      customToast({
+        message: ex.message,
+        type: 'error',
+      });
     }
   };
 
@@ -169,9 +183,9 @@ const ConnectWallet: React.FC<Props> = () => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
       isFirstTimeClickLogin &&
-        toast.success(successMessage.META_MASK_CONNECT_SUCCESSFULLY.message, {
-          hideProgressBar: true,
-          autoClose: 2000,
+        customToast({
+          message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
+          type: 'success',
           toastId: 2,
         });
       return;
@@ -189,7 +203,11 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useEffect(() => {
     if (error?.name === 'UnsupportedChainIdError') {
-      toast.error(errorMessage.META_MASK_WRONG_NETWORK.message, { hideProgressBar: true, toastId: 1 });
+      customToast({
+        message: errorMessage.META_MASK_WRONG_NETWORK.message,
+        type: 'error',
+        toastId: 1,
+      });
       return;
     }
   }, [error?.name]);
@@ -207,7 +225,10 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(unSetIsLimitOwnedNodes());
       dispatch(unSetInsuffBalance());
     } catch (e) {
-      toast.error('Oop! Something went wrong', { hideProgressBar: true });
+      customToast({
+        message: 'Oop! Something went wrong',
+        type: 'error',
+      });
     }
   }, [currentUserAddress]);
 
