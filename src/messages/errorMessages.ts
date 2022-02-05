@@ -47,4 +47,8 @@ export const errorMessage = {
     title: 'Claim reward',
     message: 'Your reward is not ready yet',
   },
+  FINISH_MINT_CONTRACT: {
+    title: 'Mint contract',
+    message: 'Please finish Mint Contract',
+  },
 };

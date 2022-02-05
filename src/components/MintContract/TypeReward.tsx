@@ -316,7 +316,8 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setOpen(false);
     setOpenStatus(false);
     dispatch(unSetInsuffBalance());
-  }, [currentUserAddress]);
+    dispatch(unSetIsLimitOwnedNodes());
+  }, [currentUserAddress, zeroXBlockBalance]);
 
   useEffect(() => {
     setDataChart(computedRewardRatioPerYear(earn));
