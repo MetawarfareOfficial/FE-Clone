@@ -4,7 +4,7 @@ import { injected } from 'connectors';
 import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
 import { unAuthenticateUser } from 'services/auth';
-import { customToast } from 'helpers';
+import { useToast } from './useToast';
 
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
@@ -34,6 +34,7 @@ export const useEagerConnect = () => {
 
 export const useInactiveListener = (suppress = false) => {
   const { active, error, activate, deactivate } = useWeb3React();
+  const { createToast } = useToast();
   const validChainId = ethers.utils.hexlify(Number(process.env.REACT_APP_CHAIN_ID));
 
   useEffect((): any => {
@@ -45,7 +46,7 @@ export const useInactiveListener = (suppress = false) => {
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = async (chainId: string | number) => {
         if (chainId.toString() !== validChainId.toString()) {
-          customToast({
+          createToast({
             message: errorMessage.META_MASK_WRONG_NETWORK.message,
             type: 'error',
           });

@@ -6,7 +6,7 @@ const ToastDefaultConfig: ToastOptions = {
   hideProgressBar: true,
 };
 
-interface OverrideToastOption extends ToastOptions {
+export interface OverrideToastOption extends ToastOptions {
   message?: ToastContent;
   promise?: {
     callback: any;

@@ -18,7 +18,7 @@ import { styled } from '@mui/material/styles';
 import { ButtonProps, Button, Link, LinkProps } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
-import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage, customToast } from 'helpers';
+import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { bigNumber2Number } from 'helpers/formatNumber';
@@ -28,6 +28,7 @@ import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
 import useMobileChangeAccountMetamask from '../../hooks/useMobileChangeAccountMetamask';
+import { useToast } from 'hooks/useToast';
 
 interface Props {
   name?: string;
@@ -105,13 +106,14 @@ const ConnectWallet: React.FC<Props> = () => {
 
   const isLogin = useAppSelector((state) => state.user.isLogin);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const { createToast } = useToast();
 
   const [isFirstTimeClickLogin, setIsFirstTimeClickLogin] = useState(false);
 
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
-        customToast({
+        createToast({
           message: CustomToastWithLink,
           type: 'error',
         });
@@ -124,7 +126,7 @@ const ConnectWallet: React.FC<Props> = () => {
       authenticateUser(signature as string);
       setIsFirstTimeClickLogin(true);
     } catch (ex: any) {
-      customToast({
+      createToast({
         message: ex.message,
         type: 'error',
       });
@@ -137,12 +139,12 @@ const ConnectWallet: React.FC<Props> = () => {
       unAuthenticateUser();
       dispatch(unSetLogin());
       dispatch(unSetAccount());
-      customToast({
+      createToast({
         message: successMessage.META_MASK_DISCONNECT_SUCCESSFULLY.message,
         type: 'info',
       });
     } catch (ex: any) {
-      customToast({
+      createToast({
         message: ex.message,
         type: 'error',
       });
@@ -156,7 +158,7 @@ const ConnectWallet: React.FC<Props> = () => {
       await addEthereumChain();
       await activate(injected);
     } catch (ex: any) {
-      customToast({
+      createToast({
         message: ex.message,
         type: 'error',
       });
@@ -183,7 +185,7 @@ const ConnectWallet: React.FC<Props> = () => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
       isFirstTimeClickLogin &&
-        customToast({
+        createToast({
           message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
           type: 'success',
           toastId: 2,
@@ -203,7 +205,7 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useEffect(() => {
     if (error?.name === 'UnsupportedChainIdError') {
-      customToast({
+      createToast({
         message: errorMessage.META_MASK_WRONG_NETWORK.message,
         type: 'error',
         toastId: 1,
@@ -225,7 +227,7 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(unSetIsLimitOwnedNodes());
       dispatch(unSetInsuffBalance());
     } catch (e) {
-      customToast({
+      createToast({
         message: 'Oop! Something went wrong',
         type: 'error',
       });
