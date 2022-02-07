@@ -115,7 +115,7 @@ const Investments: React.FC<Props> = () => {
         {status === 'succeeded' && investments ? (
           <Grid container spacing={{ xs: '12px', md: '24px', lg: '42px' }}>
             {investments.map((data) => (
-              <Grid key={data.tokenName} item xs={12} sm={4}>
+              <Grid key={data.name} item xs={12} sm={4}>
                 <Detail>
                   <TableTokens data={[data]} />
                 </Detail>
