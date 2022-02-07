@@ -7,8 +7,14 @@ const initialState = {
   error: false,
   loading: false,
   last30DaysMarketData: {},
+  dataConvert: {
+    aave: {
+      usd: 0,
+    },
+  },
   currentMarketData: {},
   marketLoading: false,
+  convertPriceCompelete: false,
   marketLoadingError: false,
 };
 
@@ -20,6 +26,12 @@ export const getPrice30DaysAgo = createAsyncThunk('get/dataChart', async (params
 
 export const getCurrentPrice = createAsyncThunk('get/currentPrice', async (params: object) => {
   return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}`, {
+    params,
+  });
+});
+
+export const convertPrice = createAsyncThunk('get/convertPrice', async (params: object) => {
+  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/simple/price`, {
     params,
   });
 });
@@ -63,6 +75,10 @@ const coingekoSlice = createSlice({
     [getLast30DaysMarketData.fulfilled.type]: (state, action) => {
       state.last30DaysMarketData = action.payload.data;
       state.marketLoading = false;
+    },
+    [convertPrice.fulfilled.type]: (state, action) => {
+      state.dataConvert = action.payload.data;
+      state.convertPriceCompelete = true;
     },
   },
 });

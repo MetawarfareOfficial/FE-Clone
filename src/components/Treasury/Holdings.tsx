@@ -1,25 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'styles/menus.css';
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { dataHoldings } from './data';
 import TableTokens from 'components/Base/TableTokens';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { convertPrice } from 'services/coingeko';
 
+import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
+import { bigNumber2Number } from 'helpers/formatNumber';
+import { formatBigNumber } from 'helpers/formatBigNumber';
+
+import OxBCoin from 'assets/images/coin-0xb.svg';
 import USDCoin from 'assets/images/coin-usd.svg';
-import USD1Coin from 'assets/images/coin-usd.svg';
 
 const data = [
   {
-    icon: USD1Coin,
-    name: 'USDC',
-    amount: 23,
-    value: 22234,
+    icon: OxBCoin,
+    name: 'OxB',
+    amount: Number,
+    value: Number,
   },
   {
     icon: USDCoin,
     name: 'USDC',
-    amount: 23,
-    value: 22234,
+    amount: Number,
+    value: Number,
   },
 ];
 
@@ -113,6 +119,67 @@ const BoxContent = styled(Box)<BoxProps>(() => ({
 
 const Holdings: React.FC<Props> = () => {
   const theme = useTheme();
+  const dispatch = useAppDispatch();
+  const dataConvert = useAppSelector((state) => state.coingeko.dataConvert);
+  const convertPriceCompelete = useAppSelector((state) => state.coingeko.convertPriceCompelete);
+
+  const [treasury, setTreasury] = useState<any>(null);
+  const [liquidity, setLiquidity] = useState<any>(null);
+  const [rewards, setRewards] = useState<any>(null);
+  const [dev_marketing, setDev_marketing] = useState<any>(null);
+
+  const getValue = (params: object) => dispatch(convertPrice(params));
+
+  const getAmount = async (address: string, key: string): Promise<void> => {
+    const nativeToken = await getBalanceNativeTokenOf(address);
+    const zeroXBlockToken = await getBalanceTokenOf(address);
+    const amountZeroXB: any = bigNumber2Number(zeroXBlockToken[0]);
+    const amountAVAX: any = bigNumber2Number(nativeToken);
+    const newData = data.map((el, index) => {
+      // viết điều kiện nếu có nhiều đồng khác
+      // index === 1 là avax
+      // index === 0 là 0xb
+      if (index)
+        return {
+          ...el,
+          amount: formatBigNumber(amountAVAX),
+          value: formatBigNumber(dataConvert.aave.usd * amountAVAX),
+        };
+      return {
+        ...el,
+        amount: formatBigNumber(amountZeroXB),
+        value: formatBigNumber(dataConvert.aave.usd * amountZeroXB),
+      };
+    });
+    if (key === 'treasury') {
+      setTreasury(newData);
+    }
+    if (key === 'liquidity') {
+      setLiquidity(newData);
+    }
+    if (key === 'rewards') {
+      setRewards(newData);
+    }
+    if (key === 'dev_marketing') {
+      setDev_marketing(newData);
+    }
+  };
+
+  useEffect(() => {
+    // ví dụ lâý đồng aave để convert
+    getValue({ ids: 'aave', vs_currencies: 'usd' });
+    getAmount('0x3e513b088339aB233d0F712910f4c60E402cd408', 'treasury');
+    getAmount('0x3e513b088339aB233d0F712910f4c60E402cd408', 'liquidity');
+    getAmount('0x3299dcc8A7f12E12C3D4F81E3a348055c0A4c381', 'rewards');
+    getAmount('0x55fF2DF220Ab057D70cb745da9eb47Ba59df5dc1', 'dev_marketing');
+  }, [convertPriceCompelete]);
+
+  const renderData = (k: string) => {
+    if (k === 'treasury') return treasury;
+    if (k === 'liquidity') return liquidity;
+    if (k === 'rewards') return rewards;
+    return dev_marketing;
+  };
 
   return (
     <Wrapper>
@@ -126,7 +193,7 @@ const Holdings: React.FC<Props> = () => {
                 <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>{item.title}</BoxHeader>
 
                 <BoxContent>
-                  <TableTokens fontSize="12px" data={data} />
+                  <TableTokens fontSize="12px" data={renderData(item.key)} />
                 </BoxContent>
               </BoxDetail>
             </Grid>
@@ -145,7 +212,7 @@ const Holdings: React.FC<Props> = () => {
                   </BoxHeader>
 
                   <BoxContent>
-                    <TableTokens fontSize="12px" data={data} />
+                    <TableTokens fontSize="12px" data={renderData(item.key)} />
                   </BoxContent>
                 </BoxDetail>
               </div>
