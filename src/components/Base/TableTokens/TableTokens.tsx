@@ -110,7 +110,7 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
                 <TableRow key={i}>
                   <TableContentText>
                     <TextToken>
-                      <ViewCoin alt="" src={item.icon} /> {item.tokenName}
+                      <ViewCoin alt="" src={item.icon} /> {item.name}
                     </TextToken>
                   </TableContentText>
                   <TableContentText align="center">{item.amount}</TableContentText>
