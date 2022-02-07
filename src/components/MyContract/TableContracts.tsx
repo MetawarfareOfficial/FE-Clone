@@ -30,7 +30,7 @@ import { sleep } from 'helpers/delayTime';
 import { DELAY_TIME } from 'consts/typeReward';
 import { errorMessage } from 'messages/errorMessages';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
-import { customToast } from 'helpers';
+import { useToast } from 'hooks/useToast';
 
 interface Props {
   title?: string;
@@ -237,6 +237,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
 
+  const { createToast } = useToast();
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [claimType, setClaimType] = useState<string>('');
@@ -295,7 +296,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       if (response.hash) setStatus(STATUS[0]);
     } catch (e: any) {
       if (e.code === -32603) {
-        customToast({
+        createToast({
           message: errorMessage.REWARDS_NOT_READY.message,
           type: 'error',
         });

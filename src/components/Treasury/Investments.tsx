@@ -6,7 +6,7 @@ import TableTokens from 'components/Base/TableTokens';
 
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { fetchInvestments } from 'services/investments';
-import { customToast } from 'helpers';
+import { useToast } from 'hooks/useToast';
 
 interface Props {
   title?: string;
@@ -93,10 +93,11 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
 const Investments: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const { error, status, investments } = useAppSelector((state) => state.investments);
+  const { createToast } = useToast();
 
   useEffect(() => {
     if (error) {
-      customToast({
+      createToast({
         message: error,
         type: 'error',
       });
