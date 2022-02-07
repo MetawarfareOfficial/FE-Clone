@@ -550,7 +550,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
           <OutlinedInputCustom
             type="number"
             value={contracts.length}
-            readOnly
+            // readOnly
             onChange={(event) => handleAddManyContracts(Number(event.target.value))}
             inputProps={{ 'aria-label': 'weight' }}
             startAdornment={
