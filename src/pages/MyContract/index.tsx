@@ -156,7 +156,6 @@ const MyContract: React.FC<Props> = () => {
       });
       return;
     }
-    resetData();
   }, [dataMyContracts.length]);
 
   useMobileChangeAccountMetamask();
