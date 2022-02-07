@@ -263,7 +263,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
 
-    if (new BigNumber(zeroXBlockBalance).isLessThan(15)) {
+    if (new BigNumber(zeroXBlockBalance).isLessThanOrEqualTo(0)) {
       dispatch(setInsuffBalance());
       return;
     }
