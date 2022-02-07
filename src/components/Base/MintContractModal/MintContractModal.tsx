@@ -363,7 +363,6 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   outline: 'none',
   border: 'none',
   span: {
-    // color: '#BDBDBD',
     fontWeight: 'normal',
     fontSize: '13px',
     opacity: '0.7',
@@ -377,14 +376,9 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
 
 const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(({ error }) => ({
   '.MuiInput-input': {
-    // padding: '8px 20px',
-    // border: `1px solid ${error ? 'red' : '#BDBDBD'}`,
-    // borderRadius: '13px',
     OutlinedInput: 'none',
     boxSizing: 'border-box',
-    // height: '39px',
     color: '#293247',
-    // marginBottom: error ? '2px' : '8px',
   },
   '.MuiFormHelperText-root': {
     color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',
@@ -494,8 +488,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   };
 
   useEffect(() => {
+    // reset contracts when account change
+    setContracts([]);
     if (maxMint > 0) {
-      handleAddContract(1);
+      // init first contract
+      handleAddManyContracts(1);
     }
   }, [maxMint]);
 
