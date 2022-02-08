@@ -4,7 +4,7 @@ import axios from 'axios';
 import { getJsonDataFromString } from 'helpers';
 
 interface Investment {
-  tokenName: string;
+  name: string;
   amount: number;
   '$ value': string;
 }
