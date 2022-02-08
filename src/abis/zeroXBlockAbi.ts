@@ -292,13 +292,6 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'getNodeNumberOf',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [{ internalType: 'enum ContractType', name: 'cType', type: 'uint8' }],
     name: 'getNodePrice',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],

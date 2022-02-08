@@ -10,6 +10,7 @@ import { replaceArrayElementByIndex } from './replaceArrayElementByIndex';
 import { handleContractNameErrors } from './handleContractNameErrors';
 import { getJsonDataFromString } from './getJsonDataFromString';
 import { customToast } from './customToast';
+import { formatReward } from './formatReward';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -23,4 +24,5 @@ export {
   handleContractNameErrors,
   getJsonDataFromString,
   customToast,
+  formatReward,
 };

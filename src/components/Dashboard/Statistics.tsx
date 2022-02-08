@@ -10,6 +10,7 @@ import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
 import TokenBg from 'assets/images/bg-token.png';
+import { useFetchUserContractData } from 'hooks/useFetchUserContractData';
 
 interface Props {
   title?: string;
@@ -129,10 +130,15 @@ const SliderItem = styled(Box)<BoxProps>(() => ({}));
 
 const Statistics: React.FC<Props> = ({ data }) => {
   const history = useHistory();
-  const nodes = useAppSelector((state) => state.contract.nodes);
+  const myContracts = useAppSelector((state) => state.contract.dataMyContracts);
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
+  const { fetchUserContractsData, myContractData } = useFetchUserContractData();
 
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
+
+  useEffect(() => {
+    fetchUserContractsData();
+  }, []);
 
   useEffect(() => {
     setStatistic([
@@ -144,7 +150,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
       },
       {
         title: 'MY CONTRACTS',
-        value: `${nodes}/100`,
+        value: `${myContractData.length}/100`,
         nameBtn: 'Mint contract',
         linkTo: '/mint-contracts',
       },
@@ -155,7 +161,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
         linkTo: '/my-contracts',
       },
     ]);
-  }, [nodes, myReward, data?.price]);
+  }, [myContracts, myReward, data?.price]);
 
   return (
     <Wrapper>

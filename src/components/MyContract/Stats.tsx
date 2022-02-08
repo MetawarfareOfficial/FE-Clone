@@ -15,6 +15,7 @@ import RewardsIcon from 'assets/images/rewards.gif';
 import RewardsDarkIcon from 'assets/images/rewards-dark.gif';
 import { CountMyContract } from 'interfaces/CountMyContract';
 import { useAppSelector } from 'stores/hooks';
+import { formatReward } from 'helpers';
 
 interface Props {
   countMyContract: CountMyContract;
@@ -85,7 +86,7 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
                 : '#262626'
             }
             title={width < 600 ? 'Rewards' : 'My Rewards'}
-            value={`${dataRewardAmount}`}
+            value={`${formatReward(String(dataRewardAmount))}`}
             icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
           />
         </Grid>

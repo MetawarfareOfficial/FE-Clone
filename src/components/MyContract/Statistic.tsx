@@ -201,7 +201,7 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
           <Title>{title}</Title>
           {text && <Description>{text}</Description>}
         </Content>
-        <Value>{title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}</Value>
+        <Value>{value}</Value>
       </Wrapper>
     );
   }
