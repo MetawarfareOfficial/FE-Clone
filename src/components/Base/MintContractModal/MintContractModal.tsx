@@ -552,6 +552,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             value={contracts.length}
             // readOnly
             onChange={(event) => handleAddManyContracts(Number(event.target.value))}
+            onKeyDown={(e) => {
+              // 190 is keycode of dot
+              if (e.keyCode === 190) {
+                e.preventDefault();
+              }
+            }}
             inputProps={{ 'aria-label': 'weight' }}
             startAdornment={
               <InputAdornment position="start" onClick={() => handleDeleteContract()}>
