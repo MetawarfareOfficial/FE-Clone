@@ -143,12 +143,12 @@ const Holdings: React.FC<Props> = () => {
         return {
           ...el,
           amount: formatBigNumber(amountAVAX),
-          value: formatBigNumber(dataConvert.aave.usd * amountAVAX),
+          value: formatBigNumber(Number(Number(dataConvert.aave.usd * amountAVAX).toFixed(2))),
         };
       return {
         ...el,
         amount: formatBigNumber(amountZeroXB),
-        value: formatBigNumber(dataConvert.aave.usd * amountZeroXB),
+        value: formatBigNumber(Number(Number(dataConvert.aave.usd * amountZeroXB).toFixed(2))),
       };
     });
     if (key === 'treasury') {
