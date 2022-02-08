@@ -37,7 +37,7 @@ const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg, theme }) => ({
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '16px',
-  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontWeight: '600',
   lineHeight: '30px',
   fontFamily: 'Poppins',

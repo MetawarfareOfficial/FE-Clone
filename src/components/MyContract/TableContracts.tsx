@@ -120,8 +120,9 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
       : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
 
   '&:disabled': {
-    background: theme.palette.mode === 'light' ? '#BCCBE2' : '#4F4F4F',
-    color: theme.palette.mode === 'light' ? '#fff' : '#828282',
+    background:
+      theme.palette.mode === 'light' ? '#BCCBE2' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+    color: theme.palette.mode === 'light' ? '#fff' : '#fff',
   },
 
   '&:hover': {

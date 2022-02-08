@@ -76,10 +76,13 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
           <Statistic
             color={
               currentUserAddress
-                ? width < 600
+                ? width < 600 && theme.palette.mode === 'light'
                   ? '#EFE5FE'
-                  : theme.palette.mode === 'light'
-                  ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+                  : 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
+                  ? 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
+                  : // ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+                  dataRewardAmount === 0
+                  ? '#3F3F3F'
                   : 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
                 : theme.palette.mode === 'light'
                 ? '#fff'
@@ -88,6 +91,7 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
             title={width < 600 ? 'Rewards' : 'My Rewards'}
             value={`${formatReward(String(dataRewardAmount))}`}
             icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
+            connected={currentUserAddress}
           />
         </Grid>
       </Grid>

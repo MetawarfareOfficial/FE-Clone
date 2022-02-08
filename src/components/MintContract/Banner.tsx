@@ -16,9 +16,9 @@ const BannerWrapper = styled(Paper)<PaperProps>(() => ({
   alignItems: 'center',
 }));
 
-const Text = styled(Typography)<TypographyProps>(() => ({
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '16px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontWeight: '600',
   lineHeight: '30px',
   fontFamily: 'Poppins',
