@@ -15,6 +15,7 @@ import {
   setInsuffBalance,
   setIsCreatingNodes,
   setIsLimitOwnedNodes,
+  toggleIsCloseMintContractModal,
   unSetInsuffBalance,
   unSetIsCreatingNodes,
   unSetIsLimitOwnedNodes,
@@ -262,6 +263,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     setOpen(!open);
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
+    dispatch(toggleIsCloseMintContractModal(!open));
 
     if (new BigNumber(zeroXBlockBalance).isLessThanOrEqualTo(0)) {
       dispatch(setInsuffBalance());

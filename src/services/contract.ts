@@ -11,6 +11,7 @@ const initialState = {
   isClaimingReward: false,
   insuffBalance: false,
   isLimitOwnedNodes: false,
+  isCloseMintContractModal: false,
 };
 
 const dataContractSlice = createSlice({
@@ -77,6 +78,9 @@ const dataContractSlice = createSlice({
     unSetIsLimitOwnedNodes: (state) => {
       state.isLimitOwnedNodes = false;
     },
+    toggleIsCloseMintContractModal: (state, action) => {
+      state.isCloseMintContractModal = action.payload;
+    },
   },
 });
 
@@ -101,6 +105,7 @@ export const {
   unSetInsuffBalance,
   setIsLimitOwnedNodes,
   unSetIsLimitOwnedNodes,
+  toggleIsCloseMintContractModal,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;

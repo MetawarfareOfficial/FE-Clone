@@ -405,6 +405,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
   const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
   const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
+  const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
@@ -486,6 +487,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     });
     setContracts(newContract);
   };
+
+  useEffect(() => {
+    if (!isCloseMintContractModal) {
+      handleAddManyContracts(1);
+    }
+  }, [isCloseMintContractModal]);
 
   useEffect(() => {
     // reset contracts when account change
