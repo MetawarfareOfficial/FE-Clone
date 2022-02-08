@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 
 import {
   Box,
@@ -13,15 +13,21 @@ import {
   DialogContent,
   DialogContentProps,
   Slide,
+  // Button,
+  ButtonProps,
   IconButton,
   IconButtonProps,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 
 import CloseImg from 'assets/images/ic-times.svg';
+import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 import SuccessGif from 'assets/images/success-white.gif';
+import SuccessDarkGif from 'assets/images/success.gif';
 import ErrorGif from 'assets/images/error-white.gif';
+import ErrorDarkGif from 'assets/images/error.gif';
 import PendingGif from 'assets/images/pending-white.gif';
+import PendingDarkGif from 'assets/images/pending.gif';
 
 interface Props {
   status: 'success' | 'error' | 'pending';
@@ -32,7 +38,7 @@ interface Props {
   onClose: () => void;
 }
 
-const Wrapper = styled(Dialog)<DialogProps>(() => ({
+const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
 
   '.MuiPaper-root': {
@@ -42,6 +48,7 @@ const Wrapper = styled(Dialog)<DialogProps>(() => ({
     padding: '0',
     margin: 0,
     boxSizing: 'border-box',
+    background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
   },
 }));
 
@@ -66,11 +73,11 @@ const ViewIcon = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const HeaderText = styled(Typography)<TypographyProps>(() => ({
+const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontSize: '18px',
   lineHeight: '27px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   textTransform: 'uppercase',
   fontWeight: '600',
   maxWidth: '105px',
@@ -129,7 +136,43 @@ const StatusText = styled(Typography)<TypographyProps>(() => ({
   margin: '23px auto 0',
 }));
 
+const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
+  width: '180px',
+  margin: '18px auto 0',
+  padding: '10px 29px',
+  height: '46px',
+  textAlign: 'center',
+  borderRadius: '14px',
+  background: disabled
+    ? 'rgba(0, 0, 0, 0.26)'
+    : theme.palette.mode === 'light'
+    ? theme.palette.primary.main
+    : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+  color: '#fff',
+  display: 'block',
+  boxSizing: 'border-box',
+  fontFamily: 'Poppins',
+  fontWeight: 'bold',
+  fontSize: '14px',
+  lineHeight: '21px',
+  cursor: 'pointer',
+  outline: 'none',
+  border: 'none',
+  span: {
+    fontWeight: 'normal',
+    fontSize: '13px',
+    opacity: '0.7',
+  },
+
+  '&:hover': {
+    opacity: 0.7,
+    cursor: 'pointer',
+  },
+}));
+
 const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onClose }) => {
+  const theme = useTheme();
+
   return (
     <Wrapper
       open={open}
@@ -145,26 +188,32 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
         <HeaderText>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>
-          <img alt="" src={CloseImg} />
+          <img alt="" src={theme.palette.mode === 'light' ? CloseImg : CloseDarkImg} />
         </CloseIcon>
       </Header>
 
       <Content>
         <ViewImage>
           {status === 'success' ? (
-            <img alt="" src={SuccessGif} />
+            <img alt="" src={theme.palette.mode === 'light' ? SuccessGif : SuccessDarkGif} />
           ) : status === 'error' ? (
-            <img alt="" src={ErrorGif} />
+            <img alt="" src={theme.palette.mode === 'light' ? ErrorGif : ErrorDarkGif} />
           ) : status === 'pending' ? (
-            <img alt="" src={PendingGif} />
+            <img alt="" src={theme.palette.mode === 'light' ? PendingGif : PendingDarkGif} />
           ) : (
-            <img alt="" src={ErrorGif} />
+            <img alt="" src={theme.palette.mode === 'light' ? ErrorGif : ErrorDarkGif} />
           )}
         </ViewImage>
 
         <StatusText color={{ color: status === 'success' ? '#119F19' : status === 'error' ? '#F62D33' : '#293247' }}>
           {text}
         </StatusText>
+
+        {status === 'error' && (
+          <ButtonMint variant="contained" color="primary">
+            Back to mint
+          </ButtonMint>
+        )}
       </Content>
     </Wrapper>
   );
