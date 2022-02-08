@@ -1,40 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
-
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import {
-  getInitApyOfNodes,
-  getNameOfNodes,
-  getPriceAllNode,
-  getRewardAmount,
-  getRewardAPYAllNode,
-  getRewardOfNodes,
-  getTimeCreatedOfNodes,
-  getTypeOfNodes,
-} from 'helpers/interractiveContract';
-import {
-  parseDataCurrentApy,
-  parseDataInitApy,
-  parseDataMyContract,
-  zipDataMyContract,
-} from 'helpers/zipDataMyContract';
-import { ContractResponse } from 'interfaces/MyContract';
-import {
-  setDataMyContracts,
-  setRewardAmount,
-  unSetDataMyContracts,
-  unSetNodes,
-  unSetRewardAmount,
-} from 'services/contract';
-import { bigNumber2NumberV2 } from 'helpers/formatNumber';
-import _ from 'lodash';
-import useInterval from 'hooks/useInterval';
+import { ListContracts, Stats, TableContracts } from 'components/MyContract';
 import { DELAY_TIME } from 'consts/myContract';
-import { useWindowSize } from 'hooks/useWindowSize';
-import { TableContracts, ListContracts, Stats } from 'components/MyContract';
+import { useFetchUserContractData } from 'hooks/useFetchUserContractData';
+import useInterval from 'hooks/useInterval';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
-import { formatApyV3 } from 'helpers/formatApy';
 import { useToast } from 'hooks/useToast';
+import { useWindowSize } from 'hooks/useWindowSize';
+import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { unSetDataMyContracts, unSetNodes, unSetRewardAmount } from 'services/contract';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;
@@ -51,57 +26,11 @@ const MyContract: React.FC<Props> = () => {
   };
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const dataMyContracts = useAppSelector((state) => state.contract.dataMyContracts);
+  const { fetchUserContractsData, myContractData } = useFetchUserContractData();
 
   const { createToast } = useToast();
   const [width] = useWindowSize();
   const [countMyContract, setCountMyContract] = useState(defaultData);
-
-  const fetchDataUserContracts = async (): Promise<void> => {
-    try {
-      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentApy] = await Promise.all([
-        getTimeCreatedOfNodes(),
-        getNameOfNodes(),
-        getRewardOfNodes(),
-        getTypeOfNodes(),
-        getRewardAmount(),
-        getInitApyOfNodes(),
-        getPriceAllNode(),
-        getRewardAPYAllNode(),
-      ]);
-
-      const dataPrices = _.flatten(prices);
-      const _prices = {
-        square: bigNumber2NumberV2(dataPrices[0]),
-        cube: bigNumber2NumberV2(dataPrices[1]),
-        tesseract: bigNumber2NumberV2(dataPrices[2]),
-      };
-
-      const dataCurrentApy = _.flatten(currentApy);
-      const _currentApy = {
-        square: formatApyV3(dataCurrentApy[0]),
-        cube: formatApyV3(dataCurrentApy[1]),
-        tesseract: formatApyV3(dataCurrentApy[2]),
-      };
-
-      const dataCt = zipDataMyContract({
-        mintDates: parseDataMyContract(mintDates[0]),
-        names: parseDataMyContract(names[0]),
-        types: parseDataMyContract(types[0]),
-        initZeroXBlockPerDays: parseDataInitApy(types[0], initApy[0], _prices),
-        currentZeroXBlockPerDays: parseDataCurrentApy(types[0], _currentApy, _prices),
-        rewards: parseDataMyContract(rewards[0]),
-      } as ContractResponse);
-      dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
-      const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e9);
-
-      dispatch(setDataMyContracts(dataCt));
-      dispatch(setRewardAmount(dataRw));
-    } catch (e) {
-      dispatch(unSetDataMyContracts());
-      dispatch(unSetRewardAmount());
-    }
-  };
 
   const resetData = () => {
     dispatch(unSetDataMyContracts());
@@ -111,12 +40,12 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    fetchDataUserContracts();
+    fetchUserContractsData();
     const handleChangeAccounts = () => {
       resetData();
       createToast({
         promise: {
-          callback: fetchDataUserContracts,
+          callback: fetchUserContractsData,
           pendingMessage: 'Loading...',
           successMessage: 'Your contracts data is fetched successfully 👌',
         },
@@ -131,10 +60,10 @@ const MyContract: React.FC<Props> = () => {
 
   useEffect(() => {
     if (currentUserAddress) {
-      if (dataMyContracts.length === 0) {
+      if (myContractData.length === 0) {
         createToast({
           promise: {
-            callback: fetchDataUserContracts,
+            callback: fetchUserContractsData,
             pendingMessage: 'Loading...',
             successMessage: 'Your contracts data is fetched successfully 👌',
           },
@@ -146,7 +75,7 @@ const MyContract: React.FC<Props> = () => {
   }, [currentUserAddress]);
 
   useEffect(() => {
-    const dataCountByType = _.countBy(dataMyContracts, 'type');
+    const dataCountByType = _.countBy(myContractData, 'type');
 
     if (dataCountByType && dataCountByType['0'] && currentUserAddress) {
       setCountMyContract({
@@ -156,12 +85,12 @@ const MyContract: React.FC<Props> = () => {
       });
       return;
     }
-  }, [dataMyContracts.length]);
+  }, [myContractData.length]);
 
   useMobileChangeAccountMetamask();
 
   useInterval(() => {
-    if (dataMyContracts.length > 0) fetchDataUserContracts();
+    if (myContractData.length > 0) fetchUserContractsData();
   }, DELAY_TIME);
 
   return (
@@ -171,9 +100,9 @@ const MyContract: React.FC<Props> = () => {
       {/*<div>{currentUserAddress}</div>*/}
 
       {width < 600 ? (
-        <ListContracts data={currentUserAddress ? dataMyContracts : []} />
+        <ListContracts data={currentUserAddress ? myContractData : []} />
       ) : (
-        <TableContracts data={currentUserAddress ? dataMyContracts : []} />
+        <TableContracts data={currentUserAddress ? myContractData : []} />
       )}
     </Box>
   );
