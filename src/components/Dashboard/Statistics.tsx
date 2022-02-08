@@ -140,7 +140,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
         title: 'Token Price',
         value: data?.price ? formatPrice(data.price) : '0.00',
         nameBtn: 'Buy now',
-        linkTo: '',
+        linkTo: 'https://traderjoexyz.com/home',
       },
       {
         title: 'MY CONTRACTS',
@@ -170,6 +170,10 @@ const Statistics: React.FC<Props> = ({ data }) => {
                   variant="contained"
                   color="secondary"
                   onClick={() => {
+                    if (item.linkTo.includes('https')) {
+                      window.open(item.linkTo, '_blank');
+                      return;
+                    }
                     history.push(item.linkTo);
                   }}
                 >
