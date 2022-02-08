@@ -4,7 +4,9 @@ import { unAuthenticateUser } from 'services/auth';
 export const useWindowClose = () => {
   useEffect(() => {
     window.addEventListener('beforeunload', () => {
-      unAuthenticateUser();
+      window.onblur = function () {
+        unAuthenticateUser();
+      };
     });
   }, []);
 };
