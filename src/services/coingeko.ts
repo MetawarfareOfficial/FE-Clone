@@ -14,7 +14,7 @@ const initialState = {
   },
   currentMarketData: {},
   marketLoading: false,
-  convertPriceCompelete: false,
+  convertPriceComplete: false,
   marketLoadingError: false,
 };
 
@@ -78,7 +78,7 @@ const coingekoSlice = createSlice({
     },
     [convertPrice.fulfilled.type]: (state, action) => {
       state.dataConvert = action.payload.data;
-      state.convertPriceCompelete = true;
+      state.convertPriceComplete = true;
     },
   },
 });
