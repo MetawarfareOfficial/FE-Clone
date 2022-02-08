@@ -121,7 +121,7 @@ const Holdings: React.FC<Props> = () => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const dataConvert = useAppSelector((state) => state.coingeko.dataConvert);
-  const convertPriceCompelete = useAppSelector((state) => state.coingeko.convertPriceCompelete);
+  const convertPriceComplete = useAppSelector((state) => state.coingeko.convertPriceComplete);
 
   const [treasury, setTreasury] = useState<any>(null);
   const [liquidity, setLiquidity] = useState<any>(null);
@@ -168,11 +168,13 @@ const Holdings: React.FC<Props> = () => {
   useEffect(() => {
     // ví dụ lâý đồng aave để convert
     getValue({ ids: 'aave', vs_currencies: 'usd' });
-    getAmount('0x3e513b088339aB233d0F712910f4c60E402cd408', 'treasury');
-    getAmount('0x3e513b088339aB233d0F712910f4c60E402cd408', 'liquidity');
-    getAmount('0x3299dcc8A7f12E12C3D4F81E3a348055c0A4c381', 'rewards');
-    getAmount('0x55fF2DF220Ab057D70cb745da9eb47Ba59df5dc1', 'dev_marketing');
-  }, [convertPriceCompelete]);
+    if (convertPriceComplete) {
+      getAmount('0x3e513b088339aB233d0F712910f4c60E402cd408', 'treasury');
+      getAmount('0x3e513b088339aB233d0F712910f4c60E402cd408', 'liquidity');
+      getAmount('0x3299dcc8A7f12E12C3D4F81E3a348055c0A4c381', 'rewards');
+      getAmount('0x55fF2DF220Ab057D70cb745da9eb47Ba59df5dc1', 'dev_marketing');
+    }
+  }, [convertPriceComplete]);
 
   const renderData = (k: string) => {
     if (k === 'treasury') return treasury;
