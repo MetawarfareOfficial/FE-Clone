@@ -51,6 +51,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     margin: 0,
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
+    border: theme.palette.mode === 'light' ? 'unset' : '1px solid #6F6F6F',
   },
 }));
 
@@ -208,7 +209,18 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
           )}
         </ViewImage>
 
-        <StatusText color={{ color: status === 'success' ? '#119F19' : status === 'error' ? '#F62D33' : '#293247' }}>
+        <StatusText
+          color={{
+            color:
+              status === 'success'
+                ? '#119F19'
+                : status === 'error'
+                ? '#F62D33'
+                : theme.palette.mode === 'light'
+                ? '#293247'
+                : '#fff',
+          }}
+        >
           {text}
         </StatusText>
 
