@@ -14,9 +14,10 @@ import { useWindowClose } from './hooks/useWindowClose';
 const App: React.FC<any> = () => {
   const { connector } = useWeb3React<Web3Provider>();
   const triedEager = useEagerConnect();
+  const defaultTheme = localStorage.getItem('themeMode') || 'light';
 
   const [activatingConnector, setActivatingConnector] = React.useState<any>();
-  const [mode, setMode] = React.useState<'light' | 'dark'>('light');
+  const [mode, setMode] = React.useState<'light' | 'dark' | any>(defaultTheme);
 
   useEffect(() => {
     if (activatingConnector && activatingConnector === connector) {
@@ -25,14 +26,16 @@ const App: React.FC<any> = () => {
   }, [activatingConnector, connector]);
 
   useInactiveListener(!triedEager || !!activatingConnector);
+  useWindowClose();
 
   const colorMode = React.useMemo(
     () => ({
       toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        setMode(defaultTheme === 'light' ? 'dark' : 'light');
+        localStorage.setItem('themeMode', defaultTheme === 'light' ? 'dark' : 'light');
       },
     }),
-    [],
+    [mode],
   );
 
   const theme = React.useMemo(
@@ -45,8 +48,6 @@ const App: React.FC<any> = () => {
       }),
     [mode],
   );
-
-  useWindowClose();
 
   return (
     <React.Suspense fallback={<div>....Loading</div>}>

@@ -114,7 +114,7 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
                     </TextToken>
                   </TableContentText>
                   <TableContentText align="center">{item.amount}</TableContentText>
-                  <TableContentText align="right">{`$${item.value}`}</TableContentText>
+                  <TableContentText align="right">${item.value}</TableContentText>
                 </TableRow>
               ))
             : ''}

@@ -54,7 +54,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const TitleBox = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#080A0F',
   fontFamily: 'Roboto',
   margin: ' 4px 5px 11px',
   fontSize: '48px',

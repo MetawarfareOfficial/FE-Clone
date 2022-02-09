@@ -3,7 +3,7 @@ export const dataHoldings = [
     key: 'treasury',
     title: 'Treasury Wallet',
     color: '#DBECFD',
-    colorDark: 'linear-gradient(141.34deg, #2978F4 28.42%, #0ABF8 132.6%)',
+    colorDark: ' linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   },
   {
     key: 'liquidity',
@@ -21,6 +21,6 @@ export const dataHoldings = [
     key: 'dev_marketing',
     title: 'Dev/Marketing Wallet',
     color: '#DBECFD',
-    colorDark: 'linear-gradient(141.34deg, #2978F4 28.42%, #0ABF8 132.6%)',
+    colorDark: 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   },
 ];

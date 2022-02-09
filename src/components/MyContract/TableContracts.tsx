@@ -120,8 +120,9 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
       : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
 
   '&:disabled': {
-    background: theme.palette.mode === 'light' ? '#BCCBE2' : '#4F4F4F',
-    color: theme.palette.mode === 'light' ? '#fff' : '#828282',
+    background:
+      theme.palette.mode === 'light' ? '#BCCBE2' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+    color: theme.palette.mode === 'light' ? '#fff' : '#fff',
   },
 
   '&:hover': {
@@ -276,8 +277,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       const response: Record<string, any> = await claimAllNodes();
       await sleep(DELAY_TIME);
 
+      if (!openStatus) setOpenStatus(true);
       if (response.hash) setStatus(STATUS[0]);
     } catch (err: any) {
+      if (!openStatus) setOpenStatus(true);
       setStatus(STATUS[1]);
     } finally {
       dispatch(unSetIsClaimingReward());
@@ -293,8 +296,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       await sleep(DELAY_TIME);
 
+      if (!openStatus) setOpenStatus(true);
       if (response.hash) setStatus(STATUS[0]);
     } catch (e: any) {
+      if (!openStatus) setOpenStatus(true);
       if (e.code === -32603) {
         createToast({
           message: errorMessage.REWARDS_NOT_READY.message,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useWindowSize } from 'hooks/useWindowSize';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Tooltip } from '@mui/material';
 import { useAppSelector } from 'stores/hooks';
-import { formatPrice } from 'helpers/formatPrice';
+// import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   icon?: any;
@@ -12,6 +12,22 @@ interface Props {
   color: string;
   text?: string;
   disabled?: boolean;
+  connected?: any;
+  data: Array<any>;
+}
+
+interface TitleProps extends TypographyProps {
+  color: string;
+}
+
+interface TitleMobileProps extends TypographyProps {
+  color: string;
+  connected: any;
+  rewards: boolean | any;
+}
+
+interface ValueProps extends TypographyProps {
+  color: string;
 }
 
 interface BoxCustomProps {
@@ -21,6 +37,7 @@ interface BoxCustomProps {
 
 interface TypographyCustomProps extends TypographyProps {
   rewards: boolean | any;
+  connected: any;
 }
 
 const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
@@ -29,7 +46,8 @@ const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
   padding: '20px 20px',
   borderRadius: '20px',
   boxShadow: '1px 19px 22px -16px rgba(50, 71, 117, 0.18)',
-  display: 'flex',
+  display: 'inline-flex',
+  width: '100%',
   alignItems: 'center',
   boxSizing: 'border-box',
 
@@ -80,16 +98,56 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const Content = styled(Box)<BoxProps>(() => ({}));
+const Content = styled(Box)<BoxProps>(({ theme }) => ({
+  maxWidth: 'calc(100% - 54px - 43px)',
+  overflow: 'hidden',
 
-const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '100%',
+  },
+}));
+
+const Title = styled(Typography)<TitleProps>(({ theme, color }) => ({
   fontFamily: 'Poppins',
   fontWeight: '600',
   fontSize: '20px',
   lineHeight: '30px',
-  color: '#293247',
+  color: color === '#3F3F3F' ? '#828282' : '#293247',
   textTransform: 'uppercase',
   margin: '0',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '15px',
+    lineHeight: '22px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '20px',
+    lineHeight: '30px',
+  },
+}));
+
+const TitleMobile = styled(Typography)<TitleMobileProps>(({ theme, color, connected, rewards }) => ({
+  fontFamily: 'Poppins',
+  fontWeight: '600',
+  fontSize: '20px',
+  lineHeight: '30px',
+  color:
+    rewards && !connected
+      ? '#4F4F4F'
+      : color === '#3F3F3F'
+      ? '#828282'
+      : theme.palette.mode === 'light'
+      ? '#293247'
+      : '#4F4F4F',
+  // color: rewards && !connected ? '#4F4F4F' : color === '#3F3F3F' ? '#828282' : '#293247',
+  textTransform: 'uppercase',
+  margin: '0',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '15px',
@@ -120,10 +178,10 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
+const Value = styled(Typography)<ValueProps>(({ theme, color }) => ({
   padding: '13px 18px',
   backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.19)',
-  color: '#293247',
+  color: color === '#3F3F3F' ? '#828282' : '#293247',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
@@ -147,8 +205,8 @@ const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards }) => ({
-  color: '#293247',
+const TotalMobile = styled(Typography)<TypographyCustomProps>(({ theme, rewards, connected }) => ({
+  color: rewards && !connected ? '#4F4F4F' : theme.palette.mode === 'light' ? '#293247' : '#4F4F4F',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
@@ -163,27 +221,31 @@ const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards }) => (
   textOverflow: 'ellipsis',
 }));
 
-const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
+const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected, data }) => {
   const [width] = useWindowSize();
+  const theme = useTheme();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const opacity = currentUserAddress && Number(value) > 0 ? '1' : '0.5';
+  const opacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '1' : '1';
 
   if (width < 600) {
     return (
       <WrapperMobile color={color} opacity={opacity}>
         <BoxHeader>
           <ViewImage>
-            <img alt="" src={icon} />
+            {title === 'Rewards' && theme.palette.mode === 'dark' && data.length === 0 ? '' : <img alt="" src={icon} />}
           </ViewImage>
-          <Tooltip title={title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}>
-            <TotalMobile rewards={title === 'Rewards'}>
-              {title === 'Rewards' || title === 'My Rewards' ? formatPrice(value) : value}
+
+          <Tooltip title={title === 'Rewards' || title === 'My Rewards' ? value : value}>
+            <TotalMobile connected={connected} rewards={title === 'Rewards'}>
+              {title === 'Rewards' || title === 'My Rewards' ? value : value}
             </TotalMobile>
           </Tooltip>
         </BoxHeader>
 
         <Content>
-          <Title>{title}</Title>
+          <TitleMobile connected={connected} rewards={title === 'Rewards'} color={color}>
+            {title}
+          </TitleMobile>
           {text && <Description>{text}</Description>}
         </Content>
       </WrapperMobile>
@@ -198,10 +260,10 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text }) => {
         )}
 
         <Content>
-          <Title>{title}</Title>
+          <Title color={color}>{title}</Title>
           {text && <Description>{text}</Description>}
         </Content>
-        <Value>{value}</Value>
+        <Value color={color}>{value}</Value>
       </Wrapper>
     );
   }

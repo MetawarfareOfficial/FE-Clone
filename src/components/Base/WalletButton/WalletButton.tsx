@@ -1,6 +1,7 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 import LightWallet from 'assets/images/light-wallet.svg';
 
@@ -34,7 +35,10 @@ const ButtonMode = styled(IconButton)<IconButtonCustomProps>(({ bgColor }) => ({
 }));
 
 const WalletButton: React.FC<Props> = ({ onChange, mode }) => {
-  const bgColor = mode === 'logout' ? '#3864FF' : '#E0E0E0';
+  const [width] = useWindowSize();
+  const theme = useTheme();
+  const bgColor =
+    mode === 'logout' ? '#3864FF' : width < 900 ? (theme.palette.mode === 'light' ? '#E0E0E0' : '#4F4F4F') : '#E0E0E0';
 
   return (
     <ButtonMode onClick={onChange} bgColor={bgColor}>

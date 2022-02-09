@@ -93,18 +93,23 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const BoxHeader = styled(Box)<BoxCustomProps>(({ color, theme }) => ({
-  padding: '9px 26px',
+  padding: '8px 26px',
   background: color,
   fontFamily: 'Poppins',
   fontWeight: '500',
   fontSize: '18px',
   lineHeight: '27px',
   color: '#11151D',
+  maxWidth: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
     lineHeight: '24px',
     padding: '8px 20px',
+    maxWidth: '100%',
   },
 }));
 

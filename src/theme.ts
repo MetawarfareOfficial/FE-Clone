@@ -5,7 +5,7 @@ export const ColorModeContext = React.createContext({ toggleColorMode: () => {} 
 
 export const themeConfig = {
   palette: {
-    mode: 'light',
+    mode: localStorage.getItem('themeMode') || 'light',
     common: {
       black: '#171717',
       white: '#fff',

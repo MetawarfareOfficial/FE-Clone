@@ -22,6 +22,9 @@ import {
 } from 'services/contract';
 import { computedRewardRatioPerYear } from '../../helpers/computedRewardRatioPerYear';
 import { RewardRatioChart } from '../../interfaces/RewardRatioChart';
+import { customToast } from '../../helpers';
+import { errorMessage } from '../../messages/errorMessages';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   id: any;
@@ -259,7 +262,19 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
 
+  const { error } = useWeb3React();
+
   const handleToggle = () => {
+    if (error?.name === 'UnsupportedChainIdError') {
+      customToast({ message: errorMessage.META_MASK_WRONG_NETWORK.message, type: 'error' });
+      return;
+    }
+
+    if (!currentUserAddress) {
+      customToast({ message: errorMessage.MINT_CONTRACT_NOT_CONNECT_WALLET.message, type: 'error' });
+      return;
+    }
+
     setOpen(!open);
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
@@ -308,6 +323,11 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     }
   };
 
+  const handleBackToMint = () => {
+    setOpenStatus(false);
+    setOpen(true);
+  };
+
   useEffect(() => {
     const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;
     const _maxMint = new BigNumber(balances).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
@@ -349,7 +369,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
           </ViewChart>
         </ViewInfo>
 
-        <ButtonMint variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
+        <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
           Mint
         </ButtonMint>
       </BoxContent>
@@ -380,6 +400,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
             : 'Insufficient Tokens'
         }
         onClose={handleToggleStatus}
+        onBackToMint={handleBackToMint}
       />
     </Wrapper>
   );

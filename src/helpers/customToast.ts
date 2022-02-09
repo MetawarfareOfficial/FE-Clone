@@ -1,4 +1,4 @@
-import { toast, ToastContent, ToastOptions } from 'react-toastify';
+import { Theme, toast, ToastContent, ToastOptions } from 'react-toastify';
 
 const ToastDefaultConfig: ToastOptions = {
   position: 'top-right',
@@ -18,6 +18,8 @@ export interface OverrideToastOption extends ToastOptions {
 
 export const customToast = (props: OverrideToastOption) => {
   const { promise, message = '' } = props;
+  const themeMode = localStorage.getItem('themeMode') || 'light';
+
   if (promise) {
     return toast.promise(
       promise.callback,
@@ -35,5 +37,6 @@ export const customToast = (props: OverrideToastOption) => {
   return toast(message, {
     ...ToastDefaultConfig,
     ...props,
+    theme: themeMode as Theme,
   });
 };

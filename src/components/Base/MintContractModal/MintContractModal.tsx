@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 
 import {
   Box,
@@ -30,7 +30,12 @@ import { TransitionProps } from '@mui/material/transitions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
+import SquareDarkIcon from 'assets/images/square-dark1.gif';
+import CubeDarkIcon from 'assets/images/cube-dark1.gif';
+import TessDarkIcon from 'assets/images/tess-dark1.gif';
+
 import CloseImg from 'assets/images/ic-times.svg';
+import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 import {
   customToast,
   deleteArrayElementByIndex,
@@ -39,8 +44,10 @@ import {
   replaceArrayElementByIndex,
 } from 'helpers';
 import BigNumber from 'bignumber.js';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { errorMessage } from 'messages/errorMessages';
+import { infoMessage } from 'messages/infoMessages';
+import { setIsOverMaxMintNodes } from 'services/contract';
 
 interface Props {
   open: boolean;
@@ -58,16 +65,23 @@ interface Contract {
   error: string | null;
 }
 
-const Wrapper = styled(Dialog)<DialogProps>(() => ({
+const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
 
+  '.MuiDialog-container': {
+    background: theme.palette.mode === 'light' ? 'rgba(165, 199, 251, 0.38)' : 'rgba(28, 28, 28, 0.36)',
+    backdropFilter: `blur(${theme.palette.mode === 'light' ? '4px' : '13px'})`,
+  },
+
   '.MuiPaper-root': {
-    width: '309px',
+    width: theme.palette.mode === 'light' ? '309px' : '317px',
     boxShadow: '0px 10px 36px rgba(38, 29, 77, 0.1)',
     borderRadius: '24px',
     padding: '0',
     margin: 0,
     boxSizing: 'border-box',
+    border: theme.palette.mode === 'light' ? 'unset' : '1px solid #6F6F6F',
+    background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
   },
 }));
 
@@ -105,7 +119,7 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontSize: '18px',
   lineHeight: '27px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   textTransform: 'uppercase',
   fontWeight: '600',
   maxWidth: '105px',
@@ -160,7 +174,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   // marginBottom: '21px',
 
   'p.MuiDialogContentText-root': {
-    color: '#828282',
+    color: theme.palette.mode === 'light' ? '#828282' : 'rgba(255, 255, 255, 0.29)',
     fontFamily: 'Poppins',
     fontSize: '12px',
     lineHeight: '18px',
@@ -216,9 +230,10 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
 
       ['.MuiInput-root']: {
         padding: '7px 20px',
-        border: '1px solid #BDBDBD',
+        border: theme.palette.mode === 'light' ? '1px solid #BDBDBD' : 'unset',
         boxSizing: 'border-box',
         borderRadius: '13px',
+        background: theme.palette.mode === 'light' ? 'unset' : '#252525',
 
         [theme.breakpoints.down('sm')]: {
           padding: '12px 20px',
@@ -281,7 +296,7 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
     display: 'inline-flex',
     alignItems: 'center',
     textTransform: 'uppercase',
-    color: ' #293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 
     '&::-webkit-inner-spin-button': {
       WebkitAppearance: 'none',
@@ -351,7 +366,11 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   height: '60px',
   textAlign: 'center',
   borderRadius: '14px',
-  backgroundColor: disabled ? 'rgba(0, 0, 0, 0.26)' : theme.palette.primary.main,
+  background: disabled
+    ? 'rgba(0, 0, 0, 0.26)'
+    : theme.palette.mode === 'light'
+    ? theme.palette.primary.main
+    : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   color: '#fff',
   display: 'inline-block',
   boxSizing: 'border-box',
@@ -359,7 +378,7 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   fontWeight: 'bold',
   fontSize: '14px',
   lineHeight: '21px',
-  cursor: 'pointer',
+  cursor: disabled ? 'not-allowed !important' : 'pointer',
   outline: 'none',
   border: 'none',
   span: {
@@ -374,25 +393,29 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   },
 }));
 
-const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(({ error }) => ({
-  '.MuiInput-input': {
-    OutlinedInput: 'none',
-    boxSizing: 'border-box',
-    color: '#293247',
-  },
-  '.MuiFormHelperText-root': {
-    color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',
-    marginBottom: '4px',
-  },
-  '.MuiInput-root': {
-    '&::before': {
-      borderBottom: 'unset !important',
+const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'error' })<TextFieldProps>(
+  ({ theme, error }) => ({
+    '.MuiInput-input': {
+      OutlinedInput: 'none',
+      boxSizing: 'border-box',
+      color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     },
-    '&::after': {
-      borderBottom: 'unset !important',
+    '.MuiFormHelperText-root': {
+      color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',
+      marginBottom: '4px',
+      fontSize: '14px',
+      lineHeight: '21px',
     },
-  },
-}));
+    '.MuiInput-root': {
+      '&::before': {
+        borderBottom: 'unset !important',
+      },
+      '&::after': {
+        borderBottom: 'unset !important',
+      },
+    },
+  }),
+);
 
 const BoxError = styled(Box)<BoxProps>(() => ({
   display: 'flex',
@@ -402,13 +425,18 @@ const BoxError = styled(Box)<BoxProps>(() => ({
 }));
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
+  const dispatch = useAppDispatch();
+  const theme = useTheme();
+
   const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
   const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
   const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
   const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
+  const isOverMaxMintNodes = useAppSelector((state) => state.contract.isOverMaxMintNodes);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
+  const [valueInput, setValueInput] = useState<number | string>(contracts.length);
 
   const handleAddContract = (numberContracts = 1) => {
     if (contracts.length >= maxMint) {
@@ -489,10 +517,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   };
 
   useEffect(() => {
-    if (!isCloseMintContractModal) {
+    if (!(isCloseMintContractModal && isCreatingNodes)) {
       handleAddManyContracts(1);
+      setValueInput(contracts.length);
     }
-  }, [isCloseMintContractModal]);
+  }, [isCloseMintContractModal, isCreatingNodes]);
 
   useEffect(() => {
     // reset contracts when account change
@@ -526,6 +555,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
+    setValueInput(contracts.length);
   }, [contracts.length]);
 
   return (
@@ -538,13 +568,26 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     >
       <Header>
         <ViewIcon>
-          <img alt="" src={icon} />
+          <img
+            alt=""
+            src={
+              theme.palette.mode === 'light'
+                ? icon
+                : name === 'Square Contract'
+                ? SquareDarkIcon
+                : name === 'Cube Contract'
+                ? CubeDarkIcon
+                : name === 'Tesseract Contract'
+                ? TessDarkIcon
+                : ''
+            }
+          />
         </ViewIcon>
 
         <HeaderText>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>
-          <img alt="" src={CloseImg} />
+          <img alt="" src={theme.palette.mode === 'light' ? CloseImg : CloseDarkImg} />
         </CloseIcon>
       </Header>
 
@@ -556,9 +599,28 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         <BoxActions>
           <OutlinedInputCustom
             type="number"
-            value={contracts.length}
-            // readOnly
-            onChange={(event) => handleAddManyContracts(Number(event.target.value))}
+            value={valueInput}
+            onChange={(event) => {
+              const value = event.target.value;
+
+              if (Number(value) > maxMint) {
+                dispatch(setIsOverMaxMintNodes(true));
+                event.preventDefault();
+                return;
+              }
+
+              dispatch(setIsOverMaxMintNodes(false));
+              setValueInput(value);
+              if (value === '') return;
+              handleAddManyContracts(Number(value));
+            }}
+            onBlur={() => {
+              if (Number(valueInput) === 0) {
+                setValueInput('0');
+                return;
+              }
+              setValueInput(valueInput.toString().replace(/^0+/, ''));
+            }}
             onKeyDown={(e) => {
               // 190 is keycode of dot
               if (e.keyCode === 190) {
@@ -589,7 +651,13 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         </BoxActions>
 
         <BoxError color={'#F62D33'}>
-          {isInsuffBalances ? 'Insufficient Tokens' : isLimitNodes ? 'You can not mint more than 100 contracts' : ''}
+          {isInsuffBalances
+            ? infoMessage.INSUFFICIENT_TOKEN.message
+            : isLimitNodes
+            ? infoMessage.LIMIT_NODES.message
+            : isOverMaxMintNodes
+            ? `${infoMessage.OVER_NODES.message} ${maxMint} contracts`
+            : ''}
         </BoxError>
 
         <ButtonMint
@@ -597,6 +665,8 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             contracts.filter(
               (item) => item.error && item.error !== errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message,
             ).length > 0 ||
+            contracts.length === 0 ||
+            valueInput === '' ||
             isCreatingNodes ||
             isInsuffBalances ||
             isLimitNodes
@@ -608,7 +678,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
           }}
         >
           Mint <br />
-          <span>{`${valueCost} 0xB required`}</span>
+          <span>{`(${valueCost} 0xB required)`}</span>
         </ButtonMint>
       </Content>
     </Wrapper>
