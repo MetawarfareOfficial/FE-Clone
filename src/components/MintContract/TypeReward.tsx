@@ -24,6 +24,7 @@ import { computedRewardRatioPerYear } from '../../helpers/computedRewardRatioPer
 import { RewardRatioChart } from '../../interfaces/RewardRatioChart';
 import { customToast } from '../../helpers';
 import { errorMessage } from '../../messages/errorMessages';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   id: any;
@@ -261,7 +262,14 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
 
+  const { error } = useWeb3React();
+
   const handleToggle = () => {
+    if (error?.name === 'UnsupportedChainIdError') {
+      customToast({ message: errorMessage.META_MASK_WRONG_NETWORK.message, type: 'error' });
+      return;
+    }
+
     if (!currentUserAddress) {
       customToast({ message: errorMessage.MINT_CONTRACT_NOT_CONNECT_WALLET.message, type: 'error' });
       return;

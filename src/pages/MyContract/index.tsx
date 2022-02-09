@@ -137,6 +137,7 @@ const MyContract: React.FC<Props> = () => {
         createToast({
           promise: {
             callback: fetchUserContractsData,
+            // TODO: fixme: move these message to file
             pendingMessage: 'Loading...',
             successMessage: 'Your contracts data is fetched successfully 👌',
           },
