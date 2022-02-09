@@ -26,6 +26,7 @@ const App: React.FC<any> = () => {
   }, [activatingConnector, connector]);
 
   useInactiveListener(!triedEager || !!activatingConnector);
+  useWindowClose();
 
   const colorMode = React.useMemo(
     () => ({
@@ -47,8 +48,6 @@ const App: React.FC<any> = () => {
       }),
     [mode],
   );
-
-  useWindowClose();
 
   return (
     <React.Suspense fallback={<div>....Loading</div>}>
