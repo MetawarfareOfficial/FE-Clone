@@ -19,6 +19,7 @@ import { formatReward } from 'helpers';
 
 interface Props {
   countMyContract: CountMyContract;
+  data: Array<any>;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -33,7 +34,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const Stats: React.FC<Props> = ({ countMyContract }) => {
+const Stats: React.FC<Props> = ({ countMyContract, data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
 
@@ -50,6 +51,7 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
             title="Square"
             text="Contract"
             value={countMyContract.square}
+            data={data}
           />
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
@@ -59,6 +61,7 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
             title="CUBE"
             text="Contract"
             value={countMyContract.cube}
+            data={data}
           />
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
@@ -70,28 +73,53 @@ const Stats: React.FC<Props> = ({ countMyContract }) => {
             title="Tesseract"
             text="Contract"
             value={countMyContract.tesseract}
+            data={data}
           />
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
           <Statistic
             color={
               currentUserAddress
-                ? width < 600 && theme.palette.mode === 'light'
-                  ? '#EFE5FE'
-                  : 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
-                  ? 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
-                  : // ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
-                  dataRewardAmount === 0
-                  ? '#3F3F3F'
+                ? theme.palette.mode === 'light'
+                  ? width < 600
+                    ? data.length > 0
+                      ? '#EFE5FE'
+                      : '#F2F2F2'
+                    : 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+                  : width < 600
+                  ? data.length > 0
+                    ? 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
+                    : '#262626'
                   : 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
                 : theme.palette.mode === 'light'
-                ? '#fff'
-                : '#262626'
+                ? width < 600
+                  ? '#F2F2F2'
+                  : '#FFFFFF'
+                : width < 600
+                ? '#262626'
+                : '#3F3F3F'
             }
+            // color={
+            //   currentUserAddress
+            //     ? (
+            //         width < 600 && theme.palette.mode === 'light'
+            //           ? '#EFE5FE'
+            //           : 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
+            //       )
+            //       ? 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+            //       : // ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+            //       dataRewardAmount === 0
+            //       ? '#3F3F3F'
+            //       : 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+            //     : theme.palette.mode === 'light'
+            //     ? '#fff'
+            //     : '#262626'
+            // }
             title={width < 600 ? 'Rewards' : 'My Rewards'}
             value={`${formatReward(String(dataRewardAmount))}`}
             icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
             connected={currentUserAddress}
+            data={data}
           />
         </Grid>
       </Grid>

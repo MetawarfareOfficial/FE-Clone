@@ -39,7 +39,7 @@ const BoxDetail = styled(Box)<BoxDetailProps>(({ theme, isMarket }) => ({
       : `url(${isMarket ? BgBox2 : BgBox1}) no-repeat left center`,
   // : 'rgba(255, 255, 255, 0.03)',
   // : `url(${BgBox}) no-repeat center -2px`,
-  backgroundSize: '103%',
+  backgroundSize: 'cover',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
   borderRadius: '20px',
   display: 'flex',
