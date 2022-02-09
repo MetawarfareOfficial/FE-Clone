@@ -510,6 +510,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   useEffect(() => {
     if (!(isCloseMintContractModal && isCreatingNodes)) {
       handleAddManyContracts(1);
+      setValueInput(contracts.length);
     }
   }, [isCloseMintContractModal, isCreatingNodes]);
 
@@ -588,9 +589,14 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
               dispatch(setIsOverMaxMintNodes(false));
               setValueInput(value);
+              if (value === '') return;
               handleAddManyContracts(Number(value));
             }}
             onBlur={() => {
+              if (Number(valueInput) === 0) {
+                setValueInput('0');
+                return;
+              }
               setValueInput(valueInput.toString().replace(/^0+/, ''));
             }}
             onKeyDown={(e) => {
@@ -638,6 +644,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
               (item) => item.error && item.error !== errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message,
             ).length > 0 ||
             contracts.length === 0 ||
+            valueInput === '' ||
             isCreatingNodes ||
             isInsuffBalances ||
             isLimitNodes
