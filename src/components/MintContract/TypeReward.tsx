@@ -315,6 +315,11 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     }
   };
 
+  const handleBackToMint = () => {
+    setOpenStatus(false);
+    setOpen(true);
+  };
+
   useEffect(() => {
     const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;
     const _maxMint = new BigNumber(balances).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
@@ -387,6 +392,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
             : 'Insufficient Tokens'
         }
         onClose={handleToggleStatus}
+        onBackToMint={handleBackToMint}
       />
     </Wrapper>
   );

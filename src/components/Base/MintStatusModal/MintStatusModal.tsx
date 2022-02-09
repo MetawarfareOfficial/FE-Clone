@@ -28,6 +28,7 @@ import ErrorGif from 'assets/images/error-white.gif';
 import ErrorDarkGif from 'assets/images/error.gif';
 import PendingGif from 'assets/images/pending-white.gif';
 import PendingDarkGif from 'assets/images/pending.gif';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   status: 'success' | 'error' | 'pending';
@@ -36,6 +37,7 @@ interface Props {
   icon: string;
   name: string;
   onClose: () => void;
+  onBackToMint?: () => void;
 }
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
@@ -170,8 +172,9 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   },
 }));
 
-const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onClose }) => {
+const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onClose, onBackToMint }) => {
   const theme = useTheme();
+  const location = useLocation();
 
   return (
     <Wrapper
@@ -209,8 +212,8 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
           {text}
         </StatusText>
 
-        {status === 'error' && (
-          <ButtonMint variant="contained" color="primary">
+        {status === 'error' && location.pathname === '/mint-contracts' && (
+          <ButtonMint variant="contained" color="primary" onClick={onBackToMint}>
             Back to mint
           </ButtonMint>
         )}
