@@ -502,10 +502,10 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   };
 
   useEffect(() => {
-    if (!isCloseMintContractModal) {
+    if (!(isCloseMintContractModal && isCreatingNodes)) {
       handleAddManyContracts(1);
     }
-  }, [isCloseMintContractModal]);
+  }, [isCloseMintContractModal, isCreatingNodes]);
 
   useEffect(() => {
     // reset contracts when account change
