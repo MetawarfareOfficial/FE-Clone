@@ -6,13 +6,18 @@ import AreaChartCustom from 'components/Base/AreaChart';
 import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
 import { formatBigNumber } from 'helpers/formatBigNumber';
 
-// import BgBox from 'assets/images/bg-trea.png';
+import BgBox1 from 'assets/images/bg-trea-1.png';
+import BgBox2 from 'assets/images/bg-trea-2.png';
 
 interface Props {
   title?: string;
 }
 
 interface BoxLeftProps extends BoxProps {
+  isMarket: boolean;
+}
+
+interface BoxDetailProps extends BoxProps {
   isMarket: boolean;
 }
 
@@ -27,11 +32,12 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
+const BoxDetail = styled(Box)<BoxDetailProps>(({ theme, isMarket }) => ({
   background:
     theme.palette.mode === 'light'
       ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%), #FFFFFF'
-      : 'rgba(255, 255, 255, 0.03)',
+      : `url(${isMarket ? BgBox2 : BgBox1}) no-repeat left center`,
+  // : 'rgba(255, 255, 255, 0.03)',
   // : `url(${BgBox}) no-repeat center -2px`,
   backgroundSize: '103%',
   boxShadow: '0px 66px 35px -48px rgba(25, 21, 48, 0.13)',
@@ -139,7 +145,7 @@ const BoxText2 = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const BoxLeft = styled(Box)<BoxLeftProps>(({ theme, isMarket }) => ({
   width: 'calc(100% - 290px)',
-  padding: isMarket ? '30px 47px' : '30px',
+  padding: isMarket ? '30px 16px 30px 30px' : '30px',
   boxSizing: 'border-box',
 
   [theme.breakpoints.up('xl')]: {
@@ -208,7 +214,7 @@ const Statistics: React.FC<Props> = () => {
     <Wrapper>
       <Grid container spacing={{ xs: '20px', md: '24px', lg: '39px' }}>
         <Grid item xs={12} sm={12} md={6}>
-          <BoxDetail>
+          <BoxDetail isMarket={false}>
             <BoxLeft isMarket={false}>
               <BoxText>Circulation Supply / Total Supply</BoxText>
               <BoxTitle>
@@ -247,7 +253,7 @@ const Statistics: React.FC<Props> = () => {
           </BoxDetail>
         </Grid>
         <Grid item xs={12} sm={12} md={6}>
-          <BoxDetail>
+          <BoxDetail isMarket={true}>
             <BoxLeft isMarket={true}>
               <BoxText2>Market Cap</BoxText2>
               <BoxTitle>{formatBigNumber(marketCap, false)}</BoxTitle>

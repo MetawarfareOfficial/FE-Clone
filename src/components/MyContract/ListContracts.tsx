@@ -69,7 +69,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: '#E0E0E0',
+  color: theme.palette.mode === 'light' ? '#E0E0E0' : '#828282',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
   fontSize: '24px',
