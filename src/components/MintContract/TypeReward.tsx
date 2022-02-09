@@ -22,6 +22,8 @@ import {
 } from 'services/contract';
 import { computedRewardRatioPerYear } from '../../helpers/computedRewardRatioPerYear';
 import { RewardRatioChart } from '../../interfaces/RewardRatioChart';
+import { customToast } from '../../helpers';
+import { errorMessage } from '../../messages/errorMessages';
 
 interface Props {
   id: any;
@@ -260,6 +262,11 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
 
   const handleToggle = () => {
+    if (!currentUserAddress) {
+      customToast({ message: errorMessage.MINT_CONTRACT_NOT_CONNECT_WALLET.message, type: 'error' });
+      return;
+    }
+
     setOpen(!open);
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
@@ -349,7 +356,7 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
           </ViewChart>
         </ViewInfo>
 
-        <ButtonMint variant="outlined" color="primary" onClick={handleToggle} disabled={!currentUserAddress}>
+        <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
           Mint
         </ButtonMint>
       </BoxContent>

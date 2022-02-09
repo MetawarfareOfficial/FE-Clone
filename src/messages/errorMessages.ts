@@ -51,4 +51,8 @@ export const errorMessage = {
     title: 'Mint contract',
     message: 'Please finish Mint Contract',
   },
+  MINT_CONTRACT_NOT_CONNECT_WALLET: {
+    title: 'Mint contract',
+    message: 'Please connect wallet to perform this action',
+  },
 };

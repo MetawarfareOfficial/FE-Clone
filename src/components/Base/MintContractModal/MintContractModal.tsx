@@ -42,6 +42,7 @@ import {
 import BigNumber from 'bignumber.js';
 import { useAppSelector } from 'stores/hooks';
 import { errorMessage } from 'messages/errorMessages';
+import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
   open: boolean;
@@ -602,7 +603,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         </BoxActions>
 
         <BoxError color={'#F62D33'}>
-          {isInsuffBalances ? 'Insufficient Tokens' : isLimitNodes ? 'You can not mint more than 100 contracts' : ''}
+          {isInsuffBalances
+            ? infoMessage.INSUFFICIENT_TOKEN.message
+            : isLimitNodes
+            ? infoMessage.LIMIT_NODES.message
+            : ''}
         </BoxError>
 
         <ButtonMint
