@@ -50,6 +50,8 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           fontFamily="Poppins"
           tickFormatter={(value) => `${formatBigNumber(Number(value))}`}
           orientation="left"
+          textAnchor="end"
+          width={60}
         />
         <Tooltip
           formatter={(value: string, name: string) => [

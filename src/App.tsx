@@ -34,7 +34,7 @@ const App: React.FC<any> = () => {
         localStorage.setItem('themeMode', defaultTheme === 'light' ? 'dark' : 'light');
       },
     }),
-    [],
+    [mode],
   );
 
   const theme = React.useMemo(
