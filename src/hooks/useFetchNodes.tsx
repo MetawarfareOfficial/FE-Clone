@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-import { getNumberNodeOf } from 'helpers/interractiveContract';
-import { bigNumber2NumberV2 } from 'helpers/formatNumber';
-import _ from 'lodash';
+import { getNameOfNodes } from 'helpers/interractiveContract';
 import { setNodes, unSetNodes } from 'services/contract';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 
@@ -12,9 +10,9 @@ export function useFetchNodes(crtNodeOk?: boolean) {
   const fetchNodesOfUser = async (address?: string): Promise<void> => {
     try {
       if (address) {
-        const response = await getNumberNodeOf(address);
-        const nodes = bigNumber2NumberV2(_.flatten(response)[0], 1);
-        dispatch(setNodes(nodes));
+        const response = await getNameOfNodes();
+        const nodes = response[0].split('#');
+        dispatch(setNodes(nodes.length));
       }
     } catch (err: any) {
       dispatch(unSetNodes());

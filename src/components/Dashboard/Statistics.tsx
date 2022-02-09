@@ -10,7 +10,6 @@ import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
 import TokenBg from 'assets/images/bg-token.png';
-import { useFetchUserContractData } from 'hooks/useFetchUserContractData';
 
 interface Props {
   title?: string;
@@ -132,13 +131,8 @@ const Statistics: React.FC<Props> = ({ data }) => {
   const history = useHistory();
   const myContracts = useAppSelector((state) => state.contract.dataMyContracts);
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
-  const { fetchUserContractsData, myContractData } = useFetchUserContractData();
-
+  const nodes = useAppSelector((state) => state.contract.nodes);
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
-
-  useEffect(() => {
-    fetchUserContractsData();
-  }, []);
 
   useEffect(() => {
     setStatistic([
@@ -150,7 +144,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
       },
       {
         title: 'MY CONTRACTS',
-        value: `${myContractData.length}/100`,
+        value: `${nodes}/100`,
         nameBtn: 'Mint contract',
         linkTo: '/mint-contracts',
       },
