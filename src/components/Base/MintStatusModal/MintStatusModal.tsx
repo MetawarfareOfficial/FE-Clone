@@ -49,6 +49,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     margin: 0,
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
+    border: theme.palette.mode === 'light' ? 'unset' : '1px solid #6F6F6F',
   },
 }));
 
