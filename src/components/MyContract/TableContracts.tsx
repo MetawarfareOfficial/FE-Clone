@@ -277,8 +277,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       const response: Record<string, any> = await claimAllNodes();
       await sleep(DELAY_TIME);
 
+      if (!openStatus) setOpenStatus(true);
       if (response.hash) setStatus(STATUS[0]);
     } catch (err: any) {
+      if (!openStatus) setOpenStatus(true);
       setStatus(STATUS[1]);
     } finally {
       dispatch(unSetIsClaimingReward());
@@ -294,8 +296,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       await sleep(DELAY_TIME);
 
+      if (!openStatus) setOpenStatus(true);
       if (response.hash) setStatus(STATUS[0]);
     } catch (e: any) {
+      if (!openStatus) setOpenStatus(true);
       if (e.code === -32603) {
         createToast({
           message: errorMessage.REWARDS_NOT_READY.message,
