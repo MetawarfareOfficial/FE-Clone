@@ -169,7 +169,7 @@ const MyContract: React.FC<Props> = () => {
 
   return (
     <Box>
-      <Stats countMyContract={countMyContract} />
+      <Stats countMyContract={countMyContract} data={currentUserAddress ? dataMyContracts : []} />
       {width < 600 ? (
         <ListContracts data={currentUserAddress ? dataMyContracts : []} />
       ) : (

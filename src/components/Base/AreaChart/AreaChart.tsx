@@ -4,8 +4,8 @@ import { useTheme } from '@mui/material/styles';
 import { ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Area } from 'recharts';
 import { formatTimestamp } from 'helpers/formatTimestamp';
 import { labelDate } from 'consts/dashboard';
-import { formatBigNumber } from 'helpers/formatBigNumber';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
+import { formatReward } from 'helpers';
 
 interface Props {
   id?: string;
@@ -35,7 +35,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           fontFamily="Poppins"
           color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           dataKey="time"
-          tickFormatter={(timestamp) => moment(timestamp).format('MMM D')}
+          tickFormatter={(timestamp) => moment(timestamp).format('D MMM')}
         />
         <YAxis
           tick={{
@@ -48,16 +48,13 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
           color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
           fontSize="10px"
           fontFamily="Poppins"
-          tickFormatter={(value) => `${formatBigNumber(Number(value))}`}
+          tickFormatter={(value) => `${formatReward(String(value))}`}
           orientation="left"
           textAnchor="end"
           width={60}
         />
         <Tooltip
-          formatter={(value: string, name: string) => [
-            formatBigNumber(Number(value)),
-            convertCamelCaseToPascalCase(name),
-          ]}
+          formatter={(value: string, name: string) => [formatReward(String(value)), convertCamelCaseToPascalCase(name)]}
           labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
         />
         <Area type="monotone" dataKey={dataKey} stroke="#3864FF" strokeWidth={2} fillOpacity={1} fill={`url(#${id})`} />

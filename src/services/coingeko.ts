@@ -3,18 +3,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const initialState = {
   last30DaysPrice: [[]],
-  currentPrice: '',
+  zeroXBCurrentPrice: '',
   error: false,
   loading: false,
   last30DaysMarketData: {},
-  dataConvert: {
-    aave: {
-      usd: 0,
-    },
-  },
+  holdingWalletTokenPrice: {} as any,
   currentMarketData: {},
   marketLoading: false,
-  convertPriceComplete: false,
+  holdingTokenLoadCompleted: false,
   marketLoadingError: false,
 };
 
@@ -30,7 +26,7 @@ export const getCurrentPrice = createAsyncThunk('get/currentPrice', async (param
   });
 });
 
-export const convertPrice = createAsyncThunk('get/convertPrice', async (params: object) => {
+export const getHoldingWalletTokenData = createAsyncThunk('get/convertPrice', async (params: object) => {
   return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/simple/price`, {
     params,
   });
@@ -62,7 +58,7 @@ const coingekoSlice = createSlice({
       state.loading = false;
     },
     [getCurrentPrice.fulfilled.type]: (state, action) => {
-      state.currentPrice = action.payload.data.market_data.current_price.usd;
+      state.zeroXBCurrentPrice = action.payload.data.market_data.current_price.usd;
       state.currentMarketData = action.payload.data.market_data;
     },
     [getLast30DaysMarketData.pending.type]: (state) => {
@@ -76,9 +72,9 @@ const coingekoSlice = createSlice({
       state.last30DaysMarketData = action.payload.data;
       state.marketLoading = false;
     },
-    [convertPrice.fulfilled.type]: (state, action) => {
-      state.dataConvert = action.payload.data;
-      state.convertPriceComplete = true;
+    [getHoldingWalletTokenData.fulfilled.type]: (state, action) => {
+      state.holdingWalletTokenPrice = action.payload.data;
+      state.holdingTokenLoadCompleted = true;
     },
   },
 });
