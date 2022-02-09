@@ -105,7 +105,7 @@ const BoxHeader = styled(Box)<BoxCustomProps>(({ color, theme }) => ({
   fontSize: '18px',
   lineHeight: '27px',
   color: '#11151D',
-  maxWidth: '265px',
+  maxWidth: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden !important',
   textOverflow: 'ellipsis',
