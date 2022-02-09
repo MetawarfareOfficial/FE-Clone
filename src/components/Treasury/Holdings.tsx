@@ -176,7 +176,7 @@ const Holdings: React.FC<Props> = () => {
         {
           ...treasury[0],
           amount: formatReward(String(usdAmount)),
-          value: formatReward(String(Number(usdAmount) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd)),
+          value: `${formatReward(String(Number(usdAmount) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
         },
       ]);
     } else {
@@ -184,7 +184,7 @@ const Holdings: React.FC<Props> = () => {
         {
           ...dev_marketing[0],
           amount: formatReward(String(usdAmount)),
-          value: formatReward(String(Number(usdAmount) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd)),
+          value: `${formatReward(String(Number(usdAmount) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
         },
       ]);
     }
@@ -200,16 +200,14 @@ const Holdings: React.FC<Props> = () => {
         {
           ...liquidity[0],
           amount: formatReward(String(zeroTokenAmount)),
-          value: `$${formatReward(
+          value: `${formatReward(
             String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
           )}`,
         },
         {
           ...liquidity[1],
           amount: formatReward(String(avaxAmount)),
-          value: `$${formatReward(
-            String(Number(avaxAmount) * holdingWalletTokenPrice[holdingWalletTokenID.avax].usd),
-          )}`,
+          value: `${formatReward(String(Number(avaxAmount) * holdingWalletTokenPrice[holdingWalletTokenID.avax].usd))}`,
         },
       ]);
     }
@@ -223,7 +221,7 @@ const Holdings: React.FC<Props> = () => {
         {
           ...rewards[0],
           amount: formatReward(String(zeroTokenAmount)),
-          value: `$${formatReward(
+          value: `${formatReward(
             String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
           )}`,
         },
