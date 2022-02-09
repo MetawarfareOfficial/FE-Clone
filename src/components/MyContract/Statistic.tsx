@@ -13,6 +13,7 @@ interface Props {
   text?: string;
   disabled?: boolean;
   connected?: any;
+  data: Array<any>;
 }
 
 interface TitleProps extends TypographyProps {
@@ -133,7 +134,15 @@ const TitleMobile = styled(Typography)<TitleMobileProps>(({ theme, color, connec
   fontWeight: '600',
   fontSize: '20px',
   lineHeight: '30px',
-  color: rewards && !connected ? '#4F4F4F' : color === '#3F3F3F' ? '#828282' : '#293247',
+  color:
+    rewards && !connected
+      ? '#4F4F4F'
+      : color === '#3F3F3F'
+      ? '#828282'
+      : theme.palette.mode === 'light'
+      ? '#293247'
+      : '#4F4F4F',
+  // color: rewards && !connected ? '#4F4F4F' : color === '#3F3F3F' ? '#828282' : '#293247',
   textTransform: 'uppercase',
   margin: '0',
   whiteSpace: 'nowrap',
@@ -196,8 +205,8 @@ const Value = styled(Typography)<ValueProps>(({ theme, color }) => ({
   },
 }));
 
-const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards, connected }) => ({
-  color: rewards && !connected ? '#4F4F4F' : '#293247',
+const TotalMobile = styled(Typography)<TypographyCustomProps>(({ theme, rewards, connected }) => ({
+  color: rewards && !connected ? '#4F4F4F' : theme.palette.mode === 'light' ? '#293247' : '#4F4F4F',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
@@ -212,17 +221,19 @@ const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards, connec
   textOverflow: 'ellipsis',
 }));
 
-const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected }) => {
+const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected, data }) => {
   const [width] = useWindowSize();
   const theme = useTheme();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const opacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '0.5' : '1';
+  const opacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '1' : '1';
 
   if (width < 600) {
     return (
       <WrapperMobile color={color} opacity={opacity}>
         <BoxHeader>
-          <ViewImage>{title === 'Rewards' && !connected ? '' : <img alt="" src={icon} />}</ViewImage>
+          <ViewImage>
+            {title === 'Rewards' && theme.palette.mode === 'dark' && data.length === 0 ? '' : <img alt="" src={icon} />}
+          </ViewImage>
 
           <Tooltip title={title === 'Rewards' || title === 'My Rewards' ? value : value}>
             <TotalMobile connected={connected} rewards={title === 'Rewards'}>

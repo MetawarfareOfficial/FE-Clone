@@ -30,6 +30,10 @@ import { TransitionProps } from '@mui/material/transitions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
+import SquareDarkIcon from 'assets/images/square-dark1.gif';
+import CubeDarkIcon from 'assets/images/cube-dark1.gif';
+import TessDarkIcon from 'assets/images/tess-dark1.gif';
+
 import CloseImg from 'assets/images/ic-times.svg';
 import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 import {
@@ -61,6 +65,11 @@ interface Contract {
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
+
+  '.MuiDialog-container': {
+    background: theme.palette.mode === 'light' ? 'rgba(165, 199, 251, 0.38)' : 'rgba(28, 28, 28, 0.36)',
+    backdropFilter: `blur(${theme.palette.mode === 'light' ? '4px' : '13px'})`,
+  },
 
   '.MuiPaper-root': {
     width: theme.palette.mode === 'light' ? '309px' : '317px',
@@ -551,7 +560,20 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     >
       <Header>
         <ViewIcon>
-          <img alt="" src={icon} />
+          <img
+            alt=""
+            src={
+              theme.palette.mode === 'light'
+                ? icon
+                : name === 'Square Contract'
+                ? SquareDarkIcon
+                : name === 'Cube Contract'
+                ? CubeDarkIcon
+                : name === 'Tesseract Contract'
+                ? TessDarkIcon
+                : ''
+            }
+          />
         </ViewIcon>
 
         <HeaderText>{name}</HeaderText>
