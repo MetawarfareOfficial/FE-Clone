@@ -36,7 +36,7 @@ const ButtonMode = styled(IconButton)<IconButtonCustomProps>(({ bgColor }) => ({
 
 const WalletButton: React.FC<Props> = ({ onChange, mode }) => {
   const [width] = useWindowSize();
-  const bgColor = mode === 'logout' ? '#3864FF' : width < 600 ? '#4F4F4F' : '#E0E0E0';
+  const bgColor = mode === 'logout' ? '#3864FF' : width < 900 ? '#4F4F4F' : '#E0E0E0';
 
   return (
     <ButtonMode onClick={onChange} bgColor={bgColor}>
