@@ -1,3 +1,5 @@
+import { formatReward } from './formatReward';
+
 const splitTheFirstValueFromString = (str: string, splitValue: string) => {
   const indexOfSplitValue = str.indexOf(splitValue);
   return [str.substring(0, indexOfSplitValue), str.substring(indexOfSplitValue + 1, str.length)];
@@ -15,7 +17,10 @@ export const getJsonDataFromString = (data: string) => {
     ({ accumulatedValues, currentObject }: any, currentValue) => {
       const valueArray = splitTheFirstValueFromString(currentValue, ':');
       const key = handleValueFromString(valueArray[0]);
-      const value = handleValueFromString(valueArray[1]);
+      let value = handleValueFromString(valueArray[1]);
+      if (key === 'value') {
+        value = formatReward(handleValueFromString(valueArray[1]));
+      }
       if (currentValue.includes('{')) {
         return {
           accumulatedValues,
