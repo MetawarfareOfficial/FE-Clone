@@ -23,7 +23,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const dispatch = useAppDispatch();
 
   const last30DaysPrice = useAppSelector((state) => state.coingeko.last30DaysPrice);
-  const currentPrice = useAppSelector((state) => state.coingeko.currentPrice);
+  const currentPrice = useAppSelector((state) => state.coingeko.zeroXBCurrentPrice);
 
   const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
   const [heightTotal, setHeightTotal] = useState<any>(null);

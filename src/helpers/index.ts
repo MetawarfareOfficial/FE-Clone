@@ -11,6 +11,7 @@ import { handleContractNameErrors } from './handleContractNameErrors';
 import { getJsonDataFromString } from './getJsonDataFromString';
 import { customToast } from './customToast';
 import { formatReward } from './formatReward';
+import { getTokenBalanceFromWalletAddress } from './getTokenBalanceFromWalletAddress';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -25,4 +26,5 @@ export {
   getJsonDataFromString,
   customToast,
   formatReward,
+  getTokenBalanceFromWalletAddress,
 };

@@ -4,7 +4,7 @@ import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material'
 import { useWindowSize } from 'hooks/useWindowSize';
 import AreaChartCustom from 'components/Base/AreaChart';
 import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
-import { formatBigNumber } from 'helpers/formatBigNumber';
+import { formatReward } from 'helpers';
 
 // import BgBox from 'assets/images/bg-trea.png';
 
@@ -212,7 +212,7 @@ const Statistics: React.FC<Props> = () => {
             <BoxLeft isMarket={false}>
               <BoxText>Circulation Supply / Total Supply</BoxText>
               <BoxTitle>
-                {formatBigNumber(circulatingSupply)} / {formatBigNumber(totalSupply)}
+                {formatReward(String(circulatingSupply))} / {formatReward(String(totalSupply))}
               </BoxTitle>
             </BoxLeft>
             <BoxRight>
@@ -250,7 +250,7 @@ const Statistics: React.FC<Props> = () => {
           <BoxDetail>
             <BoxLeft isMarket={true}>
               <BoxText2>Market Cap</BoxText2>
-              <BoxTitle>{formatBigNumber(marketCap, false)}</BoxTitle>
+              <BoxTitle>{formatReward(String(marketCap), false)}</BoxTitle>
             </BoxLeft>
             <BoxRight>
               <div
