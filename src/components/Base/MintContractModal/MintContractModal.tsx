@@ -40,9 +40,10 @@ import {
   replaceArrayElementByIndex,
 } from 'helpers';
 import BigNumber from 'bignumber.js';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { errorMessage } from 'messages/errorMessages';
 import { infoMessage } from 'messages/infoMessages';
+import { setIsOverMaxMintNodes } from 'services/contract';
 
 interface Props {
   open: boolean;
@@ -368,7 +369,7 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   fontWeight: 'bold',
   fontSize: '14px',
   lineHeight: '21px',
-  cursor: 'pointer',
+  cursor: disabled ? 'not-allowed !important' : 'pointer',
   outline: 'none',
   border: 'none',
   span: {
@@ -415,14 +416,18 @@ const BoxError = styled(Box)<BoxProps>(() => ({
 }));
 
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
+  const dispatch = useAppDispatch();
+  const theme = useTheme();
+
   const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
   const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
   const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
   const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
+  const isOverMaxMintNodes = useAppSelector((state) => state.contract.isOverMaxMintNodes);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
-  const theme = useTheme();
+  const [valueInput, setValueInput] = useState<number | string>(contracts.length);
 
   const handleAddContract = (numberContracts = 1) => {
     if (contracts.length >= maxMint) {
@@ -540,6 +545,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
+    setValueInput(contracts.length);
   }, [contracts.length]);
 
   return (
@@ -570,9 +576,23 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         <BoxActions>
           <OutlinedInputCustom
             type="number"
-            value={contracts.length}
-            // readOnly
-            onChange={(event) => handleAddManyContracts(Number(event.target.value))}
+            value={valueInput}
+            onChange={(event) => {
+              const value = event.target.value;
+
+              if (Number(value) > maxMint) {
+                dispatch(setIsOverMaxMintNodes(true));
+                event.preventDefault();
+                return;
+              }
+
+              dispatch(setIsOverMaxMintNodes(false));
+              setValueInput(value);
+              handleAddManyContracts(Number(value));
+            }}
+            onBlur={() => {
+              setValueInput(valueInput.toString().replace(/^0+/, ''));
+            }}
             onKeyDown={(e) => {
               // 190 is keycode of dot
               if (e.keyCode === 190) {
@@ -607,6 +627,8 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             ? infoMessage.INSUFFICIENT_TOKEN.message
             : isLimitNodes
             ? infoMessage.LIMIT_NODES.message
+            : isOverMaxMintNodes
+            ? `${infoMessage.OVER_NODES.message} ${maxMint} contracts`
             : ''}
         </BoxError>
 
@@ -615,6 +637,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             contracts.filter(
               (item) => item.error && item.error !== errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message,
             ).length > 0 ||
+            contracts.length === 0 ||
             isCreatingNodes ||
             isInsuffBalances ||
             isLimitNodes

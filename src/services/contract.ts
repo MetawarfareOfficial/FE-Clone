@@ -12,6 +12,7 @@ const initialState = {
   insuffBalance: false,
   isLimitOwnedNodes: false,
   isCloseMintContractModal: false,
+  isOverMaxMintNodes: false,
 };
 
 const dataContractSlice = createSlice({
@@ -81,6 +82,9 @@ const dataContractSlice = createSlice({
     toggleIsCloseMintContractModal: (state, action) => {
       state.isCloseMintContractModal = action.payload;
     },
+    setIsOverMaxMintNodes: (state, action) => {
+      state.isOverMaxMintNodes = action.payload;
+    },
   },
 });
 
@@ -106,6 +110,7 @@ export const {
   setIsLimitOwnedNodes,
   unSetIsLimitOwnedNodes,
   toggleIsCloseMintContractModal,
+  setIsOverMaxMintNodes,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;

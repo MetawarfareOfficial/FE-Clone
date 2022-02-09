@@ -7,4 +7,8 @@ export const infoMessage = {
     title: 'mint contract modal',
     message: 'You can not mint more than 100 contracts',
   },
+  OVER_NODES: {
+    title: 'mint contract modal',
+    message: 'You can only mint maximum',
+  },
 };
