@@ -6,7 +6,7 @@ import { formatTimestamp } from 'helpers/formatTimestamp';
 import { labelDate } from 'consts/dashboard';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
 import { formatReward } from 'helpers';
-
+import './styles.css';
 interface Props {
   id?: string;
   title?: string;
@@ -19,7 +19,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
   const theme = useTheme();
 
   return (
-    <ResponsiveContainer>
+    <ResponsiveContainer height={'90%'}>
       <ComposedChart width={732} height={540} data={data}>
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
@@ -39,7 +39,7 @@ const AreaChartCustom: React.FC<Props> = ({ id, data, color, dataKey = 'close' }
         />
         <YAxis
           tick={{
-            dx: 5,
+            dx: 4,
           }}
           tickCount={6}
           axisLine={false}
