@@ -255,6 +255,11 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   };
 
   const processIcon = (cType: string) => {
+    if (cType === '') {
+      setIcon('');
+      return;
+    }
+
     if (cType === '0') {
       setIcon(SquareIcon);
       return;
