@@ -8,6 +8,7 @@ export const zeroXBlockAbi = [
       { internalType: 'uint256[]', name: 'fees', type: 'uint256[]' },
       { internalType: 'uint256', name: 'swapAmount', type: 'uint256' },
       { internalType: 'address', name: 'uniV2Router', type: 'address' },
+      { internalType: 'address', name: 'usdcAddr', type: 'address' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -196,6 +197,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'bool', name: 'newVal', type: 'bool' }],
+    name: 'changeEnableAutoSwap',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
       { internalType: 'uint256', name: 'newNodePrice', type: 'uint256' },
@@ -211,13 +219,6 @@ export const zeroXBlockAbi = [
       { internalType: 'uint256', name: 'newPrice', type: 'uint256' },
     ],
     name: 'changeRewardAPYPerNode',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'bool', name: 'newVal', type: 'bool' }],
-    name: 'changeSwapLiquify',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -274,6 +275,13 @@ export const zeroXBlockAbi = [
     inputs: [],
     name: 'developmentFundPool',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'enableAutoSwap',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -664,13 +672,6 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
     name: 'updateRewardsWall',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
-    name: 'updateRwSwapFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

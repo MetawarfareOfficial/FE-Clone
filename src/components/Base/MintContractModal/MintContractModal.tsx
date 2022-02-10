@@ -424,6 +424,8 @@ const BoxError = styled(Box)<BoxProps>(() => ({
   fontSize: '12px',
 }));
 
+const preventKeyCodeNumberInput = [190, 69, 189, 187]; // . E + -
+
 const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, onClose, onSubmit, valueRequire }) => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
@@ -632,8 +634,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
               setValueInput(valueInput.toString().replace(/^0+/, ''));
             }}
             onKeyDown={(e) => {
-              // 190 is keycode of dot
-              if (e.keyCode === 190) {
+              if (preventKeyCodeNumberInput.includes(e.keyCode)) {
                 e.preventDefault();
               }
             }}

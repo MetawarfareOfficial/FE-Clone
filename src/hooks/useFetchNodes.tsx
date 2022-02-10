@@ -27,5 +27,7 @@ export function useFetchNodes(crtNodeOk?: boolean) {
     dispatch(unSetNodes());
   }, [currentUserAddress, crtNodeOk]);
 
-  return '';
+  return {
+    fetchNodesOfUser,
+  };
 }

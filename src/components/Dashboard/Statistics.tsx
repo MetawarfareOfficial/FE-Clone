@@ -10,6 +10,9 @@ import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
 import TokenBg from 'assets/images/bg-token.png';
+import { useFetchNodes } from 'hooks/useFetchNodes';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/typeReward';
 
 interface Props {
   title?: string;
@@ -132,7 +135,9 @@ const Statistics: React.FC<Props> = ({ data }) => {
   const myContracts = useAppSelector((state) => state.contract.dataMyContracts);
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
   const nodes = useAppSelector((state) => state.contract.nodes);
+  const currentUser = useAppSelector((state) => state.user.account?.address);
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
+  const { fetchNodesOfUser } = useFetchNodes();
 
   useEffect(() => {
     setStatistic([
@@ -155,7 +160,11 @@ const Statistics: React.FC<Props> = ({ data }) => {
         linkTo: '/my-contracts',
       },
     ]);
-  }, [myContracts, myReward, data?.price]);
+  }, [myContracts, myReward, data?.price, nodes]);
+
+  useInterval(async () => {
+    fetchNodesOfUser(currentUser);
+  }, DELAY_TIME);
 
   return (
     <Wrapper>

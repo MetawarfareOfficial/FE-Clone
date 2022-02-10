@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
@@ -23,7 +23,6 @@ import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { bigNumber2Number } from 'helpers/formatNumber';
 import { unSetNodes, unSetRewardAmount } from 'services/contract';
-import { useFetchNodes } from 'hooks/useFetchNodes';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
@@ -110,8 +109,6 @@ const ConnectWallet: React.FC<Props> = () => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const { createToast } = useToast();
 
-  const [isFirstTimeClickLogin, setIsFirstTimeClickLogin] = useState(false);
-
   const login = async (): Promise<void> => {
     try {
       if (!isMetaMaskInstalled()) {
@@ -126,7 +123,11 @@ const ConnectWallet: React.FC<Props> = () => {
       await activate(injected);
       if (!getToken()) dispatch(setLogin());
       authenticateUser(signature as string);
-      setIsFirstTimeClickLogin(true);
+      createToast({
+        message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
+        type: 'success',
+        toastId: 2,
+      });
     } catch (ex: any) {
       createToast({
         message: ex.message,
@@ -151,7 +152,6 @@ const ConnectWallet: React.FC<Props> = () => {
         type: 'error',
       });
     } finally {
-      setIsFirstTimeClickLogin(false);
     }
   };
 
@@ -186,12 +186,6 @@ const ConnectWallet: React.FC<Props> = () => {
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
-      isFirstTimeClickLogin &&
-        createToast({
-          message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
-          type: 'success',
-          toastId: 2,
-        });
       return;
     }
     dispatch(unSetAccount());
@@ -235,7 +229,6 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   }, [currentUserAddress]);
 
-  useFetchNodes();
   useFetchRewardAmount();
   useMobileChangeAccountMetamask();
   useInterval(() => {
