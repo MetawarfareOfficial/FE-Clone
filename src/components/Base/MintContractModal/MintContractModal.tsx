@@ -437,6 +437,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
   const [valueInput, setValueInput] = useState<number | string>(contracts.length);
+  const [isBlankInput, setIsBlankInput] = useState<boolean>(false);
 
   const handleAddContract = (numberContracts = 1) => {
     if (contracts.length >= maxMint) {
@@ -555,8 +556,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
-    setValueInput(contracts.length);
+    setValueInput(isBlankInput ? '' : contracts.length);
   }, [contracts.length]);
+
+  useEffect(() => {
+    if (isBlankInput) setContracts([]);
+  }, [isBlankInput]);
 
   return (
     <Wrapper
@@ -612,11 +617,15 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
               dispatch(setIsOverMaxMintNodes(false));
               setValueInput(value);
-              if (value === '') return;
+              if (value === '') {
+                setIsBlankInput(true);
+                return;
+              }
+              setIsBlankInput(false);
               handleAddManyContracts(Number(value));
             }}
             onBlur={() => {
-              if (Number(valueInput) === 0) {
+              if (Number(valueInput) === 0 && valueInput !== '') {
                 setValueInput('0');
                 return;
               }
