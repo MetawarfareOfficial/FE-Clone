@@ -48,6 +48,7 @@ import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { errorMessage } from 'messages/errorMessages';
 import { infoMessage } from 'messages/infoMessages';
 import { setIsOverMaxMintNodes } from 'services/contract';
+import { REGEX_DIGIT } from 'consts/regrex';
 
 interface Props {
   open: boolean;
@@ -615,11 +616,19 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
         <BoxActions>
           <OutlinedInputCustom
-            type="number"
+            type="text"
             value={valueInput}
             onChange={(event) => {
               const value = event.target.value;
               // if (value.trim() === '') return;
+
+              if (!REGEX_DIGIT.test(value)) {
+                event.preventDefault();
+                setValueInput('');
+                setIsBlankInput(true);
+                return;
+              }
+
               if (Number(value) > maxMint) {
                 dispatch(setIsOverMaxMintNodes(true));
                 setValueInput(maxMint);
