@@ -605,6 +605,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
               if (Number(value) > maxMint) {
                 dispatch(setIsOverMaxMintNodes(true));
+                setValueInput(maxMint);
                 event.preventDefault();
                 return;
               }
