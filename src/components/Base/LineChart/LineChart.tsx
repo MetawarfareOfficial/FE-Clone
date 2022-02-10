@@ -17,4 +17,4 @@ const LineChartCustom: React.FC<Props> = ({ data, color }) => {
   );
 };
 
-export default LineChartCustom;
+export default React.memo(LineChartCustom);
