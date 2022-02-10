@@ -32,12 +32,20 @@ export const formatBigNumber = (value: number | null, isAbbreviated = true, remo
   const OneMillion = 1000000;
   const OneThousand = 1000;
   const oneBillion = 1000000000;
+  const oneTrillion = 1000000000000;
   const millionNumberSuffixes = isAbbreviated ? 'M' : ' Million';
   const thousandNumberSuffixes = isAbbreviated ? 'K' : ' Thousand';
   const billionNumberSuffixes = isAbbreviated ? 'B' : ' Billion';
+  const trillionNumberSuffixes = isAbbreviated ? 'T' : ' Trillion';
   const regex = /\.$/;
   if (value) {
-    if (value >= oneBillion) {
+    if (value >= oneTrillion) {
+      const valueAfterDivide = value / oneTrillion;
+      return (
+        roundingNumber(valueAfterDivide, calculateToFixedNumber(String(valueAfterDivide))).replace(regex, '') +
+        (removeEndingSymbol ? '' : trillionNumberSuffixes)
+      );
+    } else if (value >= oneBillion) {
       const valueAfterDivide = value / oneBillion;
       return (
         roundingNumber(valueAfterDivide, calculateToFixedNumber(String(valueAfterDivide))).replace(regex, '') +
