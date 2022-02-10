@@ -46,6 +46,7 @@ export const useFetchMarketCapData = () => {
         index,
       };
     });
+
     const last30DaysMaxPrices = orderBy(
       values(
         mapValues(
