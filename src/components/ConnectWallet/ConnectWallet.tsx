@@ -28,6 +28,8 @@ import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { useToast } from 'hooks/useToast';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/connectWallet';
 
 interface Props {
   name?: string;
@@ -224,6 +226,7 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(unSetNodes());
       dispatch(unSetRewardAmount());
     } catch (e) {
+      // TODO: fixme: move message to file error message
       createToast({
         message: 'Oop! Something went wrong',
         type: 'error',
@@ -233,6 +236,9 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useFetchRewardAmount();
   useMobileChangeAccountMetamask();
+  useInterval(() => {
+    if (currentUserAddress) fetchBalance(currentUserAddress);
+  }, DELAY_TIME);
 
   if (width < 900) {
     return (
