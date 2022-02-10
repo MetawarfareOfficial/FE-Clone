@@ -565,6 +565,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     if (isBlankInput) setContracts([]);
   }, [isBlankInput]);
 
+  useEffect(() => {
+    if (!open) {
+      setIsBlankInput(false);
+    }
+  }, [open]);
+
   return (
     <Wrapper
       open={open}
