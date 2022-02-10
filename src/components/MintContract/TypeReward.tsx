@@ -15,15 +15,16 @@ import {
   setInsuffBalance,
   setIsCreatingNodes,
   setIsLimitOwnedNodes,
+  setIsOverMaxMintNodes,
   toggleIsCloseMintContractModal,
   unSetInsuffBalance,
   unSetIsCreatingNodes,
   unSetIsLimitOwnedNodes,
 } from 'services/contract';
-import { computedRewardRatioPerYear } from '../../helpers/computedRewardRatioPerYear';
-import { RewardRatioChart } from '../../interfaces/RewardRatioChart';
-import { customToast } from '../../helpers';
-import { errorMessage } from '../../messages/errorMessages';
+import { computedRewardRatioPerYear } from 'helpers/computedRewardRatioPerYear';
+import { RewardRatioChart } from 'interfaces/RewardRatioChart';
+import { customToast } from 'helpers';
+import { errorMessage } from 'messages/errorMessages';
 import { useWeb3React } from '@web3-react/core';
 
 interface Props {
@@ -279,8 +280,9 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
     dispatch(toggleIsCloseMintContractModal(!open));
+    dispatch(setIsOverMaxMintNodes(false));
 
-    if (new BigNumber(zeroXBlockBalance).isLessThanOrEqualTo(0)) {
+    if (new BigNumber(zeroXBlockBalance).isLessThanOrEqualTo(0) || new BigNumber(zeroXBlockBalance).isLessThan(value)) {
       dispatch(setInsuffBalance());
       return;
     }

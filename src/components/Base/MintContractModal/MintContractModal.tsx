@@ -516,22 +516,6 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
     setContracts(newContract);
   };
 
-  useEffect(() => {
-    if (!(isCloseMintContractModal && isCreatingNodes)) {
-      handleAddManyContracts(1);
-      setValueInput(contracts.length);
-    }
-  }, [isCloseMintContractModal, isCreatingNodes]);
-
-  useEffect(() => {
-    // reset contracts when account change
-    setContracts([]);
-    if (maxMint > 0) {
-      // init first contract
-      handleAddManyContracts(1);
-    }
-  }, [maxMint]);
-
   const renderItems = () => {
     return contracts.map((item, index) => {
       return (
@@ -552,6 +536,22 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const handleBackdropClick = () => {
     customToast({ message: errorMessage.FINISH_MINT_CONTRACT.message, type: 'error', toastId: 3 });
   };
+
+  useEffect(() => {
+    if (!(isCloseMintContractModal && isCreatingNodes)) {
+      handleAddManyContracts(1);
+      setValueInput(contracts.length);
+    }
+  }, [isCloseMintContractModal, isCreatingNodes]);
+
+  useEffect(() => {
+    // reset contracts when account change
+    setContracts([]);
+    if (maxMint > 0) {
+      // init first contract
+      handleAddManyContracts(1);
+    }
+  }, [maxMint]);
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
