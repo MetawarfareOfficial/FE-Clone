@@ -457,6 +457,10 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   };
 
   const handleDeleteContract = () => {
+    if (isOverMaxMintNodes) {
+      dispatch(setIsOverMaxMintNodes(false));
+    }
+
     // prevent from deleting contract if contracts length = 1
     if (contracts.length >= 2) {
       const newContract = [...contracts];
