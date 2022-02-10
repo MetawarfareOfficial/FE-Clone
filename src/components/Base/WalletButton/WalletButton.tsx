@@ -15,7 +15,7 @@ interface IconButtonCustomProps {
 }
 
 const ButtonMode = styled(IconButton)<IconButtonCustomProps>(({ bgColor }) => ({
-  background: bgColor,
+  background: `${bgColor}!important`,
   boxShadow: '0px 12px 11px -10px rgba(0, 0, 0, 0.25)',
   boxSizing: 'border-box',
   borderRadius: '10px',
