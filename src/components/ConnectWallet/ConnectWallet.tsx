@@ -158,7 +158,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const handleWrongNetWork = async (): Promise<void> => {
     try {
       await addEthereumChain();
-      await activate(injected);
+      // await activate(injected);   // nam commented this for bug show toast error when change network in mobile
     } catch (ex: any) {
       createToast({
         message: ex.message,
