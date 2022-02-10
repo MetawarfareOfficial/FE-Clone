@@ -558,7 +558,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
-    setValueInput(isBlankInput ? '' : contracts.length);
+    setValueInput(isBlankInput && contracts.length === 0 ? '' : contracts.length);
   }, [contracts.length]);
 
   useEffect(() => {
