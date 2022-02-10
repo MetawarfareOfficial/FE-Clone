@@ -23,7 +23,6 @@ import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { bigNumber2Number } from 'helpers/formatNumber';
 import { unSetNodes, unSetRewardAmount } from 'services/contract';
-import { useFetchNodes } from 'hooks/useFetchNodes';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
@@ -232,7 +231,6 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   }, [currentUserAddress]);
 
-  useFetchNodes();
   useFetchRewardAmount();
   useMobileChangeAccountMetamask();
 
