@@ -188,8 +188,8 @@ const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
 const TitleChart = styled(Typography)<TypographyProps>(({ theme }) => ({
   position: 'absolute',
   zIndex: '2',
-  top: '16px',
-  left: '42px',
+  top: '2px',
+  left: '70px',
   fontFamily: 'Roboto',
   fontWeight: 'normal',
   fontSize: '12px',
@@ -211,7 +211,7 @@ const Statistics: React.FC<Props> = () => {
   }, [width]);
 
   return (
-    <Wrapper>
+    <Wrapper className="treasury-statistics">
       <Grid container spacing={{ xs: '20px', md: '24px', lg: '39px' }}>
         <Grid item xs={12} sm={12} md={6}>
           <BoxDetail isMarket={false}>
@@ -239,6 +239,7 @@ const Statistics: React.FC<Props> = () => {
                   minHeight: '100%',
                   marginLeft: screenSize > 599 ? '-35px' : '-30px',
                   marginBottom: '-15px',
+                  position: 'relative',
                 }}
               >
                 <TitleChart>1 Month</TitleChart>
@@ -276,6 +277,7 @@ const Statistics: React.FC<Props> = () => {
                   minHeight: '100%',
                   marginLeft: screenSize > 599 ? '-35px' : '-30px',
                   marginBottom: '-15px',
+                  position: 'relative',
                 }}
               >
                 <TitleChart>1 Month</TitleChart>
