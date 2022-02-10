@@ -270,7 +270,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimAll = async () => {
     try {
-      processModal('ALL CONTRACT');
+      processModal('ALL CONTRACTS');
       processIcon('');
       dispatch(setIsClaimingReward());
 
