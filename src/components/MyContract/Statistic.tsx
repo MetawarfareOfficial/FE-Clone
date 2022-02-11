@@ -23,6 +23,7 @@ interface TitleProps extends TypographyProps {
 interface TitleMobileProps extends TypographyProps {
   color: string;
   connected: any;
+  value: any;
   rewards: boolean | any;
 }
 
@@ -37,6 +38,7 @@ interface BoxCustomProps {
 
 interface TypographyCustomProps extends TypographyProps {
   rewards: boolean | any;
+  value: any;
   connected: any;
 }
 
@@ -129,7 +131,7 @@ const Title = styled(Typography)<TitleProps>(({ theme, color }) => ({
   },
 }));
 
-const TitleMobile = styled(Typography)<TitleMobileProps>(({ theme, color, connected, rewards }) => ({
+const TitleMobile = styled(Typography)<TitleMobileProps>(({ theme, color, connected, rewards, value }) => ({
   fontFamily: 'Poppins',
   fontWeight: '600',
   fontSize: '20px',
@@ -141,6 +143,8 @@ const TitleMobile = styled(Typography)<TitleMobileProps>(({ theme, color, connec
       ? '#828282'
       : theme.palette.mode === 'light'
       ? '#293247'
+      : Number(value) === 0 && rewards
+      ? '#4F4F4F'
       : '#293247',
   // color: rewards && !connected ? '#4F4F4F' : color === '#3F3F3F' ? '#828282' : '#293247',
   textTransform: 'uppercase',
@@ -205,8 +209,15 @@ const Value = styled(Typography)<ValueProps>(({ theme, color }) => ({
   },
 }));
 
-const TotalMobile = styled(Typography)<TypographyCustomProps>(({ theme, rewards, connected }) => ({
-  color: rewards && !connected ? '#4F4F4F' : theme.palette.mode === 'light' ? '#293247' : '#293247',
+const TotalMobile = styled(Typography)<TypographyCustomProps>(({ theme, rewards, connected, value }) => ({
+  color:
+    rewards && !connected
+      ? '#4F4F4F'
+      : theme.palette.mode === 'light'
+      ? '#293247'
+      : Number(value) === 0 && rewards
+      ? '#4F4F4F'
+      : '#293247',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
@@ -236,14 +247,14 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected
           </ViewImage>
 
           <Tooltip title={title === 'Rewards' || title === 'My Rewards' ? value : value}>
-            <TotalMobile connected={connected} rewards={title === 'Rewards'}>
+            <TotalMobile connected={connected} rewards={title === 'Rewards'} value={value}>
               {title === 'Rewards' || title === 'My Rewards' ? value : value}
             </TotalMobile>
           </Tooltip>
         </BoxHeader>
 
         <Content>
-          <TitleMobile connected={connected} rewards={title === 'Rewards'} color={color}>
+          <TitleMobile connected={connected} rewards={title === 'Rewards'} color={color} value={value}>
             {title}
           </TitleMobile>
           {text && <Description>{text}</Description>}
