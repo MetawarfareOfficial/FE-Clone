@@ -28,6 +28,11 @@ import ErrorGif from 'assets/images/error-white.gif';
 import ErrorDarkGif from 'assets/images/error.gif';
 import PendingGif from 'assets/images/pending-white.gif';
 import PendingDarkGif from 'assets/images/pending.gif';
+
+import SquareDarkIcon from 'assets/images/square-dark1.gif';
+import CubeDarkIcon from 'assets/images/cube-dark1.gif';
+import TessDarkIcon from 'assets/images/tess-dark1.gif';
+
 import { useLocation } from 'react-router-dom';
 
 interface Props {
@@ -42,6 +47,11 @@ interface Props {
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
+
+  '.MuiDialog-container': {
+    background: theme.palette.mode === 'light' ? 'rgba(165, 199, 251, 0.38)' : 'rgba(28, 28, 28, 0.36)',
+    backdropFilter: `blur(${theme.palette.mode === 'light' ? '4px' : '13px'})`,
+  },
 
   '.MuiPaper-root': {
     width: '317px',
@@ -187,7 +197,20 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
     >
       <Header>
         <ViewIcon>
-          <img alt="" src={icon} />
+          <img
+            alt=""
+            src={
+              theme.palette.mode === 'light'
+                ? icon
+                : name === 'Square Contract'
+                ? SquareDarkIcon
+                : name === 'Cube Contract'
+                ? CubeDarkIcon
+                : name === 'Tesseract Contract'
+                ? TessDarkIcon
+                : ''
+            }
+          />
         </ViewIcon>
         <HeaderText>{name}</HeaderText>
 
