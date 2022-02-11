@@ -3,13 +3,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 import TypeReward from './TypeReward';
-
-import SquareIcon from 'assets/images/square.gif';
-import SquareDarkIcon from 'assets/images/square-dark.gif';
-import CubeIcon from 'assets/images/cube.gif';
-import CubeDarkIcon from 'assets/images/cube-dark.gif';
-import TessIcon from 'assets/images/tess.gif';
-import TessDarkIcon from 'assets/images/tess-dark.gif';
+import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 
