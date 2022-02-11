@@ -34,6 +34,7 @@ import CubeDarkIcon from 'assets/images/cube-dark1.gif';
 import TessDarkIcon from 'assets/images/tess-dark1.gif';
 
 import { useLocation } from 'react-router-dom';
+import { infoMessage } from '../../../messages/infoMessages';
 
 interface Props {
   status: 'success' | 'error' | 'pending';
@@ -43,6 +44,10 @@ interface Props {
   name: string;
   onClose: () => void;
   onBackToMint?: () => void;
+}
+
+interface TypographyCustomProps {
+  claimFailed: boolean;
 }
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
@@ -139,7 +144,7 @@ const ViewImage = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const StatusText = styled(Typography)<TypographyProps>(() => ({
+const StatusText = styled(Typography)<TypographyCustomProps>(({ claimFailed }) => ({
   maxWidth: '221px',
   fontFamily: 'Poppins',
   fontWeight: 'bold',
@@ -147,6 +152,7 @@ const StatusText = styled(Typography)<TypographyProps>(() => ({
   lineHeight: '27px',
   textAlign: 'center',
   margin: '23px auto 0',
+  whiteSpace: claimFailed ? 'nowrap' : 'unset',
 }));
 
 const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
@@ -243,6 +249,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
                 ? '#293247'
                 : '#fff',
           }}
+          claimFailed={text === infoMessage.REWARD_CLAIM_FAILED.message}
         >
           {text}
         </StatusText>

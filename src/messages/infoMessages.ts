@@ -11,4 +11,8 @@ export const infoMessage = {
     title: 'mint contract modal',
     message: 'You can only mint maximum',
   },
+  REWARD_CLAIM_FAILED: {
+    title: 'mint status modal',
+    message: 'Rewards claiming failed',
+  },
 };

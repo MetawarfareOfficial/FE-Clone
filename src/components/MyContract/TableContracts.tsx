@@ -31,6 +31,7 @@ import { DELAY_TIME } from 'consts/typeReward';
 import { errorMessage } from 'messages/errorMessages';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { useToast } from 'hooks/useToast';
+import { infoMessage } from '../../messages/infoMessages';
 
 interface Props {
   title?: string;
@@ -388,7 +389,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             status === 'success'
               ? 'Rewards claimed successfully'
               : status === 'error'
-              ? 'Rewards claiming failed'
+              ? infoMessage.REWARD_CLAIM_FAILED.message
               : status === 'pending'
               ? 'Processing'
               : 'Insufficient Tokens'
