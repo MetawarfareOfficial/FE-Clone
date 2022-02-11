@@ -132,10 +132,12 @@ const SliderItem = styled(Box)<BoxProps>(() => ({}));
 
 const Statistics: React.FC<Props> = ({ data }) => {
   const history = useHistory();
+
   const myContracts = useAppSelector((state) => state.contract.dataMyContracts);
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
   const nodes = useAppSelector((state) => state.contract.nodes);
-  const currentUser = useAppSelector((state) => state.user.account?.address);
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
   const { fetchNodesOfUser } = useFetchNodes();
 
@@ -163,7 +165,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
   }, [myContracts, myReward, data?.price, nodes]);
 
   useInterval(async () => {
-    fetchNodesOfUser(currentUser);
+    if (currentUserAddress) await fetchNodesOfUser(currentUserAddress);
   }, DELAY_TIME);
 
   return (
@@ -207,6 +209,10 @@ const Statistics: React.FC<Props> = ({ data }) => {
                       variant="contained"
                       color="secondary"
                       onClick={() => {
+                        if (item.linkTo.includes('https')) {
+                          window.open(item.linkTo, '_blank');
+                          return;
+                        }
                         history.push(item.linkTo);
                       }}
                     >
