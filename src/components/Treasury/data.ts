@@ -24,3 +24,5 @@ export const dataHoldings = [
     colorDark: 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   },
 ];
+
+export const investmentsData = [];
