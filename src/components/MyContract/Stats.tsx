@@ -90,7 +90,9 @@ const Stats: React.FC<Props> = ({ countMyContract, data }) => {
                   ? data.length > 0
                     ? 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
                     : '#262626'
-                  : 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+                  : data.length > 0
+                  ? 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+                  : '#3F3F3F'
                 : theme.palette.mode === 'light'
                 ? width < 600
                   ? '#F2F2F2'

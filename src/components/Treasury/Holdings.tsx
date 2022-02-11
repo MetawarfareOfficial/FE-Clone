@@ -11,7 +11,7 @@ import { bigNumber2Number } from 'helpers/formatNumber';
 
 import OxBCoin from 'assets/images/coin-0xb.svg';
 import USDCoin from 'assets/images/coin-usd.svg';
-import AVAXCoin from 'assets/images/coin-avax.svg';
+import AVAXCoin from 'assets/images/avalanche-avax-logo.svg';
 import { holdingsWalletAddresses, holdingWalletTokenID } from 'consts/holdings';
 import { usdcAbi } from 'abis/usdcAbi';
 import { formatReward, getTokenBalanceFromWalletAddress } from 'helpers';
