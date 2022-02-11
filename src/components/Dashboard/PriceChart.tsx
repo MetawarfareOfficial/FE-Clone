@@ -4,14 +4,16 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
 import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
-import { formatPrice } from 'helpers/formatPrice';
 import { formatTimestamp } from 'helpers/formatTimestamp';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
+import { formatReward } from 'helpers';
 
 interface Props {
   title?: string;
   heightTotal: number;
   data: Array<any>;
+  XDataKey?: string;
+  YDataKey?: string;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -66,7 +68,7 @@ const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
+const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDataKey = 'price' }) => {
   const [width] = useWindowSize();
   const theme = useTheme();
   const [heightChart, setHeightChart] = useState(500);
@@ -112,7 +114,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 fontSize="10px"
                 fontFamily="Helvetica"
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
-                dataKey="time"
+                dataKey={XDataKey}
                 tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate)}
                 interval={heightTotal < 600 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
@@ -125,19 +127,23 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 fontFamily="Helvetica"
                 orientation="right"
-                dataKey="price"
+                dataKey={YDataKey}
+                tickFormatter={(value) => formatReward(String(value))}
               />
 
               {theme.palette.mode === 'dark' && <CartesianGrid stroke="#1D1D1D" strokeOpacity={0.7} />}
 
               <Tooltip
-                formatter={(value: string, name: string) => [formatPrice(value), convertCamelCaseToPascalCase(name)]}
+                formatter={(value: string, name: string) => [
+                  formatReward(String(value)),
+                  convertCamelCaseToPascalCase(name),
+                ]}
                 labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
               />
 
               <Area
                 type="monotone"
-                dataKey="price"
+                dataKey={YDataKey}
                 stroke={theme.palette.mode === 'light' ? '#3864FF' : '#2978F4'}
                 strokeWidth={2}
                 fillOpacity={1}
