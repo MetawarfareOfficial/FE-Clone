@@ -49,7 +49,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: 'bold',
   fontSize: '24px',
   lineHeight: '28px',
-  color: '#828282',
+  color: '#293247',
   marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {

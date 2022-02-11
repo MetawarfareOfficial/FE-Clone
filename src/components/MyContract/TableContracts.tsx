@@ -112,7 +112,7 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   boxShadow: 'none',
   width: '98px',
   height: '38px',
-  color: theme.palette.mode === 'light' ? `#293247` : '#fff',
+  color: theme.palette.mode === 'light' ? `#fff` : '#fff',
   background:
     theme.palette.mode === 'light'
       ? `${theme.palette.secondary}`
@@ -293,7 +293,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
     try {
-      processModal(formatCType(cType));
+      processModal(`${formatCType(cType)} Contract`);
       processIcon(cType);
       dispatch(setIsClaimingReward());
 
@@ -379,6 +379,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             )}
           </CustomTableBody>
         </Table>
+
         <MintStatusModal
           icon={icon}
           name={claimType}

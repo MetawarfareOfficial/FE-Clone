@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Grid, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
+import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
 
-import TableTokens from 'components/Base/TableTokens';
+// import TableTokens from 'components/Base/TableTokens';
+import TableInvestments from './TableInvestments';
 
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { fetchInvestments } from 'services/investments';
 import { useToast } from 'hooks/useToast';
+
+import { investmentsData } from './data';
 
 interface Props {
   title?: string;
@@ -25,7 +28,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: 'bold',
   fontSize: '24px',
   lineHeight: '28px',
-  color: '#828282',
+  color: '#293247',
   marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {
@@ -45,27 +48,17 @@ const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.03)',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
   borderRadius: '22px',
-  padding: '17px 25px',
+  padding: '17px 24px',
   boxSizing: 'border-box',
+  minHeight: '550px',
+  display: 'flex',
+  alignItems: 'center',
 
   [theme.breakpoints.down('lg')]: {
     padding: '14px 18px',
   },
   [theme.breakpoints.down('sm')]: {
     padding: '18px',
-  },
-}));
-
-const Detail = styled(Box)<BoxProps>(({ theme }) => ({
-  background: theme.palette.mode === 'light' ? '#F9F9FB' : '#1A1A1A',
-  borderRadius: '11px',
-  padding: '13px 8px',
-
-  [theme.breakpoints.down('lg')]: {
-    padding: '10px 6px',
-  },
-  [theme.breakpoints.down('sm')]: {
-    padding: '15px 3px',
   },
 }));
 
@@ -92,7 +85,10 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const Investments: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
-  const { error, status, investments } = useAppSelector((state) => state.investments);
+  const {
+    error,
+    // status, investments
+  } = useAppSelector((state) => state.investments);
   const { createToast } = useToast();
 
   useEffect(() => {
@@ -113,7 +109,7 @@ const Investments: React.FC<Props> = () => {
       <Title>Investments</Title>
 
       <PaperContent>
-        {status === 'succeeded' && investments ? (
+        {/* {status === 'succeeded' && investments ? (
           <Grid container spacing={{ xs: '12px', md: '24px', lg: '42px' }}>
             {investments.map((data) => (
               <Grid key={data.name} item xs={12} sm={4}>
@@ -123,6 +119,12 @@ const Investments: React.FC<Props> = () => {
               </Grid>
             ))}
           </Grid>
+        ) : (
+          <TextNoData>No investments yet!</TextNoData>
+        )} */}
+
+        {investmentsData.length > 0 ? (
+          <TableInvestments data={investmentsData} />
         ) : (
           <TextNoData>No investments yet!</TextNoData>
         )}

@@ -35,7 +35,7 @@ interface Props {
   status: 'success' | 'error' | 'pending';
   open: boolean;
   text: string;
-  icon: string;
+  icon?: string;
   name: string;
   onClose: () => void;
   onBackToMint?: () => void;

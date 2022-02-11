@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 
 import { Box } from '@mui/material';
 
-import { Statistics, Holdings, Investments } from 'components/Treasury';
+import { Holdings, Investments } from 'components/Treasury';
 import { toast } from 'react-toastify';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 
@@ -19,7 +19,7 @@ const Treasury: React.FC<Props> = () => {
 
   return (
     <Box>
-      <Statistics />
+      {/* <Statistics /> */}
       <Holdings />
       <Investments />
     </Box>
