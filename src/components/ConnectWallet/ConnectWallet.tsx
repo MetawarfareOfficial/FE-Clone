@@ -187,6 +187,8 @@ const ConnectWallet: React.FC<Props> = () => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
       return;
+    } else if (!account) {
+      unAuthenticateUser();
     }
     dispatch(unSetAccount());
   }, [account, active, chainId, isLogin, currentUserAddress]);
