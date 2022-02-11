@@ -40,7 +40,7 @@ interface Props {
   status: 'success' | 'error' | 'pending';
   open: boolean;
   text: string;
-  icon: string;
+  icon?: string;
   name: string;
   onClose: () => void;
   onBackToMint?: () => void;
@@ -202,22 +202,24 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
       aria-describedby="alert-dialog-slide-description"
     >
       <Header>
-        <ViewIcon>
-          <img
-            alt=""
-            src={
-              theme.palette.mode === 'light'
-                ? icon
-                : name === 'Square Contract'
-                ? SquareDarkIcon
-                : name === 'Cube Contract'
-                ? CubeDarkIcon
-                : name === 'Tesseract Contract'
-                ? TessDarkIcon
-                : ''
-            }
-          />
-        </ViewIcon>
+        {icon && (
+          <ViewIcon>
+            <img
+              alt=""
+              src={
+                theme.palette.mode === 'light'
+                  ? icon
+                  : name === 'Square Contract'
+                  ? SquareDarkIcon
+                  : name === 'Cube Contract'
+                  ? CubeDarkIcon
+                  : name === 'Tesseract Contract'
+                  ? TessDarkIcon
+                  : ''
+              }
+            />
+          </ViewIcon>
+        )}
         <HeaderText>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>

@@ -75,7 +75,7 @@ interface LogoProps extends LinkProps {
 
 const drawerWidth = 224;
 const drawerWidthMinus = 100;
-const transition = 'width 1s ease-in-out';
+const transition = 'width 0.8s ease-in-out';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
