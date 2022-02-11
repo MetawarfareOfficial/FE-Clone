@@ -13,6 +13,7 @@ import moment from 'moment';
 import { toast } from 'react-toastify';
 import useFetchInforContract from 'hooks/useFetchInforContract';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
+import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
 
 interface DashboardProps {
   name?: string;
@@ -25,6 +26,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
   const currentPrice = useAppSelector((state) => state.coingeko.zeroXBCurrentPrice);
 
   const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
+  const { marketCapHistory } = useFetchMarketCapData();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isPriceChartOpened, setIsPriceChartOpened] = useState<boolean>(true);
   const [heightTotal, setHeightTotal] = useState<any>(null);
 
   const handleChangeHeightTotal = (height: number) => {
@@ -79,7 +83,11 @@ const Dashboard: React.FC<DashboardProps> = () => {
           <TotalMinted onChangeHeight={handleChangeHeightTotal} />
         </Grid>
         <Grid item xs={12} md={8}>
-          <PriceChart heightTotal={heightTotal} data={tokenPrices} />
+          <PriceChart
+            heightTotal={heightTotal}
+            YDataKey={isPriceChartOpened ? 'price' : 'marketCap'}
+            data={isPriceChartOpened ? tokenPrices : marketCapHistory}
+          />
         </Grid>
       </Grid>
     </Box>
