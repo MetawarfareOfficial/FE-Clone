@@ -37,6 +37,12 @@ export const useInactiveListener = (suppress = false) => {
   const { createToast } = useToast();
   const validChainId = ethers.utils.hexlify(Number(process.env.REACT_APP_CHAIN_ID));
 
+  const handleAccountsChanged = (accounts: string[]) => {
+    if (!accounts[0]) {
+      unAuthenticateUser();
+    }
+  };
+
   useEffect((): any => {
     const { ethereum } = window as any;
     if (ethereum) {
@@ -54,18 +60,24 @@ export const useInactiveListener = (suppress = false) => {
         }
       };
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const handleAccountsChanged = async (accounts: string[]) => {};
-
-      // ethereum.on('chainChanged', handleChainChanged);
       ethereum.on('accountsChanged', handleAccountsChanged);
       injected.on('Web3ReactDeactivate', unAuthenticateUser);
 
       return () => {
         if (ethereum.removeListener) {
           ethereum.removeListener('chainChanged', handleChainChanged);
-          ethereum.removeListener('accountsChanged', handleAccountsChanged);
         }
       };
     }
   }, [active, error, suppress, activate, deactivate]);
+
+  useEffect(() => {
+    const { ethereum } = window as any;
+    ethereum.removeListener('accountsChanged', handleAccountsChanged);
+    return () => {
+      if (ethereum.removeListener) {
+        ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      }
+    };
+  }, []);
 };

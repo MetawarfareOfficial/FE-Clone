@@ -166,7 +166,7 @@ const Holdings: React.FC<Props> = () => {
 
   const handleGetDevAndMarketingOrTreasuryWalletData = async (key: string) => {
     const isTreasury = key === 'treasury';
-    const usdAmount = await getTokenBalanceFromWalletAddress(
+    const usdToken = await getTokenBalanceFromWalletAddress(
       process.env.REACT_APP_USDC_CONTRACT_ADDRESS,
       usdcAbi,
       isTreasury ? holdingsWalletAddresses.treasury : holdingsWalletAddresses.dev_marketing,
@@ -175,16 +175,16 @@ const Holdings: React.FC<Props> = () => {
       setTreasury([
         {
           ...treasury[0],
-          amount: formatReward(String(usdAmount)),
-          value: `${formatReward(String(Number(usdAmount) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
+          amount: formatReward(String(usdToken)),
+          value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
         },
       ]);
     } else {
       setDev_marketing([
         {
           ...dev_marketing[0],
-          amount: formatReward(String(usdAmount)),
-          value: `${formatReward(String(Number(usdAmount) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
+          amount: formatReward(String(usdToken)),
+          value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
         },
       ]);
     }
