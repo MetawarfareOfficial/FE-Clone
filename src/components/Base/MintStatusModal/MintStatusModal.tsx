@@ -28,11 +28,6 @@ import ErrorGif from 'assets/images/error-white.gif';
 import ErrorDarkGif from 'assets/images/error.gif';
 import PendingGif from 'assets/images/pending-white.gif';
 import PendingDarkGif from 'assets/images/pending.gif';
-
-import SquareDarkIcon from 'assets/images/square-dark1.gif';
-import CubeDarkIcon from 'assets/images/cube-dark1.gif';
-import TessDarkIcon from 'assets/images/tess-dark1.gif';
-
 import { useLocation } from 'react-router-dom';
 import { infoMessage } from 'messages/infoMessages';
 
@@ -203,20 +198,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
     >
       <Header>
         <ViewIcon>
-          <img
-            alt=""
-            src={
-              theme.palette.mode === 'light'
-                ? icon
-                : name === 'Square Contract'
-                ? SquareDarkIcon
-                : name === 'Cube Contract'
-                ? CubeDarkIcon
-                : name === 'Tesseract Contract'
-                ? TessDarkIcon
-                : ''
-            }
-          />
+          <img alt="" src={icon} />
         </ViewIcon>
         <HeaderText>{name}</HeaderText>
 

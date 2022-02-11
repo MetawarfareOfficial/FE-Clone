@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
   BoxProps,
@@ -23,9 +23,7 @@ import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { claimAllNodes, claimNodeByNode } from 'helpers/interractiveContract';
 import MintStatusModal from 'components/Base/MintStatusModal';
-import SquareIcon from 'assets/images/square.gif';
-import CubeIcon from 'assets/images/cube.gif';
-import TessIcon from 'assets/images/tess.gif';
+import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
 import { sleep } from 'helpers/delayTime';
 import { DELAY_TIME } from 'consts/typeReward';
 import { errorMessage } from 'messages/errorMessages';
@@ -234,6 +232,7 @@ const TableRowNoData = styled(TableRow)<TableRowProps>(({ theme }) => ({
 
 const TableContracts: React.FC<Props> = ({ data }) => {
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
@@ -261,16 +260,16 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     }
 
     if (cType === '0') {
-      setIcon(SquareIcon);
+      setIcon(theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon);
       return;
     }
 
     if (cType === '1') {
-      setIcon(CubeIcon);
+      setIcon(theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon);
       return;
     }
 
-    setIcon(TessIcon);
+    setIcon(theme.palette.mode === 'light' ? TessIcon : TessDarkIcon);
   };
 
   const handleClickClaimAll = async () => {
