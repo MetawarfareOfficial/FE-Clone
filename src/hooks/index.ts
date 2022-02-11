@@ -73,11 +73,13 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window as any;
-    ethereum.removeListener('accountsChanged', handleAccountsChanged);
-    return () => {
-      if (ethereum.removeListener) {
-        ethereum.removeListener('accountsChanged', handleAccountsChanged);
-      }
-    };
+    if (ethereum) {
+      ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      return () => {
+        if (ethereum.removeListener) {
+          ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        }
+      };
+    }
   }, []);
 };
