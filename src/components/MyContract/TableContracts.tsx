@@ -31,7 +31,7 @@ import { DELAY_TIME } from 'consts/typeReward';
 import { errorMessage } from 'messages/errorMessages';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { useToast } from 'hooks/useToast';
-import { infoMessage } from '../../messages/infoMessages';
+import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
   title?: string;

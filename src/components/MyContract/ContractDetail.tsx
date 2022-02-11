@@ -6,7 +6,7 @@ import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatCType } from 'helpers/formatCType';
 import { formatPrice } from 'helpers/formatPrice';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
-import { useAppSelector } from '../../stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   mintDate: string;

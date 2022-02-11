@@ -34,7 +34,7 @@ import CubeDarkIcon from 'assets/images/cube-dark1.gif';
 import TessDarkIcon from 'assets/images/tess-dark1.gif';
 
 import { useLocation } from 'react-router-dom';
-import { infoMessage } from '../../../messages/infoMessages';
+import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
   status: 'success' | 'error' | 'pending';
