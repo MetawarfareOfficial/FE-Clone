@@ -80,6 +80,8 @@ export const useInactiveListener = (suppress = false) => {
           ethereum.removeListener('accountsChanged', handleAccountsChanged);
         }
       };
+    } else {
+      unAuthenticateUser();
     }
   }, []);
 };
