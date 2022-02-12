@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { IconButton } from '@mui/material';
 import { useWindowSize } from 'hooks/useWindowSize';
@@ -42,9 +42,6 @@ const WalletButton: React.FC<Props> = ({ onChange, mode }) => {
   const theme = useTheme();
   const bgColor =
     mode === 'logout' ? '#3864FF' : width < 900 ? (theme.palette.mode === 'light' ? '#E0E0E0' : '#4F4F4F') : '#E0E0E0';
-  useEffect(() => {
-    alert(bgColor);
-  }, [mode]);
   return (
     <ButtonMode onClick={onChange} bgColor={bgColor} hoverEnable={width < 900 ? false : true}>
       <img alt="" src={LightWallet} />
