@@ -2,7 +2,6 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import ConnectWallet from 'components/ConnectWallet';
 import { useAppSelector } from 'stores/hooks';
-import { useLocation } from 'react-router-dom';
 import { formatUserAddress } from 'helpers';
 import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
 
@@ -33,15 +32,6 @@ const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg, theme }) => ({
     minHeight: isBg ? '90px' : '40px',
     padding: isBg ? '16px 22px 16px 24px' : 0,
   },
-}));
-
-const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontSize: '16px',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-  fontWeight: '600',
-  lineHeight: '30px',
-  fontFamily: 'Poppins',
-  width: '479px',
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -76,8 +66,8 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const Banner: React.FC<Props> = ({ isBg }) => {
-  const isMintContractLocation = useLocation().pathname === '/mint-contracts';
+const Banner: React.FC<Props> = () => {
+  // const isMintContractLocation = useLocation().pathname === '/mint-contracts';
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isLogin = useAppSelector((state) => state.user.isLogin);
@@ -85,10 +75,10 @@ const Banner: React.FC<Props> = ({ isBg }) => {
   // const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
 
   return (
-    <BannerWrapper isBg={isBg}>
-      {isMintContractLocation && (
+    <BannerWrapper isBg={false}>
+      {/* {isMintContractLocation && (
         <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
-      )}
+      )} */}
 
       <BoxRight>
         {currentUserAddress && isLogin && (

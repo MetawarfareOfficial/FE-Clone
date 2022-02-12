@@ -1,53 +1,299 @@
 import React from 'react';
-// import { styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 import {
-  Paper,
+  Box,
+  BoxProps,
   Table,
-  // TableProps,
+  TableProps,
   TableContainer,
-  // TableContainerProps,
+  TableContainerProps,
   TableBody,
   // TableBodyProps,
   TableCell,
-  // TableCellProps,
+  TableCellProps,
   TableHead,
-  // TableHeadProps,
   TableRow,
-  // TableRowProps,
+  TableRowProps,
+  Typography,
+  TypographyProps,
 } from '@mui/material';
+
+import PaginationCustom from 'components/Base/Pagination';
 
 interface Props {
   data: Array<any>;
 }
 
-const TableInvestments: React.FC<Props> = ({ data }) => {
-  return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
+interface TextUnitProps {
+  status: 'increase' | 'decrease';
+}
 
-        <TableBody>
-          {data.map((item, i) => (
-            <TableRow key={i}>
-              <TableCell>{item.name}</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat&nbsp;(g)</TableCell>
-              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+const Wrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => ({
+  width: '100%',
+  background:
+    theme.palette.mode === 'light'
+      ? '#fff'
+      : `linear-gradient(136.53deg, rgba(255, 255, 255, 0.126) 1.5%, rgba(255, 255, 255, 0) 48.05%, 
+        rgba(255, 255, 255, 0.1739) 107.89%)`,
+  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+  borderRadius: '22px',
+  padding: 1,
+  // padding: '8px 19px 5px',
+  boxSizing: 'border-box',
+}));
+
+const ViewPagination = styled(Box)<BoxProps>(() => ({
+  width: '100%',
+  textAlign: 'right',
+  marginTop: '21px',
+
+  'nav > ul': {
+    display: 'inline-flex',
+  },
+}));
+
+const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
+  borderCollapse: 'separate',
+  borderSpacing: '0px 14px',
+  padding: '8px 19px 5px',
+  boxSizing: 'border-box',
+  borderRadius: '22px',
+  background: theme.palette.mode === 'light' ? '#fff' : `#252525`,
+
+  '.noData': {
+    background: 'none',
+    boxShadow: 'none',
+  },
+}));
+
+const TableCellHead = styled(TableCell)<TableCellProps>(({ theme }) => ({
+  fontFamily: 'Roboto',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontSize: '14px',
+  lineHeight: '16px',
+  color: theme.palette.mode === 'light' ? '#BDBDBD' : '#4F4F4F',
+  padding: '10px',
+  border: 'none',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '6px',
+    fontSize: '12px',
+    lineHeight: '14px',
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: '6px',
+    fontSize: '11px',
+    lineHeight: '13px',
+  },
+}));
+
+const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontSize: '14px',
+  lineHeight: '21px',
+  color: theme.palette.mode === 'light' ? '#000' : '#fff',
+  padding: '10px',
+  border: 'none',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '6px',
+    fontSize: '12px',
+    lineHeight: '18px',
+  },
+}));
+
+const TableRowHead = styled(TableRow)<TableRowProps>(({ theme }) => ({
+  'th:first-child': {
+    paddingLeft: '28px',
+  },
+  'th:last-child': {
+    paddingRight: '0px',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    'th:first-child': {
+      paddingLeft: '14px',
+    },
+    'th:last-child': {
+      paddingRight: '14px',
+    },
+  },
+}));
+
+const TableRowContent = styled(TableRow)<TableRowProps>(({ theme }) => ({
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#2F2F2F',
+  boxShadow: theme.palette.mode === 'light' ? '0px -1px 10px rgba(0, 0, 0, 0.07)' : 'unset',
+  borderRadius: '11px',
+
+  'td:first-child': {
+    paddingLeft: '28px',
+    borderRadius: '11px 0 0 11px',
+  },
+  'td:last-child': {
+    paddingRight: '45px',
+    borderRadius: '0 11px 11px 0',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    'td:first-child': {
+      paddingLeft: '14px',
+    },
+    'td:last-child': {
+      paddingRight: '14px',
+    },
+  },
+}));
+
+const TextCenter = styled(Box)<BoxProps>(() => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+}));
+
+const TextUnit = styled(Typography)<TextUnitProps>(({ status, theme }) => ({
+  fontFamily: 'Roboto',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontSize: '14px',
+  lineHeight: '21px',
+  color:
+    status === 'increase'
+      ? '#119F19'
+      : status === 'decrease'
+      ? '#CE3737'
+      : theme.palette.mode === 'light'
+      ? '#000'
+      : '#fff',
+  marginRight: '4px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
+  },
+}));
+
+const ViewIcon = styled('img')(({ theme }) => ({
+  width: '32px',
+  height: '32px',
+  marginRight: '19px',
+
+  [theme.breakpoints.down('lg')]: {
+    width: '26px',
+    height: '26px',
+    marginRight: '10px',
+  },
+}));
+
+const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
+  fontFamily: 'Roboto',
+  fontWeight: 'normal',
+  fontSize: '20px',
+  lineHeight: '23px',
+  textAlign: 'center',
+  color: theme.palette.mode === 'light' ? '#4F4F4F' : '#4F4F4F',
+  width: '100%',
+  height: '100%',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  minHeight: '353px',
+  // background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
+  // boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+  // borderRadius: '22px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '18px',
+    lineHeight: '22px',
+    // minHeight: '400px',
+  },
+  [theme.breakpoints.down('md')]: {
+    // minHeight: '200px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    // minHeight: '80px',
+    background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
+    boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+    borderRadius: '22px',
+  },
+}));
+
+const TableInvestments: React.FC<Props> = ({ data }) => {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage] = React.useState(5);
+
+  const handleChangePage = (index: number) => {
+    setPage(index - 1);
+  };
+
+  return (
+    <Box>
+      <Wrapper>
+        <TableCustom aria-label="simple table">
+          <TableHead>
+            <TableRowHead>
+              <TableCellHead>Token Name</TableCellHead>
+              <TableCellHead align="center">Token Price</TableCellHead>
+              <TableCellHead align="center">Our Holdings</TableCellHead>
+              <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
+              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
+            </TableRowHead>
+          </TableHead>
+
+          <TableBody>
+            {(rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map(
+              (item, i) => (
+                <TableRowContent key={i}>
+                  <TableCellContent>
+                    <TextCenter>
+                      <ViewIcon alt="" src={item.icon} />
+                      {item.name}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {item.token_price}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>{item.our_holdings}</TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {item.initial}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="right">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {item.current_investment}
+                    </TextCenter>
+                  </TableCellContent>
+                </TableRowContent>
+              ),
+            )}
+
+            {data.length === 0 && (
+              <TableRowContent className="noData">
+                <TableCellContent colSpan={5}>
+                  <TextNoData>No investments yet!</TextNoData>
+                </TableCellContent>
+              </TableRowContent>
+            )}
+          </TableBody>
+        </TableCustom>
+      </Wrapper>
+
+      {data.length > 0 && (
+        <ViewPagination>
+          <PaginationCustom total={data.length} limit={rowsPerPage} page={page + 1} onChange={handleChangePage} />
+        </ViewPagination>
+      )}
+    </Box>
   );
 };
 
