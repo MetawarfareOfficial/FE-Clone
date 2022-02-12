@@ -99,7 +99,7 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
             <TableHeaderText fontSize={fontSize} align="center">
               Amount
             </TableHeaderText>
-            <TableHeaderText fontSize={fontSize} align="right">
+            <TableHeaderText fontSize={fontSize} align="center">
               $ value
             </TableHeaderText>
           </TableRow>
@@ -114,7 +114,7 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
                     </TextToken>
                   </TableContentText>
                   <TableContentText align="center">{item.amount}</TableContentText>
-                  <TableContentText align="right">${item.value}</TableContentText>
+                  <TableContentText align="center">${item.value}</TableContentText>
                 </TableRow>
               ))
             : ''}

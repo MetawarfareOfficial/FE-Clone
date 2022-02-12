@@ -49,7 +49,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: 'bold',
   fontSize: '24px',
   lineHeight: '28px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#828282',
   marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {
@@ -66,13 +66,33 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
-  background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
+const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
+  background:
+    theme.palette.mode === 'light'
+      ? '#FFFFFF'
+      : `linear-gradient(136.53deg, rgba(255, 255, 255, 0.126) 1.5%, rgba(255, 255, 255, 0) 48.05%, 
+        rgba(255, 255, 255, 0.1739) 107.89%)`,
   borderRadius: '20px',
   overflow: 'hidden',
   height: '100%',
   minHeight: '167px',
   boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.05)',
+  position: 'relative',
+  padding: '1px',
+  boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    minHeight: '140px',
+    width: '265px',
+    marginRight: '32px',
+  },
+}));
+
+const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
+  borderRadius: '20px',
+  overflow: 'hidden',
+  height: '100%',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#252525',
 
   [theme.breakpoints.up('xl')]: {
     minHeight: '200px',
@@ -84,11 +104,6 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
     minHeight: '140px',
     width: 'auto',
     marginRight: '0',
-  },
-  [theme.breakpoints.down('sm')]: {
-    minHeight: '140px',
-    width: '265px',
-    marginRight: '32px',
   },
 }));
 
@@ -113,8 +128,10 @@ const BoxHeader = styled(Box)<BoxCustomProps>(({ color, theme }) => ({
   },
 }));
 
-const BoxContent = styled(Box)<BoxProps>(() => ({
+const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   padding: '4px 8px',
+  height: 'calc(100% - 43px)',
+  background: theme.palette.mode === 'light' ? '#fff' : '#252525',
 }));
 
 const Holdings: React.FC<Props> = () => {
@@ -257,13 +274,17 @@ const Holdings: React.FC<Props> = () => {
         <Grid container spacing={{ xs: '24px', lg: '32px' }}>
           {dataHoldings.map((item, i) => (
             <Grid item xs={6} sm={6} lg={3} key={i}>
-              <BoxDetail>
-                <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>{item.title}</BoxHeader>
+              <BoxItem>
+                <BoxDetail>
+                  <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
+                    {item.title}
+                  </BoxHeader>
 
-                <BoxContent>
-                  <TableTokens fontSize="12px" data={renderData(item.key)} />
-                </BoxContent>
-              </BoxDetail>
+                  <BoxContent>
+                    <TableTokens fontSize="12px" data={renderData(item.key)} />
+                  </BoxContent>
+                </BoxDetail>
+              </BoxItem>
             </Grid>
           ))}
         </Grid>
@@ -274,15 +295,17 @@ const Holdings: React.FC<Props> = () => {
           <div className="scroll-area__body">
             {dataHoldings.map((item, i) => (
               <div key={i} className={`scroll-area__column item${i + 1}`}>
-                <BoxDetail>
-                  <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
-                    {item.title}
-                  </BoxHeader>
+                <BoxItem>
+                  <BoxDetail>
+                    <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
+                      {item.title}
+                    </BoxHeader>
 
-                  <BoxContent>
-                    <TableTokens fontSize="12px" data={renderData(item.key)} />
-                  </BoxContent>
-                </BoxDetail>
+                    <BoxContent>
+                      <TableTokens fontSize="12px" data={renderData(item.key)} />
+                    </BoxContent>
+                  </BoxDetail>
+                </BoxItem>
               </div>
             ))}
           </div>

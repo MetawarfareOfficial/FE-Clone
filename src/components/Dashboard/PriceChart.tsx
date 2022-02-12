@@ -52,7 +52,7 @@ const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
       : 'linear-gradient(0deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03))',
   // backdropFilter: theme.palette.mode === 'light' ? 'unset' : 'blur(279px)',
   borderRadius: '26px',
-  padding: '35px 0 20px 30px',
+  padding: '22px 0 20px 30px',
   boxSizing: 'border-box',
   width: '100%',
   height: '100%',
@@ -75,16 +75,40 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
 
   useEffect(() => {
     if (heightTotal) {
-      const newHeight = heightTotal - 85;
+      const newHeight = heightTotal - 85 - 30;
       setHeightChart(newHeight);
     }
   }, [heightTotal]);
 
   return (
     <Wrapper>
-      <Title>Price Chart</Title>
+      <Title>Chart</Title>
+
+      <div className={`toggle-button-cover showMobile ${theme.palette.mode}Mode`}>
+        <div className="button-cover">
+          <div className="button b2" id="button-10">
+            <input type="checkbox" className="checkbox" />
+            <div className="knobs">
+              <span>Token price</span>
+            </div>
+            <div className="layer"></div>
+          </div>
+        </div>
+      </div>
 
       <ViewChart>
+        <div className={`toggle-button-cover showDesktop ${theme.palette.mode}Mode`}>
+          <div className="button-cover">
+            <div className="button b2" id="button-10">
+              <input type="checkbox" className="checkbox" />
+              <div className="knobs">
+                <span>Token price</span>
+              </div>
+              <div className="layer"></div>
+            </div>
+          </div>
+        </div>
+
         <div
           style={{
             width: width < 480 ? 'calc(100% + 30px)' : '100%',
