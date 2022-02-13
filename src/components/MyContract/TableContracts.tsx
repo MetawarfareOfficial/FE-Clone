@@ -37,7 +37,8 @@ interface Props {
 }
 
 const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
-  minHeight: 'calc(100vh - 119px - 315px)',
+  // minHeight: 'calc(100vh - 50px - 315px)',
+  minHeight: 'calc(100vh - 50px - 300px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
