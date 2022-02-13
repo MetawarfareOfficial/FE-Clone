@@ -50,7 +50,7 @@ const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
   background: 'none',
   boxShadow: 'none',
   boxSizing: 'border-box',
-  minHeight: '550px',
+  // minHeight: '550px',
 
   [theme.breakpoints.down('lg')]: {
     padding: ' 0',

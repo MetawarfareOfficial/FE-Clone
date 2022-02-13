@@ -3,7 +3,14 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 import TypeReward from './TypeReward';
-import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
+import {
+  SquareIcon,
+  CubeIcon,
+  TessIcon,
+  SquareDarkDefaultIcon,
+  CubeDarkDefaultIcon,
+  TessDarkDefaultIcon,
+} from 'assets/images';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 
@@ -54,7 +61,7 @@ const TypesReward: React.FC<Props> = () => {
       <TypeReward
         id={0}
         name="Square Contract"
-        icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon}
+        icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkDefaultIcon}
         color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
         colorChart={theme.palette.mode === 'light' ? '#A1A1E1' : width < 600 ? '#934EA0' : '#3864FF'}
         value={dataPrice.square}
@@ -64,7 +71,7 @@ const TypesReward: React.FC<Props> = () => {
       <TypeReward
         id={1}
         name="Cube Contract"
-        icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
+        icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkDefaultIcon}
         color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
         // colorChart="#9DE6AB"
         colorChart={theme.palette.mode === 'light' ? '#9DE6AB' : width < 600 ? '#4F9F96' : '#3864FF'}
@@ -75,7 +82,7 @@ const TypesReward: React.FC<Props> = () => {
       <TypeReward
         id={2}
         name="Tesseract Contract"
-        icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
+        icon={theme.palette.mode === 'light' ? TessIcon : TessDarkDefaultIcon}
         color={
           theme.palette.mode === 'light' ? '#DBECFD' : 'linear-gradient(125.46deg, #2978F4 42.78%, #23ABF8 129.61%)'
         }

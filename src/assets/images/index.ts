@@ -5,3 +5,7 @@ export { default as TessIcon } from 'assets/images/tess.gif';
 export { default as SquareDarkIcon } from 'assets/images/square-dark1.gif';
 export { default as CubeDarkIcon } from 'assets/images/cube-dark1.gif';
 export { default as TessDarkIcon } from 'assets/images/tess-dark1.gif';
+
+export { default as SquareDarkDefaultIcon } from 'assets/images/square-dark.gif';
+export { default as CubeDarkDefaultIcon } from 'assets/images/cube-dark.gif';
+export { default as TessDarkDefaultIcon } from 'assets/images/tess-dark.gif';

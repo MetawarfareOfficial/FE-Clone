@@ -175,7 +175,7 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
   boxShadow: '0px 23px 48px rgba(0, 0, 0, 0.06)',
   border: 'none',
   borderRadius: '20px',
-  maxHeight: 'calc(100vh - 119px - 212px)',
+  maxHeight: 'calc(100vh - 50px - 200px)',
 
   '&::-webkit-scrollbar-button': {
     height: '9px',

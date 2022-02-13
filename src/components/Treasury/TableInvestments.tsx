@@ -76,6 +76,7 @@ const TableCellHead = styled(TableCell)<TableCellProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#BDBDBD' : '#4F4F4F',
   padding: '10px',
   border: 'none',
+  width: '20%',
 
   [theme.breakpoints.down('lg')]: {
     padding: '6px',
@@ -98,6 +99,7 @@ const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#000' : '#fff',
   padding: '10px',
   border: 'none',
+  width: '20%',
 
   [theme.breakpoints.down('lg')]: {
     padding: '6px',
@@ -200,20 +202,13 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   minHeight: '353px',
-  // background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
-  // boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
-  // borderRadius: '22px',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '18px',
     lineHeight: '22px',
-    // minHeight: '400px',
   },
-  [theme.breakpoints.down('md')]: {
-    // minHeight: '200px',
-  },
+  [theme.breakpoints.down('md')]: {},
   [theme.breakpoints.down('sm')]: {
-    // minHeight: '80px',
     background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
     boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
     borderRadius: '22px',
