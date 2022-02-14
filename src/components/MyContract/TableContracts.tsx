@@ -21,7 +21,7 @@ import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatPrice } from 'helpers/formatPrice';
 import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
-import { claimAllNodes, claimNodeByNode } from 'helpers/interractiveContract';
+import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
 import { sleep } from 'helpers/delayTime';
@@ -212,7 +212,7 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
   },
 }));
 
-const STATUS = ['success', 'error', 'pending'];
+const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
 const CustomTableBody = styled(TableBody)<TableBodyProps>(() => ({
   overflow: 'auto',
@@ -279,6 +279,12 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       processIcon('');
       dispatch(setIsClaimingReward());
 
+      const claimPermit = await getClaimPermit();
+      if (!claimPermit[0]) {
+        setStatus(STATUS[3]);
+        return;
+      }
+
       const response: Record<string, any> = await claimAllNodes();
       await sleep(DELAY_TIME);
 
@@ -297,6 +303,14 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       processModal(`${formatCType(cType)} Contract`);
       processIcon(cType);
       dispatch(setIsClaimingReward());
+
+      const claimPermit = await getClaimPermit();
+      if (claimPermit[0]) {
+        processModal('');
+        processIcon('');
+        setStatus(STATUS[3]);
+        return;
+      }
 
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       await sleep(DELAY_TIME);
@@ -388,11 +402,13 @@ const TableContracts: React.FC<Props> = ({ data }) => {
           status={status}
           text={
             status === 'success'
-              ? 'Rewards claimed successfully'
+              ? infoMessage.REWARD_CLAIM_OK.message
               : status === 'error'
               ? infoMessage.REWARD_CLAIM_FAILED.message
               : status === 'pending'
-              ? 'Processing'
+              ? infoMessage.PROCESSING.message
+              : status === 'permission denied'
+              ? infoMessage.PERMISSION_DENIED.message
               : 'Insufficient Tokens'
           }
           onClose={handleToggleStatus}

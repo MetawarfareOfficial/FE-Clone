@@ -15,4 +15,16 @@ export const infoMessage = {
     title: 'mint status modal',
     message: 'Rewards claiming failed',
   },
+  PERMISSION_DENIED: {
+    title: 'mint status modal',
+    message: 'Sorry, there is an unexpected system error. Please try again later.',
+  },
+  PROCESSING: {
+    title: 'mint status modal',
+    message: 'Processing',
+  },
+  REWARD_CLAIM_OK: {
+    title: 'mint status modal',
+    message: 'Rewards claimed successfully',
+  },
 };

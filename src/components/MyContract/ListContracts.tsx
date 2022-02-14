@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
 
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
-import { claimAllNodes, claimNodeByNode } from 'helpers/interractiveContract';
+import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { DELAY_TIME } from 'consts/typeReward';
 import { formatCType } from 'helpers/formatCType';
@@ -128,6 +128,12 @@ const ListContracts: React.FC<Props> = ({ data }) => {
       processIcon('');
       dispatch(setIsClaimingReward());
 
+      const claimPermit = await getClaimPermit();
+      if (!claimPermit[0]) {
+        setStatus(STATUS[3]);
+        return;
+      }
+
       const response: Record<string, any> = await claimAllNodes();
       await sleep(DELAY_TIME);
 
@@ -146,6 +152,14 @@ const ListContracts: React.FC<Props> = ({ data }) => {
       processModal(formatCType(cType));
       processIcon(cType);
       dispatch(setIsClaimingReward());
+
+      const claimPermit = await getClaimPermit();
+      if (claimPermit[0]) {
+        processModal('');
+        processIcon('');
+        setStatus(STATUS[3]);
+        return;
+      }
 
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       await sleep(DELAY_TIME);

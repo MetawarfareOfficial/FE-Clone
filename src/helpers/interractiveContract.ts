@@ -177,3 +177,11 @@ export const getInitApyOfNodes = async (): Promise<[string]> => {
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getClaimPermit = async (): Promise<[boolean]> => {
+  try {
+    return contractWithoutSigner.functions.enableCashout.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};

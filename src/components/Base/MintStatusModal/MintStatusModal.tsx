@@ -43,6 +43,7 @@ interface Props {
 
 interface TypographyCustomProps {
   claimFailed: boolean;
+  permissionDenied: boolean;
 }
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
@@ -139,8 +140,8 @@ const ViewImage = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const StatusText = styled(Typography)<TypographyCustomProps>(({ claimFailed }) => ({
-  maxWidth: '221px',
+const StatusText = styled(Typography)<TypographyCustomProps>(({ claimFailed, permissionDenied }) => ({
+  maxWidth: permissionDenied ? '250px' : '221px',
   fontFamily: 'Poppins',
   fontWeight: 'bold',
   fontSize: '18px',
@@ -232,6 +233,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
                 : '#fff',
           }}
           claimFailed={text === infoMessage.REWARD_CLAIM_FAILED.message}
+          permissionDenied={text === infoMessage.PERMISSION_DENIED.message}
         >
           {text}
         </StatusText>
