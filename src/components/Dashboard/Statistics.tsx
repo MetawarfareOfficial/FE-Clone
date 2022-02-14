@@ -152,7 +152,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
       {
         title: 'MY CONTRACTS',
         value: `${nodes}/100`,
-        nameBtn: 'Mint contract',
+        nameBtn: 'Mint contracts',
         linkTo: '/mint-contracts',
       },
       {
