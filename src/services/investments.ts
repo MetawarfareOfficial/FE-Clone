@@ -2,29 +2,24 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { get } from 'lodash';
 import axios from 'axios';
 import { getJsonDataFromString } from 'helpers';
-
-interface Investment {
-  name: string;
-  amount: number;
-  '$ value': string;
-}
+import { BaseInvest } from 'interfaces/Invest';
 
 type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 
 interface InitState {
-  investments: Investment[] | null;
+  investments: BaseInvest[] | [];
   status: Status;
   error: string | undefined;
 }
 
 const initialState: InitState = {
-  investments: null,
+  investments: [],
   status: 'idle',
   error: undefined,
 };
 
 export const fetchInvestments = createAsyncThunk('get/investment', async () => {
-  const response = await axios.get(`${process.env.REACT_APP_GIST_URL}`);
+  const response = await axios.get(`${process.env.REACT_APP_GIST_URL}${process.env.REACT_APP_GIST_TOKEN_ID}`);
   return response.data;
 });
 
@@ -43,7 +38,8 @@ export const investmentsSlice = createSlice({
         state.investments = getJsonDataFromString(payload);
       })
       .addCase(fetchInvestments.rejected, (state, action) => {
-        (state.status = 'failed'), (state.error = action.error.message);
+        state.status = 'failed';
+        state.error = action.error.message;
       });
   },
 });

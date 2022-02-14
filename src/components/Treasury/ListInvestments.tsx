@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
+import { getIconUrlBySymbol } from 'helpers/getIconBySymbol';
 
 interface Props {
   data: Array<any>;
@@ -116,11 +117,11 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                 <Grid item xs={5}>
                   <Title>Token Name</Title>
                   <TextCenter>
-                    <ViewIcon alt="" src={item.icon} />
+                    <ViewIcon alt="icon token" src={getIconUrlBySymbol(item.symbol)} />
                     {item.name}
                   </TextCenter>
                 </Grid>
-                <Grid item xs={7}></Grid>
+                <Grid item xs={7} />
 
                 <Grid item xs={5}>
                   <Title>Token Price</Title>

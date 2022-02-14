@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 
 import PaginationCustom from 'components/Base/Pagination';
+import { formatPrice } from '../../helpers/formatPrice';
 
 interface Props {
   data: Array<any>;
@@ -250,7 +251,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {item.token_price}
+                      {formatPrice(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
@@ -259,13 +260,13 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {item.initial}
+                      {formatPrice(item.initial)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="right">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {item.current_investment}
+                      {formatPrice(item.current_investment)}
                     </TextCenter>
                   </TableCellContent>
                 </TableRowContent>

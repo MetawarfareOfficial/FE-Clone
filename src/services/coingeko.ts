@@ -12,6 +12,7 @@ const initialState = {
   marketLoading: false,
   holdingTokenLoadCompleted: false,
   marketLoadingError: false,
+  marketPriceData: [],
 };
 
 export const getPrice30DaysAgo = createAsyncThunk('get/dataChart', async (params: object) => {
@@ -39,6 +40,12 @@ export const getLast30DaysMarketData = createAsyncThunk('get/marketCapHistoryDat
       params,
     },
   );
+});
+
+export const getMarketPriceData = createAsyncThunk('get/priceMarketData', async (params: object) => {
+  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/markets`, {
+    params,
+  });
 });
 
 const coingekoSlice = createSlice({
@@ -75,6 +82,9 @@ const coingekoSlice = createSlice({
     [getHoldingWalletTokenData.fulfilled.type]: (state, action) => {
       state.holdingWalletTokenPrice = action.payload.data;
       state.holdingTokenLoadCompleted = true;
+    },
+    [getMarketPriceData.fulfilled.type]: (state, action) => {
+      state.marketPriceData = action.payload.data;
     },
   },
 });
