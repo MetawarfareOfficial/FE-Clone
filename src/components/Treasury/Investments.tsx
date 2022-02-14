@@ -10,12 +10,13 @@ import ListInvestments from './ListInvestments';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { fetchInvestments } from 'services/investments';
 import { useToast } from 'hooks/useToast';
-import { getMarketPriceData } from '../../services/coingeko';
-import { Coin } from '../../interfaces/Coin';
-import { BaseInvest, Invest } from '../../interfaces/Invest';
+import { getMarketPriceData } from 'services/coingeko';
+import { Coin } from 'interfaces/Coin';
+import { BaseInvest, Invest } from 'interfaces/Invest';
 import BigNumber from 'bignumber.js';
-import useInterval from '../../hooks/useInterval';
-import { DELAY_TIME } from '../../consts/investments';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/investments';
+import { uniqBy } from 'lodash';
 
 interface Props {
   title?: string;
@@ -93,8 +94,9 @@ const Investments: React.FC<Props> = () => {
 
   useEffect(() => {
     if (investments.length > 0 && marketPriceData.length > 0) {
-      setDataTableInvest(
-        investments.map((item: BaseInvest) => {
+      const investArr = investments
+        .filter((i: BaseInvest) => Object.values(i).every((x) => x !== ''))
+        .map((item: BaseInvest) => {
           const coin = marketPriceData.find((el: Coin) => el.symbol === item.symbol.toLowerCase());
           return coin
             ? ({
@@ -104,14 +106,19 @@ const Investments: React.FC<Props> = () => {
                 current_investment: new BigNumber(coin.current_price).times(item.our_holdings).toNumber(),
               } as Invest)
             : ({} as Invest);
-        }),
+        });
+
+      const uniqInvest = uniqBy(
+        investArr.filter((invest) => Object.keys(invest).length > 0),
+        (item) => item.symbol.toLowerCase(),
       );
+
+      setDataTableInvest(uniqInvest);
     }
   }, [marketPriceData, investments]);
 
   useInterval(() => {
     dispatch(getMarketPriceData({ vs_currency: 'usd', page: 1, per_page: 100 }));
-    // dispatch(fetchInvestments());
   }, DELAY_TIME);
 
   return (
