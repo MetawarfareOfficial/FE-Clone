@@ -30,9 +30,9 @@ import { TransitionProps } from '@mui/material/transitions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
-import SquareDarkIcon from 'assets/images/square-dark1.gif';
-import CubeDarkIcon from 'assets/images/cube-dark1.gif';
-import TessDarkIcon from 'assets/images/tess-dark1.gif';
+import SquareDarkIcon from 'assets/images/square-dark.gif';
+import CubeDarkIcon from 'assets/images/cube-dark.gif';
+import TessDarkIcon from 'assets/images/tess-dark.gif';
 
 import CloseImg from 'assets/images/ic-times.svg';
 import CloseDarkImg from 'assets/images/ic-close-dark.svg';
