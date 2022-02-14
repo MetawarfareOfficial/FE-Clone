@@ -14,6 +14,7 @@ interface Props {
   disabled?: boolean;
   connected?: any;
   data: Array<any>;
+  id?: string;
 }
 
 interface TitleProps extends TypographyProps {
@@ -232,12 +233,12 @@ const TotalMobile = styled(Typography)<TypographyCustomProps>(({ theme, rewards,
   textOverflow: 'ellipsis',
 }));
 
-const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected, data }) => {
+const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected, data, id }) => {
   const [width] = useWindowSize();
   const theme = useTheme();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const opacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '0.75' : '0.3';
-
+  const myRewardOpacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '1' : '0.3';
   if (width < 600) {
     return (
       <WrapperMobile color={color} opacity={opacity}>
@@ -263,7 +264,7 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected
     );
   } else {
     return (
-      <Wrapper color={color} opacity={opacity}>
+      <Wrapper color={color} opacity={id && id === 'my-reward' ? myRewardOpacity : opacity}>
         {icon && (
           <ViewImage>
             <img alt="" src={icon} />

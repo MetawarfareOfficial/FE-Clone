@@ -78,6 +78,7 @@ const Stats: React.FC<Props> = ({ countMyContract, data }) => {
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
           <Statistic
+            id="my-reward"
             color={
               currentUserAddress
                 ? theme.palette.mode === 'light'
@@ -102,7 +103,7 @@ const Stats: React.FC<Props> = ({ countMyContract, data }) => {
                 : '#3F3F3F'
             }
             // color={
-            //   currentUserAddress
+            //   currentUserAddress#D2FFDB
             //     ? (
             //         width < 600 && theme.palette.mode === 'light'
             //           ? '#EFE5FE'
