@@ -69,7 +69,7 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
-  fontWeight: 'normal',
+  fontWeight: '500',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
   maxWidth: '186px',
@@ -182,7 +182,7 @@ const Tokens: React.FC<Props> = () => {
                 <BoxSale>
                   <Sale>10%</Sale>
                   <Text>
-                    <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
+                    <span>Token</span> in Development/ Marketing Wallet as 100% USDC
                   </Text>
                 </BoxSale>
               </SliderItem>
