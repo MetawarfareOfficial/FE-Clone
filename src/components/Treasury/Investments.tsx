@@ -111,7 +111,7 @@ const Investments: React.FC<Props> = () => {
 
   useInterval(() => {
     dispatch(getMarketPriceData({ vs_currency: 'usd', page: 1, per_page: 100 }));
-    dispatch(fetchInvestments());
+    // dispatch(fetchInvestments());
   }, DELAY_TIME);
 
   return (

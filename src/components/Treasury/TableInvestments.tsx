@@ -21,6 +21,7 @@ import {
 
 import PaginationCustom from 'components/Base/Pagination';
 import { formatPrice } from '../../helpers/formatPrice';
+import { formatCapitalizeLetters } from '../../helpers/formatCapitalizeLetters';
 
 interface Props {
   data: Array<any>;
@@ -245,7 +246,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent>
                     <TextCenter>
                       <ViewIcon alt="" src={item.icon} />
-                      {item.name}
+                      {formatCapitalizeLetters(item.name)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
@@ -255,7 +256,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
-                    <TextCenter>{item.our_holdings}</TextCenter>
+                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>

@@ -1,7 +1,9 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
-import { getIconUrlBySymbol } from 'helpers/getIconBySymbol';
+import { formatCapitalizeLetters } from '../../helpers/formatCapitalizeLetters';
+import { formatPrice } from '../../helpers/formatPrice';
+import PaginationCustom from '../Base/Pagination';
 
 interface Props {
   data: Array<any>;
@@ -106,57 +108,82 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
+const ViewPagination = styled(Box)<BoxProps>(() => ({
+  width: '100%',
+  textAlign: 'right',
+  marginTop: '21px',
+
+  'nav > ul': {
+    display: 'inline-flex',
+  },
+}));
+
 const ListInvestments: React.FC<Props> = ({ data }) => {
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage] = React.useState(5);
+
+  const handleChangePage = (index: number) => {
+    setPage(index - 1);
+  };
+
   return (
-    <Wrapper>
-      {data.length > 0 ? (
-        data.map((item, i) => (
-          <InvestmentItem key={i}>
-            <BoxContent>
-              <Grid container spacing={'14px'}>
-                <Grid item xs={5}>
-                  <Title>Token Name</Title>
-                  <TextCenter>
-                    <ViewIcon alt="icon token" src={getIconUrlBySymbol(item.symbol)} />
-                    {item.name}
-                  </TextCenter>
-                </Grid>
-                <Grid item xs={7} />
+    <Box>
+      <Wrapper>
+        {data.length > 0 ? (
+          (rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map((item, i) => (
+            <InvestmentItem key={i}>
+              <BoxContent>
+                <Grid container spacing={'14px'}>
+                  <Grid item xs={5}>
+                    <Title>Token Name</Title>
+                    <TextCenter>
+                      <ViewIcon alt="icon token" src={item.icon} />
+                      {formatCapitalizeLetters(item.name)}
+                    </TextCenter>
+                  </Grid>
+                  <Grid item xs={7} />
 
-                <Grid item xs={5}>
-                  <Title>Token Price</Title>
-                  <TextCenter>
-                    <TextUnit status={item.status}>$</TextUnit>
-                    {item.token_price}
-                  </TextCenter>
-                </Grid>
-                <Grid item xs={7}>
-                  <Title>Initial Investment (USD)</Title>
-                  <TextCenter>
-                    <TextUnit status={item.status}>$</TextUnit>
-                    {item.initial}
-                  </TextCenter>
-                </Grid>
+                  <Grid item xs={5}>
+                    <Title>Token Price</Title>
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatPrice(item.token_price)}
+                    </TextCenter>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Title>Initial Investment (USD)</Title>
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatPrice(item.initial)}
+                    </TextCenter>
+                  </Grid>
 
-                <Grid item xs={5}>
-                  <Title>Our Holdings</Title>
-                  <TextCenter>{item.our_holdings}</TextCenter>
+                  <Grid item xs={5}>
+                    <Title>Our Holdings</Title>
+                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <Title>Current investment value (USD)</Title>
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatPrice(item.current_investment)}
+                    </TextCenter>
+                  </Grid>
                 </Grid>
-                <Grid item xs={7}>
-                  <Title>Current investment value (USD)</Title>
-                  <TextCenter>
-                    <TextUnit status={item.status}>$</TextUnit>
-                    {item.current_investment}
-                  </TextCenter>
-                </Grid>
-              </Grid>
-            </BoxContent>
-          </InvestmentItem>
-        ))
-      ) : (
-        <TextNoData>No investments yet!</TextNoData>
+              </BoxContent>
+            </InvestmentItem>
+          ))
+        ) : (
+          <TextNoData>No investments yet!</TextNoData>
+        )}
+      </Wrapper>
+
+      {data.length > 0 && (
+        <ViewPagination>
+          <PaginationCustom total={data.length} limit={rowsPerPage} page={page + 1} onChange={handleChangePage} />
+        </ViewPagination>
       )}
-    </Wrapper>
+    </Box>
   );
 };
 
