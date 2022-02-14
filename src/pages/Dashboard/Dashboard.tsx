@@ -84,6 +84,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         </Grid>
         <Grid item xs={12} md={8}>
           <PriceChart
+            changeChart={setIsPriceChartOpened}
             heightTotal={heightTotal}
             YDataKey={isPriceChartOpened ? 'price' : 'marketCap'}
             data={isPriceChartOpened ? tokenPrices : marketCapHistory}

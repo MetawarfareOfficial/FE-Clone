@@ -14,6 +14,7 @@ interface Props {
   data: Array<any>;
   XDataKey?: string;
   YDataKey?: string;
+  changeChart: (isOpenPriceChart: boolean) => void;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -68,7 +69,7 @@ const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDataKey = 'price' }) => {
+const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDataKey = 'price', changeChart }) => {
   const [width] = useWindowSize();
   const theme = useTheme();
   const [heightChart, setHeightChart] = useState(500);
@@ -80,6 +81,12 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
     }
   }, [heightTotal]);
 
+  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      changeChart(false);
+    } else changeChart(true);
+  };
+
   return (
     <Wrapper>
       <Title>Chart</Title>
@@ -87,7 +94,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
       <div className={`toggle-button-cover showMobile ${theme.palette.mode}Mode`}>
         <div className="button-cover">
           <div className="button b2" id="button-10">
-            <input type="checkbox" className="checkbox" />
+            <input onChange={handleCheckBoxChange} type="checkbox" className="checkbox" />
             <div className="knobs">
               <span>Token price</span>
             </div>
@@ -100,7 +107,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
         <div className={`toggle-button-cover showDesktop ${theme.palette.mode}Mode`}>
           <div className="button-cover">
             <div className="button b2" id="button-10">
-              <input type="checkbox" className="checkbox" />
+              <input onChange={handleCheckBoxChange} type="checkbox" className="checkbox" />
               <div className="knobs">
                 <span>Token price</span>
               </div>
