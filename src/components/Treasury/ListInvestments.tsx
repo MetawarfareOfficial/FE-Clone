@@ -54,6 +54,7 @@ const ViewIcon = styled('img')(() => ({
   width: '21px',
   height: '21px',
   marginRight: '7px',
+  borderRadius: '100%',
 }));
 
 const TextCenter = styled(Box)<BoxProps>(({ theme }) => ({

@@ -185,11 +185,13 @@ const ViewIcon = styled('img')(({ theme }) => ({
   width: '32px',
   height: '32px',
   marginRight: '19px',
+  borderRadius: '100%',
 
   [theme.breakpoints.down('lg')]: {
     width: '26px',
     height: '26px',
     marginRight: '10px',
+    borderRadius: '100%',
   },
 }));
 
