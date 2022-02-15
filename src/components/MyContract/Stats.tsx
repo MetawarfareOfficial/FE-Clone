@@ -16,6 +16,7 @@ import RewardsDarkIcon from 'assets/images/rewards-dark.gif';
 import { CountMyContract } from 'interfaces/CountMyContract';
 import { useAppSelector } from 'stores/hooks';
 import { formatReward } from 'helpers';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 
 interface Props {
   countMyContract: CountMyContract;
@@ -118,7 +119,7 @@ const Stats: React.FC<Props> = ({ countMyContract, data }) => {
             //     : '#262626'
             // }
             title={width < 600 ? 'Rewards' : 'My Rewards'}
-            value={`${formatReward(String(dataRewardAmount))}`}
+            value={`${formatForNumberLessThanCondition(formatReward(String(dataRewardAmount)), 0.001)}`}
             icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
             connected={currentUserAddress}
             data={data}

@@ -102,7 +102,7 @@ const MyContract: React.FC<Props> = () => {
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
       dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
-      const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e9);
+      const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e18);
 
       dispatch(setDataMyContracts(dataCt));
       dispatch(setRewardAmount(dataRw));
