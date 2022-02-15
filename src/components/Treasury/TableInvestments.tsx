@@ -256,6 +256,31 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
     setPage(index - 1);
   };
 
+  if (status === 'loading') {
+    return (
+      <Box>
+        <Wrapper>
+          <TableCustom aria-label="simple table">
+            <TableHead>
+              <TableRowHead>
+                <TableCellHead>Token Name</TableCellHead>
+                <TableCellHead align="center">Token Price</TableCellHead>
+                <TableCellHead align="center">Our Holdings</TableCellHead>
+                <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
+                <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
+              </TableRowHead>
+            </TableHead>
+            <TableBody>
+              {[...Array(5)].map((i) => (
+                <TableSkeleton key={i} />
+              ))}
+            </TableBody>
+          </TableCustom>
+        </Wrapper>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Wrapper>
@@ -271,49 +296,47 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           </TableHead>
 
           <TableBody>
-            {status === 'loading'
-              ? [...Array(rowsPerPage)].map((i) => <TableSkeleton key={i} />)
-              : (rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map(
-                  (item, i) => (
-                    <TableRowContent key={i}>
-                      <TableCellContent>
-                        <TextCenter>
-                          <ViewIcon alt="" src={item.icon} />
-                          {formatCapitalizeLetters(item.name)}
-                        </TextCenter>
-                      </TableCellContent>
-                      <TableCellContent align="center">
-                        <TextCenter>
-                          <TextUnit status={item.status}>$</TextUnit>
-                          {formatPrice(item.token_price)}
-                        </TextCenter>
-                      </TableCellContent>
-                      <TableCellContent align="center">
-                        <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
-                      </TableCellContent>
-                      <TableCellContent align="center">
-                        <TextCenter>
-                          <TextUnit status={item.status}>$</TextUnit>
-                          {formatPrice(item.initial)}
-                        </TextCenter>
-                      </TableCellContent>
-                      <TableCellContent align="right">
-                        <TextCenter>
-                          <TextUnit status={item.status}>$</TextUnit>
-                          {formatPrice(item.current_investment)}
-                        </TextCenter>
-                      </TableCellContent>
-                    </TableRowContent>
-                  ),
+            {(rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map(
+              (item, i) => (
+                <TableRowContent key={i}>
+                  <TableCellContent>
+                    <TextCenter>
+                      <ViewIcon alt="" src={item.icon} />
+                      {formatCapitalizeLetters(item.name)}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatPrice(item.token_price)}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>{item.our_holdings}</TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatPrice(item.initial)}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="right">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatPrice(item.current_investment)}
+                    </TextCenter>
+                  </TableCellContent>
+                </TableRowContent>
+              ),
+            )}
 
-                  data.length === 0 && (
-                    <TableRowContent className="noData">
-                      <TableCellContent colSpan={5}>
-                        <TextNoData>No investments yet!</TextNoData>
-                      </TableCellContent>
-                    </TableRowContent>
-                  ),
-                )}
+            {data.length === 0 && (
+              <TableRowContent className="noData">
+                <TableCellContent colSpan={5}>
+                  <TextNoData>No investments yet!</TextNoData>
+                </TableCellContent>
+              </TableRowContent>
+            )}
           </TableBody>
         </TableCustom>
       </Wrapper>

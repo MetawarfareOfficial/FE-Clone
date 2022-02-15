@@ -4,6 +4,8 @@ import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material'
 import { formatCapitalizeLetters } from '../../helpers/formatCapitalizeLetters';
 import { formatPrice } from '../../helpers/formatPrice';
 import PaginationCustom from '../Base/Pagination';
+import Skeleton from '@mui/material/Skeleton';
+import { useAppSelector } from '../../stores/hooks';
 
 interface Props {
   data: Array<any>;
@@ -119,13 +121,64 @@ const ViewPagination = styled(Box)<BoxProps>(() => ({
   },
 }));
 
+const ListSkeleton: React.FC = () => {
+  return (
+    <InvestmentItem>
+      <BoxContent>
+        <Grid container spacing={'14px'}>
+          <Grid item xs={5}>
+            <Title>Token Name</Title>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Skeleton variant="circular" width={26} height={26} />
+              <Skeleton animation="wave" width={'70%'} />
+            </div>
+          </Grid>
+          <Grid item xs={7} />
+
+          <Grid item xs={5}>
+            <Title>Token Price</Title>
+            <Skeleton animation="wave" height={26} />
+          </Grid>
+          <Grid item xs={7}>
+            <Title>Initial Investment (USD)</Title>
+            <Skeleton animation="wave" height={26} />
+          </Grid>
+
+          <Grid item xs={5}>
+            <Title>Our Holdings</Title>
+            <Skeleton animation="wave" height={26} />
+          </Grid>
+          <Grid item xs={7}>
+            <Title>Current investment value (USD)</Title>
+            <Skeleton animation="wave" height={26} />
+          </Grid>
+        </Grid>
+      </BoxContent>
+    </InvestmentItem>
+  );
+};
+
 const ListInvestments: React.FC<Props> = ({ data }) => {
+  const status = useAppSelector((state) => state.investments.status);
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage] = React.useState(5);
 
   const handleChangePage = (index: number) => {
     setPage(index - 1);
   };
+
+  if (status === 'loading') {
+    return (
+      <Box>
+        <Wrapper>
+          {[...Array(5)].map((i) => (
+            <ListSkeleton key={i} />
+          ))}
+        </Wrapper>
+      </Box>
+    );
+  }
 
   return (
     <Box>
