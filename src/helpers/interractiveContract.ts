@@ -88,9 +88,9 @@ export const getBalanceNativeTokenOf = async (address: string): Promise<BigNumbe
 
 export const getRewardAPYAllNode = async (): Promise<any[]> => {
   try {
-    const squareApy = contractWithoutSigner.functions.getRewardAPYPerNode(contractType.square);
-    const cubeApy = contractWithoutSigner.functions.getRewardAPYPerNode(contractType.cube);
-    const tesseractApy = contractWithoutSigner.functions.getRewardAPYPerNode(contractType.tesseract);
+    const squareApy = contractWithoutSigner.functions.getRewardAPRPerNode(contractType.square);
+    const cubeApy = contractWithoutSigner.functions.getRewardAPRPerNode(contractType.cube);
+    const tesseractApy = contractWithoutSigner.functions.getRewardAPRPerNode(contractType.tesseract);
 
     return await Promise.all([squareApy, cubeApy, tesseractApy]);
   } catch (e) {
@@ -132,7 +132,7 @@ export const getNumberNodeOf = async (address: string): Promise<[BigNumber]> => 
 
 export const getTimeCreatedOfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getNodesCreatime.call({});
+    return contractWithSigner.functions.getNodesCreationTime.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -172,7 +172,7 @@ export const getRewardAmount = async (): Promise<[BigNumber]> => {
 
 export const getInitApyOfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getNodesInitialAPY.call({});
+    return contractWithSigner.functions.getNodesInitialAPR.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
