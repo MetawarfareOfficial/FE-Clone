@@ -367,7 +367,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>
                   <TableCellContent align="center">
-                    {formatForNumberLessThanCondition(formatPrice(bigNumber2NumberV3(item.rewards, 1e18)), 0.01)}
+                    {formatForNumberLessThanCondition(bigNumber2NumberV3(item.rewards, 1e18), 0.01, formatPrice)}
                   </TableCellContent>
                   <TableCellContent align="right">
                     <ButtonClaim

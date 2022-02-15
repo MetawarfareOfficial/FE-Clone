@@ -11,7 +11,7 @@ const useFetchRewardAmount = () => {
   const fetchRewardAmount = async () => {
     try {
       const response = await getRewardAmount();
-      const data = bigNumber2NumberV2(response[0], 1e9);
+      const data = bigNumber2NumberV2(response[0], 1e18);
       if (currentUserAddress) {
         dispatch(setRewardAmount(data));
         return;
