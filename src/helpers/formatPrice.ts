@@ -1,6 +1,12 @@
-export const formatPrice = (price: string): string => {
+export const formatPrice = (price: string, numberAfterPeriod = 2): string => {
   if (price) {
-    return Number(price).toLocaleString('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+    return Number(price).toLocaleString('en-US', {
+      maximumFractionDigits: numberAfterPeriod,
+      minimumFractionDigits: numberAfterPeriod,
+    });
   }
-  return Number('0').toLocaleString('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+  return Number('0').toLocaleString('en-US', {
+    maximumFractionDigits: numberAfterPeriod,
+    minimumFractionDigits: numberAfterPeriod,
+  });
 };
