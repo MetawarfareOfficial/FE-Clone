@@ -1,11 +1,12 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
-import { formatCapitalizeLetters } from '../../helpers/formatCapitalizeLetters';
-import { formatPrice } from '../../helpers/formatPrice';
-import PaginationCustom from '../Base/Pagination';
+import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
+import { formatPrice, formatQuantity } from 'helpers/formatPrice';
+import PaginationCustom from 'components/Base/Pagination';
 import Skeleton from '@mui/material/Skeleton';
-import { useAppSelector } from '../../stores/hooks';
+import { useAppSelector } from 'stores/hooks';
+import { range } from 'lodash';
 
 interface Props {
   data: Array<any>;
@@ -172,7 +173,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
     return (
       <Box>
         <Wrapper>
-          {[...Array(5)].map((i) => (
+          {range(rowsPerPage).map((i) => (
             <ListSkeleton key={i} />
           ))}
         </Wrapper>
@@ -214,7 +215,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
 
                   <Grid item xs={5}>
                     <Title>Our Holdings</Title>
-                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
+                    <TextCenter>{formatQuantity(item.our_holdings)}</TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>

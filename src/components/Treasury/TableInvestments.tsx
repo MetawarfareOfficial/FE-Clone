@@ -20,10 +20,12 @@ import {
 } from '@mui/material';
 
 import PaginationCustom from 'components/Base/Pagination';
-import { formatPrice } from '../../helpers/formatPrice';
-import { formatCapitalizeLetters } from '../../helpers/formatCapitalizeLetters';
-import { useAppSelector } from '../../stores/hooks';
+import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
+import { useAppSelector } from 'stores/hooks';
 import Skeleton from '@mui/material/Skeleton';
+import { range } from 'lodash';
+import { formatNumberWithComas } from 'helpers/formatPrice';
+import { formatInvestmentValue } from 'helpers/formatInvestmentValue';
 
 interface Props {
   data: Array<any>;
@@ -273,7 +275,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               </TableRowHead>
             </TableHead>
             <TableBody>
-              {[...Array(5)].map((i) => (
+              {range(rowsPerPage).map((i) => (
                 <TableSkeleton key={i} />
               ))}
             </TableBody>
@@ -310,22 +312,22 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price)}
+                      {formatNumberWithComas(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
-                    <TextCenter>{item.our_holdings}</TextCenter>
+                    <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial)}
+                      {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="right">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment)}
+                      {formatInvestmentValue(item.current_investment)}
                     </TextCenter>
                   </TableCellContent>
                 </TableRowContent>
