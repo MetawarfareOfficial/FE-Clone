@@ -15,7 +15,7 @@ import { Coin } from 'interfaces/Coin';
 import { BaseInvest, Invest } from 'interfaces/Invest';
 import BigNumber from 'bignumber.js';
 import useInterval from 'hooks/useInterval';
-import { DELAY_TIME } from 'consts/investments';
+import { DELAY_TIME, PARAMS } from 'consts/investments';
 import { uniqBy } from 'lodash';
 
 interface Props {
@@ -89,7 +89,7 @@ const Investments: React.FC<Props> = () => {
 
   useEffect(() => {
     dispatch(fetchInvestments());
-    dispatch(getMarketPriceData({ vs_currency: 'usd', page: 1, per_page: 100 }));
+    dispatch(getMarketPriceData(PARAMS));
   }, []);
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const Investments: React.FC<Props> = () => {
   }, [marketPriceData, investments]);
 
   useInterval(() => {
-    dispatch(getMarketPriceData({ vs_currency: 'usd', page: 1, per_page: 100 }));
+    dispatch(getMarketPriceData(PARAMS));
   }, DELAY_TIME);
 
   return (
