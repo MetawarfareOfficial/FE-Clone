@@ -224,10 +224,12 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
 const TableSkeleton: React.FC = () => {
   return (
     <TableRowContent>
-      <TableCellContent align="center">
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Skeleton variant="circular" width={26} height={26} />
-          <Skeleton animation="wave" width={'70%'} />
+      <TableCellContent>
+        <div style={{ display: 'flex' }}>
+          <div style={{ paddingRight: '10px' }}>
+            <Skeleton variant="circular" width={26} height={26} />
+          </div>
+          <Skeleton animation="wave" width={'100%'} />
         </div>
       </TableCellContent>
       <TableCellContent align="center">
@@ -239,7 +241,7 @@ const TableSkeleton: React.FC = () => {
       <TableCellContent align="center">
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
-      <TableCellContent align="center">
+      <TableCellContent align="center" style={{ paddingRight: '10px' }}>
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
     </TableRowContent>
@@ -263,7 +265,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           <TableCustom aria-label="simple table">
             <TableHead>
               <TableRowHead>
-                <TableCellHead align="center">Token Name</TableCellHead>
+                <TableCellHead>Token Name</TableCellHead>
                 <TableCellHead align="center">Token Price</TableCellHead>
                 <TableCellHead align="center">Our Holdings</TableCellHead>
                 <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
