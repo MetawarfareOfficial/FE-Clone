@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import axios from 'axios';
 import { getJsonDataFromString } from 'helpers';
 import { BaseInvest } from 'interfaces/Invest';
+import { sleep } from '../helpers/delayTime';
 
 type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 
@@ -19,6 +20,7 @@ const initialState: InitState = {
 };
 
 export const fetchInvestments = createAsyncThunk('get/investment', async () => {
+  await sleep(5000);
   const response = await axios.get(`${process.env.REACT_APP_GIST_URL}${process.env.REACT_APP_GIST_TOKEN_ID}`);
   return response.data;
 });
