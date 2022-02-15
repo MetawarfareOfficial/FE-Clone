@@ -418,20 +418,21 @@ const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
   const location = useLocation();
 
-  const [open, setOpen] = React.useState(true);
-  const [width] = useWindowSize();
+  const [width] = useWindowSize([null, null] as unknown as number[]);
+  const [open, setOpen] = React.useState(width ? (width < 1200 ? false : true) : null);
   const theme = useTheme();
   const colorMode = React.useContext<any>(ColorModeContext);
-
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
   };
 
   useEffect(() => {
-    if (width < 1200) {
-      setOpen(false);
-    } else {
-      setOpen(true);
+    if (width) {
+      if (width < 1200) {
+        setOpen(false);
+      } else {
+        setOpen(true);
+      }
     }
   }, [width]);
 
@@ -447,133 +448,123 @@ const Layout: React.FC<Props> = ({ children }) => {
     window.location.reload();
   };
 
-  useEffect(() => {
-    if (width < 1200) {
-      setOpen(false);
-    } else {
-      setOpen(true);
-    }
-  }, [width]);
-
   useFetchInforContract();
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
       <Header onChangeMode={handleChangeMode} />
 
-      <Drawer
-        variant="permanent"
-        open={open}
-        sx={{
-          display: {
-            md: 'block',
-            xs: 'none',
-          },
-        }}
-      >
-        <DrawerHeader open={open}>
-          <Logo open={open} to="/">
-            {
-              // open ? (
-              theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
-              // ) : (
-              //   <img alt="" src={LogoIcon} />
-              // )
-            }
-          </Logo>
-          <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
-        </DrawerHeader>
+      {open !== null && (
+        <>
+          <Drawer
+            variant="permanent"
+            open={open}
+            sx={{
+              display: {
+                md: 'block',
+                xs: 'none',
+              },
+            }}
+          >
+            <DrawerHeader open={open}>
+              <Logo open={open} to="/">
+                {
+                  // open ? (
+                  theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
+                  // ) : (
+                  //   <img alt="" src={LogoIcon} />
+                  // )
+                }
+              </Logo>
+              <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
+            </DrawerHeader>
 
-        <SideMenus open={open}>
-          {menus &&
-            menus.map((item, i) => (
-              <MenuCustom
-                key={i}
-                open={open}
-                active={location.pathname === item.path}
-                onClick={() => openMenu(item.path)}
-              >
-                <MenuIconCustom open={open}>
-                  {!open ? (
-                    <TooltipCustom title={item.name} arrow placement="right">
-                      {location.pathname === item.path ? (
-                        <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                      ) : (
-                        <img alt="" src={item.icon} />
-                      )}
-                    </TooltipCustom>
-                  ) : (
-                    <>
-                      {location.pathname === item.path ? (
-                        <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                      ) : (
-                        <img alt="" src={item.icon} />
-                      )}
-                    </>
-                  )}
-                </MenuIconCustom>
-                <ListItemTextCustom
-                  primary={item.name}
-                  open={open}
-                  // sx={{  }}
-                />
-                {/* {open && <ListItemText primary={item.name} />} */}
-              </MenuCustom>
-            ))}
-        </SideMenus>
-
-        <SideAction>
-          {open ? (
-            <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
-              Refresh
-            </ButtonRefresh>
-          ) : (
-            <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
-              <img alt="" src={RefreshIcon} />
-            </ButtonIconRefresh>
-          )}
-
-          <BoxSwitch>
-            {open && <label>Light</label>}
-            {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
-            <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
-            {open && <label>Dark</label>}
-          </BoxSwitch>
-        </SideAction>
-      </Drawer>
-
-      <MainLayout component="main" open={open}>
-        <MenusMobile>
-          <div className="scroll-area scroll-area--horizontal">
-            <div className="scroll-area__body">
+            <SideMenus open={open}>
               {menus &&
                 menus.map((item, i) => (
-                  <div key={i} className={`scroll-area__column item${i + 1}`}>
-                    <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
-                      <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
-                    </LinkCustom>
-                  </div>
+                  <MenuCustom
+                    key={i}
+                    open={open}
+                    active={location.pathname === item.path}
+                    onClick={() => openMenu(item.path)}
+                  >
+                    <MenuIconCustom open={open}>
+                      {!open ? (
+                        <TooltipCustom title={item.name} arrow placement="right">
+                          {location.pathname === item.path ? (
+                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                          ) : (
+                            <img alt="" src={item.icon} />
+                          )}
+                        </TooltipCustom>
+                      ) : (
+                        <>
+                          {location.pathname === item.path ? (
+                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                          ) : (
+                            <img alt="" src={item.icon} />
+                          )}
+                        </>
+                      )}
+                    </MenuIconCustom>
+                    <ListItemTextCustom
+                      primary={item.name}
+                      open={open}
+                      // sx={{  }}
+                    />
+                    {/* {open && <ListItemText primary={item.name} />} */}
+                  </MenuCustom>
                 ))}
-            </div>
-          </div>
-          {/* </SliderScroll> */}
-        </MenusMobile>
+            </SideMenus>
 
-        {
-          // location.pathname !== '/treasury' &&
-          width > 899 && (
-            <Banner
-              // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
-              // walletId="0x33434dieoewo"
-              // onConnect={handleConnect}
-              // connected={false}
-              isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true}
-            />
-          )
-        }
+            <SideAction>
+              {open ? (
+                <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                  Refresh
+                </ButtonRefresh>
+              ) : (
+                <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                  <img alt="" src={RefreshIcon} />
+                </ButtonIconRefresh>
+              )}
 
-        {children}
-      </MainLayout>
+              <BoxSwitch>
+                {open && <label>Light</label>}
+                {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
+                <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
+                {open && <label>Dark</label>}
+              </BoxSwitch>
+            </SideAction>
+          </Drawer>
+
+          <MainLayout component="main" open={open}>
+            <MenusMobile>
+              <div className="scroll-area scroll-area--horizontal">
+                <div className="scroll-area__body">
+                  {menus &&
+                    menus.map((item, i) => (
+                      <div key={i} className={`scroll-area__column item${i + 1}`}>
+                        <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                          <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                        </LinkCustom>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              {/* </SliderScroll> */}
+            </MenusMobile>
+
+            {
+              // location.pathname !== '/treasury' &&
+              width > 899 && (
+                <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
+              )
+            }
+
+            {children}
+          </MainLayout>
+        </>
+      )}
     </Box>
   );
 };
