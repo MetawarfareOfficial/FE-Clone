@@ -7,6 +7,7 @@ import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard'
 import { formatTimestamp } from 'helpers/formatTimestamp';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
 import { formatReward } from 'helpers';
+import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -159,14 +160,16 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 fontFamily="Helvetica"
                 orientation="right"
                 dataKey={YDataKey}
-                tickFormatter={(value) => formatReward(String(value))}
+                tickFormatter={(value) =>
+                  YDataKey === 'price' ? formatPrice(String(value), 0) : formatReward(String(value))
+                }
               />
 
               {theme.palette.mode === 'dark' && <CartesianGrid stroke="#1D1D1D" strokeOpacity={0.7} />}
 
               <Tooltip
                 formatter={(value: string, name: string) => [
-                  formatReward(String(value)),
+                  `$${YDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0)}`,
                   convertCamelCaseToPascalCase(name),
                 ]}
                 labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
