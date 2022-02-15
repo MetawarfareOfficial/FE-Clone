@@ -2,11 +2,12 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
 import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
-import { formatPrice, formatQuantity } from 'helpers/formatPrice';
+import { formatNumberWithComas } from 'helpers/formatPrice';
 import PaginationCustom from 'components/Base/Pagination';
 import Skeleton from '@mui/material/Skeleton';
 import { useAppSelector } from 'stores/hooks';
 import { range } from 'lodash';
+import { formatInvestmentValue } from 'helpers/formatInvestmentValue';
 
 interface Props {
   data: Array<any>;
@@ -202,26 +203,26 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Token Price</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price)}
+                      {formatNumberWithComas(item.token_price)}
                     </TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Initial Investment (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial)}
+                      {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </Grid>
 
                   <Grid item xs={5}>
                     <Title>Our Holdings</Title>
-                    <TextCenter>{formatQuantity(item.our_holdings)}</TextCenter>
+                    <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment)}
+                      {formatInvestmentValue(item.current_investment)}
                     </TextCenter>
                   </Grid>
                 </Grid>
