@@ -30,6 +30,7 @@ import { errorMessage } from 'messages/errorMessages';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { useToast } from 'hooks/useToast';
 import { infoMessage } from 'messages/infoMessages';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 
 interface Props {
   title?: string;
@@ -366,7 +367,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">{item.initial}</TableCellContent>
                   <TableCellContent align="center">{item.current}</TableCellContent>
                   <TableCellContent align="center">
-                    {formatPrice(bigNumber2NumberV3(item.rewards, 1e9))}
+                    {formatForNumberLessThanCondition(formatPrice(bigNumber2NumberV3(item.rewards, 1e18)), 0.01)}
                   </TableCellContent>
                   <TableCellContent align="right">
                     <ButtonClaim
