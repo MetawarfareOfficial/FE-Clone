@@ -5,6 +5,7 @@ import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps, 
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatCType } from 'helpers/formatCType';
 import { formatPrice } from 'helpers/formatPrice';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { useAppSelector } from 'stores/hooks';
 
@@ -119,8 +120,12 @@ const ContractDetail: React.FC<Props> = ({
         <Grid item xs={4}>
           <Box>
             <Title>Rewards</Title>
-            <Tooltip title={formatPrice(bigNumber2NumberV3(`${rewards}`, 1e9))}>
-              <Text>{formatPrice(bigNumber2NumberV3(`${rewards}`, 1e9))}</Text>
+            <Tooltip
+              title={formatForNumberLessThanCondition(bigNumber2NumberV3(String(rewards), 1e18), 0.01, formatPrice)}
+            >
+              <Text>
+                {formatForNumberLessThanCondition(bigNumber2NumberV3(String(rewards), 1e18), 0.01, formatPrice)}
+              </Text>
             </Tooltip>
           </Box>
         </Grid>
