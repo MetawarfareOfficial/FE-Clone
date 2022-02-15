@@ -224,7 +224,7 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
 const TableSkeleton: React.FC = () => {
   return (
     <TableRowContent>
-      <TableCellContent>
+      <TableCellContent align="center">
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Skeleton variant="circular" width={26} height={26} />
           <Skeleton animation="wave" width={'70%'} />
@@ -239,7 +239,7 @@ const TableSkeleton: React.FC = () => {
       <TableCellContent align="center">
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
-      <TableCellContent align="right">
+      <TableCellContent align="center">
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
     </TableRowContent>
@@ -263,11 +263,11 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           <TableCustom aria-label="simple table">
             <TableHead>
               <TableRowHead>
-                <TableCellHead>Token Name</TableCellHead>
+                <TableCellHead align="center">Token Name</TableCellHead>
                 <TableCellHead align="center">Token Price</TableCellHead>
                 <TableCellHead align="center">Our Holdings</TableCellHead>
                 <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
-                <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
+                <TableCellHead align="center">Current Investment value (USD)</TableCellHead>
               </TableRowHead>
             </TableHead>
             <TableBody>
