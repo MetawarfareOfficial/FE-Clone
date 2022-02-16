@@ -161,7 +161,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 orientation="right"
                 dataKey={YDataKey}
                 tickFormatter={(value) =>
-                  YDataKey === 'price' ? formatPrice(String(value), 0) : formatReward(String(value))
+                  YDataKey === 'price' ? formatPrice(String(value), 0, 0) : formatReward(String(value))
                 }
               />
 
@@ -169,7 +169,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
 
               <Tooltip
                 formatter={(value: string, name: string) => [
-                  `$${YDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0)}`,
+                  `$${YDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0, 0)}`,
                   convertCamelCaseToPascalCase(name),
                 ]}
                 labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
