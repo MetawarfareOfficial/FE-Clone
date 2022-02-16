@@ -26,6 +26,8 @@ import { RewardRatioChart } from 'interfaces/RewardRatioChart';
 import { customToast } from 'helpers';
 import { errorMessage } from 'messages/errorMessages';
 import { useWeb3React } from '@web3-react/core';
+import get from 'lodash/get';
+import { getToken } from 'services/auth';
 
 interface Props {
   id: any;
@@ -266,12 +268,15 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const { error } = useWeb3React();
 
   const handleToggle = () => {
-    if (error?.name === 'UnsupportedChainIdError') {
+    if (
+      (error?.name === 'UnsupportedChainIdError' ||
+        get(window, 'ethereum.networkVersion', 1) !== process.env.REACT_APP_CHAIN_ID) &&
+      getToken()
+    ) {
       customToast({ message: errorMessage.META_MASK_WRONG_NETWORK.message, type: 'error' });
       return;
     }
-
-    if (!currentUserAddress) {
+    if (!getToken()) {
       customToast({ message: errorMessage.MINT_CONTRACT_NOT_CONNECT_WALLET.message, type: 'error' });
       return;
     }

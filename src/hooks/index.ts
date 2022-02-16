@@ -60,7 +60,6 @@ export const useInactiveListener = (suppress = false) => {
         }
       };
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ethereum.on('accountsChanged', handleAccountsChanged);
       injected.on('Web3ReactDeactivate', unAuthenticateUser);
 
       return () => {
@@ -74,7 +73,7 @@ export const useInactiveListener = (suppress = false) => {
   useEffect(() => {
     const { ethereum } = window as any;
     if (ethereum) {
-      ethereum.removeListener('accountsChanged', handleAccountsChanged);
+      ethereum.on('accountsChanged', handleAccountsChanged);
       return () => {
         if (ethereum.removeListener) {
           ethereum.removeListener('accountsChanged', handleAccountsChanged);
