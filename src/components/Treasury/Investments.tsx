@@ -97,7 +97,7 @@ const Investments: React.FC<Props> = () => {
       const investArr = investments
         .filter((i: BaseInvest) => Object.values(i).every((x) => x !== ''))
         .map((item: BaseInvest) => {
-          const coin = marketPriceData.find((el: Coin) => el.symbol === item.symbol.toLowerCase());
+          const coin = marketPriceData.find((el: Coin) => el.symbol.toLowerCase() === item.symbol.toLowerCase());
           return coin
             ? ({
                 ...item,
