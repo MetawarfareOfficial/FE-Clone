@@ -293,7 +293,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               <TableCellHead align="center">Token Price</TableCellHead>
               <TableCellHead align="center">Our Holdings</TableCellHead>
               <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
-              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
+              <TableCellHead align="center">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
           </TableHead>
 
@@ -310,22 +310,22 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price)}
+                      {formatPrice(item.token_price, 2, 0)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
-                    <TextCenter>{item.our_holdings}</TextCenter>
+                    <TextCenter>{formatPrice(item.our_holdings, 2, 0)}</TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial)}
+                      {formatPrice(item.initial, 2, 0)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="right">
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment)}
+                      {formatPrice(item.current_investment, 2, 0)}
                     </TextCenter>
                   </TableCellContent>
                 </TableRowContent>

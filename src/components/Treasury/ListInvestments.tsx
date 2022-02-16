@@ -201,26 +201,26 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Token Price</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price)}
+                      {formatPrice(item.token_price, 2, 0)}
                     </TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Initial Investment (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial)}
+                      {formatPrice(item.initial, 2, 0)}
                     </TextCenter>
                   </Grid>
 
                   <Grid item xs={5}>
                     <Title>Our Holdings</Title>
-                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
+                    <TextCenter>{formatPrice(item.our_holdings, 2, 0)}</TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment)}
+                      {formatPrice(item.current_investment, 2, 0)}
                     </TextCenter>
                   </Grid>
                 </Grid>
