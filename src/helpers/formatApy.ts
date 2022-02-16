@@ -3,18 +3,18 @@ import { BigNumber as BN } from 'ethers';
 import { bigNumber2Number } from 'helpers/formatNumber';
 import { formatPrice } from 'helpers/formatPrice';
 
-export const formatApy = (data: BN): string => {
+export const formatApr = (data: BN): string => {
   const data2BN = bigNumber2Number(data, 1e6);
-  const bn2Percent = new BigNumber(data2BN).div(100).toString();
+  const bn2Percent = new BigNumber(data2BN).toString();
   return formatPrice(bn2Percent);
 };
 
-export const formatApyV2 = (data: BN): number => {
+export const formatAprV2 = (data: BN): number => {
   const data2BN = bigNumber2Number(data, 1e6);
-  return new BigNumber(data2BN).div(100).toNumber();
+  return new BigNumber(data2BN).toNumber();
 };
 
-export const formatApyV3 = (data: BN): string => {
+export const formatAprV3 = (data: BN): string => {
   const data2BN = bigNumber2Number(data, 1e6);
-  return new BigNumber(data2BN).div(100).toString();
+  return new BigNumber(data2BN).toString();
 };

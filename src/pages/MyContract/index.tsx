@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { ListContracts, Stats, TableContracts } from 'components/MyContract';
 import { DELAY_TIME } from 'consts/myContract';
-import { formatApyV3 } from 'helpers/formatApy';
+import { formatAprV3 } from 'helpers/formatApy';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import {
   getInitApyOfNodes,
@@ -88,9 +88,9 @@ const MyContract: React.FC<Props> = () => {
 
       const dataCurrentApy = _.flatten(currentApy);
       const _currentApy = {
-        square: formatApyV3(dataCurrentApy[0]),
-        cube: formatApyV3(dataCurrentApy[1]),
-        tesseract: formatApyV3(dataCurrentApy[2]),
+        square: formatAprV3(dataCurrentApy[0]),
+        cube: formatAprV3(dataCurrentApy[1]),
+        tesseract: formatAprV3(dataCurrentApy[2]),
       };
 
       const dataCt = zipDataMyContract({
