@@ -27,4 +27,8 @@ export const infoMessage = {
     title: 'mint status modal',
     message: 'Rewards claimed successfully',
   },
+  NETWORK_ERROR: {
+    title: 'axios interceptor',
+    message: 'Network Error',
+  },
 };

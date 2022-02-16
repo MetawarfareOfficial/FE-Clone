@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axiosInstance from 'utils/AxiosInstance';
 
 const initialState = {
   last30DaysPrice: [[]],
@@ -17,25 +17,28 @@ const initialState = {
 };
 
 export const getPrice30DaysAgo = createAsyncThunk('get/dataChart', async (params: object) => {
-  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}/ohlc`, {
-    params,
-  });
+  return await axiosInstance.get(
+    `${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}/ohlc`,
+    {
+      params,
+    },
+  );
 });
 
 export const getCurrentPrice = createAsyncThunk('get/currentPrice', async (params: object) => {
-  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}`, {
+  return await axiosInstance.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}`, {
     params,
   });
 });
 
 export const getHoldingWalletTokenData = createAsyncThunk('get/convertPrice', async (params: object) => {
-  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/simple/price`, {
+  return await axiosInstance.get(`${process.env.REACT_APP_COINGECKO_URL}/simple/price`, {
     params,
   });
 });
 
 export const getLast30DaysMarketData = createAsyncThunk('get/marketCapHistoryData', async (params: object) => {
-  return await axios.get(
+  return await axiosInstance.get(
     `${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}/market_chart`,
     {
       params,
@@ -44,7 +47,7 @@ export const getLast30DaysMarketData = createAsyncThunk('get/marketCapHistoryDat
 });
 
 export const getMarketPriceData = createAsyncThunk('get/priceMarketData', async (params: object) => {
-  return await axios.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/markets`, {
+  return await axiosInstance.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/markets`, {
     params,
   });
 });
@@ -66,8 +69,8 @@ const coingekoSlice = createSlice({
       state.loading = false;
     },
     [getCurrentPrice.fulfilled.type]: (state, action) => {
-      state.zeroXBCurrentPrice = action.payload.data.market_data.current_price.usd;
-      state.currentMarketData = action.payload.data.market_data;
+      state.zeroXBCurrentPrice = action.payload.data?.market_data?.current_price?.usd;
+      state.currentMarketData = action.payload.data?.market_data;
       state.networkError = false;
     },
     [getCurrentPrice.rejected.type]: (state, action) => {
