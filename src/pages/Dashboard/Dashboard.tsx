@@ -27,7 +27,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
   const { marketCapHistory } = useFetchMarketCapData();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isPriceChartOpened, setIsPriceChartOpened] = useState<boolean>(true);
   const [heightTotal, setHeightTotal] = useState<any>(null);
 

@@ -13,6 +13,7 @@ const initialState = {
   holdingTokenLoadCompleted: false,
   marketLoadingError: false,
   marketPriceData: [],
+  networkError: false,
 };
 
 export const getPrice30DaysAgo = createAsyncThunk('get/dataChart', async (params: object) => {
@@ -67,6 +68,12 @@ const coingekoSlice = createSlice({
     [getCurrentPrice.fulfilled.type]: (state, action) => {
       state.zeroXBCurrentPrice = action.payload.data.market_data.current_price.usd;
       state.currentMarketData = action.payload.data.market_data;
+      state.networkError = false;
+    },
+    [getCurrentPrice.rejected.type]: (state, action) => {
+      if (action.error.name === 'Error') {
+        state.networkError = true;
+      }
     },
     [getLast30DaysMarketData.pending.type]: (state) => {
       state.marketLoading = true;
