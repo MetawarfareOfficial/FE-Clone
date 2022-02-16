@@ -35,7 +35,7 @@ export const investmentsSlice = createSlice({
       .addCase(fetchInvestments.fulfilled, (state, action) => {
         state.status = 'succeeded';
         const payload = get(action, `payload.files['${process.env.REACT_APP_INVESTMENT_DATA_FILE_NAME}'].content`, []);
-        // TODO: fixme: using JSON.parse(payload) instead
+        // TODO: fixme: use JSON.parse(payload) instead
         state.investments = getJsonDataFromString(payload);
       })
       .addCase(fetchInvestments.rejected, (state, action) => {
