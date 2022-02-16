@@ -150,8 +150,7 @@ const MyContract: React.FC<Props> = () => {
 
   useEffect(() => {
     const dataCountByType = _.countBy(dataMyContracts, 'type');
-
-    if (dataCountByType && dataCountByType['0'] && currentUserAddress) {
+    if ((dataCountByType['0'] || dataCountByType['1'] || dataCountByType['2']) && currentUserAddress) {
       setCountMyContract({
         square: `${dataCountByType['0'] || 0}`,
         cube: `${dataCountByType['1'] || 0}`,
@@ -164,7 +163,7 @@ const MyContract: React.FC<Props> = () => {
   useMobileChangeAccountMetamask();
 
   useInterval(() => {
-    if (dataMyContracts.length > 0) fetchUserContractsData();
+    fetchUserContractsData();
   }, DELAY_TIME);
 
   return (
