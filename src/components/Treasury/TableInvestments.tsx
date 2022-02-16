@@ -24,7 +24,8 @@ import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
 import { useAppSelector } from 'stores/hooks';
 import Skeleton from '@mui/material/Skeleton';
 import { range } from 'lodash';
-import { formatPrice } from 'helpers/formatPrice';
+import { formatNumberWithComas } from 'helpers/formatPrice';
+import { formatInvestmentValue } from 'helpers/formatInvestmentValue';
 
 interface Props {
   data: Array<any>;
@@ -311,22 +312,22 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price, 2, 0)}
+                      {formatNumberWithComas(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
-                    <TextCenter>{formatPrice(item.our_holdings, 2, 0)}</TextCenter>
+                    <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial, 2, 0)}
+                      {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment, 2, 0)}
+                      {formatInvestmentValue(item.current_investment)}
                     </TextCenter>
                   </TableCellContent>
                 </TableRowContent>
