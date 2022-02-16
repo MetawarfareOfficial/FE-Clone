@@ -295,7 +295,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               <TableCellHead align="center">Token Price</TableCellHead>
               <TableCellHead align="center">Our Holdings</TableCellHead>
               <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
-              <TableCellHead align="center">Current Investment value (USD)</TableCellHead>
+              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
           </TableHead>
 
@@ -324,7 +324,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="center">
+                  <TableCellContent align="right">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatInvestmentValue(item.current_investment)}
