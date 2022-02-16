@@ -61,6 +61,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
       price: currentPrice.toString(),
     } as TokenPrice);
     _data.shift();
+
     setTokenPrices(_data);
   }, [last30DaysPrice, currentPrice]);
 

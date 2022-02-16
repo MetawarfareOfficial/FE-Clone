@@ -29,6 +29,6 @@ export const infoMessage = {
   },
   NETWORK_ERROR: {
     title: 'axios interceptor',
-    message: 'No internet connection found. App is running in offline mode',
+    message: 'Network Error',
   },
 };
