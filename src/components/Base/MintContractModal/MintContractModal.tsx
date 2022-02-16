@@ -532,7 +532,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             onChange={(event) => handleContractNameChange(event, index)}
             error={!!item.error}
             helperText={item.error}
-            value={item.name}
+            value={`${index + 1}. ${item.name}`}
             variant="standard"
             fullWidth
           />
