@@ -4,7 +4,16 @@ import { Box, BoxProps, Button, ButtonProps } from '@mui/material';
 
 import ContractDetail from './ContractDetail';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
+import {
+  SquareIcon,
+  CubeIcon,
+  TessIcon,
+  AllContract,
+  SquareDarkIcon,
+  CubeDarkIcon,
+  TessDarkIcon,
+  AllDarkContract,
+} from 'assets/images';
 
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
@@ -105,7 +114,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
   const processIcon = (cType: string) => {
     if (cType === '') {
-      setIcon('');
+      setIcon(theme.palette.mode === 'light' ? AllContract : AllDarkContract);
       return;
     }
 

@@ -20,10 +20,11 @@ import {
 } from '@mui/material';
 
 import PaginationCustom from 'components/Base/Pagination';
-import { formatPrice } from '../../helpers/formatPrice';
-import { formatCapitalizeLetters } from '../../helpers/formatCapitalizeLetters';
-import { useAppSelector } from '../../stores/hooks';
+import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
+import { useAppSelector } from 'stores/hooks';
 import Skeleton from '@mui/material/Skeleton';
+import { range } from 'lodash';
+import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   data: Array<any>;
@@ -273,7 +274,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               </TableRowHead>
             </TableHead>
             <TableBody>
-              {[...Array(5)].map((i) => (
+              {range(rowsPerPage).map((i) => (
                 <TableSkeleton key={i} />
               ))}
             </TableBody>

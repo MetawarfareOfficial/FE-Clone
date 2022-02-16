@@ -23,7 +23,16 @@ import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
 import MintStatusModal from 'components/Base/MintStatusModal';
-import { SquareIcon, CubeIcon, TessIcon, SquareDarkIcon, CubeDarkIcon, TessDarkIcon } from 'assets/images';
+import {
+  SquareIcon,
+  CubeIcon,
+  TessIcon,
+  SquareDarkIcon,
+  CubeDarkIcon,
+  TessDarkIcon,
+  AllContract,
+  AllDarkContract,
+} from 'assets/images';
 import { sleep } from 'helpers/delayTime';
 import { DELAY_TIME } from 'consts/typeReward';
 import { errorMessage } from 'messages/errorMessages';
@@ -257,7 +266,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const processIcon = (cType: string) => {
     if (cType === '') {
-      setIcon('');
+      setIcon(theme.palette.mode === 'light' ? AllContract : AllDarkContract);
       return;
     }
 

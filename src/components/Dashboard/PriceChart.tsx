@@ -99,7 +99,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
             <div className="knobs">
               <span>Token price</span>
             </div>
-            <div className="layer"></div>
+            <div className="layer" />
           </div>
         </div>
       </div>
@@ -112,7 +112,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
               <div className="knobs">
                 <span>Token price</span>
               </div>
-              <div className="layer"></div>
+              <div className="layer" />
             </div>
           </div>
         </div>

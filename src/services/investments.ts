@@ -19,7 +19,6 @@ const initialState: InitState = {
 };
 
 export const fetchInvestments = createAsyncThunk('get/investment', async () => {
-  // await sleep(5000);
   const response = await axios.get(`${process.env.REACT_APP_GIST_URL}${process.env.REACT_APP_GIST_TOKEN_ID}`);
   return response.data;
 });
