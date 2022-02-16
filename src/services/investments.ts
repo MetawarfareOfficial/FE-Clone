@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { get } from 'lodash';
-import axios from 'axios';
 import { getJsonDataFromString } from 'helpers';
 import { BaseInvest } from 'interfaces/Invest';
+import axiosInstance from 'utils/AxiosInstance';
 
 type Status = 'idle' | 'loading' | 'succeeded' | 'failed';
 
@@ -19,7 +19,7 @@ const initialState: InitState = {
 };
 
 export const fetchInvestments = createAsyncThunk('get/investment', async () => {
-  const response = await axios.get(`${process.env.REACT_APP_GIST_URL}${process.env.REACT_APP_GIST_TOKEN_ID}`);
+  const response = await axiosInstance.get(`${process.env.REACT_APP_GIST_URL}${process.env.REACT_APP_GIST_TOKEN_ID}`);
   return response.data;
 });
 
