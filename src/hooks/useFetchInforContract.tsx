@@ -1,7 +1,7 @@
 import { getPriceAllNode, getRewardAPYAllNode, getTotalNodeByType } from 'helpers/interractiveContract';
 import _ from 'lodash';
 import { setApy, setPrice, setTotal, unSetApy, unSetPrice, unSetTotal } from 'services/contract';
-import { formatApy } from 'helpers/formatApy';
+import { formatApr } from 'helpers/formatApy';
 import { useAppDispatch } from 'stores/hooks';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import { useEffect } from 'react';
@@ -16,9 +16,9 @@ const useFetchInforContract = () => {
 
       dispatch(
         setApy({
-          square: formatApy(data[0]),
-          cube: formatApy(data[1]),
-          tesseract: formatApy(data[2]),
+          square: formatApr(data[0]),
+          cube: formatApr(data[1]),
+          tesseract: formatApr(data[2]),
         }),
       );
     } catch (e) {
