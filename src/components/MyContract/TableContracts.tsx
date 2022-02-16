@@ -280,6 +280,11 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       return;
     }
 
+    if (cType === '3') {
+      setIcon('');
+      return;
+    }
+
     setIcon(theme.palette.mode === 'light' ? TessIcon : TessDarkIcon);
   };
 
@@ -291,6 +296,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
       const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
+        processModal('');
+        processIcon('3');
         setStatus(STATUS[3]);
         return;
       }
@@ -316,6 +323,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
       const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
+        processModal('');
+        processIcon('3');
         setStatus(STATUS[3]);
         return;
       }
