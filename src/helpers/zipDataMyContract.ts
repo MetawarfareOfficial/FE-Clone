@@ -20,9 +20,9 @@ export const parseDataInitApy = (types: string, initApy: string, prices: Contrac
     const zipTypesInitApy = zipWith(_types, _initApy);
     // TODO: fixme reusable code
     return zipTypesInitApy.map((item: any) => {
-      if (item[0] === '0') return computeEarnedTokenPerDay(prices.square, bigNumber2NumberV3(item[1], 1e11));
-      if (item[0] === '1') return computeEarnedTokenPerDay(prices.cube, bigNumber2NumberV3(item[1], 1e11));
-      return computeEarnedTokenPerDay(prices.tesseract, bigNumber2NumberV3(item[1], 1e11));
+      if (item[0] === '0') return computeEarnedTokenPerDay(prices.square, bigNumber2NumberV3(item[1], 1e6));
+      if (item[0] === '1') return computeEarnedTokenPerDay(prices.cube, bigNumber2NumberV3(item[1], 1e6));
+      return computeEarnedTokenPerDay(prices.tesseract, bigNumber2NumberV3(item[1], 1e6));
     });
   }
   return [];
