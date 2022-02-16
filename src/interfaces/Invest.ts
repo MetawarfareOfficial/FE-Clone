@@ -1,6 +1,6 @@
 export interface BaseInvest {
   initial: string;
-  name: string;
+  // name: string;
   our_holdings: string;
   symbol: string;
 }

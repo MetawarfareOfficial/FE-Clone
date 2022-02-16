@@ -101,6 +101,7 @@ const Investments: React.FC<Props> = () => {
           return coin
             ? ({
                 ...item,
+                name: coin.name,
                 token_price: coin.current_price,
                 icon: coin.image,
                 current_investment: new BigNumber(coin.current_price).times(item.our_holdings).toNumber(),

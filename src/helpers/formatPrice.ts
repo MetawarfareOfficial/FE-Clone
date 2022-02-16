@@ -14,11 +14,6 @@ export const formatPrice = (price: string, numberAfterPeriod = 2): string => {
   });
 };
 
-export const formatQuantity = (quantity: string): string => {
-  if (Number(quantity) < 0.01) return '< 0.01';
-  return formatPrice(quantity);
-};
-
 export const formatNumberWithComas = (number: number): string => {
   const decimalPlaces = number.toString().split('.');
   decimalPlaces[0] = decimalPlaces[0].replace(REGEX_UNIT_NUMBER, ',');
