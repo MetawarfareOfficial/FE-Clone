@@ -5,12 +5,14 @@ export const formatPrice = (price: string, maximumFractionDigits = 2, minimumFra
   if (price) {
     return Number(price).toLocaleString('en-US', {
       maximumFractionDigits,
-      minimumFractionDigits,
+      minimumFractionDigits:
+        maximumFractionDigits < minimumFractionDigits ? maximumFractionDigits : minimumFractionDigits,
     });
   }
   return Number('0').toLocaleString('en-US', {
     maximumFractionDigits,
-    minimumFractionDigits,
+    minimumFractionDigits:
+      maximumFractionDigits < minimumFractionDigits ? maximumFractionDigits : minimumFractionDigits,
   });
 };
 
