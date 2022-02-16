@@ -316,8 +316,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
       const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
-        processModal('');
-        processIcon('');
         setStatus(STATUS[3]);
         return;
       }

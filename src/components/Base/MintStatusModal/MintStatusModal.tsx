@@ -226,7 +226,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
             color:
               status === 'success'
                 ? '#119F19'
-                : status === 'error'
+                : ['error', 'permission denied'].includes(status)
                 ? '#F62D33'
                 : theme.palette.mode === 'light'
                 ? '#293247'

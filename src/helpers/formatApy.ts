@@ -9,11 +9,6 @@ export const formatApr = (data: BN): string => {
   return formatPrice(bn2Percent);
 };
 
-export const formatAprV2 = (data: BN): number => {
-  const data2BN = bigNumber2Number(data, 1e6);
-  return new BigNumber(data2BN).toNumber();
-};
-
 export const formatAprV3 = (data: BN): string => {
   const data2BN = bigNumber2Number(data, 1e6);
   return new BigNumber(data2BN).toString();
