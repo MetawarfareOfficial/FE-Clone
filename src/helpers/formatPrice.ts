@@ -1,16 +1,16 @@
 import BigNumber from 'bignumber.js';
 import { REGEX_UNIT_NUMBER } from 'consts/regrex';
 
-export const formatPrice = (price: string, numberAfterPeriod = 2): string => {
+export const formatPrice = (price: string, maximumFractionDigits = 2, minimumFractionDigits = 2): string => {
   if (price) {
     return Number(price).toLocaleString('en-US', {
-      maximumFractionDigits: numberAfterPeriod,
-      minimumFractionDigits: numberAfterPeriod,
+      maximumFractionDigits,
+      minimumFractionDigits,
     });
   }
   return Number('0').toLocaleString('en-US', {
-    maximumFractionDigits: numberAfterPeriod,
-    minimumFractionDigits: numberAfterPeriod,
+    maximumFractionDigits,
+    minimumFractionDigits,
   });
 };
 
