@@ -418,6 +418,10 @@ const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'erro
   }),
 );
 
+const ContractIndex = styled(Box)<BoxProps>(({ theme }) => ({
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+}));
+
 const BoxError = styled(Box)<BoxProps>(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -530,9 +534,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         <ListItem key={index}>
           <TextName
             onChange={(event) => handleContractNameChange(event, index)}
+            InputProps={{
+              startAdornment: <ContractIndex>{index + 1}.</ContractIndex>,
+            }}
             error={!!item.error}
             helperText={item.error}
-            value={`${index + 1}. ${item.name}`}
+            value={item.name}
             variant="standard"
             fullWidth
           />
