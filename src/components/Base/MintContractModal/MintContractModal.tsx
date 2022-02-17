@@ -424,6 +424,8 @@ const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'erro
 
 const ContractIndex = styled(Box)<BoxProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  fontFamily: 'Poppins',
+  fontSize: '14px',
 }));
 
 const BoxError = styled(Box)<BoxProps>(() => ({
@@ -507,7 +509,12 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
     if (
       JSON.stringify(contracts[index]) ===
-      JSON.stringify({ ...contracts[index], error: errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message })
+        JSON.stringify({ ...contracts[index], error: errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message }) ||
+      JSON.stringify(contracts[index]) ===
+        JSON.stringify({
+          ...contracts[index],
+          error: errorMessage.CONTRACT_NAME_INVALID_AND_MORE_THAN_32_CHARACTERS.message,
+        })
     ) {
       if (event.target.value.length < contracts[index].name.length) {
         const newContract = replaceArrayElementByIndex(contracts, index, {
@@ -517,7 +524,10 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
         setContracts(newContract);
       }
       return;
-    } else if (error === errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message) {
+    } else if (
+      error === errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message ||
+      error === errorMessage.CONTRACT_NAME_INVALID_AND_MORE_THAN_32_CHARACTERS.message
+    ) {
       const newContract = replaceArrayElementByIndex(contracts, index, {
         ...contracts[index],
         error,
@@ -543,7 +553,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
               startAdornment: <ContractIndex>{index + 1}.</ContractIndex>,
             }}
             error={!!item.error}
-            helperText={item.error}
+            helperText={
+              item.error === errorMessage.CONTRACT_NAME_INVALID_AND_MORE_THAN_32_CHARACTERS.message
+                ? errorMessage.CONTRACT_NAME_INVALID.message
+                : item.error
+            }
             value={item.name}
             variant="standard"
             fullWidth
@@ -701,8 +715,8 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
             : isOverMaxMintNodes
             ? nodes + contracts.length >= LIMIT_MAX_MINT
-              ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
-              : `${infoMessage.OVER_NODES.message.replace('#number', String(maxMint))}`
+              ? !isBlankInput && infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
+              : !isBlankInput && `${infoMessage.OVER_NODES.message.replace('#number', String(maxMint))}`
             : ''}
         </BoxError>
 
