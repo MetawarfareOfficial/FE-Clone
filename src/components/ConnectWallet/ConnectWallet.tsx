@@ -36,6 +36,7 @@ interface Props {
 }
 
 const ButtonConnect = styled(Button)<ButtonProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
   textDecoration: 'none',
   borderRadius: '14px',
   padding: '12px 20px',
@@ -158,7 +159,6 @@ const ConnectWallet: React.FC<Props> = () => {
   const handleWrongNetWork = async (): Promise<void> => {
     try {
       await addEthereumChain();
-      // await activate(injected);   // nam commented this for bug show toast error when change network in mobile
     } catch (ex: any) {
       createToast({
         message: ex.message,
@@ -185,6 +185,7 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useEffect(() => {
     if (account && active && chainId && isLogin) {
+      // alert(account)
       dispatch(setAccount({ address: account }));
       return;
     }

@@ -157,23 +157,6 @@ export const zeroXBlockAbi = [
     stateMutability: 'view',
     type: 'function',
   },
-  {
-    inputs: [
-      { internalType: 'address', name: 'account', type: 'address' },
-      { internalType: 'bool', name: 'value', type: 'bool' },
-    ],
-    name: 'blacklistMalicious',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
-    name: 'boostReward',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
   { inputs: [], name: 'cashoutAll', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
     inputs: [],
@@ -191,7 +174,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'uint256', name: 'newTime', type: 'uint256' }],
-    name: 'changeClaimTime',
+    name: 'changeCashoutTimeout',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -205,7 +188,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [
-      { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
+      { internalType: 'enum ContractType', name: 'contractType', type: 'uint8' },
       { internalType: 'uint256', name: 'newNodePrice', type: 'uint256' },
     ],
     name: 'changeNodePrice',
@@ -215,20 +198,10 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [
-      { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
+      { internalType: 'enum ContractType', name: 'contractType', type: 'uint8' },
       { internalType: 'int256', name: 'reducePercentage', type: 'int256' },
     ],
     name: 'changeRewardAPRPerNode',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'string[]', name: 'names', type: 'string[]' },
-      { internalType: 'enum ContractType', name: 'cType', type: 'uint8' },
-    ],
-    name: 'createMultipleNodesWithTokens',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -287,13 +260,20 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
-    name: 'getClaimTime',
+    name: 'enableMintNodes',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getCashoutTimeout',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'enum ContractType', name: 'cType', type: 'uint8' }],
+    inputs: [{ internalType: 'enum ContractType', name: 'contractType', type: 'uint8' }],
     name: 'getNodePrice',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -322,7 +302,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
-    name: 'getNodesLastClaimTime',
+    name: 'getNodesLastCashoutTime',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
@@ -349,7 +329,7 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'enum ContractType', name: 'cType', type: 'uint8' }],
+    inputs: [{ internalType: 'enum ContractType', name: 'contractType', type: 'uint8' }],
     name: 'getRewardAPRPerNode',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -405,6 +385,16 @@ export const zeroXBlockAbi = [
     name: 'liquidityPoolFee',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'string[]', name: 'names', type: 'string[]' },
+      { internalType: 'enum ContractType', name: 'contractType', type: 'uint8' },
+    ],
+    name: 'mintNodes',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -502,8 +492,25 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'bool', name: 'value', type: 'bool' },
+    ],
+    name: 'setBlacklistStatus',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'bool', name: '_enableCashout', type: 'bool' }],
     name: 'setEnableCashout',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bool', name: 'value', type: 'bool' }],
+    name: 'setEnableMintNodes',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -650,7 +657,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateDevelopmentFundWall',
+    name: 'updateDevelopmentFundWallet',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -664,7 +671,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateLiquidityWall',
+    name: 'updateLiquidityWallet',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -678,7 +685,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateRewardsWall',
+    name: 'updateRewardsWallet',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -699,7 +706,7 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateTreasuryWall',
+    name: 'updateTreasuryWallet',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

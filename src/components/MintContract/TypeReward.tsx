@@ -7,7 +7,7 @@ import MintContractModal from 'components/Base/MintContractModal';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
-import { contractType, DELAY_TIME, LIMIT_MAX_MINT } from 'consts/typeReward';
+import { contractType, DELAY_TIME, LIMIT_MAX_MINT, LIMIT_ONE_TIME_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
@@ -338,7 +338,9 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   useEffect(() => {
     const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;
     const _maxMint = new BigNumber(balances).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
-    setMaxMint(_maxMint >= LIMIT_MAX_MINT - nodes ? LIMIT_MAX_MINT - nodes : _maxMint);
+    const restMintableContracts = LIMIT_MAX_MINT - nodes;
+    const numberMintableContracts = _maxMint >= LIMIT_ONE_TIME_MINT ? LIMIT_ONE_TIME_MINT : _maxMint;
+    setMaxMint(numberMintableContracts >= restMintableContracts ? restMintableContracts : numberMintableContracts);
   }, [zeroXBlockBalance, nodes]);
 
   useEffect(() => {
