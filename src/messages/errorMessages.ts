@@ -29,7 +29,7 @@ export const errorMessage = {
   },
   CONTRACT_NAME_INVALID: {
     title: 'Contract',
-    message: 'Please ensure the characters in the name are separated by _ only',
+    message: 'Please ensure there is no special character for the contract name',
   },
   CONTRACT_NAME_EMPTY: {
     title: 'Contract',
