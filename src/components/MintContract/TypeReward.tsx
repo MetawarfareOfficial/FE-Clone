@@ -351,6 +351,12 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   }, [currentUserAddress, zeroXBlockBalance]);
 
   useEffect(() => {
+    if (!open) {
+      dispatch(setIsOverMaxMintNodes(false));
+    }
+  }, [open]);
+
+  useEffect(() => {
     setDataChart(computedRewardRatioPerYear(earn));
   }, [earn]);
 
