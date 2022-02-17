@@ -145,7 +145,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
     setStatistic([
       {
         title: 'Token Price',
-        value: data?.price ? formatPrice(data.price) : '0.00',
+        value: data?.price ? formatPrice(String(data.price)) : '0.00',
         nameBtn: 'Buy now',
         linkTo: 'https://traderjoexyz.com/home',
       },

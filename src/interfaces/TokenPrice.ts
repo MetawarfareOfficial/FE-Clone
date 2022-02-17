@@ -1,4 +1,4 @@
 export interface TokenPrice {
-  time: string;
-  price: string;
+  time: string | number;
+  price: string | number;
 }

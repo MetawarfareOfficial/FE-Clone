@@ -389,16 +389,18 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
         </ButtonMint>
       </BoxContent>
 
-      <MintContractModal
-        icon={icon}
-        name={name}
-        maxMint={maxMint}
-        valueRequire={value}
-        contracts={['Name']}
-        open={open}
-        onClose={handleToggle}
-        onSubmit={handleSubmit}
-      />
+      {open && (
+        <MintContractModal
+          icon={icon}
+          name={name}
+          maxMint={maxMint}
+          valueRequire={value}
+          contracts={['Name']}
+          open={open}
+          onClose={handleToggle}
+          onSubmit={handleSubmit}
+        />
+      )}
 
       <MintStatusModal
         icon={icon}
