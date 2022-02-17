@@ -31,6 +31,10 @@ export const errorMessage = {
     title: 'Contract',
     message: 'Please ensure there is no special character for the contract name',
   },
+  CONTRACT_NAME_INVALID_AND_MORE_THAN_32_CHARACTERS: {
+    title: 'Contract',
+    message: 'Contract name is invalid and more than 32 characters',
+  },
   CONTRACT_NAME_EMPTY: {
     title: 'Contract',
     message: 'Please input the name for the contract',
