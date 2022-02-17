@@ -400,7 +400,7 @@ const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'erro
   ({ theme, error }) => ({
     '.MuiInput-input': {
       OutlinedInput: 'none',
-      boxSizing: 'border-box',
+      // boxSizing: 'border-box',
       color: theme.palette.mode === 'light' ? '#293247' : '#fff',
       fontFamily: 'Poppins',
       fontSize: '14px',
