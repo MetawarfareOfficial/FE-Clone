@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import App from 'App';
 import reportWebVitals from 'reportWebVitals';
 import store from 'stores/store';
@@ -20,12 +20,12 @@ function getLibrary(provider: any) {
 ReactDOM.render(
   <Provider store={store}>
     <Web3ReactProvider getLibrary={getLibrary}>
-      <BrowserRouter>
+      <HashRouter>
         <React.StrictMode>
           <App />
-          <ToastContainer pauseOnHover={false} />
+          <ToastContainer pauseOnHover={false} newestOnTop={true} autoClose={3000} limit={1} />
         </React.StrictMode>
-      </BrowserRouter>
+      </HashRouter>
     </Web3ReactProvider>
   </Provider>,
   document.getElementById('root'),

@@ -3,6 +3,8 @@ import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
 
+// import bgBorder from 'assets/images/bg-box-gradient.png';
+
 interface Props {
   title?: string;
 }
@@ -14,6 +16,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 
   [theme.breakpoints.down('sm')]: {
     padding: '0 14px',
+    marginTop: '11px',
   },
 }));
 
@@ -21,7 +24,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   textTransform: 'capitalize',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
@@ -48,8 +51,11 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   lineHeight: '21px',
   fontFamily: 'Poppins',
   fontWeight: '500',
-  color: '#293247',
-  border: `1px solid ${theme.palette.primary.main}`,
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  border: theme.palette.mode === 'light' ? `1px solid ${theme.palette.primary.main}` : 'none',
+  background: theme.palette.mode === 'light' ? '#fff' : `rgba(255, 255, 255, 0.03)`,
+  // theme.palette.mode === 'light' ? '#fff' : `url(${bgBorder}) no-repeat center center`,
+  backgroundSize: '107%',
 
   [theme.breakpoints.down('lg')]: {
     padding: '20px',
@@ -73,8 +79,8 @@ const ClaimRewards: React.FC<Props> = () => {
     <Wrapper>
       <Title>Claim Rewards Tax</Title>
       <Pool>
-        Every time a user claims rewards, a 10% tax will be applied and redirected to the 0xBlock Liquidity Pool (50%
-        0xB, 50% AVAX)
+        Every time a user claims rewards, a 10% tax will be applied and redirected to the 0xBlock Liquidity Pool as 50%
+        0xB & 50% AVAX
       </Pool>
     </Wrapper>
   );

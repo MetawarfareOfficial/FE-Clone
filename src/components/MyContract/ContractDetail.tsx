@@ -1,6 +1,13 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps } from '@mui/material';
+import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps, Tooltip } from '@mui/material';
+
+import { formatTimestampV2 } from 'helpers/formatTimestamp';
+import { formatCType } from 'helpers/formatCType';
+import { formatPrice } from 'helpers/formatPrice';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { bigNumber2NumberV3 } from 'helpers/formatNumber';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   mintDate: string;
@@ -9,36 +16,41 @@ interface Props {
   name: string;
   rewards: number;
   current: number;
+  nodeIndex: number;
+  onClaimClick: (arg1: number, arg2: string) => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   boxSizing: 'border-box',
   overflow: 'hidden',
   padding: '28px 14px 14px',
-  background: '#FFFFFF',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.1)',
   borderRadius: '14px',
   marginBottom: '7px',
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Roboto',
   fontWeight: 'normal',
   fontSize: '12px',
   lineHeight: '14px',
-  color: '#A4A9B7',
+  color: theme.palette.mode === 'light' ? '#A4A9B7' : ' #828282',
 }));
 
-const Text = styled(Typography)<TypographyProps>(() => ({
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontWeight: '500',
   fontSize: '14px',
   lineHeight: '26px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(() => ({
+const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -49,6 +61,8 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   boxShadow: 'none',
   height: '36px',
   marginTop: '15px',
+  color: theme.palette.mode === 'light' ? theme.palette.primary.light : '#fff',
+  border: `1px solid ${theme.palette.mode === 'light' ? theme.palette.primary.light : '#fff'}`,
 
   '&:hover': {
     cursor: 'pointed',
@@ -56,49 +70,85 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const ContractDetail: React.FC<Props> = ({ mintDate, type, initial, name, rewards, current }) => {
+const ContractDetail: React.FC<Props> = ({
+  mintDate,
+  type,
+  initial,
+  name,
+  rewards,
+  current,
+  nodeIndex,
+  onClaimClick,
+}) => {
+  const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
+
   return (
     <Wrapper>
       <Grid container spacing="19px">
         <Grid item xs={4}>
           <Box>
             <Title>Mint Date</Title>
-            <Text>{mintDate}</Text>
+            <Tooltip title={formatTimestampV2(mintDate)}>
+              <Text>{formatTimestampV2(mintDate)}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Type</Title>
-            <Text>{type}</Text>
+            <Tooltip title={formatCType(type)}>
+              <Text>{formatCType(type)}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Initial 0xB/day </Title>
-            <Text>{initial}</Text>
+            <Tooltip title={initial}>
+              <Text>{initial}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Name</Title>
-            <Text>{name}</Text>
+            <Tooltip title={name}>
+              <Text>{name}</Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Rewards</Title>
-            <Text>{rewards}</Text>
+            <Tooltip
+              title={formatForNumberLessThanCondition(bigNumber2NumberV3(String(rewards), 1e18), 0.01, formatPrice)}
+            >
+              <Text>
+                {formatForNumberLessThanCondition(bigNumber2NumberV3(String(rewards), 1e18), 0.01, formatPrice)}
+              </Text>
+            </Tooltip>
           </Box>
         </Grid>
         <Grid item xs={4}>
           <Box>
             <Title>Current 0xB/day</Title>
-            <Text>{current}</Text>
+            <Tooltip title={current}>
+              <Text>{current}</Text>
+            </Tooltip>
           </Box>
         </Grid>
       </Grid>
 
-      <ButtonClaim size="small" variant="outlined" color="primary" fullWidth>
+      <ButtonClaim
+        size="small"
+        variant="outlined"
+        color="primary"
+        fullWidth
+        disabled={isClaimingReward}
+        onClick={() => {
+          onClaimClick(nodeIndex, type);
+        }}
+      >
         Claim
       </ButtonClaim>
     </Wrapper>

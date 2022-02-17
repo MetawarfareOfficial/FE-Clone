@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { styled, Theme, CSSObject } from '@mui/material/styles';
+import React, { useEffect } from 'react';
+import 'styles/menus.css';
+import { styled, Theme, CSSObject, useTheme } from '@mui/material/styles';
 import { Link, LinkProps, useHistory, useLocation } from 'react-router-dom';
 import { menus } from './menus';
+import { ColorModeContext } from 'theme';
 import { useWindowSize } from 'hooks/useWindowSize';
 import MuiDrawer from '@mui/material/Drawer';
 import { BoxProps } from '@mui/material/Box';
@@ -27,14 +29,15 @@ import {
 import SwitchMode from 'components/Base/SwitchMode';
 import Banner from 'components/Base/Banner';
 import Header from './Header';
-import SliderScroll from 'components/Base/SliderScroll';
 
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import LogoImg from 'assets/images/logo.svg';
-import LogoIcon from 'assets/images/logo-ic.svg';
+// import LogoIcon from 'assets/images/logo-ic.svg';
+import LogoDarkImg from 'assets/images/logo-dark.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
+import useFetchInforContract from 'hooks/useFetchInforContract';
 
 interface Props {
   name?: string;
@@ -66,25 +69,26 @@ interface ListItemTextCustomProps extends ListItemTextProps {
   open: boolean;
 }
 
+interface LogoProps extends LinkProps {
+  open: boolean;
+}
+
 const drawerWidth = 224;
 const drawerWidthMinus = 100;
+const transition = 'width 0.8s ease-in-out';
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
+
+  transition: transition,
+  background: theme.palette.mode === 'dark' ? '#171717' : '#fff',
   overflow: 'unset',
   border: 'none',
   boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
+  transition: transition,
   border: 'none',
   overflow: 'unset',
   // width: `calc(${theme.spacing(7)} + 1px)`,
@@ -96,11 +100,11 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
-const DrawerHeader = styled('div')(() => ({
+const DrawerHeader = styled('div')<any>(({ open }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '38px 34px',
+  padding: open ? '38px 34px' : '38px 31px',
   position: 'relative',
   marginBottom: '22px',
 }));
@@ -108,7 +112,10 @@ const DrawerHeader = styled('div')(() => ({
 const ToggleButton = styled(IconButton)(({ theme }) => ({
   width: '18px',
   height: '18px',
-  backgroundColor: `${theme.palette.primary.light}`,
+  background:
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.light
+      : `linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)`,
   borderRadius: '50%',
   zIndex: 200,
   position: 'absolute',
@@ -128,11 +135,13 @@ const ToggleButton = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const Logo = styled(Link)<LinkProps>(() => ({
+const Logo = styled(Link)<LogoProps>(({ open }) => ({
   display: 'inline-flex',
-  maxWidth: '155px',
+  width: open ? '155px' : '50px',
   alignItem: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
+  overflow: 'hidden',
+  transition: transition,
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
@@ -150,7 +159,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 }));
 
-const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => ({
+const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open, theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -160,7 +169,7 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
   marginBottom: '10px',
   height: '56px',
   // overflow: 'hidden',
-  backgroundColor: active ? '#dbecfd88' : '#fff',
+  backgroundColor: active ? (theme.palette.mode === 'light' ? '#dbecfd88' : '#212121') : 'unset',
   width: `${open ? '100%' : '56px'}`,
 
   span: {
@@ -169,7 +178,13 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
     lineHeight: '26px',
     fontFamily: 'Poppins',
     fontWeight: active ? 'bold' : 'normal',
-    color: active ? '#293247' : '#A4A9B7',
+    color: active
+      ? theme.palette.mode === 'light'
+        ? '#293247'
+        : '#fff'
+      : theme.palette.mode === 'light'
+      ? '#A4A9B7'
+      : 'rgba(164, 169, 183, 0.56)',
   },
 
   svg: {
@@ -179,10 +194,10 @@ const MenuCustom = styled(ListItem)<ListItemCustomProps>(({ active, open }) => (
 
   '&:hover': {
     cursor: 'pointer',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     fontWeight: 'bold',
-    background: '#dbecfd88',
-    opacity: 0.8,
+    background: theme.palette.mode === 'light' ? '#dbecfd88' : '#2121217d',
+    // opacity: 0.8,
   },
 }));
 
@@ -205,14 +220,15 @@ const MenuIconCustom = styled(ListItemIcon)<ListItemIconCustomProps>(({ open }) 
 }));
 
 const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
-  background: '#FAFBFE',
+  background: theme.palette.mode === 'light' ? '#FAFBFE' : '#1e1e1e',
   // width: '100%',
   minHeight: '100vh',
-  padding: '30px',
+  padding: '25px 30px',
   boxSizing: 'border-box',
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
   // overflow: 'hidden',
+  transition: transition,
 
   [theme.breakpoints.down('lg')]: {
     padding: '24px',
@@ -237,7 +253,8 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'none',
   fontWeight: '700',
   fontFamily: 'Poppins',
-  color: theme.palette.primary.main,
+  color: theme.palette.primary[theme.palette.mode],
+  borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
   padding: '6px 35px',
   borderRadius: '8px',
   marginBottom: '20px',
@@ -246,7 +263,7 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 
 const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
-  color: theme.palette.primary.main,
+  color: theme.palette.primary[theme.palette.mode],
   marginBottom: '20px',
   minWidth: '34px',
   width: '34px',
@@ -259,14 +276,14 @@ const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const BoxSwitch = styled(Box)<BoxProps>(() => ({
+const BoxSwitch = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 
   label: {
     fontSize: '10px',
-    color: '#A4A9B7',
+    color: theme.palette.mode === 'dark' ? '#A4A9B7' : '#A4A9B7',
     lineHeight: '18px',
     textTransform: 'capitalize',
     fontFamily: 'Poppins',
@@ -306,7 +323,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 const MenusMobile = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'none',
   alignItems: 'center',
-  marginBottom: '34px',
+  marginBottom: '10px',
 
   [theme.breakpoints.down('md')]: {
     display: 'flex',
@@ -316,19 +333,29 @@ const MenusMobile = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const MenuItem = styled(Box)<BoxMenuProps>(({ active }) => ({
-  border: `1px solid ${active ? '#3864FF' : '#A4A9B7'}`,
+const MenuItem = styled(Box)<BoxMenuProps>(({ active, theme }) => ({
+  border: theme.palette.mode === 'light' ? `1px solid ${active ? '#3864FF' : '#A4A9B7'}` : 'unset',
   boxSizing: 'border-box',
   borderRadius: '14px',
-  background: active ? '#3864FF' : 'unset',
+  // background: active ? '#3864FF' : theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.09)',
+  // background: active ? '#3864FF' : theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.09)',
+  background:
+    theme.palette.mode === 'light'
+      ? active
+        ? '#3864FF'
+        : 'unset'
+      : active
+      ? 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+      : 'rgba(255, 255, 255, 0.09)',
   padding: '10px 19px',
   minWidth: '135px',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+  overflow: 'hidden',
 
   a: {
-    color: active ? '#fff' : '#A4A9B7',
+    color: active ? '#fff' : theme.palette.mode === 'light' ? '#A4A9B7' : '#fff',
     fontFamily: 'Poppins',
     fontWeight: 'bold',
     fontSize: '14px',
@@ -339,6 +366,17 @@ const MenuItem = styled(Box)<BoxMenuProps>(({ active }) => ({
   ['&:hover']: {
     opacity: '0.7',
     cursor: 'pointer',
+  },
+  ['&:focus']: {
+    opacity: '0.7',
+    cursor: 'pointer',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    ['&:hover']: {
+      opacity: '1',
+      cursor: 'pointer',
+    },
   },
 }));
 
@@ -352,6 +390,18 @@ const LinkCustom = styled(Link)<any>(({ active }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   marginRight: '14px',
+  outline: 'none',
+  width: 'auto !important',
+
+  '&:focus': {
+    outline: 'none',
+  },
+  '&:active': {
+    outline: 'none',
+  },
+  '&:focus-visible': {
+    outline: 'none',
+  },
 }));
 
 const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open, theme }) => ({
@@ -365,71 +415,26 @@ const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open
 }));
 
 const Layout: React.FC<Props> = ({ children }) => {
-  const sliderRef = useRef<any>(null);
   const history = useHistory();
   const location = useLocation();
-  const [open, setOpen] = React.useState(true);
-  // const [lightMode, setLightMode] = React.useState(true);
-  const [width] = useWindowSize();
 
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 900,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 680,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
+  const [width] = useWindowSize([null, null] as unknown as number[]);
+  const [open, setOpen] = React.useState(width ? (width < 1200 ? false : true) : null);
+  const theme = useTheme();
+  const colorMode = React.useContext<any>(ColorModeContext);
+  const handleChangeMode = () => {
+    colorMode.toggleColorMode();
   };
 
   useEffect(() => {
-    if (width < 1200) {
-      setOpen(false);
-    } else {
-      setOpen(true);
+    if (width) {
+      if (width < 1200) {
+        setOpen(false);
+      } else {
+        setOpen(true);
+      }
     }
   }, [width]);
-
-  const handleChangeMode = () => {};
 
   const handleToggle = () => {
     setOpen(!open);
@@ -439,129 +444,127 @@ const Layout: React.FC<Props> = ({ children }) => {
     history.push(url);
   };
 
-  const handleConnect = () => {};
+  const handleRefresh = () => {
+    window.location.reload();
+  };
 
-  // const scroll = (e: any) => {
-  //   if (sliderRef === null) {
-  //     return 0;
-  //   } else {
-  //     if (e.wheelDelta > 0) {
-  //       sliderRef.current.slickPrev();
-  //     } else {
-  //       sliderRef.current.slickNext();
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('wheel', scroll, true);
-
-  //   return () => {
-  //     window.removeEventListener('wheel', scroll, true);
-  //   };
-  // }, []);
+  useFetchInforContract();
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
-      <Header />
+      <Header onChangeMode={handleChangeMode} />
 
-      <Drawer
-        variant="permanent"
-        open={open}
-        sx={{
-          display: {
-            md: 'block',
-            xs: 'none',
-          },
-        }}
-      >
-        <DrawerHeader>
-          <Logo to="/">{open ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoIcon} />}</Logo>
-          <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
-        </DrawerHeader>
+      {open !== null && (
+        <>
+          <Drawer
+            variant="permanent"
+            open={open}
+            sx={{
+              display: {
+                md: 'block',
+                xs: 'none',
+              },
+            }}
+          >
+            <DrawerHeader open={open}>
+              <Logo open={open} to="/">
+                {
+                  // open ? (
+                  theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
+                  // ) : (
+                  //   <img alt="" src={LogoIcon} />
+                  // )
+                }
+              </Logo>
+              <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
+            </DrawerHeader>
 
-        <SideMenus open={open}>
-          {menus &&
-            menus.map((item, i) => (
-              <MenuCustom
-                key={i}
-                open={open}
-                active={location.pathname === item.path}
-                onClick={() => openMenu(item.path)}
-              >
-                <MenuIconCustom open={open}>
-                  {!open ? (
-                    <TooltipCustom title={item.name} arrow placement="right">
-                      {location.pathname === item.path ? (
-                        <img alt="" src={item.activeIcon} />
+            <SideMenus open={open}>
+              {menus &&
+                menus.map((item, i) => (
+                  <MenuCustom
+                    key={i}
+                    open={open}
+                    active={location.pathname === item.path}
+                    onClick={() => openMenu(item.path)}
+                  >
+                    <MenuIconCustom open={open}>
+                      {!open ? (
+                        <TooltipCustom title={item.name} arrow placement="right">
+                          {location.pathname === item.path ? (
+                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                          ) : (
+                            <img alt="" src={item.icon} />
+                          )}
+                        </TooltipCustom>
                       ) : (
-                        <img alt="" src={item.icon} />
+                        <>
+                          {location.pathname === item.path ? (
+                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                          ) : (
+                            <img alt="" src={item.icon} />
+                          )}
+                        </>
                       )}
-                    </TooltipCustom>
-                  ) : (
-                    <>
-                      {location.pathname === item.path ? (
-                        <img alt="" src={item.activeIcon} />
-                      ) : (
-                        <img alt="" src={item.icon} />
-                      )}
-                    </>
-                  )}
-                </MenuIconCustom>
-                <ListItemTextCustom
-                  primary={item.name}
-                  open={open}
-                  // sx={{  }}
-                />
-                {/* {open && <ListItemText primary={item.name} />} */}
-              </MenuCustom>
-            ))}
-        </SideMenus>
+                    </MenuIconCustom>
+                    <ListItemTextCustom
+                      primary={item.name}
+                      open={open}
+                      // sx={{  }}
+                    />
+                    {/* {open && <ListItemText primary={item.name} />} */}
+                  </MenuCustom>
+                ))}
+            </SideMenus>
 
-        <SideAction>
-          {open ? (
-            <ButtonRefresh variant="outlined" color="primary">
-              Refresh
-            </ButtonRefresh>
-          ) : (
-            <ButtonIconRefresh variant="outlined" color="primary">
-              <img alt="" src={RefreshIcon} />
-            </ButtonIconRefresh>
-          )}
+            <SideAction>
+              {open ? (
+                <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                  Refresh
+                </ButtonRefresh>
+              ) : (
+                <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                  <img alt="" src={RefreshIcon} />
+                </ButtonIconRefresh>
+              )}
 
-          <BoxSwitch>
-            {open && <label>Light</label>}
-            {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
-            <SwitchMode mode="light" onChange={handleChangeMode} />
-            {open && <label>Dark</label>}
-          </BoxSwitch>
-        </SideAction>
-      </Drawer>
+              <BoxSwitch>
+                {open && <label>Light</label>}
+                {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
+                <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
+                {open && <label>Dark</label>}
+              </BoxSwitch>
+            </SideAction>
+          </Drawer>
 
-      <MainLayout component="main" open={open}>
-        <MenusMobile>
-          <SliderScroll elRef={sliderRef} settings={settings}>
-            {menus &&
-              menus.map((item, i) => (
-                <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
-                  <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
-                </LinkCustom>
-              ))}
-          </SliderScroll>
-        </MenusMobile>
+          <MainLayout component="main" open={open}>
+            <MenusMobile>
+              <div className="scroll-area scroll-area--horizontal">
+                <div className="scroll-area__body">
+                  {menus &&
+                    menus.map((item, i) => (
+                      <div key={i} className={`scroll-area__column item${i + 1}`}>
+                        <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                          <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                        </LinkCustom>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              {/* </SliderScroll> */}
+            </MenusMobile>
 
-        {location.pathname !== '/treasury' && width > 899 && (
-          <Banner
-            // text="Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens"
-            // walletId="0x33434dieoewo"
-            onConnect={handleConnect}
-            connected={false}
-            isBg={location.pathname !== '/'}
-          />
-        )}
+            {
+              // location.pathname !== '/treasury' &&
+              width > 899 && (
+                <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
+              )
+            }
 
-        {children}
-      </MainLayout>
+            {children}
+          </MainLayout>
+        </>
+      )}
     </Box>
   );
 };

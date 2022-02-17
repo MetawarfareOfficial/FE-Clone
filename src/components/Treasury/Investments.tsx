@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Grid, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
+import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
 
-import TableTokens from 'components/Base/TableTokens';
+// import TableTokens from 'components/Base/TableTokens';
+import TableInvestments from './TableInvestments';
+import ListInvestments from './ListInvestments';
 
-import BitcoinCoin from 'assets/images/coin-bitcoin.svg';
-
-const data = [
-  {
-    icon: BitcoinCoin,
-    name: 'Bitcoin',
-    amount: 23,
-    value: 22234,
-  },
-];
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { fetchInvestments } from 'services/investments';
+import { useToast } from 'hooks/useToast';
+import { getMarketPriceData } from 'services/coingeko';
+import { Coin } from 'interfaces/Coin';
+import { BaseInvest, Invest } from 'interfaces/Invest';
+import BigNumber from 'bignumber.js';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME, PARAMS } from 'consts/investments';
+import { uniqBy } from 'lodash';
 
 interface Props {
   title?: string;
@@ -32,7 +35,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: 'bold',
   fontSize: '24px',
   lineHeight: '28px',
-  color: '#828282',
+  color: theme.palette.mode === 'light' ? '#293247' : '#828282',
   marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {
@@ -44,94 +47,87 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     textAlign: 'center',
     fontSize: '24px',
     lineHeight: '36px',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#828282',
   },
 }));
 
 const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
-  background: ' #FFFFFF',
-  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
-  borderRadius: '22px',
-  padding: '17px 25px',
+  background: 'none',
+  boxShadow: 'none',
   boxSizing: 'border-box',
+  // minHeight: '550px',
 
   [theme.breakpoints.down('lg')]: {
-    padding: '14px 18px',
+    padding: ' 0',
+    minHeight: 'auto',
   },
   [theme.breakpoints.down('sm')]: {
-    padding: '18px',
-  },
-}));
-
-const Detail = styled(Box)<BoxProps>(({ theme }) => ({
-  background: '#F9F9FB',
-  borderRadius: '11px',
-  padding: '13px 8px',
-
-  [theme.breakpoints.down('lg')]: {
-    padding: '10px 6px',
-  },
-  [theme.breakpoints.down('sm')]: {
-    padding: '15px 3px',
-  },
-}));
-
-const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: 'Roboto',
-  fontWeight: 'normal',
-  fontSize: '20px',
-  lineHeight: '23px',
-  textAlign: 'center',
-  color: '#4F4F4F',
-  width: '100%',
-  height: '100%',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '92px',
-
-  [theme.breakpoints.down('lg')]: {
-    fontSize: '18px',
-    lineHeight: '22px',
-    minHeight: '60px',
+    padding: '0',
+    background: 'none',
+    boxShadow: 'unset',
   },
 }));
 
 const Investments: React.FC<Props> = () => {
-  const [showData, setShowData] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const { error, investments } = useAppSelector((state) => state.investments);
+  const marketPriceData: Coin[] = useAppSelector((state) => state.coingeko.marketPriceData);
+
+  const { createToast } = useToast();
+  const [width] = useWindowSize();
+  const [dataTableInvest, setDataTableInvest] = useState<Invest[]>([]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setShowData(true);
-    }, 3000);
+    if (error) {
+      createToast({
+        message: error,
+        type: 'error',
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    dispatch(fetchInvestments());
+    dispatch(getMarketPriceData(PARAMS));
   }, []);
+
+  useEffect(() => {
+    if (investments.length > 0 && marketPriceData.length > 0) {
+      const investArr = investments
+        .filter((i: BaseInvest) => Object.values(i).every((x) => x !== ''))
+        .map((item: BaseInvest) => {
+          const coin = marketPriceData.find((el: Coin) => el.symbol.toLowerCase() === item.symbol.toLowerCase());
+          return coin
+            ? ({
+                ...item,
+                name: coin.name,
+                token_price: coin.current_price,
+                icon: coin.image,
+                current_investment: new BigNumber(coin.current_price).times(item.our_holdings).toNumber(),
+              } as Invest)
+            : ({} as Invest);
+        });
+
+      const uniqInvest = uniqBy(
+        investArr.filter((invest) => Object.keys(invest).length > 0),
+        (item) => item.symbol.toLowerCase(),
+      );
+
+      setDataTableInvest(uniqInvest);
+    }
+  }, [marketPriceData, investments]);
+
+  useInterval(() => {
+    dispatch(getMarketPriceData(PARAMS));
+  }, DELAY_TIME);
 
   return (
     <Wrapper>
       <Title>Investments</Title>
 
       <PaperContent>
-        {showData ? (
-          <Grid container spacing={{ xs: '12px', md: '24px', lg: '42px' }}>
-            <Grid item xs={12} sm={4}>
-              <Detail>
-                <TableTokens data={data} />
-              </Detail>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Detail>
-                <TableTokens data={data} />
-              </Detail>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Detail>
-                <TableTokens data={data} />
-              </Detail>
-            </Grid>
-          </Grid>
-        ) : (
-          <TextNoData>No investments yet!</TextNoData>
-        )}
+        {width < 600 ? <ListInvestments data={dataTableInvest} /> : <TableInvestments data={dataTableInvest} />}
       </PaperContent>
     </Wrapper>
   );

@@ -16,7 +16,7 @@ const Root = styled('span')`
   position: relative;
   display: inline-block;
   width: 40px;
-  height: 20px;
+  height: 19px;
   margin: 0 10px;
   cursor: pointer;
   transform: rotate(180deg);
@@ -39,12 +39,12 @@ const Root = styled('span')`
     display: block;
     width: 17px;
     height: 17px;
-    top: 3px;
-    left: 3px;
+    top: 1px;
+    left: 1px;
     border-radius: 16px;
     background-color: #fff;
     position: relative;
-    transition: all 200ms ease;
+    transition: 0.7s ease-in-out;
   }
 
   &.${switchUnstyledClasses.focusVisible} .${switchUnstyledClasses.thumb} {
@@ -55,7 +55,7 @@ const Root = styled('span')`
   &.${switchUnstyledClasses.checked} {
     .${switchUnstyledClasses.thumb} {
       left: 22px;
-      top: 2px;
+      top: 1px;
       background-color: #fff;
     }
 

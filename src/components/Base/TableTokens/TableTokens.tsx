@@ -37,8 +37,9 @@ const TableHeaderText = styled(TableCell)<TableCellCustomProps>(({ fontSize, the
   fontSize: fontSize || '14px',
   lineHeight: '16px',
   padding: '7px',
-  color: ' #BDBDBD',
+  color: theme.palette.mode === 'light' ? '#BDBDBD' : '#4F4F4F',
   border: 'none',
+  maxWidth: '33%',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '12px',
@@ -58,8 +59,9 @@ const TableContentText = styled(TableCell)(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '16px',
   padding: '7px',
-  color: ' #293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   border: 'none',
+  maxWidth: '33%',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '12px',
@@ -99,7 +101,7 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
             <TableHeaderText fontSize={fontSize} align="center">
               Amount
             </TableHeaderText>
-            <TableHeaderText fontSize={fontSize} align="right">
+            <TableHeaderText fontSize={fontSize} align="center">
               $ value
             </TableHeaderText>
           </TableRow>
@@ -114,7 +116,7 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
                     </TextToken>
                   </TableContentText>
                   <TableContentText align="center">{item.amount}</TableContentText>
-                  <TableContentText align="right">{item.value}</TableContentText>
+                  <TableContentText align="center">${item.value}</TableContentText>
                 </TableRow>
               ))
             : ''}

@@ -1,57 +1,18 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
-
 import TypeReward from './TypeReward';
-
-import SquareIcon from 'assets/images/square.gif';
-import CubeIcon from 'assets/images/cube.gif';
-import TessIcon from 'assets/images/tess.gif';
-
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+import {
+  SquareIcon,
+  CubeIcon,
+  TessIcon,
+  SquareDarkDefaultIcon,
+  CubeDarkDefaultIcon,
+  TessDarkDefaultIcon,
+} from 'assets/images';
+import { useAppSelector } from 'stores/hooks';
+import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 
 interface Props {
   title?: string;
@@ -71,7 +32,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   textTransform: 'capitalize',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
@@ -88,42 +49,48 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const TypesReward: React.FC<Props> = () => {
+  const theme = useTheme();
+  const [width] = useWindowSize();
+  const dataApy = useAppSelector((state) => state.contract.apy);
+  const dataPrice = useAppSelector((state) => state.contract.price);
+
   return (
     <Wrapper>
       <Title>Types of Reward Contracts</Title>
 
       <TypeReward
         id={0}
-        name="Sqaure Contract"
-        icon={SquareIcon}
-        color="#E5E5FE"
-        colorChart="#A1A1E1"
-        value={5}
-        apy={250}
-        earn={0.03}
-        dataChart={data}
+        name="Square Contract"
+        icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkDefaultIcon}
+        color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
+        colorChart={theme.palette.mode === 'light' ? '#A1A1E1' : width < 600 ? '#934EA0' : '#3864FF'}
+        value={dataPrice.square}
+        apy={dataApy.square}
+        earn={computeEarnedTokenPerDay(dataPrice.square, dataApy.square)}
       />
       <TypeReward
         id={1}
         name="Cube Contract"
-        icon={CubeIcon}
-        color="#D2FFDB"
-        colorChart="#9DE6AB"
-        value={15}
-        apy={400}
-        earn={0.16}
-        dataChart={data}
+        icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkDefaultIcon}
+        color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
+        // colorChart="#9DE6AB"
+        colorChart={theme.palette.mode === 'light' ? '#9DE6AB' : width < 600 ? '#4F9F96' : '#3864FF'}
+        value={dataPrice.cube}
+        apy={dataApy.cube}
+        earn={computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)}
       />
       <TypeReward
         id={2}
         name="Tesseract Contract"
-        icon={TessIcon}
-        color="#DBECFD"
-        colorChart="#9EC5EB"
-        value={30}
-        apy={500}
-        earn={0.41}
-        dataChart={data}
+        icon={theme.palette.mode === 'light' ? TessIcon : TessDarkDefaultIcon}
+        color={
+          theme.palette.mode === 'light' ? '#DBECFD' : 'linear-gradient(125.46deg, #2978F4 42.78%, #23ABF8 129.61%)'
+        }
+        // colorChart="#9EC5EB"
+        colorChart={theme.palette.mode === 'light' ? '#9EC5EB' : width < 600 ? '#5B71C4' : '#3864FF'}
+        value={dataPrice.tesseract}
+        apy={dataApy.tesseract}
+        earn={computeEarnedTokenPerDay(dataPrice.tesseract, dataApy.tesseract)}
       />
     </Wrapper>
   );

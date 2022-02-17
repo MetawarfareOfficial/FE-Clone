@@ -1,13 +1,18 @@
 import React, { useRef, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import 'styles/menus.css';
+import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, Typography, TypographyProps, Grid } from '@mui/material';
 import { BoxProps } from '@mui/material/Box';
 
 import SquareIcon from 'assets/images/square.gif';
+import SquareDarkIcon from 'assets/images/square-dark.gif';
 import CubeIcon from 'assets/images/cube.gif';
+import CubeDarkIcon from 'assets/images/cube-dark.gif';
 import TessIcon from 'assets/images/tess.gif';
-import SliderScroll from '../Base/SliderScroll/index';
+import TessDarkIcon from 'assets/images/tess-dark.gif';
+import { useAppSelector } from 'stores/hooks';
+import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 
 interface Props {
   title?: string;
@@ -28,7 +33,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   margin: ' 0 0 31px',
   fontSize: '24px',
   lineHeight: '36px',
@@ -49,7 +54,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const TitleBox = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#080A0F',
   fontFamily: 'Roboto',
   margin: ' 4px 5px 11px',
   fontSize: '48px',
@@ -69,7 +74,7 @@ const TitleBox = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const TextBox = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#000',
+  color: theme.palette.mode === 'light' ? '#000' : 'rgba(255, 255, 255, 0.46)',
   fontSize: '14px',
   lineHeight: '21px',
   fontWeight: 'normal',
@@ -80,10 +85,14 @@ const TextBox = styled(Typography)<TypographyProps>(({ theme }) => ({
     fontSize: '12px',
     lineHeight: '18px',
   },
+
+  [theme.breakpoints.down('sm')]: {
+    color: '#000',
+  },
 }));
 
 const HeaderTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#080A0F',
   fontSize: '20px',
   lineHeight: '30px',
   fontWeight: '600',
@@ -101,7 +110,7 @@ const HeaderTitle = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: 'rgba(41, 50, 71, 0.35)',
+  color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.35)' : 'rgba(255, 255, 255, 0.42)',
   fontSize: '12px',
   lineHeight: '18px',
   fontWeight: 'normal',
@@ -114,11 +123,12 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     fontSize: '12px',
     lineHeight: '18px',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.35)' : 'rgba(41, 50, 71, 0.35)',
   },
 }));
 
 const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
-  color: '#000000',
+  color: theme.palette.mode === 'light' ? '#000000' : '#080A0F',
   margin: '5px 0',
   fontSize: '13px',
   lineHeight: '20px',
@@ -134,7 +144,7 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
 const BoxTotal = styled(Box)<BoxTypeProps>(({ color, shadow, theme }) => ({
   borderRadius: '13px',
   overflow: 'hidden',
-  backgroundColor: `${color}`,
+  background: `${color}`,
   boxShadow: `${shadow}`,
   display: 'flex',
 
@@ -164,13 +174,19 @@ const BoxLeft = styled(Box)<BoxProps>(({ theme }) => ({
 const BoxRight = styled(Box)<BoxProps>(({ theme }) => ({
   padding: '14px',
   boxSizing: 'border-box',
-  width: '150px',
+  minWidth: '150px',
+  width: '40%',
   display: 'inline-flex',
   alignItems: 'center',
   backgroundColor: 'rgba(255, 255, 255, 0.21)',
 
+  [theme.breakpoints.down('xl')]: {
+    width: 'auto',
+  },
+
   [theme.breakpoints.down('lg')]: {
     width: '115px',
+    minWidth: '115px',
     padding: '8px',
   },
   [theme.breakpoints.down('md')]: {
@@ -213,55 +229,11 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
 const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
   const boxRef = useRef<any>(null);
   const [width] = useWindowSize();
-  const sliderRef = useRef<any>(null);
+  const theme = useTheme();
 
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
-
-  // const scroll = (e: any) => {
-  //   if (sliderRef === null) {
-  //     return 0;
-  //   } else {
-  //     if (e.wheelDelta > 0) {
-  //       sliderRef.current.slickPrev();
-  //     } else {
-  //       sliderRef.current.slickNext();
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   window.addEventListener('wheel', scroll, true);
-
-  //   return () => {
-  //     window.removeEventListener('wheel', scroll, true);
-  //   };
-  // }, []);
+  const dataApy = useAppSelector((state) => state.contract.apy);
+  const dataPrice = useAppSelector((state) => state.contract.price);
+  const dataTotal = useAppSelector((state) => state.contract.total);
 
   useEffect(() => {
     if (boxRef && boxRef.current) {
@@ -278,11 +250,14 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
         <div ref={boxRef}>
           <Grid container spacing={{ sm: '24px', md: '30px' }}>
             <Grid item xs={4} md={12}>
-              <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+              <BoxTotal
+                color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
+                shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+              >
                 <BoxLeft>
                   <BoxHeader>
                     <ViewImage>
-                      <img alt="" src={SquareIcon} width="100%" />
+                      <img alt="" src={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon} width="100%" />
                     </ViewImage>
 
                     <BoxHeaderContent>
@@ -291,25 +266,31 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     </BoxHeaderContent>
                   </BoxHeader>
 
-                  <TitleBox>30</TitleBox>
+                  <TitleBox>{dataTotal.square}</TitleBox>
                   <TextBox>Contracts minted</TextBox>
                 </BoxLeft>
 
                 <BoxRight>
                   <Box>
-                    <Description>5 0xB</Description>
-                    <Description>Earn 0.03 0xB/day</Description>
-                    <Description>250% APY</Description>
+                    <Description>{`${dataPrice.square} 0xB`}</Description>
+                    <Description>{`Earn ${computeEarnedTokenPerDay(
+                      dataPrice.square,
+                      dataApy.square,
+                    )} 0xB/day`}</Description>
+                    <Description>{`${Number(dataApy.square)}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
             </Grid>
             <Grid item xs={4} md={12}>
-              <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
+              <BoxTotal
+                color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
+                shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+              >
                 <BoxLeft>
                   <BoxHeader>
                     <ViewImage>
-                      <img alt="" src={CubeIcon} width="100%" />
+                      <img alt="" src={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon} width="100%" />
                     </ViewImage>
 
                     <BoxHeaderContent>
@@ -318,25 +299,36 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     </BoxHeaderContent>
                   </BoxHeader>
 
-                  <TitleBox>30</TitleBox>
+                  <TitleBox>{dataTotal.cube}</TitleBox>
                   <TextBox>Contracts minted</TextBox>
                 </BoxLeft>
 
                 <BoxRight>
                   <Box>
-                    <Description>15 0xB</Description>
-                    <Description>Earn 0.16 0xB/day</Description>
-                    <Description>400% APY</Description>
+                    <Description>{`${dataPrice.cube} 0xB`}</Description>
+                    <Description>{`Earn ${computeEarnedTokenPerDay(
+                      dataPrice.cube,
+                      dataApy.cube,
+                    )} 0xB/day`}</Description>
+                    <Description>{`${Number(dataApy.cube)}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
             </Grid>
             <Grid item xs={4} md={12}>
-              <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
+              <BoxTotal
+                color={
+                  theme.palette.mode === 'light'
+                    ? '#DBECFD'
+                    : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+                }
+                shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                sx={{ margin: 0 }}
+              >
                 <BoxLeft>
                   <BoxHeader>
                     <ViewImage>
-                      <img alt="" src={TessIcon} width="100%" />
+                      <img alt="" src={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon} width="100%" />
                     </ViewImage>
 
                     <BoxHeaderContent>
@@ -345,15 +337,18 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     </BoxHeaderContent>
                   </BoxHeader>
 
-                  <TitleBox>30</TitleBox>
+                  <TitleBox>{dataTotal.tesseract}</TitleBox>
                   <TextBox>Contracts minted</TextBox>
                 </BoxLeft>
 
                 <BoxRight>
                   <Box>
-                    <Description>30 0xB</Description>
-                    <Description>Earn 0.41 0xB/day</Description>
-                    <Description>500% APY</Description>
+                    <Description>{`${dataPrice.tesseract} 0xB`}</Description>
+                    <Description>{`Earn ${computeEarnedTokenPerDay(
+                      dataPrice.tesseract,
+                      dataApy.tesseract,
+                    )} 0xB/day`}</Description>
+                    <Description>{`${Number(dataApy.tesseract)}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
@@ -363,89 +358,122 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-        <SliderScroll elRef={sliderRef} settings={settings}>
-          <Box>
-            <BoxTotal color="#E5E5FE" shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
-              <BoxLeft>
-                <BoxHeader>
-                  <ViewImage>
-                    <img alt="" src={SquareIcon} width="100%" />
-                  </ViewImage>
+        <div className="scroll-area scroll-area--horizontal">
+          <div className="scroll-area__body">
+            <div className="scroll-area__column item1">
+              <Box>
+                <BoxTotal
+                  color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
+                  shadow=" 0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                >
+                  <BoxLeft>
+                    <BoxHeader>
+                      <ViewImage>
+                        <img alt="" src={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon} width="100%" />
+                      </ViewImage>
 
-                  <BoxHeaderContent>
-                    <HeaderTitle>Square</HeaderTitle>
-                    <HeaderText>Contract</HeaderText>
-                  </BoxHeaderContent>
-                </BoxHeader>
+                      <BoxHeaderContent>
+                        <HeaderTitle>Square</HeaderTitle>
+                        <HeaderText>Contract</HeaderText>
+                      </BoxHeaderContent>
+                    </BoxHeader>
 
-                <TitleBox>30</TitleBox>
-                <TextBox>Contracts minted</TextBox>
-              </BoxLeft>
+                    <TitleBox>{dataTotal.square}</TitleBox>
+                    <TextBox>Contracts minted</TextBox>
+                  </BoxLeft>
 
-              <BoxRight>
-                <Box>
-                  <Description>5 0xB</Description>
-                  <Description>Earn 0.03 0xB/day</Description>
-                  <Description>250% APY</Description>
-                </Box>
-              </BoxRight>
-            </BoxTotal>
-          </Box>
-          <Box>
-            <BoxTotal color="#D2FFDB" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)">
-              <BoxLeft>
-                <BoxHeader>
-                  <ViewImage>
-                    <img alt="" src={CubeIcon} width="100%" />
-                  </ViewImage>
+                  <BoxRight>
+                    <Box>
+                      <Description>{`${dataPrice.square} 0xB`}</Description>
+                      <Description>{`Earn ${computeEarnedTokenPerDay(
+                        dataPrice.square,
+                        dataApy.square,
+                      )} 0xB/day`}</Description>
+                      <Description>{`${dataApy.square}% APR`}</Description>
+                    </Box>
+                  </BoxRight>
+                </BoxTotal>
+              </Box>
+            </div>
 
-                  <BoxHeaderContent>
-                    <HeaderTitle>Cube </HeaderTitle>
-                    <HeaderText>Contract</HeaderText>
-                  </BoxHeaderContent>
-                </BoxHeader>
+            <div className="item item2">
+              <Box>
+                <BoxTotal
+                  color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
+                  shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                >
+                  <BoxLeft>
+                    <BoxHeader>
+                      <ViewImage>
+                        <img alt="" src={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon} width="100%" />
+                      </ViewImage>
 
-                <TitleBox>30</TitleBox>
-                <TextBox>Contracts minted</TextBox>
-              </BoxLeft>
+                      <BoxHeaderContent>
+                        <HeaderTitle>Cube </HeaderTitle>
+                        <HeaderText>Contract</HeaderText>
+                      </BoxHeaderContent>
+                    </BoxHeader>
 
-              <BoxRight>
-                <Box>
-                  <Description>15 0xB</Description>
-                  <Description>Earn 0.16 0xB/day</Description>
-                  <Description>400% APY</Description>
-                </Box>
-              </BoxRight>
-            </BoxTotal>
-          </Box>
-          <Box>
-            <BoxTotal color="#DBECFD" shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)" sx={{ margin: 0 }}>
-              <BoxLeft>
-                <BoxHeader>
-                  <ViewImage>
-                    <img alt="" src={TessIcon} width="100%" />
-                  </ViewImage>
+                    <TitleBox>{dataTotal.cube}</TitleBox>
+                    <TextBox>Contracts minted</TextBox>
+                  </BoxLeft>
 
-                  <BoxHeaderContent>
-                    <HeaderTitle>Tesseract</HeaderTitle>
-                    <HeaderText>Contract</HeaderText>
-                  </BoxHeaderContent>
-                </BoxHeader>
+                  <BoxRight>
+                    <Box>
+                      <Description>{`${dataPrice.cube} 0xB`}</Description>
+                      <Description>{`Earn ${computeEarnedTokenPerDay(
+                        dataPrice.cube,
+                        dataApy.cube,
+                      )} 0xB/day`}</Description>
+                      <Description>{`${dataApy.cube}% APR`}</Description>
+                    </Box>
+                  </BoxRight>
+                </BoxTotal>
+              </Box>
+            </div>
 
-                <TitleBox>30</TitleBox>
-                <TextBox>Contracts minted</TextBox>
-              </BoxLeft>
+            <div className="item item3">
+              <Box>
+                <BoxTotal
+                  color={
+                    theme.palette.mode === 'light'
+                      ? '#DBECFD'
+                      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+                  }
+                  shadow="0px 56px 31px -48px rgba(25, 21, 48, 0.13)"
+                  sx={{ margin: 0 }}
+                >
+                  <BoxLeft>
+                    <BoxHeader>
+                      <ViewImage>
+                        <img alt="" src={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon} width="100%" />
+                      </ViewImage>
 
-              <BoxRight>
-                <Box>
-                  <Description>30 0xB</Description>
-                  <Description>Earn 0.41 0xB/day</Description>
-                  <Description>500% APY</Description>
-                </Box>
-              </BoxRight>
-            </BoxTotal>
-          </Box>
-        </SliderScroll>
+                      <BoxHeaderContent>
+                        <HeaderTitle>Tesseract</HeaderTitle>
+                        <HeaderText>Contract</HeaderText>
+                      </BoxHeaderContent>
+                    </BoxHeader>
+
+                    <TitleBox>{dataTotal.tesseract}</TitleBox>
+                    <TextBox>Contracts minted</TextBox>
+                  </BoxLeft>
+
+                  <BoxRight>
+                    <Box>
+                      <Description>{`${dataPrice.tesseract} 0xB`}</Description>
+                      <Description>{`Earn ${computeEarnedTokenPerDay(
+                        dataPrice.tesseract,
+                        dataApy.tesseract,
+                      )} 0xB/day`}</Description>
+                      <Description>{`${dataApy.tesseract}% APR`}</Description>
+                    </Box>
+                  </BoxRight>
+                </BoxTotal>
+              </Box>
+            </div>
+          </div>
+        </div>
       </Box>
     </Wrapper>
   );

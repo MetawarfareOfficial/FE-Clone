@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React from 'react';
+import 'styles/menus.css';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
 
-import SliderScroll from 'components/Base/SliderScroll';
+import bgBox from 'assets/images/bg-box.png';
 
 interface Props {
   title?: string;
@@ -13,7 +14,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   textAlign: 'center',
   fontSize: '24px',
   lineHeight: '44px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#BDBDBD',
   textTransform: 'capitalize',
   fontWeight: 'bold',
   fontFamily: 'Poppins',
@@ -48,9 +49,11 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   alignItems: 'center',
   borderRadius: '22px',
   boxSizing: 'border-box',
-  boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
+  boxShadow: theme.palette.mode === 'light' ? '0px 0px 48px rgba(0, 0, 0, 0.06)' : 'unset',
   height: '100%',
   minHeight: '123px',
+  background: theme.palette.mode === 'light' ? '#fff' : `url(${bgBox}) no-repeat center center `,
+  backgroundSize: theme.palette.mode === 'light' ? 'unset' : 'cover',
 
   [theme.breakpoints.down('lg')]: {
     padding: '16px 24px',
@@ -59,25 +62,31 @@ const BoxSale = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     marginRight: '30px',
     maxWidth: '265px',
+    height: '123px',
   },
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
-  fontWeight: 'normal',
-  color: '#293247',
+  fontWeight: '500',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
   maxWidth: '186px',
 
   span: {
     fontWeight: 'bold',
-    color: theme.palette.primary.main,
+    color: theme.palette.mode === 'light' ? theme.palette.primary.main : '#579AFF',
   },
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '12px',
     lineHeight: '18px',
+  },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '12px',
+    lineHeight: '18px',
+    whiteSpace: 'normal',
   },
 }));
 
@@ -90,7 +99,10 @@ const Sale = styled(Box)<BoxProps>(({ theme }) => ({
   height: '57px',
   borderRadius: '15px',
   boxShadow: '0px 14px 26px -2px rgba(0, 0, 0, 0.14)',
-  background: 'linear-gradient(112.15deg, #A5C7FB -10.8%, #C0CAFF 107.36%)',
+  background:
+    theme.palette.mode === 'light'
+      ? 'linear-gradient(112.15deg, #A5C7FB -10.8%, #C0CAFF 107.36%)'
+      : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -114,60 +126,11 @@ const Sale = styled(Box)<BoxProps>(({ theme }) => ({
 const SliderItem = styled(Box)<BoxProps>(() => ({
   paddingTop: '23px',
   paddingLeft: '13px',
+  boxSizing: 'border-box',
+  position: 'relative',
 }));
 
 const Tokens: React.FC<Props> = () => {
-  const holdingRef = useRef<any>(null);
-
-  const settings = {
-    className: 'slider variable-width',
-    dots: false,
-    arrows: false,
-    infinite: false,
-    centerMode: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    variableWidth: true,
-    speed: 300,
-    responsive: [
-      {
-        breakpoint: 900,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 769,
-        settings: {
-          className: 'slider variable-width',
-          dots: false,
-          arrows: false,
-          infinite: false,
-          centerMode: false,
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          variableWidth: true,
-          speed: 300,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
-
   return (
     <Wrapper>
       <Title>Minted Contract Tokens Distribution</Title>
@@ -178,7 +141,7 @@ const Tokens: React.FC<Props> = () => {
             <BoxSale>
               <Sale>10%</Sale>
               <Text>
-                <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
+                <span>Token</span> in Development/ Marketing Wallet as 100% USDC
               </Text>
             </BoxSale>
           </Grid>
@@ -192,7 +155,7 @@ const Tokens: React.FC<Props> = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={3}>
             <BoxSale>
-              <Sale>30%</Sale>
+              <Sale>20%</Sale>
               <Text>
                 <span>Token</span> in Treasury Wallet as 100% USDC
               </Text>
@@ -210,40 +173,56 @@ const Tokens: React.FC<Props> = () => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        <SliderScroll elRef={holdingRef} settings={settings}>
-          <SliderItem>
-            <BoxSale>
-              <Sale>10%</Sale>
-              <Text>
-                <span>Token</span> in Development/ Marketing Funds Wallet (100% USDC)
-              </Text>
-            </BoxSale>
-          </SliderItem>
-          <SliderItem>
-            <BoxSale>
-              <Sale>20%</Sale>
-              <Text>
-                <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
-              </Text>
-            </BoxSale>
-          </SliderItem>
-          <SliderItem>
-            <BoxSale>
-              <Sale>30%</Sale>
-              <Text>
-                <span>Token</span> in Treasury Wallet as 100% USDC
-              </Text>
-            </BoxSale>
-          </SliderItem>
-          <SliderItem>
-            <BoxSale>
-              <Sale>50%</Sale>
-              <Text>
-                <span>Token</span> in Rewards Wallet as 100% 0xB
-              </Text>
-            </BoxSale>
-          </SliderItem>
-        </SliderScroll>
+        {/* <SliderScroll elRef={holdingRef} settings={settings}> */}
+
+        <div className="scroll-area scroll-area--horizontal">
+          <div className="scroll-area__body">
+            <div className="scroll-area__column item1">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>10%</Sale>
+                  <Text>
+                    <span>Token</span> in Development/ Marketing Wallet as 100% USDC
+                  </Text>
+                </BoxSale>
+              </SliderItem>
+            </div>
+
+            <div className="scroll-area__column item2">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>20%</Sale>
+                  <Text>
+                    <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
+                  </Text>
+                </BoxSale>
+              </SliderItem>
+            </div>
+
+            <div className="scroll-area__column item3">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>20%</Sale>
+                  <Text>
+                    <span>Token</span> in Treasury Wallet as 100% USDC
+                  </Text>
+                </BoxSale>
+              </SliderItem>{' '}
+            </div>
+
+            <div className="scroll-area__column item4">
+              <SliderItem>
+                <BoxSale>
+                  <Sale>50%</Sale>
+                  <Text>
+                    <span>Token</span> in Rewards Wallet as 100% 0xB
+                  </Text>
+                </BoxSale>
+              </SliderItem>
+            </div>
+          </div>
+        </div>
+        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );

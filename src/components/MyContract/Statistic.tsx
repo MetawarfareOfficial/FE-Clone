@@ -1,7 +1,9 @@
 import React from 'react';
 import { useWindowSize } from 'hooks/useWindowSize';
-import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { Box, BoxProps, Typography, TypographyProps, Tooltip } from '@mui/material';
+import { useAppSelector } from 'stores/hooks';
+// import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   icon?: any;
@@ -10,33 +12,53 @@ interface Props {
   color: string;
   text?: string;
   disabled?: boolean;
+  connected?: any;
+  data: Array<any>;
+}
+
+interface TitleProps extends TypographyProps {
+  color: string;
+}
+
+interface TitleMobileProps extends TypographyProps {
+  color: string;
+  connected: any;
+  value: any;
+  rewards: boolean | any;
+}
+
+interface ValueProps extends TypographyProps {
+  color: string;
 }
 
 interface BoxCustomProps {
   color: string;
-  disabled?: boolean;
+  opacity?: string;
 }
 
 interface TypographyCustomProps extends TypographyProps {
   rewards: boolean | any;
+  value: any;
+  connected: any;
 }
 
-const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, disabled }) => ({
+const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
   background: color,
+  opacity: opacity,
   padding: '20px 20px',
   borderRadius: '20px',
   boxShadow: '1px 19px 22px -16px rgba(50, 71, 117, 0.18)',
-  display: 'flex',
+  display: 'inline-flex',
+  width: '100%',
   alignItems: 'center',
   boxSizing: 'border-box',
-  opacity: disabled ? 0.4 : 1,
 
   [theme.breakpoints.down('lg')]: {
     padding: '12px 14px',
   },
 }));
 
-const WrapperMobile = styled(Box)<BoxCustomProps>(({ color, theme, disabled }) => ({
+const WrapperMobile = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
   width: '100%',
   display: 'none',
   background: color,
@@ -45,7 +67,7 @@ const WrapperMobile = styled(Box)<BoxCustomProps>(({ color, theme, disabled }) =
   boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.11)',
   boxSizing: 'border-box',
   height: '100%',
-  opacity: disabled ? 0.4 : 1,
+  opacity: opacity,
 
   [theme.breakpoints.down('sm')]: {
     display: 'inline-block',
@@ -60,7 +82,7 @@ const BoxHeader = styled(Box)<BoxProps>(() => ({
 
 const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
   width: '43px',
-  heigh: '43px',
+  height: '43px',
   marginRight: '10px',
 
   img: {
@@ -78,16 +100,58 @@ const ViewImage = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const Content = styled(Box)<BoxProps>(() => ({}));
+const Content = styled(Box)<BoxProps>(({ theme }) => ({
+  maxWidth: 'calc(100% - 54px - 43px)',
+  overflow: 'hidden',
 
-const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '100%',
+  },
+}));
+
+const Title = styled(Typography)<TitleProps>(({ theme, color }) => ({
   fontFamily: 'Poppins',
   fontWeight: '600',
   fontSize: '20px',
   lineHeight: '30px',
-  color: '#293247',
+  color: color === '#3F3F3F' ? '#828282' : '#293247',
   textTransform: 'uppercase',
   margin: '0',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '15px',
+    lineHeight: '22px',
+  },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '20px',
+    lineHeight: '30px',
+  },
+}));
+
+const TitleMobile = styled(Typography)<TitleMobileProps>(({ theme, color, connected, rewards, value }) => ({
+  fontFamily: 'Poppins',
+  fontWeight: '600',
+  fontSize: '20px',
+  lineHeight: '30px',
+  color:
+    rewards && !connected
+      ? '#4F4F4F'
+      : color === '#3F3F3F'
+      ? '#828282'
+      : theme.palette.mode === 'light'
+      ? '#293247'
+      : Number(value) === 0 && rewards
+      ? '#4F4F4F'
+      : '#293247',
+  // color: rewards && !connected ? '#4F4F4F' : color === '#3F3F3F' ? '#828282' : '#293247',
+  textTransform: 'uppercase',
+  margin: '0',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '15px',
@@ -118,21 +182,24 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
+const Value = styled(Typography)<ValueProps>(({ theme, color }) => ({
   padding: '13px 18px',
-  backgroundColor: '#fff',
-  color: '#293247',
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.19)',
+  color: color === '#3F3F3F' ? '#828282' : '#293247',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
   fontSize: '20px',
   lineHeight: '23px',
-  display: 'inline-flex',
+  display: 'inline-block',
   alignItems: 'center',
   justifyContent: 'center',
   marginLeft: 'auto',
   boxShadow: '0px 4px 17px rgba(0, 0, 0, 0.13)',
   borderRadius: '12px',
+  // whiteSpace: 'nowrap',
+  // overflow: 'hidden !important',
+  // textOverflow: 'ellipsis',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
@@ -142,44 +209,60 @@ const Value = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const TotalMobile = styled(Typography)<TypographyCustomProps>(({ rewards }) => ({
-  color: '#293247',
+const TotalMobile = styled(Typography)<TypographyCustomProps>(({ theme, rewards, connected, value }) => ({
+  color:
+    rewards && !connected
+      ? '#4F4F4F'
+      : theme.palette.mode === 'light'
+      ? '#293247'
+      : Number(value) === 0 && rewards
+      ? '#4F4F4F'
+      : '#293247',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
   fontSize: rewards ? '24px' : '36px',
   lineHeight: rewards ? '28px' : '42px',
-  display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: 'cal(100% - 67px)',
-  // whiteSpace: 'nowrap',
-  // overflow: 'hidden !important',
-  // textOverflow: 'ellipsis',
+  display: 'inline-block',
+  width: 'calc(100% - 67px)',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
 }));
 
-const Statistic: React.FC<Props> = ({ icon, title, value, color, text, disabled }) => {
+const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected, data }) => {
   const [width] = useWindowSize();
-
+  const theme = useTheme();
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const opacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '0.75' : '0.3';
   if (width < 600) {
     return (
-      <WrapperMobile color={color} disabled={disabled}>
+      <WrapperMobile color={color} opacity={opacity}>
         <BoxHeader>
           <ViewImage>
-            <img alt="" src={icon} />
+            {title === 'Rewards' && theme.palette.mode === 'dark' && data.length === 0 ? '' : <img alt="" src={icon} />}
           </ViewImage>
-          <TotalMobile rewards={title === 'Rewards' ? true : false}>{value}</TotalMobile>
+
+          <Tooltip title={title === 'Rewards' || title === 'My Rewards' ? value : value}>
+            <TotalMobile connected={connected} rewards={title === 'Rewards'} value={value}>
+              {title === 'Rewards' || title === 'My Rewards' ? value : value}
+            </TotalMobile>
+          </Tooltip>
         </BoxHeader>
 
         <Content>
-          <Title>{title}</Title>
+          <TitleMobile connected={connected} rewards={title === 'Rewards'} color={color} value={value}>
+            {title}
+          </TitleMobile>
           {text && <Description>{text}</Description>}
         </Content>
       </WrapperMobile>
     );
   } else {
     return (
-      <Wrapper color={color} disabled={disabled}>
+      <Wrapper color={color} opacity={opacity}>
         {icon && (
           <ViewImage>
             <img alt="" src={icon} />
@@ -187,10 +270,10 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, disabled 
         )}
 
         <Content>
-          <Title>{title}</Title>
+          <Title color={color}>{title}</Title>
           {text && <Description>{text}</Description>}
         </Content>
-        <Value>{value}</Value>
+        <Value color={color}>{value}</Value>
       </Wrapper>
     );
   }

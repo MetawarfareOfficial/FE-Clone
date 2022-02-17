@@ -1,17 +1,26 @@
 import React from 'react';
 import { useWindowSize } from 'hooks/useWindowSize';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Grid } from '@mui/material';
 
-import Statistic from './Statistic';
+import Statistic from 'components/MyContract/Statistic';
 
 import SquareIcon from 'assets/images/square.gif';
+import SquareDarkIcon from 'assets/images/square-dark.gif';
 import CubeIcon from 'assets/images/cube.gif';
+import CubeDarkIcon from 'assets/images/cube-dark.gif';
 import TessIcon from 'assets/images/tess.gif';
+import TessDarkIcon from 'assets/images/tess-dark.gif';
 import RewardsIcon from 'assets/images/rewards.gif';
+import RewardsDarkIcon from 'assets/images/rewards-dark.gif';
+import { CountMyContract } from 'interfaces/CountMyContract';
+import { useAppSelector } from 'stores/hooks';
+import { formatReward } from 'helpers';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 
 interface Props {
-  connected: boolean;
+  countMyContract: CountMyContract;
+  data: Array<any>;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -26,33 +35,94 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const Stats: React.FC<Props> = ({ connected }) => {
+const Stats: React.FC<Props> = ({ countMyContract, data }) => {
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const dataRewardAmount = useAppSelector((state) => state.contract.dataRewardAmount);
+
+  const theme = useTheme();
   const [width] = useWindowSize();
 
   return (
     <Wrapper sx={{ width: '100%', margin: '30px 0' }}>
       <Grid container spacing={{ xs: '19px', md: '25px' }}>
         <Grid item xs={6} sm={6} md={3}>
-          <Statistic icon={SquareIcon} color="#E5E5FE" title="Square" text="Contract" value="5" />
+          <Statistic
+            icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon}
+            color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
+            title="Square"
+            text="Contract"
+            value={countMyContract.square}
+            data={data}
+          />
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
-          <Statistic icon={CubeIcon} color="#D2FFDB" title="CUBE" text="Contract" value="0" />
+          <Statistic
+            icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
+            color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
+            title="CUBE"
+            text="Contract"
+            value={countMyContract.cube}
+            data={data}
+          />
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
-          <Statistic icon={TessIcon} color="#DBECFD" title="Tesseract" text="Contract" value="3" disabled={true} />
+          <Statistic
+            icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
+            color={
+              theme.palette.mode === 'light' ? '#DBECFD' : 'linear-gradient(126.79deg, #2978F4 43.77%, #23ABF8 129.86%)'
+            }
+            title="Tesseract"
+            text="Contract"
+            value={countMyContract.tesseract}
+            data={data}
+          />
         </Grid>
         <Grid item xs={6} sm={6} md={3}>
           <Statistic
             color={
-              connected
+              currentUserAddress && data.length > 0
+                ? theme.palette.mode === 'light'
+                  ? width < 600
+                    ? data.length > 0
+                      ? '#EFE5FE'
+                      : '#F2F2F2'
+                    : 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+                  : width < 600
+                  ? data.length > 0
+                    ? 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
+                    : '#262626'
+                  : data.length > 0
+                  ? 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+                  : '#3F3F3F'
+                : theme.palette.mode === 'light'
                 ? width < 600
-                  ? '#EFE5FE'
-                  : 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
-                : '#fff'
+                  ? '#F2F2F2'
+                  : '#FFFFFF'
+                : width < 600
+                ? '#262626'
+                : '#3F3F3F'
             }
+            // color={
+            //   currentUserAddress#D2FFDB
+            //     ? (
+            //         width < 600 && theme.palette.mode === 'light'
+            //           ? '#EFE5FE'
+            //           : 'linear-gradient(138.19deg, #64AADD 45.65%, #2670A5 119.73%)'
+            //       )
+            //       ? 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+            //       : // ? 'linear-gradient(129.07deg, #7FB2FE 3.5%, #879FFF 115.01%)'
+            //       dataRewardAmount === 0
+            //       ? '#3F3F3F'
+            //       : 'linear-gradient(102.25deg, #2D91D9 -1.96%, #2670A5 97.13%)'
+            //     : theme.palette.mode === 'light'
+            //     ? '#fff'
+            //     : '#262626'
+            // }
             title={width < 600 ? 'Rewards' : 'My Rewards'}
-            value="0.000"
-            icon={width < 600 ? RewardsIcon : null}
+            value={`${formatForNumberLessThanCondition(String(dataRewardAmount), 0.001, formatReward)}`}
+            icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
+            connected={currentUserAddress}
+            data={data}
           />
         </Grid>
       </Grid>

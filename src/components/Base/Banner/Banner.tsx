@@ -1,6 +1,9 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
+import ConnectWallet from 'components/ConnectWallet';
+import { useAppSelector } from 'stores/hooks';
+import { formatUserAddress } from 'helpers';
+import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
 
 interface Props {
   text?: string;
@@ -10,10 +13,6 @@ interface Props {
   onConnect?: () => void;
 }
 
-interface ButtonWalletProps extends ButtonProps {
-  isBg: boolean;
-}
-
 interface PaperCustomProps extends PaperProps {
   isBg: boolean;
 }
@@ -21,7 +20,7 @@ interface PaperCustomProps extends PaperProps {
 const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg, theme }) => ({
   boxShadow: isBg ? '0px 0px 48px rgba(0, 0, 0, 0.06)' : 'none',
   borderRadius: '22px',
-  backgroundColor: isBg ? '#fff' : 'unset',
+  background: isBg ? (theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.03)') : 'unset',
   padding: isBg ? '30px 22px 30px 33px' : 0,
   boxSizing: 'border-box',
   display: 'flex',
@@ -33,15 +32,6 @@ const BannerWrapper = styled(Paper)<PaperCustomProps>(({ isBg, theme }) => ({
     minHeight: isBg ? '90px' : '40px',
     padding: isBg ? '16px 22px 16px 24px' : 0,
   },
-}));
-
-const Text = styled(Typography)<TypographyProps>(() => ({
-  fontSize: '16px',
-  color: '#293247',
-  fontWeight: '600',
-  lineHeight: '30px',
-  fontFamily: 'Poppins',
-  width: '479px',
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -76,39 +66,28 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const ButtonWallet = styled(Button)<ButtonWalletProps>(({ isBg, theme }) => ({
-  fontSize: '14px',
-  lineHeight: '21px',
-  fontFamily: 'Poppins',
-  fontWeight: 'bold',
-  padding: '12px 24px',
-  borderRadius: '14px',
-  textTransform: 'capitalize',
-  boxShadow: 'none',
-  background: isBg ? theme.palette.primary.main : 'unset',
+const Banner: React.FC<Props> = () => {
+  // const isMintContractLocation = useLocation().pathname === '/mint-contracts';
 
-  '&:hover': {
-    opacity: 0.7,
-    boxShadow: 'none',
-    background: isBg ? theme.palette.primary.main : 'unset',
-  },
-}));
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const isLogin = useAppSelector((state) => state.user.isLogin);
+  // const nativeBalance = useAppSelector((state) => state.user.nativeBalance);
+  // const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
 
-const Banner: React.FC<Props> = ({ isBg, text, walletId, connected, onConnect }) => {
   return (
-    <BannerWrapper isBg={isBg}>
-      {text && <Text>{text}</Text>}
+    <BannerWrapper isBg={false}>
+      {/* {isMintContractLocation && (
+        <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
+      )} */}
 
       <BoxRight>
-        {connected && (
+        {currentUserAddress && isLogin && (
           <Wallet>
             <span>Wallet</span>
-            <Title>{walletId}</Title>
+            <Title>{formatUserAddress(currentUserAddress)}</Title>
           </Wallet>
         )}
-        <ButtonWallet isBg={isBg} variant={isBg ? 'contained' : 'outlined'} color="primary" onClick={onConnect}>
-          {connected ? 'Disconnect' : 'Connect'} Wallet
-        </ButtonWallet>
+        <ConnectWallet />
       </BoxRight>
     </BannerWrapper>
   );
