@@ -49,6 +49,7 @@ import { errorMessage } from 'messages/errorMessages';
 import { infoMessage } from 'messages/infoMessages';
 import { setIsOverMaxMintNodes } from 'services/contract';
 import { REGEX_DIGIT } from 'consts/regrex';
+import { LIMIT_MAX_MINT } from 'consts/typeReward';
 
 interface Props {
   open: boolean;
@@ -443,6 +444,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
   const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
   const isOverMaxMintNodes = useAppSelector((state) => state.contract.isOverMaxMintNodes);
+  const nodes = useAppSelector((state: any) => state.contract.nodes);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
@@ -696,9 +698,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
           {isInsuffBalances
             ? infoMessage.INSUFFICIENT_TOKEN.message
             : isLimitNodes
-            ? infoMessage.LIMIT_NODES.message
+            ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
             : isOverMaxMintNodes
-            ? `${infoMessage.OVER_NODES.message} ${maxMint} contracts`
+            ? nodes + contracts.length >= LIMIT_MAX_MINT
+              ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
+              : `${infoMessage.OVER_NODES.message.replace('#number', String(maxMint))}`
             : ''}
         </BoxError>
 
