@@ -236,7 +236,14 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected
   const [width] = useWindowSize();
   const theme = useTheme();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const opacity = currentUserAddress && Number(value) > 0 ? '1' : theme.palette.mode === 'light' ? '0.75' : '0.3';
+  const opacity =
+    currentUserAddress && Number(value) > 0
+      ? '1'
+      : theme.palette.mode === 'light'
+      ? '0.75'
+      : value === '<0.001'
+      ? '1'
+      : '0.3';
   if (width < 600) {
     return (
       <WrapperMobile color={color} opacity={opacity}>

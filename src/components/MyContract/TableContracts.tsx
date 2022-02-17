@@ -210,11 +210,11 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
     maxHeight: 'calc(100vh - 260px)',
 
     '&::-webkit-scrollbar-button': {
-      height: '4px',
+      height: '0px',
     },
     '&::-webkit-scrollbar': {
-      width: '4px',
-      height: '4px',
+      width: '0px',
+      height: '0px',
     },
   },
   [theme.breakpoints.down('md')]: {
