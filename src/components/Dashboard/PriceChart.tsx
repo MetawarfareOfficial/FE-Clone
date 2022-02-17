@@ -147,7 +147,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 fontFamily="Helvetica"
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 dataKey={XDataKey}
-                tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate)}
+                tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate, 'UTC')}
                 interval={heightTotal < 600 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
               />
@@ -172,7 +172,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                   `$${YDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0, 0)}`,
                   convertCamelCaseToPascalCase(name),
                 ]}
-                labelFormatter={(value: string) => formatTimestamp(value, labelDate)}
+                labelFormatter={(value: string) => formatTimestamp(value, labelDate, 'UTC')}
               />
 
               <Area

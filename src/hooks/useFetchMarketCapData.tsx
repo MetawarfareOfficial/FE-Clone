@@ -1,7 +1,7 @@
 import { labelGroupDate, paramsCurrentPriceApi } from 'consts/dashboard';
 import { DELAY_TIME, getLast30DaysMarketParams } from 'consts/treasury';
 import { get, groupBy, mapValues, maxBy, orderBy, values } from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { useEffect, useState } from 'react';
 import { getCurrentPrice, getLast30DaysMarketData } from 'services/coingeko';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
@@ -50,7 +50,7 @@ export const useFetchMarketCapData = () => {
     const last30DaysMaxPrices = orderBy(
       values(
         mapValues(
-          groupBy(last30DaysPricesWithIndex, (data) => moment(data.time).format(labelGroupDate)),
+          groupBy(last30DaysPricesWithIndex, (data) => moment(data.time).tz('UTC').format(labelGroupDate)),
           (value) => maxBy(value, 'price'),
         ),
       ),
