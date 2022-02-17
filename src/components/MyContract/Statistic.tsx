@@ -29,6 +29,7 @@ interface TitleMobileProps extends TypographyProps {
 
 interface ValueProps extends TypographyProps {
   color: string;
+  number: string;
 }
 
 interface BoxCustomProps {
@@ -114,7 +115,7 @@ const Title = styled(Typography)<TitleProps>(({ theme, color }) => ({
   fontWeight: '600',
   fontSize: '20px',
   lineHeight: '30px',
-  color: color === '#3F3F3F' ? '#828282' : '#293247',
+  color: color === '#3F3F3F' ? '#828282' : theme.palette.mode === 'light' ? '#293247' : '#11151D',
   textTransform: 'uppercase',
   margin: '0',
   whiteSpace: 'nowrap',
@@ -182,10 +183,15 @@ const Description = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
-const Value = styled(Typography)<ValueProps>(({ theme, color }) => ({
+const Value = styled(Typography)<ValueProps>(({ theme, color, number }) => ({
   padding: '13px 18px',
-  backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'rgba(255, 255, 255, 0.19)',
-  color: color === '#3F3F3F' ? '#828282' : '#293247',
+  backgroundColor:
+    theme.palette.mode === 'light'
+      ? '#fff'
+      : Number(number) > 0
+      ? 'rgba(255, 255, 255, 0.19)'
+      : 'rgba(255, 255, 255, 0.04)',
+  color: color === '#3F3F3F' ? '#828282' : theme.palette.mode === 'light' ? '#293247' : '#11151D',
   boxSizing: 'border-box',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
@@ -273,7 +279,9 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected
           <Title color={color}>{title}</Title>
           {text && <Description>{text}</Description>}
         </Content>
-        <Value color={color}>{value}</Value>
+        <Value number={value} color={color}>
+          {value}
+        </Value>
       </Wrapper>
     );
   }

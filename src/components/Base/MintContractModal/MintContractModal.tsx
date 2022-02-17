@@ -401,6 +401,8 @@ const TextName = styled(TextField, { shouldForwardProp: (prop) => prop !== 'erro
       OutlinedInput: 'none',
       boxSizing: 'border-box',
       color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+      fontFamily: 'Poppins',
+      fontSize: '14px',
     },
     '.MuiFormHelperText-root': {
       color: error ? 'red' : 'rgba(0, 0, 0, 0.6)',

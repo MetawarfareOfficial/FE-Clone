@@ -31,7 +31,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: 'Roboto',
+  fontFamily: theme.palette.mode === 'light' ? 'Roboto' : 'Poppins',
   fontWeight: 'bold',
   fontSize: '24px',
   lineHeight: '28px',

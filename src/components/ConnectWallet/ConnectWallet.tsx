@@ -36,6 +36,7 @@ interface Props {
 }
 
 const ButtonConnect = styled(Button)<ButtonProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
   textDecoration: 'none',
   borderRadius: '14px',
   padding: '12px 20px',
