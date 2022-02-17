@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { Box, Grid } from '@mui/material';
+import PriceChart from 'components/Dashboard/PriceChart';
 import Statistics from 'components/Dashboard/Statistics';
 import TotalMinted from 'components/Dashboard/TotalMinted';
-import PriceChart from 'components/Dashboard/PriceChart';
-import { Box, Grid } from '@mui/material';
-import { getCurrentPrice, getPrice30DaysAgo } from 'services/coingeko';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import useInterval from 'hooks/useInterval';
-import { DELAY_TIME, labelGroupDate, paramsCurrentPriceApi, paramsLast30DaysApi } from 'consts/dashboard';
-import { TokenPrice } from 'interfaces/TokenPrice';
-import _ from 'lodash';
-import moment from 'moment-timezone';
-import { toast } from 'react-toastify';
+import { paramsCurrentPriceApi, paramsLast30DaysApi } from 'consts/dashboard';
 import useFetchInforContract from 'hooks/useFetchInforContract';
 import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
+import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { getCurrentPrice, getPrice30DaysAgo } from 'services/coingeko';
+import { useAppDispatch } from 'stores/hooks';
 
 interface DashboardProps {
   name?: string;
@@ -21,11 +18,7 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = () => {
   const dispatch = useAppDispatch();
 
-  const last30DaysPrice = useAppSelector((state) => state.coingeko.last30DaysPrice);
-  const currentPrice = useAppSelector((state) => state.coingeko.zeroXBCurrentPrice);
-
-  const [tokenPrices, setTokenPrices] = useState<TokenPrice[]>([]);
-  const { marketCapHistory } = useFetchMarketCapData();
+  const { last30DaysDailyPrices, marketCapHistory } = useFetchMarketCapData();
   const [isPriceChartOpened, setIsPriceChartOpened] = useState<boolean>(true);
   const [heightTotal, setHeightTotal] = useState<any>(null);
 
@@ -39,40 +32,12 @@ const Dashboard: React.FC<DashboardProps> = () => {
     toast.clearWaitingQueue();
   }, []);
 
-  useEffect(() => {
-    const _data: TokenPrice[] = [];
-    const prices = last30DaysPrice.map((el: Array<string>) => {
-      return {
-        time: el[0],
-        price: el[2],
-      };
-    });
-    const tokenPriceGroupByDate = _.groupBy(prices, (data) => moment(data.time).tz('UTC').format(labelGroupDate));
-    Object.keys(tokenPriceGroupByDate).map((key) => {
-      const maxPriceObject = _.maxBy(tokenPriceGroupByDate[key], 'price') as TokenPrice;
-      _data.push(maxPriceObject);
-    });
-
-    _data.pop();
-    _data.push({
-      time: '',
-      price: currentPrice.toString(),
-    } as TokenPrice);
-    _data.shift();
-
-    setTokenPrices(_data);
-  }, [last30DaysPrice, currentPrice]);
-
   useFetchInforContract();
-
-  useInterval(async () => {
-    await dispatch(getCurrentPrice(paramsCurrentPriceApi));
-  }, DELAY_TIME);
 
   return (
     <Box>
       <Box mt={{ xs: '28px', md: '30px' }} mb={{ xs: '34px', md: '50px' }}>
-        <Statistics data={_.last(tokenPrices)} />
+        <Statistics data={_.last(last30DaysDailyPrices)} />
       </Box>
 
       <Grid container spacing={{ xs: '15px', md: '30px' }}>
@@ -84,7 +49,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
             changeChart={setIsPriceChartOpened}
             heightTotal={heightTotal}
             YDataKey={isPriceChartOpened ? 'price' : 'marketCap'}
-            data={isPriceChartOpened ? tokenPrices : marketCapHistory}
+            data={isPriceChartOpened ? last30DaysDailyPrices : marketCapHistory}
           />
         </Grid>
       </Grid>

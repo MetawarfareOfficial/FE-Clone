@@ -5,11 +5,11 @@ export const infoMessage = {
   },
   LIMIT_NODES: {
     title: 'mint contract modal',
-    message: 'You can not mint more than 100 contracts',
+    message: 'You can only mint maximum #number contracts',
   },
   OVER_NODES: {
     title: 'mint contract modal',
-    message: 'You can only mint maximum',
+    message: 'You cannot mint more than #number contracts in one transaction.',
   },
   REWARD_CLAIM_FAILED: {
     title: 'mint status modal',
