@@ -9,10 +9,9 @@ import useInterval from 'hooks/useInterval';
 import { DELAY_TIME, labelGroupDate, paramsCurrentPriceApi, paramsLast30DaysApi } from 'consts/dashboard';
 import { TokenPrice } from 'interfaces/TokenPrice';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { toast } from 'react-toastify';
 import useFetchInforContract from 'hooks/useFetchInforContract';
-import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
 
 interface DashboardProps {
@@ -42,14 +41,13 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   useEffect(() => {
     const _data: TokenPrice[] = [];
-
     const prices = last30DaysPrice.map((el: Array<string>) => {
       return {
         time: el[0],
         price: el[2],
       };
     });
-    const tokenPriceGroupByDate = _.groupBy(prices, (data) => moment(data.time).format(labelGroupDate));
+    const tokenPriceGroupByDate = _.groupBy(prices, (data) => moment(data.time).tz('UTC').format(labelGroupDate));
     Object.keys(tokenPriceGroupByDate).map((key) => {
       const maxPriceObject = _.maxBy(tokenPriceGroupByDate[key], 'price') as TokenPrice;
       _data.push(maxPriceObject);
@@ -66,7 +64,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
   }, [last30DaysPrice, currentPrice]);
 
   useFetchInforContract();
-  useMobileChangeAccountMetamask();
 
   useInterval(async () => {
     await dispatch(getCurrentPrice(paramsCurrentPriceApi));

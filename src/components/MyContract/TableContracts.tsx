@@ -189,11 +189,11 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
   maxHeight: 'calc(100vh - 50px - 200px)',
 
   '&::-webkit-scrollbar-button': {
-    height: '9px',
+    height: '0px',
   },
   '&::-webkit-scrollbar': {
-    width: '9px',
-    height: '9px',
+    width: '0px',
+    height: '0px',
   },
   '&::-webkit-scrollbar-track': {
     boxShadow: 'none',
@@ -201,7 +201,7 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
   },
   '&::-webkit-scrollbar-thumb': {
     backgroundColor: '#3864FF',
-    height: '9px',
+    height: '0px',
     outline: 'none',
     borderRadius: '10px',
   },

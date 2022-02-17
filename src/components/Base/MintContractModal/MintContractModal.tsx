@@ -210,7 +210,8 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
     overflow: 'auto',
 
     '&::-webkit-scrollbar': {
-      width: '5px',
+      width: '0px',
+      height: '0px',
     },
     '&::-webkit-scrollbar-track': {
       boxShadow: 'none',

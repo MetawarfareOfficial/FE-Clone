@@ -16,9 +16,9 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
   ul: {
     li: {
       button: {
-        width: 'auto',
+        width: '32px',
         minWidth: '16px',
-        height: 'auto',
+        height: '32px',
         padding: 0,
         fontFamily: 'Poppins',
         fontWeight: 'normal',
@@ -28,6 +28,10 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
         color: theme.palette.mode === 'light' ? ' #A4A9B7' : '#4F4F4F',
         margin: '0 5px',
         background: 'none',
+        borderRadius: '6px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
 
         span: {
           width: 'auto',
@@ -44,7 +48,7 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
       },
 
       '.MuiPaginationItem-previousNext': {
-        color: '#3864FF',
+        color: '#4F4F4F',
         fontWeight: 'bold',
         fontSize: '16px',
         lineHeight: '24px',
@@ -52,14 +56,20 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
           background: 'none',
         },
         '&:focus': {
-          background: 'none',
+          // background: 'none',
+          background: '#3864FF',
+          color: '#fff',
         },
       },
 
+      '.MuiPaginationItem-previousNext.Mui-disabled': {
+        display: 'none',
+      },
+
       '.MuiPaginationItem-ellipsis': {
-        width: 'auto',
+        width: '32px',
         minWidth: '16px',
-        height: 'auto',
+        height: '32px',
         padding: 0,
         fontFamily: 'Poppins',
         fontWeight: 'normal',
@@ -72,8 +82,9 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
       },
 
       '.Mui-selected': {
-        background: 'none',
-        color: '#3864FF',
+        fontFamily: 'Poppins',
+        background: '#3864FF !important',
+        color: '#fff',
         fontWeight: 'bold',
         fontSize: '16px',
         lineHeight: '24px',

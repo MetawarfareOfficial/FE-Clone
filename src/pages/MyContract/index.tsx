@@ -20,7 +20,6 @@ import {
   zipDataMyContract,
 } from 'helpers/zipDataMyContract';
 import useInterval from 'hooks/useInterval';
-import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 import { useToast } from 'hooks/useToast';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { ContractResponse } from 'interfaces/MyContract';
@@ -159,8 +158,6 @@ const MyContract: React.FC<Props> = () => {
       return;
     }
   }, [dataMyContracts.length]);
-
-  useMobileChangeAccountMetamask();
 
   useInterval(() => {
     fetchUserContractsData();

@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import { ClaimRewards, Tokens, TypesReward } from 'components/MintContract';
-import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
 import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
@@ -30,8 +29,6 @@ const MintContract: React.FC<Props> = () => {
   useEffect(() => {
     toast.clearWaitingQueue();
   }, []);
-
-  useMobileChangeAccountMetamask();
 
   return (
     <Box>
