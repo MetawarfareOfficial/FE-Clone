@@ -295,7 +295,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setClaimingType(ClaimingType.AllContracts);
       dispatch(setIsClaimingReward());
 
-      const claimPermit = [false];
+      const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
         processModal('');
         setClaimingType(null);
