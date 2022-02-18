@@ -185,7 +185,6 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useEffect(() => {
     if (account && active && chainId && isLogin) {
-      // alert(account)
       dispatch(setAccount({ address: account }));
       return;
     }
