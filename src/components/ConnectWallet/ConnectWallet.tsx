@@ -36,6 +36,7 @@ interface Props {
 }
 
 const ButtonConnect = styled(Button)<ButtonProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
   textDecoration: 'none',
   borderRadius: '14px',
   padding: '12px 20px',
@@ -184,7 +185,6 @@ const ConnectWallet: React.FC<Props> = () => {
 
   useEffect(() => {
     if (account && active && chainId && isLogin) {
-      // alert(account)
       dispatch(setAccount({ address: account }));
       return;
     }

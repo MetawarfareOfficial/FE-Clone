@@ -3,8 +3,6 @@ import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { useWindowSize } from 'hooks/useWindowSize';
 import AreaChartCustom from 'components/Base/AreaChart';
-import { useFetchMarketCapData } from 'hooks/useFetchMarketCapData';
-import { formatReward } from 'helpers';
 
 import BgBox1 from 'assets/images/bg-trea-1.png';
 import BgBox2 from 'assets/images/bg-trea-2.png';
@@ -203,8 +201,8 @@ const Statistics: React.FC<Props> = () => {
   const theme = useTheme();
   const [screenSize, setScreenSize] = useState(width);
 
-  const { circulatingSupply, circulatingSupplyHistory, totalSupply, marketCap, marketCapHistory } =
-    useFetchMarketCapData();
+  // const { circulatingSupply, circulatingSupplyHistory, totalSupply, marketCap, marketCapHistory } =
+  //   useFetchMarketCapData();
 
   useEffect(() => {
     setScreenSize(width);
@@ -217,9 +215,7 @@ const Statistics: React.FC<Props> = () => {
           <BoxDetail isMarket={false}>
             <BoxLeft isMarket={false}>
               <BoxText>Circulation Supply / Total Supply</BoxText>
-              <BoxTitle>
-                {formatReward(String(circulatingSupply))} / {formatReward(String(totalSupply))}
-              </BoxTitle>
+              <BoxTitle>10M/ 16M</BoxTitle>
             </BoxLeft>
             <BoxRight>
               <div
@@ -247,7 +243,7 @@ const Statistics: React.FC<Props> = () => {
                   id="colorUv"
                   color={theme.palette.mode === 'light' ? '#E5F5FE' : '#29445C'}
                   dataKey="circulationSupply"
-                  data={circulatingSupplyHistory}
+                  data={[]}
                 />
               </div>
             </BoxRight>
@@ -257,7 +253,7 @@ const Statistics: React.FC<Props> = () => {
           <BoxDetail isMarket={true}>
             <BoxLeft isMarket={true}>
               <BoxText2>Market Cap</BoxText2>
-              <BoxTitle>{formatReward(String(marketCap), false)}</BoxTitle>
+              <BoxTitle>16M</BoxTitle>
             </BoxLeft>
             <BoxRight>
               <div
@@ -284,7 +280,7 @@ const Statistics: React.FC<Props> = () => {
                 <AreaChartCustom
                   id="colorUv2"
                   dataKey="marketCap"
-                  data={marketCapHistory}
+                  data={[]}
                   color={theme.palette.mode === 'light' ? '#E5E8FE' : '#56CCF2'}
                 />
               </div>
