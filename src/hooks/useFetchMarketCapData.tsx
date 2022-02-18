@@ -104,19 +104,24 @@ export const useFetchMarketCapData = () => {
     });
   };
 
+  const ensureIs30DaysData = (data: any[]) => {
+    if (data.length > 30) {
+      return data.splice(data.length - 30, 30);
+    }
+    return data;
+  };
+
   const handleConvertMarketData = (last30DaysMarketData: MarketData, currentMarketData: CurrentMarketData) => {
     const last30DaysMarketCapsWithHourlyValue = get(last30DaysMarketData, 'market_caps', []);
     const last30DaysHourlyPrices = get(last30DaysMarketData, 'prices', []);
     const last30DaysDailyPrices = handleGetLast30DaysPriceDailyValue(last30DaysHourlyPrices, currentMarketData);
-    last30DaysDailyPrices.shift();
     const last30DaysMarketCapsDailyValue = handleGetLast30DaysMarketCapDailyValue(
       last30DaysMarketCapsWithHourlyValue,
       currentMarketData,
     );
-    last30DaysMarketCapsDailyValue.shift();
     return {
-      last30DaysDailyPrices,
-      last30DaysMarketCapsDailyValue,
+      last30DaysDailyPrices: ensureIs30DaysData(last30DaysDailyPrices),
+      last30DaysMarketCapsDailyValue: ensureIs30DaysData(last30DaysMarketCapsDailyValue),
       marketCap: get(currentMarketData, 'market_cap.usd', 0),
     };
   };
