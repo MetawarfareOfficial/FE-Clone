@@ -208,9 +208,9 @@ const Holdings: React.FC<Props> = () => {
   };
 
   const handleGetLiquidityWalletData = async () => {
-    const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.treasury);
+    const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.liquidity);
     const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
-    const avaxToken = await getBalanceNativeTokenOf(holdingsWalletAddresses.treasury);
+    const avaxToken = await getBalanceNativeTokenOf(holdingsWalletAddresses.liquidity);
     const avaxAmount = bigNumber2Number(avaxToken);
     if (holdingWalletTokenID.zeroToken) {
       setLiquidity([
