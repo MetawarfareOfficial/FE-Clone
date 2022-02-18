@@ -1,4 +1,4 @@
 export interface RewardRatioChart {
-  year: number;
-  rewardRatio: number;
+  month: number;
+  rewardRatio: string;
 }
