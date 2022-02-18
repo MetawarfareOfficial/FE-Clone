@@ -8,40 +8,16 @@ interface Props {
   data?: Array<any>;
 }
 
-const dataTest = [
-  {
-    yValue: 15,
-    xValue: 1,
-  },
-  // {
-  //   yValue: 13.4,
-  //   xValue: 4,
-  // },
-  {
-    yValue: 10,
-    xValue: 4,
-  },
-  {
-    yValue: 8,
-    xValue: 7,
-  },
-  {
-    yValue: 4,
-    xValue: 10,
-  },
-];
-
-const LineChartCustom: React.FC<Props> = () => {
+const LineChartCustom: React.FC<Props> = ({ data }) => {
   const theme = useTheme();
+
+  const xAxisData = data?.map((i) => i.rewardRatio);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <LineChart width={300} height={200} data={dataTest} className="lineReward">
+      <LineChart width={300} height={200} data={data} className="lineReward">
         <XAxis
-          // tick={{
-          //   dx: 3,
-          // }}
-          dataKey="xValue"
+          dataKey="month"
           tickLine={false}
           axisLine={false}
           fontSize="9px"
@@ -49,19 +25,20 @@ const LineChartCustom: React.FC<Props> = () => {
           color={theme.palette.mode === 'light' ? '#A4A9B7' : '#A4A9B7'}
         />
         <YAxis
-          // tick={{
-          //   dy: 0,
-          // }}
-          dataKey="yValue"
+          dataKey="rewardRatio"
+          type={'number'}
           tickLine={false}
           axisLine={false}
           fontSize="9px"
           fontFamily="Roboto"
           color={theme.palette.mode === 'light' ? '#A4A9B7' : '#4F4F4F'}
+          ticks={xAxisData}
+          domain={xAxisData ? xAxisData[0] : 0}
+          interval={0}
         />
         <Line
           type="step"
-          dataKey="yValue"
+          dataKey="rewardRatio"
           stroke={theme.palette.mode === 'light' ? '#3864FF' : '#3864FF'}
           strokeWidth={2}
           dot={false}
