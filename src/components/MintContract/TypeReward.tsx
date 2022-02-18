@@ -8,7 +8,7 @@ import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
 import { contractType, DELAY_TIME, LIMIT_MAX_MINT, LIMIT_ONE_TIME_MINT } from 'consts/typeReward';
-import { createMultipleNodesWithTokens } from 'helpers/interractiveContract';
+import { createMultipleNodesWithTokens, getMintPermit } from 'helpers/interractiveContract';
 import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import {
@@ -28,6 +28,7 @@ import { errorMessage } from 'messages/errorMessages';
 import { useWeb3React } from '@web3-react/core';
 import get from 'lodash/get';
 import { getToken } from 'services/auth';
+import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
   id: any;
@@ -249,7 +250,7 @@ const ViewChart = styled('div')`
   }
 `;
 
-const STATUS = ['success', 'error', 'pending'];
+const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
 const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart }) => {
   const dispatch = useAppDispatch();
@@ -305,6 +306,12 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
     try {
       dispatch(setIsCreatingNodes());
+
+      const mintPermit = await getMintPermit();
+      if (!mintPermit[0]) {
+        setStatus(STATUS[3]);
+        return;
+      }
 
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
@@ -403,8 +410,8 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
       )}
 
       <MintStatusModal
-        icon={icon}
-        name={name}
+        icon={status === STATUS[3] ? '' : icon}
+        name={status === STATUS[3] ? '' : name}
         open={openStatus}
         status={status}
         text={
@@ -414,6 +421,8 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
             ? 'Contract minting failed'
             : status === 'pending'
             ? 'Processing'
+            : status === 'permission denied'
+            ? infoMessage.PERMISSION_DENIED.message
             : 'Insufficient Tokens'
         }
         onClose={handleToggleStatus}

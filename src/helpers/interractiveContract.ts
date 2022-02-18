@@ -185,3 +185,11 @@ export const getClaimPermit = async (): Promise<[boolean]> => {
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getMintPermit = async (): Promise<[boolean]> => {
+  try {
+    return contractWithoutSigner.functions.enableMintNodes.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
