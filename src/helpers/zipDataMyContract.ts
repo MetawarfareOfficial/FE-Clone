@@ -3,10 +3,17 @@ import { zipWith } from 'lodash';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { ContractPrice } from 'interfaces/ContractPrice';
-import { ContractApy } from 'interfaces/ContractApy';
+import { formatPrice } from './formatPrice';
 
 export const parseDataMyContract = (data: string) => {
   return data.split('#');
+};
+
+const calculateEarnCurrent0xbPerDay = (price: number, apr: string) => {
+  const convertedApr = bigNumber2NumberV3(String(apr), 1e6);
+  const tokenEarnedPerYear = (Number(price) * Number(convertedApr)) / 100;
+  const tokenEarnedPerDay = tokenEarnedPerYear / 365;
+  return formatPrice(String(tokenEarnedPerDay));
 };
 
 export const parseDataInitApy = (types: string, initApy: string, prices: ContractPrice) => {
@@ -28,15 +35,14 @@ export const parseDataInitApy = (types: string, initApy: string, prices: Contrac
   return [];
 };
 
-export const parseDataCurrentApy = (types: string, currentApy: ContractApy, prices: ContractPrice) => {
+export const parseDataCurrentApr = (types: string, currentAprPerContract: string[], prices: ContractPrice) => {
   const _types = parseDataMyContract(types);
 
   if (_types.length > 0) {
-    // TODO: fixme reusable code
-    return _types.map((type: string) => {
-      if (type === '0') return computeEarnedTokenPerDay(prices.square, currentApy.square);
-      if (type === '1') return computeEarnedTokenPerDay(prices.cube, currentApy.cube);
-      return computeEarnedTokenPerDay(prices.tesseract, currentApy.tesseract);
+    return currentAprPerContract.map((apr: string, index) => {
+      if (_types[index] === '0') return calculateEarnCurrent0xbPerDay(prices.square, apr);
+      else if (_types[index] === '1') return calculateEarnCurrent0xbPerDay(prices.cube, apr);
+      return calculateEarnCurrent0xbPerDay(prices.tesseract, apr);
     });
   }
   return [];

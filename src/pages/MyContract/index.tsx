@@ -1,20 +1,19 @@
 import { Box } from '@mui/material';
 import { ListContracts, Stats, TableContracts } from 'components/MyContract';
 import { DELAY_TIME } from 'consts/myContract';
-import { formatAprV3 } from 'helpers/formatApy';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import {
-  getInitApyOfNodes,
+  getInitAPROfNodes,
   getNameOfNodes,
+  getNodesCurrentAPR,
   getPriceAllNode,
   getRewardAmount,
-  getRewardAPYAllNode,
   getRewardOfNodes,
   getTimeCreatedOfNodes,
   getTypeOfNodes,
 } from 'helpers/interractiveContract';
 import {
-  parseDataCurrentApy,
+  parseDataCurrentApr,
   parseDataInitApy,
   parseDataMyContract,
   zipDataMyContract,
@@ -67,15 +66,15 @@ const MyContract: React.FC<Props> = () => {
       if (!currentUserAddress) {
         throw new Error('user address is undefined');
       }
-      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentApy] = await Promise.all([
+      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentAPRs] = await Promise.all([
         getTimeCreatedOfNodes(),
         getNameOfNodes(),
         getRewardOfNodes(),
         getTypeOfNodes(),
         getRewardAmount(),
-        getInitApyOfNodes(),
+        getInitAPROfNodes(),
         getPriceAllNode(),
-        getRewardAPYAllNode(),
+        getNodesCurrentAPR(),
       ]);
 
       const dataPrices = _.flatten(prices);
@@ -85,19 +84,12 @@ const MyContract: React.FC<Props> = () => {
         tesseract: bigNumber2NumberV2(dataPrices[2]),
       };
 
-      const dataCurrentApy = _.flatten(currentApy);
-      const _currentApy = {
-        square: formatAprV3(dataCurrentApy[0]),
-        cube: formatAprV3(dataCurrentApy[1]),
-        tesseract: formatAprV3(dataCurrentApy[2]),
-      };
-
       const dataCt = zipDataMyContract({
         mintDates: parseDataMyContract(mintDates[0]),
         names: parseDataMyContract(names[0]),
         types: parseDataMyContract(types[0]),
         initZeroXBlockPerDays: parseDataInitApy(types[0], initApy[0], _prices),
-        currentZeroXBlockPerDays: parseDataCurrentApy(types[0], _currentApy, _prices),
+        currentZeroXBlockPerDays: parseDataCurrentApr(types[0], parseDataMyContract(currentAPRs[0]), _prices),
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
       dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
