@@ -241,6 +241,13 @@ const TableRowNoData = styled(TableRow)<TableRowProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.03)',
 }));
 
+enum ClaimingType {
+  AllContracts = 'allContract',
+  Cube = 'cube',
+  Square = 'square',
+  Tesseract = 'tesseract',
+}
+
 const TableContracts: React.FC<Props> = ({ data }) => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
@@ -252,7 +259,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [claimType, setClaimType] = useState<string>('');
-  const [icon, setIcon] = useState<string>('');
+  const [claimingType, setClaimingType] = useState<ClaimingType | null>(null);
 
   const handleToggleStatus = () => {
     setOpenStatus(!openStatus);
@@ -264,40 +271,34 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     setClaimType(type);
   };
 
-  const processIcon = (cType: string) => {
-    if (cType === '') {
-      setIcon(theme.palette.mode === 'light' ? AllContract : AllDarkContract);
-      return;
+  const getIconByMode = (type: ClaimingType | null, mode: string) => {
+    if (type) {
+      if (type === ClaimingType.AllContracts) return mode === 'light' ? AllContract : AllDarkContract;
+      else if (type === ClaimingType.Square) return mode === 'light' ? SquareIcon : SquareDarkIcon;
+      else if (type === ClaimingType.Cube) return mode === 'light' ? CubeIcon : CubeDarkIcon;
+      else if (type === ClaimingType.Tesseract) return mode === 'light' ? TessIcon : TessDarkIcon;
     }
+    return '';
+  };
 
-    if (cType === '0') {
-      setIcon(theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon);
-      return;
-    }
-
-    if (cType === '1') {
-      setIcon(theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon);
-      return;
-    }
-
-    if (cType === '3') {
-      setIcon('');
-      return;
-    }
-
-    setIcon(theme.palette.mode === 'light' ? TessIcon : TessDarkIcon);
+  const convertCType = (cType: string) => {
+    if (cType === '') return ClaimingType.AllContracts;
+    else if (cType === '0') return ClaimingType.Square;
+    else if (cType === '1') return ClaimingType.Cube;
+    else if (cType === '2') return ClaimingType.Tesseract;
+    else return null;
   };
 
   const handleClickClaimAll = async () => {
     try {
       processModal('ALL CONTRACTS');
-      processIcon('');
+      setClaimingType(ClaimingType.AllContracts);
       dispatch(setIsClaimingReward());
 
-      const claimPermit = await getClaimPermit();
+      const claimPermit = [false];
       if (!claimPermit[0]) {
         processModal('');
-        processIcon('3');
+        setClaimingType(null);
         setStatus(STATUS[3]);
         return;
       }
@@ -318,13 +319,13 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
     try {
       processModal(`${formatCType(cType)} Contract`);
-      processIcon(cType);
+      setClaimingType(convertCType(cType));
       dispatch(setIsClaimingReward());
 
       const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
         processModal('');
-        processIcon('3');
+        setClaimingType(null);
         setStatus(STATUS[3]);
         return;
       }
@@ -413,7 +414,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
         </Table>
 
         <MintStatusModal
-          icon={icon}
+          icon={getIconByMode(claimingType, theme.palette.mode)}
           name={claimType}
           open={openStatus}
           status={status}
