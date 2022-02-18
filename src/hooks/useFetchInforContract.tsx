@@ -1,4 +1,4 @@
-import { getPriceAllNode, getRewardAPYAllNode, getTotalNodeByType } from 'helpers/interractiveContract';
+import { getPriceAllNode, getRewardAPRAllNode, getTotalNodeByType } from 'helpers/interractiveContract';
 import _ from 'lodash';
 import { setApy, setPrice, setTotal, unSetApy, unSetPrice, unSetTotal } from 'services/contract';
 import { formatApr } from 'helpers/formatApy';
@@ -11,7 +11,7 @@ const useFetchInforContract = () => {
 
   const fetchApy = async () => {
     try {
-      const response = await getRewardAPYAllNode();
+      const response = await getRewardAPRAllNode();
       const data = _.flatten(response);
 
       dispatch(
