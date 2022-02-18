@@ -148,8 +148,9 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 dataKey={XDataKey}
                 tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate)}
-                interval={heightTotal < 600 ? 6 : tickFormatInterval}
+                interval={width < 1200 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
+                dy={width < 1200 ? 10 : 0}
               />
 
               <YAxis
