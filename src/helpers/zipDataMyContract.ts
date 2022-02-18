@@ -3,7 +3,7 @@ import { zipWith } from 'lodash';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { ContractPrice } from 'interfaces/ContractPrice';
-import { formatPrice } from './formatPrice';
+import { formatPrice, truncateNumber } from './formatPrice';
 
 export const parseDataMyContract = (data: string) => {
   return data.split('#');
@@ -13,7 +13,8 @@ const calculateEarnCurrent0xbPerDay = (price: number, apr: string) => {
   const convertedApr = bigNumber2NumberV3(String(apr), 1e6);
   const tokenEarnedPerYear = (Number(price) * Number(convertedApr)) / 100;
   const tokenEarnedPerDay = tokenEarnedPerYear / 365;
-  return formatPrice(String(tokenEarnedPerDay));
+  const truncatedNumber = truncateNumber(tokenEarnedPerDay, 3);
+  return formatPrice(String(truncatedNumber), 3, 3);
 };
 
 export const parseDataInitApy = (types: string, initApy: string, prices: ContractPrice) => {
