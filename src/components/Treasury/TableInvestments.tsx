@@ -305,7 +305,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               (item, i) => (
                 <TableRowContent key={i}>
                   <TableCellContent>
-                    <TextCenter>
+                    <TextCenter style={{ display: 'flex', justifyContent: 'flex-start' }}>
                       <ViewIcon alt="" src={item.icon} />
                       {formatCapitalizeLetters(item.name)}
                     </TextCenter>
