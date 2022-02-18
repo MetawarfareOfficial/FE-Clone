@@ -45,7 +45,7 @@ interface Props {
 const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
   width: '100%',
   marginBottom: '15px',
-  padding: '12px',
+  padding: '0 12px',
   boxSizing: 'border-box',
   display: 'flex',
   alignItems: 'center',
@@ -234,14 +234,16 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
 const ViewChart = styled('div')`
   width: 143px;
   height: 37px;
+  padding-top: 10px;
+  margin-bottom: -10px;
 
   @media (min-width: 1441px) {
     width: 200px;
-    height: 60px;
+    height: 88px;
   }
   @media (max-width: 900px) {
     width: 120px;
-    height: 30px;
+    /* height: 30px; */
   }
 
   @media (max-width: 600px) {

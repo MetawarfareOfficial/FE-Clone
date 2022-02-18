@@ -24,3 +24,7 @@ body::-webkit-scrollbar-thumb {
   background-color: #3864FF;
   border-radius: 10px;
 }
+
+.lineReward .recharts-layer {
+  stroke-linejoin: bevel;
+}
