@@ -22,6 +22,7 @@ axiosInstance.interceptors.response.use(
         theme: theme as Theme,
       });
     }
+    return Promise.reject(error);
   },
 );
 
