@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { uniq } from 'lodash';
 
 interface Props {
   title?: string;
@@ -11,18 +12,23 @@ interface Props {
 const LineChartCustom: React.FC<Props> = ({ data }) => {
   const theme = useTheme();
 
-  const xAxisData = data?.map((i) => i.rewardRatio);
+  const yAxisData = data?.map((i) => i.rewardRatio);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart width={300} height={200} data={data} className="lineReward">
         <XAxis
           dataKey="month"
+          type={'number'}
           tickLine={false}
           axisLine={false}
           fontSize="9px"
           fontFamily="Roboto"
           color={theme.palette.mode === 'light' ? '#A4A9B7' : '#A4A9B7'}
+          tickFormatter={(value, index) => {
+            if (index >= 4) return ``;
+            return `${Number(value) + 1}`;
+          }}
         />
         <YAxis
           dataKey="rewardRatio"
@@ -32,8 +38,8 @@ const LineChartCustom: React.FC<Props> = ({ data }) => {
           fontSize="9px"
           fontFamily="Roboto"
           color={theme.palette.mode === 'light' ? '#A4A9B7' : '#4F4F4F'}
-          ticks={xAxisData}
-          domain={xAxisData ? xAxisData[0] : 0}
+          ticks={uniq(yAxisData)}
+          domain={yAxisData ? yAxisData[0] : 0}
           interval={0}
         />
         <Line
