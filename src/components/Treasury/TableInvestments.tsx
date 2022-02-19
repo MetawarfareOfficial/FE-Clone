@@ -106,7 +106,6 @@ const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   padding: '10px',
   border: 'none',
   width: '20%',
-  flex: '2',
 
   [theme.breakpoints.down('lg')]: {
     padding: '6px',
@@ -160,6 +159,17 @@ const TableRowContent = styled(TableRow)<TableRowProps>(({ theme }) => ({
 const TextCenter = styled(Box)<BoxProps>(() => ({
   display: 'inline-flex',
   alignItems: 'center',
+}));
+
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: 'normal',
+  fontSize: '14px',
+  lineHeight: '21px',
+  color: theme.palette.mode === 'light' ? '#000' : '#fff',
+  padding: '10px',
+  border: 'none',
 }));
 
 const TextUnit = styled(Typography)<TextUnitProps>(({ status, theme }) => ({
@@ -293,10 +303,10 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           <TableHead>
             <TableRowHead>
               <TableCellHead>Token Name</TableCellHead>
-              <TableCellHead align="left">Token Price</TableCellHead>
-              <TableCellHead align="left">Our Holdings</TableCellHead>
-              <TableCellHead align="left">Initial Investment (USD)</TableCellHead>
-              <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
+              <TableCellHead align="center">Token Price</TableCellHead>
+              <TableCellHead align="center">Our Holdings</TableCellHead>
+              <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
+              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
           </TableHead>
 
@@ -305,27 +315,27 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               (item, i) => (
                 <TableRowContent key={i}>
                   <TableCellContent>
-                    <TextCenter>
+                    <TextCenter style={{ display: 'flex', justifyContent: 'flex-start' }}>
                       <ViewIcon alt="" src={item.icon} />
-                      {formatCapitalizeLetters(item.name)}
+                      <Text>{formatCapitalizeLetters(item.name)}</Text>
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatNumberWithComas(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="center">
                     <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="right">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatInvestmentValue(item.current_investment)}

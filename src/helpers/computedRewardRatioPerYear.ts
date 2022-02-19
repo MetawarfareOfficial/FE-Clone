@@ -17,5 +17,9 @@ export const computedRewardRatioPerYear = (earn: string): Array<RewardRatioChart
       rewardRatio: calcRewardRatio(index === 0 ? earn : rewardRatioCharts[index - 1].rewardRatio, index),
     });
   });
-  return rewardRatioCharts;
+  return [
+    { month: 0, rewardRatio: rewardRatioCharts[0].rewardRatio } as RewardRatioChart,
+    ...rewardRatioCharts,
+    { month: 11, rewardRatio: rewardRatioCharts[3].rewardRatio } as RewardRatioChart,
+  ];
 };

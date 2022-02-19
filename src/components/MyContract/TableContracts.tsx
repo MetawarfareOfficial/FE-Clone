@@ -273,6 +273,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const getIconByMode = (type: ClaimingType | null, mode: string) => {
     if (type) {
+      // TODO: return in if still need else statement?
       if (type === ClaimingType.AllContracts) return mode === 'light' ? AllContract : AllDarkContract;
       else if (type === ClaimingType.Square) return mode === 'light' ? SquareIcon : SquareDarkIcon;
       else if (type === ClaimingType.Cube) return mode === 'light' ? CubeIcon : CubeDarkIcon;
@@ -295,7 +296,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setClaimingType(ClaimingType.AllContracts);
       dispatch(setIsClaimingReward());
 
-      const claimPermit = [false];
+      const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
         processModal('');
         setClaimingType(null);

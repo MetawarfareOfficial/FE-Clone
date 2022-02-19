@@ -86,7 +86,7 @@ export const getBalanceNativeTokenOf = async (address: string): Promise<BigNumbe
   }
 };
 
-export const getRewardAPYAllNode = async (): Promise<any[]> => {
+export const getRewardAPRAllNode = async (): Promise<any[]> => {
   try {
     const squareApy = contractWithoutSigner.functions.getRewardAPRPerNode(contractType.square);
     const cubeApy = contractWithoutSigner.functions.getRewardAPRPerNode(contractType.cube);
@@ -170,9 +170,17 @@ export const getRewardAmount = async (): Promise<[BigNumber]> => {
   }
 };
 
-export const getInitApyOfNodes = async (): Promise<[string]> => {
+export const getInitAPROfNodes = async (): Promise<[string]> => {
   try {
     return contractWithSigner.functions.getNodesInitialAPR.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getNodesCurrentAPR = async (): Promise<[string]> => {
+  try {
+    return contractWithSigner.functions.getNodesCurrentAPR.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -181,6 +189,14 @@ export const getInitApyOfNodes = async (): Promise<[string]> => {
 export const getClaimPermit = async (): Promise<[boolean]> => {
   try {
     return contractWithoutSigner.functions.enableCashout.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getMintPermit = async (): Promise<[boolean]> => {
+  try {
+    return contractWithoutSigner.functions.enableMintNodes.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }

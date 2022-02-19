@@ -1,10 +1,10 @@
 import moment from 'moment-timezone';
 
-export const formatTimestamp = (timestamp: string, formatter: string, timezone?: string): string => {
+export const formatTimestamp = (timestamp: string, formatter: string): string => {
   if (timestamp !== '') {
-    return timezone ? moment(new Date(timestamp)).format(formatter) : moment(new Date(timestamp)).format(formatter);
+    return moment(new Date(timestamp)).format(formatter);
   }
-  return timezone ? moment(new Date()).format(formatter) : moment(new Date()).format(formatter);
+  return moment(new Date()).format(formatter);
 };
 
 export const formatTimestampV2 = (timestamp: string): string => {

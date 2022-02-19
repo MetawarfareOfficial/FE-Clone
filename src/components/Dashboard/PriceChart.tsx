@@ -3,7 +3,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
 import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { labelDate, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
+import { tickFormatDate, tickFormatInterval } from 'consts/dashboard';
 import { formatTimestamp } from 'helpers/formatTimestamp';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
 import { formatReward } from 'helpers';
@@ -147,9 +147,10 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 fontFamily="Helvetica"
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 dataKey={XDataKey}
-                tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate, 'UTC')}
-                interval={heightTotal < 600 ? 6 : tickFormatInterval}
+                tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate)}
+                interval={width < 1200 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
+                dy={width < 1200 ? 10 : 0}
               />
 
               <YAxis
@@ -172,7 +173,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                   `$${YDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0, 0)}`,
                   convertCamelCaseToPascalCase(name),
                 ]}
-                labelFormatter={(value: string) => formatTimestamp(value, labelDate, 'UTC')}
+                labelFormatter={(value: string) => formatTimestamp(value, 'MMM DD YYYY')}
               />
 
               <Area
