@@ -10,12 +10,20 @@ import 'assets/fonts/stylesheet.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
 
 function getLibrary(provider: any) {
   const library = new Web3Provider(provider);
   library.pollingInterval = 3000;
   return library;
 }
+
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_URL,
+  integrations: [new BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
 
 ReactDOM.render(
   <Provider store={store}>
