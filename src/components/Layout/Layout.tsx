@@ -38,6 +38,8 @@ import LogoImg from 'assets/images/logo.svg';
 import LogoDarkImg from 'assets/images/logo-dark.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
+import { addAssets } from '../../helpers/addAssets';
+import { useAppSelector } from '../../stores/hooks';
 
 interface Props {
   name?: string;
@@ -260,6 +262,7 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   marginBottom: '20px',
   fontSize: '14px',
   lineHeight: '21px',
+  width: '126px',
 }));
 
 const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -417,10 +420,12 @@ const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open
 const Layout: React.FC<Props> = ({ children }) => {
   const history = useHistory();
   const location = useLocation();
+  const theme = useTheme();
+
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
 
   const [width] = useWindowSize([null, null] as unknown as number[]);
   const [open, setOpen] = React.useState(width ? (width < 1200 ? false : true) : null);
-  const theme = useTheme();
   const colorMode = React.useContext<any>(ColorModeContext);
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
@@ -518,15 +523,34 @@ const Layout: React.FC<Props> = ({ children }) => {
             </SideMenus>
 
             <SideAction>
-              {open ? (
-                <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                  Refresh
-                </ButtonRefresh>
-              ) : (
-                <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                  <img alt="" src={RefreshIcon} />
-                </ButtonIconRefresh>
-              )}
+              <Box>
+                {open ? (
+                  <ButtonRefresh onClick={addAssets} variant="outlined" color="primary" disabled={!currentUserAddress}>
+                    Import 0XB
+                  </ButtonRefresh>
+                ) : (
+                  <ButtonIconRefresh
+                    onClick={addAssets}
+                    variant="outlined"
+                    color="primary"
+                    disabled={!currentUserAddress}
+                  >
+                    <img alt="" src={RefreshIcon} />
+                  </ButtonIconRefresh>
+                )}
+              </Box>
+
+              <Box>
+                {open ? (
+                  <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                    Refresh
+                  </ButtonRefresh>
+                ) : (
+                  <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                    <img alt="" src={RefreshIcon} />
+                  </ButtonIconRefresh>
+                )}
+              </Box>
 
               <BoxSwitch>
                 {open && <label>Light</label>}
