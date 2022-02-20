@@ -233,13 +233,13 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
 
 const ViewChart = styled('div')`
   width: 143px;
-  height: 37px;
+  height: 88px;
   padding-top: 10px;
   margin-bottom: -10px;
 
   @media (min-width: 1441px) {
     width: 200px;
-    height: 88px;
+    //height: 88px;
   }
   @media (max-width: 900px) {
     width: 120px;
@@ -248,7 +248,7 @@ const ViewChart = styled('div')`
 
   @media (max-width: 600px) {
     width: 50%;
-    height: 60px;
+    //height: 60px;
   }
 `;
 

@@ -36,6 +36,7 @@ const LineChartCustom: React.FC<Props> = ({ data, color }) => {
             if (index >= 4) return ``;
             return `${Number(value) + 1}`;
           }}
+          interval={0}
         />
         <YAxis
           dataKey="rewardRatio"
