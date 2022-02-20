@@ -23,7 +23,13 @@ const LineChartCustom: React.FC<Props> = ({ data, color }) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart width={300} height={200} data={data} className="lineReward">
+      <ComposedChart
+        width={300}
+        height={200}
+        data={data}
+        className="lineReward"
+        margin={{ top: 10, right: 0, left: -25, bottom: 0 }}
+      >
         <defs>
           <linearGradient id="shadow-0" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={theme.palette.mode === 'light' ? `#4F49DD` : '#29445C'} stopOpacity={0.8} />
