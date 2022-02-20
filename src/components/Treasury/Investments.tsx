@@ -105,6 +105,7 @@ const Investments: React.FC<Props> = () => {
                 token_price: coin.current_price,
                 icon: coin.image,
                 current_investment: new BigNumber(coin.current_price).times(item.our_holdings).toNumber(),
+                avg_buy_price: new BigNumber(item.initial).div(item.our_holdings).toNumber(),
               } as Invest)
             : ({} as Invest);
         });

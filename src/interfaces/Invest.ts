@@ -8,4 +8,5 @@ export interface BaseInvest {
 export interface Invest extends BaseInvest {
   icon: string;
   token_price: number;
+  avg_buy_price: number;
 }

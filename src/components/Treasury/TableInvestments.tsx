@@ -83,6 +83,7 @@ const TableCellHead = styled(TableCell)<TableCellProps>(({ theme }) => ({
   padding: '10px',
   border: 'none',
   width: '20%',
+  whiteSpace: 'nowrap',
 
   [theme.breakpoints.down('lg')]: {
     padding: '6px',
@@ -106,6 +107,7 @@ const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   padding: '10px',
   border: 'none',
   width: '20%',
+  flex: '2',
 
   [theme.breakpoints.down('lg')]: {
     padding: '6px',
@@ -245,16 +247,19 @@ const TableSkeleton: React.FC = () => {
           <Skeleton animation="wave" width={'100%'} />
         </div>
       </TableCellContent>
-      <TableCellContent align="center">
+      <TableCellContent align="left">
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
-      <TableCellContent align="center">
+      <TableCellContent align="left">
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
-      <TableCellContent align="center">
+      <TableCellContent align="left">
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
-      <TableCellContent align="center" style={{ paddingRight: '10px' }}>
+      <TableCellContent align="left">
+        <Skeleton animation="wave" height={26} />
+      </TableCellContent>
+      <TableCellContent align="left" style={{ paddingRight: '10px' }}>
         <Skeleton animation="wave" height={26} />
       </TableCellContent>
     </TableRowContent>
@@ -279,10 +284,11 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
             <TableHead>
               <TableRowHead>
                 <TableCellHead>Token Name</TableCellHead>
-                <TableCellHead align="center">Token Price</TableCellHead>
-                <TableCellHead align="center">Our Holdings</TableCellHead>
-                <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
-                <TableCellHead align="center">Current Investment value (USD)</TableCellHead>
+                <TableCellHead align="left">Token Price</TableCellHead>
+                <TableCellHead align="left">Our Holdings</TableCellHead>
+                <TableCellHead align="left">Initial Investment (USD)</TableCellHead>
+                <TableCellHead align="left">Average Buying Price (USD)</TableCellHead>
+                <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
               </TableRowHead>
             </TableHead>
             <TableBody>
@@ -303,10 +309,11 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           <TableHead>
             <TableRowHead>
               <TableCellHead>Token Name</TableCellHead>
-              <TableCellHead align="center">Token Price</TableCellHead>
-              <TableCellHead align="center">Our Holdings</TableCellHead>
-              <TableCellHead align="center">Initial Investment (USD)</TableCellHead>
-              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
+              <TableCellHead align="left">Token Price</TableCellHead>
+              <TableCellHead align="left">Our Holdings</TableCellHead>
+              <TableCellHead align="left">Initial Investment (USD)</TableCellHead>
+              <TableCellHead align="left">Average Buying Price (USD)</TableCellHead>
+              <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
           </TableHead>
 
@@ -320,22 +327,28 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       <Text>{formatCapitalizeLetters(item.name)}</Text>
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="center">
+                  <TableCellContent>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatNumberWithComas(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="center">
+                  <TableCellContent>
                     <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="center">
+                  <TableCellContent>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="right">
+                  <TableCellContent>
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatInvestmentValue(item.avg_buy_price)}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatInvestmentValue(item.current_investment)}
