@@ -152,9 +152,8 @@ const ViewInfo = styled(Box)<BoxProps>(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     width: '100%',
-    // display: 'inline-block',
     padding: '0',
-    marginTop: '27px',
+    display: 'block',
   },
 }));
 
@@ -165,9 +164,12 @@ const Info = styled(Box)<BoxProps>(({ theme }) => ({
   alignItems: 'center',
 
   [theme.breakpoints.down('sm')]: {
-    width: '50%',
-    // float: 'left',
-    display: 'inline-block',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    whiteSpace: 'nowrap',
+    width: '100%',
+    margin: '18px 0 6px 0',
   },
 }));
 
@@ -192,8 +194,8 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     padding: '0',
-    width: '100%',
-    fontSize: '14px',
+    width: 'auto',
+    fontSize: '12px',
     lineHeight: '21px',
     marginBottom: '7px',
   },
@@ -247,7 +249,7 @@ const ViewChart = styled('div')`
   }
 
   @media (max-width: 600px) {
-    width: 50%;
+    width: 100%;
     //height: 60px;
   }
 `;
