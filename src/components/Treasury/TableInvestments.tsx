@@ -107,7 +107,6 @@ const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   padding: '10px',
   border: 'none',
   width: '20%',
-  flex: '2',
 
   [theme.breakpoints.down('lg')]: {
     padding: '6px',
@@ -327,28 +326,28 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       <Text>{formatCapitalizeLetters(item.name)}</Text>
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="left">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatNumberWithComas(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="left">
                     <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="left">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatNumberWithComas(item.initial)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="left">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatInvestmentValue(item.avg_buy_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent>
+                  <TableCellContent align="left">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatInvestmentValue(item.current_investment)}
