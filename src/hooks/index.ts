@@ -3,25 +3,45 @@ import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
-import { unAuthenticateUser } from 'services/auth';
+import { getToken, unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
-
+import { useWindowSize } from './useWindowSize';
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
-
+  const { ethereum } = window as any;
   const [tried, setTried] = useState(false);
+  const [size] = useWindowSize();
 
   useEffect(() => {
-    injected.isAuthorized().then(async (isAuthorized: boolean) => {
-      if (isAuthorized) {
-        await activate(injected, undefined, true).catch(() => {
+    try {
+      injected.isAuthorized().then(async (isAuthorized: boolean) => {
+        if (isAuthorized) {
+          activate(injected, undefined, true).catch(() => {
+            setTried(true);
+          });
+        } else {
           setTried(true);
-        });
-      } else {
-        setTried(true);
-      }
-    });
+        }
+      });
+    } catch (error) {
+      alert(`error ${(error as any).message}`);
+    }
   }, []);
+
+  const handleReloadPageIfMetamaskPending = async (ethereum: any) => {
+    const waitingTime = 1500;
+    const reloadPageTimeOut = setTimeout(() => {
+      window.location.reload();
+    }, waitingTime);
+    await ethereum.request({ method: 'eth_requestAccounts' });
+    clearTimeout(reloadPageTimeOut);
+  };
+  useEffect(() => {
+    // this code for fixing bug ethereum.request does not response on metamask mobile
+    if (ethereum && ethereum.isMetaMask && size < 600 && getToken()) {
+      handleReloadPageIfMetamaskPending(ethereum);
+    }
+  }, [ethereum, size, getToken()]);
 
   useEffect(() => {
     if (!tried && active) {
