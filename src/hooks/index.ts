@@ -7,29 +7,11 @@ import { unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
-
+  const { ethereum } = window as any;
   const [tried, setTried] = useState(false);
-  const handleEthereum = () => {
-    const { ethereum } = window as any;
-    if (ethereum) {
-      alert('Ethereum successfully detected!');
-    } else {
-      alert('Foo!');
-    }
-  };
 
   useEffect(() => {
     try {
-      if ((window as any).ethereum) {
-        handleEthereum();
-      } else {
-        window.addEventListener('ethereum#initialized', handleEthereum, {
-          once: true,
-        });
-        setTimeout(handleEthereum, 3000);
-      }
-      // const ethereum = (window as any).ethereum;
-      // alert(typeof ethereum);
       injected.isAuthorized().then(async (isAuthorized: boolean) => {
         if (isAuthorized) {
           activate(injected, undefined, true).catch(() => {
@@ -43,6 +25,12 @@ export const useEagerConnect = () => {
       alert(`error ${(error as any).message}`);
     }
   }, []);
+
+  useEffect(() => {
+    if (ethereum) {
+      alert(`is metamask ${ethereum.isMetaMask}`);
+    }
+  }, [ethereum]);
 
   useEffect(() => {
     if (!tried && active) {
