@@ -5,7 +5,6 @@ import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
 import { unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
-import get from 'lodash/get';
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
 
@@ -13,6 +12,7 @@ export const useEagerConnect = () => {
 
   useEffect(() => {
     injected.isAuthorized().then(async (isAuthorized: boolean) => {
+      alert(`isAuthorized: ${isAuthorized} `);
       if (isAuthorized) {
         await activate(injected, undefined, true).catch(() => {
           setTried(true);
@@ -72,9 +72,6 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window as any;
-
-    alert(typeof get(ethereum, 'on'));
-
     if (ethereum) {
       ethereum.on('accountsChanged', handleAccountsChanged);
       return () => {
