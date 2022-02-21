@@ -27,16 +27,14 @@ export const useEagerConnect = () => {
   }, []);
 
   const handle = async (ethereum: any) => {
-    ethereum
-      .request({ method: 'eth_requestAccounts' })
-      .then((account: any) => {
-        if (!account) {
-          alert(account);
-        }
-      })
-      .catch(() => {
-        alert('error');
-      });
+    const reloadPageTimeOut = setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+    const account = await ethereum.request({ method: 'eth_requestAccounts' });
+    if (!account) {
+      alert(account);
+    }
+    clearTimeout(reloadPageTimeOut);
   };
   useEffect(() => {
     if (ethereum) {
