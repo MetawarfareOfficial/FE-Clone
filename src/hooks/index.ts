@@ -11,22 +11,28 @@ export const useEagerConnect = () => {
   const [tried, setTried] = useState(false);
 
   useEffect(() => {
-    (window as any).ethereum
-      .request({
-        method: 'eth_requestAccounts',
-      })
-      .then((account: any) => {
-        alert(`account: ${account} `);
-      });
-    injected.isAuthorized().then(async (isAuthorized: boolean) => {
-      if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
-          setTried(true);
+    try {
+      const ethereum = (window as any).ethereum;
+      alert(`${ethereum}`);
+      ethereum
+        .request({
+          method: 'eth_requestAccounts',
+        })
+        .then((account: any) => {
+          alert(`account: ${account} `);
         });
-      } else {
-        setTried(true);
-      }
-    });
+      injected.isAuthorized().then(async (isAuthorized: boolean) => {
+        if (isAuthorized) {
+          activate(injected, undefined, true).catch(() => {
+            setTried(true);
+          });
+        } else {
+          setTried(true);
+        }
+      });
+    } catch (error) {
+      alert(`error ${(error as any).message}`);
+    }
   }, []);
 
   useEffect(() => {
