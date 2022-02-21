@@ -27,9 +27,13 @@ export const useEagerConnect = () => {
   }, []);
 
   const handle = async (ethereum: any) => {
-    const account = await ethereum.request({ method: 'eth_requestAccounts' });
-    if (!account) {
-      alert(account);
+    try {
+      const account = await ethereum.request({ method: 'eth_requestAccounts' });
+      if (!account) {
+        alert(account);
+      }
+    } catch (error) {
+      alert('error');
     }
   };
   useEffect(() => {
