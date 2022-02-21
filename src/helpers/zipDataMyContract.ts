@@ -4,6 +4,7 @@ import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { ContractPrice } from 'interfaces/ContractPrice';
 import { formatPrice, truncateNumber } from './formatPrice';
+import BigNumber from 'bignumber.js';
 
 export const parseDataMyContract = (data: string) => {
   return data.split('#');
@@ -11,9 +12,8 @@ export const parseDataMyContract = (data: string) => {
 
 const calculateEarnCurrent0xbPerDay = (price: number, apr: string) => {
   const convertedApr = bigNumber2NumberV3(String(apr), 1e6);
-  const tokenEarnedPerYear = (Number(price) * Number(convertedApr)) / 100;
-  const tokenEarnedPerDay = tokenEarnedPerYear / 365;
-  const truncatedNumber = truncateNumber(tokenEarnedPerDay, 3);
+  const tokenEarnedPerYear = new BigNumber(convertedApr).multipliedBy(price).div(36500).toNumber();
+  const truncatedNumber = truncateNumber(tokenEarnedPerYear, 3);
   return formatPrice(String(truncatedNumber), 3, 3);
 };
 
