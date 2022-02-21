@@ -11,11 +11,12 @@ export const useEagerConnect = () => {
   const [tried, setTried] = useState(false);
 
   useEffect(() => {
+    alert(`injected: ${injected.isAuthorized()}`);
     injected.isAuthorized().then(async (isAuthorized: boolean) => {
-      const account = await (window as any).ethereum.request({
-        method: 'eth_requestAccounts',
-      });
-      alert(`account: ${account} `);
+      // const account = await (window as any).ethereum.request({
+      //   method: 'eth_requestAccounts',
+      // });
+      // alert(`account: ${account} `);
       if (isAuthorized) {
         await activate(injected, undefined, true).catch(() => {
           setTried(true);
