@@ -29,7 +29,7 @@ export const useEagerConnect = () => {
   }, []);
 
   const handleReloadPageIfMetamaskPending = async (ethereum: any) => {
-    const waitingTime = 1000;
+    const waitingTime = 1500;
     const reloadPageTimeOut = setTimeout(() => {
       window.location.reload();
     }, waitingTime);
