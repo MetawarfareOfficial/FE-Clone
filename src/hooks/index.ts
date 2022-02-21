@@ -26,9 +26,15 @@ export const useEagerConnect = () => {
     }
   }, []);
 
+  const handle = async (ethereum: any) => {
+    const account = await ethereum.request({ method: 'eth_requestAccounts' });
+    if (!account) {
+      alert(account);
+    }
+  };
   useEffect(() => {
     if (ethereum) {
-      alert(`is metamask ${ethereum.isMetaMask}`);
+      handle(ethereum);
     }
   }, [ethereum]);
 
