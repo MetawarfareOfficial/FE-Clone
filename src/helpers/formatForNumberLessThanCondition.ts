@@ -3,9 +3,7 @@ export const formatForNumberLessThanCondition = (
   numberCondition: number | string,
   callBack?: any,
 ) => {
-  if (Number(value) === 0) {
-    return value;
-  } else if (Number(value) < Number(numberCondition)) {
+  if (Number(value) < Number(numberCondition) && Number(value) !== 0) {
     return '<' + String(numberCondition);
   }
   return callBack ? callBack(value) : value;
