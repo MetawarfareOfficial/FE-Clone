@@ -13,14 +13,7 @@ export const useEagerConnect = () => {
   useEffect(() => {
     try {
       const ethereum = (window as any).ethereum;
-      alert(`${ethereum}`);
-      ethereum
-        .request({
-          method: 'eth_requestAccounts',
-        })
-        .then((account: any) => {
-          alert(`account: ${account} `);
-        });
+      alert(typeof ethereum);
       injected.isAuthorized().then(async (isAuthorized: boolean) => {
         if (isAuthorized) {
           activate(injected, undefined, true).catch(() => {
