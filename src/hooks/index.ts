@@ -12,9 +12,9 @@ export const useEagerConnect = () => {
   const [tried, setTried] = useState(false);
 
   useEffect(() => {
-    injected.isAuthorized().then((isAuthorized: boolean) => {
+    injected.isAuthorized().then(async (isAuthorized: boolean) => {
       if (isAuthorized) {
-        activate(injected, undefined, true).catch(() => {
+        await activate(injected, undefined, true).catch(() => {
           setTried(true);
         });
       } else {
