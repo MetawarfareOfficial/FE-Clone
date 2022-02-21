@@ -38,6 +38,7 @@ export const useInactiveListener = (suppress = false) => {
   const validChainId = ethers.utils.hexlify(Number(process.env.REACT_APP_CHAIN_ID));
 
   const handleAccountsChanged = (accounts: string[]) => {
+    alert(`${accounts[0]} \n ${accounts[1]}`);
     if (!accounts[0]) {
       unAuthenticateUser();
     }
@@ -72,7 +73,6 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window as any;
-    alert(typeof ethereum);
     if (ethereum) {
       ethereum.on('accountsChanged', handleAccountsChanged);
       return () => {
