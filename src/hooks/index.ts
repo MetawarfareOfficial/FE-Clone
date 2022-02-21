@@ -7,21 +7,35 @@ import { unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
 
 export const useEagerConnect = () => {
-  const { activate, active } = useWeb3React();
+  const { activate, active, error } = useWeb3React();
 
   const [tried, setTried] = useState(false);
 
   useEffect(() => {
     injected.isAuthorized().then(async (isAuthorized: boolean) => {
       if (isAuthorized) {
-        await activate(injected, undefined, true).catch(() => {
-          setTried(true);
-        });
+        try {
+          await activate(
+            injected,
+            () => {
+              alert(`error: ${error?.message}`);
+            },
+            true,
+          ).catch(() => {
+            setTried(true);
+          });
+        } catch (error2) {
+          alert((error2 as any).message);
+        }
       } else {
         setTried(true);
       }
     });
   }, []);
+
+  useEffect(() => {
+    alert(active);
+  }, [active]);
 
   useEffect(() => {
     if (!tried && active) {
@@ -72,8 +86,13 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window as any;
+    const handle = async () => {
+      const a = await ethereum.request({ method: 'net_version' });
+      alert(`network: ${a}`);
+    };
     if (ethereum) {
       ethereum.on('accountsChanged', handleAccountsChanged);
+      handle();
       return () => {
         if (ethereum.removeListener) {
           ethereum.removeListener('accountsChanged', handleAccountsChanged);
