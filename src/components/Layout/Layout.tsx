@@ -37,9 +37,11 @@ import LogoImg from 'assets/images/logo.svg';
 // import LogoIcon from 'assets/images/logo-ic.svg';
 import LogoDarkImg from 'assets/images/logo-dark.svg';
 import RefreshIcon from 'assets/images/refresh.svg';
+import ImportTokenIcon from 'assets/images/import-token.svg';
+import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
-import { addAssets } from '../../helpers/addAssets';
-import { useAppSelector } from '../../stores/hooks';
+import { addAssets } from 'helpers/addAssets';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   name?: string;
@@ -535,7 +537,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                     color="primary"
                     disabled={!currentUserAddress}
                   >
-                    <img alt="" src={RefreshIcon} />
+                    <img alt="import token icon" src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon} />
                   </ButtonIconRefresh>
                 )}
               </Box>
