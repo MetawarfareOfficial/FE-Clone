@@ -72,6 +72,7 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window as any;
+    alert(typeof ethereum);
     if (ethereum) {
       ethereum.on('accountsChanged', handleAccountsChanged);
       return () => {
