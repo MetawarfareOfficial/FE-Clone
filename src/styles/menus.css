@@ -272,3 +272,16 @@
     margin: 0 auto 33px;
   }
 }
+
+
+.MuiTooltip-popper[data-popper-placement*="bottom"] .css-1k51tf5-MuiTooltip-tooltip {
+  margin-top: -10px !important;
+}
+
+.MuiTooltip-popper[data-popper-placement*="left"] .css-1k51tf5-MuiTooltip-tooltip {
+  margin-right: 6px !important;
+}
+
+.MuiTooltip-popper[data-popper-placement*="right"] .css-1k51tf5-MuiTooltip-tooltip{
+  margin-left: 0px !important;
+}

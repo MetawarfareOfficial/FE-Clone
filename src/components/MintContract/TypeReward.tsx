@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 
 import LineChart from 'components/Base/LineChart';
 import MintContractModal from 'components/Base/MintContractModal';
@@ -233,7 +234,7 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ViewChart = styled('div')`
+const ViewChart = styled('div')<any>`
   width: 143px;
   height: 88px;
   padding-top: 10px;
@@ -254,9 +255,33 @@ const ViewChart = styled('div')`
   }
 `;
 
+// const TooltipCustom = styled(Tooltip)<TooltipProps>(({ theme }) => ({
+//    [`& .${tooltipClasses.tooltip}`]: {
+//     backgroundColor: theme.palette.common.black,
+//   },
+// }));
+
+const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
+    // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.123)',
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#000',
+    boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.123)',
+    color: theme.palette.mode === 'light' ? '#A4A9B7' : '#A4A9B7',
+    fontFamily: 'Roboto',
+    fontWeight: 'normal',
+    fontSize: '9px',
+    lineHeight: '11px',
+  },
+}));
+
 const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
-const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colorChart }) => {
+const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, colorChart }) => {
   const dispatch = useAppDispatch();
 
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
@@ -269,6 +294,13 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
   const [maxMint, setMaxMint] = useState<number>(-1);
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
+  const [openTooltip, setOpenTooltip] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setOpenTooltip(false);
+    }, 5000);
+  }, []);
 
   const { error } = useWeb3React();
 
@@ -391,9 +423,15 @@ const TypeReward: React.FC<Props> = ({ icon, name, value, apy, earn, color, colo
             <Text>Earn {earn} 0xB/day</Text>
           </Info>
 
-          <ViewChart>
-            <LineChart data={dataChart} color={colorChart} />
-          </ViewChart>
+          <TooltipCustom open={openTooltip} title="Month" arrow placement="right-end">
+            <ViewChart onMouseEnter={() => setOpenTooltip(true)} onMouseLeave={() => setOpenTooltip(false)}>
+              <TooltipCustom open={openTooltip} title="Reward" arrow placement="left">
+                <span />
+              </TooltipCustom>
+              <LineChart data={dataChart} color={colorChart} id={id} />
+              {/* <LineShadowChart /> */}
+            </ViewChart>
+          </TooltipCustom>
         </ViewInfo>
 
         <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
