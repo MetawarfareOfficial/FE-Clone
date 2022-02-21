@@ -111,6 +111,7 @@ const ConnectWallet: React.FC<Props> = () => {
   const { createToast } = useToast();
 
   const login = async (): Promise<void> => {
+    alert(`login:${error?.message} : ${chainId} : ${active} : ${isLogin}`);
     try {
       if (!isMetaMaskInstalled()) {
         createToast({
@@ -138,6 +139,7 @@ const ConnectWallet: React.FC<Props> = () => {
   };
 
   const logout = async (): Promise<void> => {
+    alert(`logout:${error?.message} : ${chainId} : ${active} : ${isLogin}`);
     try {
       await deactivate();
       unAuthenticateUser();
@@ -157,6 +159,7 @@ const ConnectWallet: React.FC<Props> = () => {
   };
 
   const handleWrongNetWork = async (): Promise<void> => {
+    alert(`handleWrongNetWork:${error?.message} : ${chainId} : ${active} : ${isLogin}`);
     try {
       await addEthereumChain();
     } catch (ex: any) {
