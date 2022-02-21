@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
 import { unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
-
+import get from 'lodash/get';
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
 
@@ -38,7 +38,6 @@ export const useInactiveListener = (suppress = false) => {
   const validChainId = ethers.utils.hexlify(Number(process.env.REACT_APP_CHAIN_ID));
 
   const handleAccountsChanged = (accounts: string[]) => {
-    alert(`${accounts[0]} \n ${accounts[1]}`);
     if (!accounts[0]) {
       unAuthenticateUser();
     }
@@ -73,6 +72,9 @@ export const useInactiveListener = (suppress = false) => {
 
   useEffect(() => {
     const { ethereum } = window as any;
+
+    alert(typeof get(ethereum, 'on'));
+
     if (ethereum) {
       ethereum.on('accountsChanged', handleAccountsChanged);
       return () => {
