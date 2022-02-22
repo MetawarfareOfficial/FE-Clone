@@ -1,9 +1,9 @@
-import { labelGroupDate, paramsCurrentPriceApi } from 'consts/dashboard';
+import { labelGroupDate, paramsCurrentMarketApi } from 'consts/dashboard';
 import { DELAY_TIME, getLast30DaysMarketParams } from 'consts/treasury';
 import { get, groupBy, mapValues, maxBy, orderBy, values } from 'lodash';
 import moment from 'moment-timezone';
 import { useEffect, useState } from 'react';
-import { getCurrentPrice, getLast30DaysMarketData } from 'services/coingeko';
+import { getCurrentMarketData, getLast30DaysMarketData } from 'services/coingeko';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import useInterval from './useInterval';
 
@@ -128,7 +128,7 @@ export const useFetchMarketCapData = () => {
 
   useEffect(() => {
     dispatch(getLast30DaysMarketData(getLast30DaysMarketParams));
-    dispatch(getCurrentPrice(paramsCurrentPriceApi));
+    dispatch(getCurrentMarketData(paramsCurrentMarketApi));
   }, []);
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export const useFetchMarketCapData = () => {
   }, [last30DaysMarketData, currentMarketData]);
 
   useInterval(async () => {
-    await dispatch(getCurrentPrice(paramsCurrentPriceApi));
+    await dispatch(getCurrentMarketData(paramsCurrentMarketApi));
   }, DELAY_TIME);
 
   return {
