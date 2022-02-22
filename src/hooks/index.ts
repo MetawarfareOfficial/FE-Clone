@@ -44,10 +44,12 @@ export const useEagerConnect = () => {
 
   const handleReloadPageIfEthereumRequestNotResponse = async (ethereum: any) => {
     const waitingTime = 1500;
+    alert('debug');
     const reloadPageTimeOut = setTimeout(() => {
       window.location.reload();
     }, waitingTime);
-    await ethereum.request({ method: 'eth_requestAccounts' });
+    const account = await ethereum.request({ method: 'eth_requestAccounts' });
+    alert(`account: ${account}`);
     clearTimeout(reloadPageTimeOut);
   };
 
