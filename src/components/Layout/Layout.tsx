@@ -531,14 +531,16 @@ const Layout: React.FC<Props> = ({ children }) => {
                     Import 0XB
                   </ButtonRefresh>
                 ) : (
-                  <ButtonIconRefresh
-                    onClick={addAssets}
-                    variant="outlined"
-                    color="primary"
-                    disabled={!currentUserAddress}
-                  >
-                    <img alt="import token icon" src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon} />
-                  </ButtonIconRefresh>
+                  <TooltipCustom title="Add 0xB" arrow placement="right">
+                    <ButtonIconRefresh
+                      onClick={addAssets}
+                      variant="outlined"
+                      color="primary"
+                      disabled={!currentUserAddress}
+                    >
+                      <img alt="import token icon" src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon} />
+                    </ButtonIconRefresh>
+                  </TooltipCustom>
                 )}
               </Box>
 
@@ -548,9 +550,11 @@ const Layout: React.FC<Props> = ({ children }) => {
                     Refresh
                   </ButtonRefresh>
                 ) : (
-                  <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                    <img alt="" src={RefreshIcon} />
-                  </ButtonIconRefresh>
+                  <TooltipCustom title="Refresh" arrow placement="right">
+                    <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                      <img alt="" src={RefreshIcon} />
+                    </ButtonIconRefresh>
+                  </TooltipCustom>
                 )}
               </Box>
 

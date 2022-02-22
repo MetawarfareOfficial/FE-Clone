@@ -63,7 +63,7 @@ const TypesReward: React.FC<Props> = () => {
         name="Square Contract"
         icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkDefaultIcon}
         color={theme.palette.mode === 'light' ? '#E5E5FE' : '#327DD2'}
-        colorChart={theme.palette.mode === 'light' ? '#4F49DD' : width < 600 ? '#934EA0' : '#3864FF'}
+        colorChart={theme.palette.mode === 'light' ? '#4F49DD' : width < 600 ? '#4F49DD' : ' #4F49DD'}
         value={dataPrice.square}
         apy={dataApy.square}
         earn={computeEarnedTokenPerDay(dataPrice.square, dataApy.square)}
@@ -74,7 +74,7 @@ const TypesReward: React.FC<Props> = () => {
         icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkDefaultIcon}
         color={theme.palette.mode === 'light' ? '#D2FFDB' : '#2B91CF'}
         // colorChart="#9DE6AB"
-        colorChart={theme.palette.mode === 'light' ? '#5EF87A' : width < 600 ? '#4F9F96' : '#3864FF'}
+        colorChart={theme.palette.mode === 'light' ? '#5EF87A' : width < 600 ? '#5EF87A' : '#5EF87A'}
         value={dataPrice.cube}
         apy={dataApy.cube}
         earn={computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)}
@@ -84,10 +84,10 @@ const TypesReward: React.FC<Props> = () => {
         name="Tesseract Contract"
         icon={theme.palette.mode === 'light' ? TessIcon : TessDarkDefaultIcon}
         color={
-          theme.palette.mode === 'light' ? '#DBECFD' : 'linear-gradient(125.46deg, #2978F4 42.78%, #23ABF8 129.61%)'
+          theme.palette.mode === 'light' ? '#DBECFD' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
         }
         // colorChart="#9EC5EB"
-        colorChart={theme.palette.mode === 'light' ? '#4092E7' : width < 600 ? '#5B71C4' : '#3864FF'}
+        colorChart={theme.palette.mode === 'light' ? '#4092E7' : width < 600 ? '#4092E7' : '#4092E7'}
         value={dataPrice.tesseract}
         apy={dataApy.tesseract}
         earn={computeEarnedTokenPerDay(dataPrice.tesseract, dataApy.tesseract)}

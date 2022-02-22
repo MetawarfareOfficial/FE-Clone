@@ -285,3 +285,36 @@
 .MuiTooltip-popper[data-popper-placement*="right"] .css-1k51tf5-MuiTooltip-tooltip{
   margin-left: 0px !important;
 }
+
+.darkModeChart .recharts-text  {
+  fill: #fff !important;
+  color: #fff !important;
+
+}
+
+.lightModeChart .recharts-text  {
+  fill: #293247 !important;
+  color: #293247 !important;
+
+}
+
+@media(max-width: 600px) {
+  .MuiTooltip-popper[data-popper-placement*="right"] .css-1k51tf5-MuiTooltip-tooltip{
+    margin-left: 40px !important;
+  }
+
+
+  .tooltipMonths[data-popper-placement*="right"] .MuiTooltip-tooltipPlacementRight{
+    margin-left: -69px !important;
+    margin-top: -40px;
+  }
+
+
+  .MuiTooltip-popper[data-popper-placement*="bottom"] .css-1k51tf5-MuiTooltip-tooltip{
+    margin-top: -8px !important;
+  }
+
+  .MuiTooltip-popper[data-popper-placement*="bottom"] .MuiTooltip-arrow {
+    top: 0px !important;
+  }
+}
