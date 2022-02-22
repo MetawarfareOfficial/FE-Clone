@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
@@ -151,6 +152,12 @@ const ViewInfo = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('lg')]: {
     paddingLeft: '24px',
   },
+  [theme.breakpoints.down('md')]: {
+    marginLeft: 0,
+    paddingLeft: '0',
+    width: 'calc(100% - 120px)',
+    justifyContent: 'flex-start',
+  },
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     padding: '0',
@@ -236,9 +243,9 @@ const ButtonMint = styled(Button)<ButtonProps>(({ theme }) => ({
 
 const ViewChart = styled('div')<any>`
   width: 143px;
-  height: 88px;
+  height: 80px;
   padding-top: 10px;
-  margin-bottom: -10px;
+  margin-bottom: 0px;
 
   @media (min-width: 1441px) {
     width: 200px;
@@ -266,16 +273,23 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
   [`& .${tooltipClasses.arrow}`]: {
     color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
-    // boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.123)',
+    top: '7px !important',
+
+    ['&::before']: {
+      boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+      backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    },
   },
   [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#000',
-    boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.123)',
-    color: theme.palette.mode === 'light' ? '#A4A9B7' : '#A4A9B7',
-    fontFamily: 'Roboto',
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+    fontFamily: 'Poppins',
     fontWeight: 'normal',
-    fontSize: '9px',
-    lineHeight: '11px',
+    fontSize: '12px',
+    lineHeight: '22px',
+    borderRadius: '7px',
+    padding: '2px 10px',
   },
 }));
 
@@ -283,6 +297,7 @@ const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
 const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, colorChart }) => {
   const dispatch = useAppDispatch();
+  const [width] = useWindowSize();
 
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
@@ -423,13 +438,18 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
             <Text>Earn {earn} 0xB/day</Text>
           </Info>
 
-          <TooltipCustom open={openTooltip} title="Month" arrow placement="right-end">
+          <TooltipCustom
+            className="tooltipMonths"
+            open={openTooltip}
+            title="Months"
+            arrow
+            placement={width > 600 ? 'right-end' : 'right-end'}
+          >
             <ViewChart onMouseEnter={() => setOpenTooltip(true)} onMouseLeave={() => setOpenTooltip(false)}>
-              <TooltipCustom open={openTooltip} title="Reward" arrow placement="left">
+              <TooltipCustom open={openTooltip} title="Rewards" arrow placement="left-start">
                 <span />
               </TooltipCustom>
               <LineChart data={dataChart} color={colorChart} id={id} />
-              {/* <LineShadowChart /> */}
             </ViewChart>
           </TooltipCustom>
         </ViewInfo>

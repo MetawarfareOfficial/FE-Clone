@@ -28,12 +28,12 @@ const LineChartCustom: React.FC<Props> = ({ data, color, id }) => {
         width={300}
         height={200}
         data={data}
-        className="lineReward"
+        className={`lineReward ${theme.palette.mode}ModeChart`}
         margin={{ top: 10, right: 0, left: -25, bottom: 0 }}
       >
         <defs>
           <filter id={`shadow${id}`} height="200%">
-            <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+            <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur" />
             <feOffset in="blur" dx="0" dy="6" result="offsetBlur" />
             <feFlood floodColor={color} floodOpacity="1" result="offsetColor" />
             <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetBlur" />
@@ -51,7 +51,7 @@ const LineChartCustom: React.FC<Props> = ({ data, color, id }) => {
           axisLine={false}
           fontSize="9px"
           fontFamily="Roboto"
-          color={theme.palette.mode === 'light' ? '#A4A9B7' : '#A4A9B7'}
+          color={theme.palette.mode === 'light' ? '#293247' : '#FFFFFF'}
           tickFormatter={(value, index) => {
             if (index >= 4) return ``;
             return `${Number(value) + 1}`;
@@ -65,7 +65,7 @@ const LineChartCustom: React.FC<Props> = ({ data, color, id }) => {
           axisLine={false}
           fontSize="9px"
           fontFamily="Roboto"
-          color={theme.palette.mode === 'light' ? '#A4A9B7' : '#4F4F4F'}
+          color={theme.palette.mode === 'light' ? '#293247' : '#FFFFFF'}
           ticks={uniq(yAxisData)}
           domain={yAxisData ? yAxisData[0] : 0}
           interval={0}
