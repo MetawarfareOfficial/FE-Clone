@@ -138,7 +138,10 @@ const ListSkeleton: React.FC = () => {
               <Skeleton animation="wave" width={'70%'} />
             </div>
           </Grid>
-          <Grid item xs={7} />
+          <Grid item xs={7}>
+            <Title>Our Investment (USD)</Title>
+            <Skeleton animation="wave" height={26} />
+          </Grid>
 
           <Grid item xs={5}>
             <Title>Token Price</Title>
