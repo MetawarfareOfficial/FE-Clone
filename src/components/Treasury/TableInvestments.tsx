@@ -285,7 +285,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                 <TableCellHead>Token Name</TableCellHead>
                 <TableCellHead align="left">Token Price</TableCellHead>
                 <TableCellHead align="left">Our Holdings</TableCellHead>
-                <TableCellHead align="left">Initial Investment (USD)</TableCellHead>
+                <TableCellHead align="left">Our Investment (USD)</TableCellHead>
                 <TableCellHead align="left">Average Buying Price (USD)</TableCellHead>
                 <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
               </TableRowHead>
@@ -310,7 +310,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               <TableCellHead>Token Name</TableCellHead>
               <TableCellHead align="left">Token Price</TableCellHead>
               <TableCellHead align="left">Our Holdings</TableCellHead>
-              <TableCellHead align="left">Initial Investment (USD)</TableCellHead>
+              <TableCellHead align="left">Our Investment (USD)</TableCellHead>
               <TableCellHead align="left">Average Buying Price (USD)</TableCellHead>
               <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
