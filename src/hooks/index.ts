@@ -42,19 +42,19 @@ export const useEagerConnect = () => {
     }
   }, []);
 
-  const handleReloadPageIfEthereumRequestNotResponse = async (ethereum: any) => {
-    const waitingTime = 1000;
-    const reloadPageTimeOut = setTimeout(() => {
-      window.location.reload();
-    }, waitingTime);
-    await ethereum.request({ method: 'eth_requestAccounts' });
-    clearTimeout(reloadPageTimeOut);
-  };
-
   useEffect(() => {
     // this is for fixing bug ethereum.request does not response on metamask mobile
     if (ethereum && ethereum.isMetaMask && size < 600 && getToken()) {
-      handleReloadPageIfEthereumRequestNotResponse(ethereum);
+      const waitingTime = 1000;
+      const reloadPageTimeOut = setTimeout(() => {
+        window.location.reload();
+      }, waitingTime);
+      ethereum.request({ method: 'eth_requestAccounts' }).then(() => {
+        clearTimeout(reloadPageTimeOut);
+      });
+      return () => {
+        clearTimeout(reloadPageTimeOut);
+      };
     }
   }, [ethereum, size, getToken()]);
 
