@@ -44,7 +44,6 @@ export const useEagerConnect = () => {
 
   const handleReloadPageIfEthereumRequestNotResponse = async (ethereum: any) => {
     const waitingTime = 2000;
-    alert('debug');
     const reloadPageTimeOut = setTimeout(() => {
       window.location.reload();
     }, waitingTime);
