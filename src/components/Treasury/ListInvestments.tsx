@@ -116,7 +116,10 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
 const ViewPagination = styled(Box)<BoxProps>(() => ({
   width: '100%',
   textAlign: 'right',
-  marginTop: '21px',
+  margin: '36px 0px 27px 0px',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 
   'nav > ul': {
     display: 'inline-flex',
@@ -185,6 +188,12 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
   return (
     <Box>
       <Wrapper>
+        {data.length > 0 && (
+          <ViewPagination>
+            <PaginationCustom total={data.length} limit={rowsPerPage} page={page + 1} onChange={handleChangePage} />
+          </ViewPagination>
+        )}
+
         {data.length > 0 ? (
           (rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map((item, i) => (
             <InvestmentItem key={i}>
@@ -197,7 +206,13 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                       {formatCapitalizeLetters(item.name)}
                     </TextCenter>
                   </Grid>
-                  <Grid item xs={7} />
+                  <Grid item xs={7}>
+                    <Title>Our Investment (USD)</Title>
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatNumberWithComas(item.initial)}
+                    </TextCenter>
+                  </Grid>
 
                   <Grid item xs={5}>
                     <Title>Token Price</Title>
@@ -207,10 +222,10 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     </TextCenter>
                   </Grid>
                   <Grid item xs={7}>
-                    <Title>Initial Investment (USD)</Title>
+                    <Title>Average Buying Price (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatNumberWithComas(item.initial)}
+                      {formatInvestmentValue(item.avg_buy_price)}
                     </TextCenter>
                   </Grid>
 
@@ -233,12 +248,6 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
           <TextNoData>No investments yet!</TextNoData>
         )}
       </Wrapper>
-
-      {data.length > 0 && (
-        <ViewPagination>
-          <PaginationCustom total={data.length} limit={rowsPerPage} page={page + 1} onChange={handleChangePage} />
-        </ViewPagination>
-      )}
     </Box>
   );
 };
