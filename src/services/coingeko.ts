@@ -25,7 +25,7 @@ export const getPrice30DaysAgo = createAsyncThunk('get/dataChart', async (params
   );
 });
 
-export const getCurrentPrice = createAsyncThunk('get/currentPrice', async (params: object) => {
+export const getCurrentMarketData = createAsyncThunk('get/currentPrice', async (params: object) => {
   return await axiosInstance.get(`${process.env.REACT_APP_COINGECKO_URL}/coins/${process.env.REACT_APP_NAME_COIN}`, {
     params,
   });
@@ -68,12 +68,12 @@ const coingekoSlice = createSlice({
       state.error = true;
       state.loading = false;
     },
-    [getCurrentPrice.fulfilled.type]: (state, action) => {
+    [getCurrentMarketData.fulfilled.type]: (state, action) => {
       state.zeroXBCurrentPrice = action.payload.data?.market_data?.current_price?.usd;
       state.currentMarketData = action.payload.data?.market_data;
       state.networkError = false;
     },
-    [getCurrentPrice.rejected.type]: (state, action) => {
+    [getCurrentMarketData.rejected.type]: (state, action) => {
       if (action.error.name === 'Error') {
         state.networkError = true;
       }
