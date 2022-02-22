@@ -42,6 +42,7 @@ import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
+import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
 
 interface Props {
   name?: string;
@@ -429,6 +430,9 @@ const Layout: React.FC<Props> = ({ children }) => {
   const [width] = useWindowSize([null, null] as unknown as number[]);
   const [open, setOpen] = React.useState(width ? (width < 1200 ? false : true) : null);
   const colorMode = React.useContext<any>(ColorModeContext);
+
+  const { ethereumOk } = useCheckEthereumResponse();
+
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
   };
@@ -461,7 +465,7 @@ const Layout: React.FC<Props> = ({ children }) => {
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
       <Header onChangeMode={handleChangeMode} />
 
-      {open !== null && (
+      {open !== null && ethereumOk && (
         <>
           <Drawer
             variant="permanent"
