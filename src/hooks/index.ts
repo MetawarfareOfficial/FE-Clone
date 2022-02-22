@@ -3,25 +3,60 @@ import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
-import { unAuthenticateUser } from 'services/auth';
+import { getToken, unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
-
+import { useWindowSize } from './useWindowSize';
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
-
+  const { ethereum } = window as any;
   const [tried, setTried] = useState(false);
+  const [size] = useWindowSize();
+
+  const handleAccountsChanged = (accounts: string[]) => {
+    if (!accounts[0]) {
+      unAuthenticateUser();
+    }
+  };
 
   useEffect(() => {
-    injected.isAuthorized().then(async (isAuthorized: boolean) => {
+    const { ethereum } = window as any;
+    // trying to active if the account is being connected on the metamask
+    injected.isAuthorized().then((isAuthorized: boolean) => {
       if (isAuthorized) {
-        await activate(injected, undefined, true).catch(() => {
+        activate(injected, undefined, true).catch(() => {
           setTried(true);
         });
       } else {
         setTried(true);
+        unAuthenticateUser();
       }
     });
+    // listeners
+    if (ethereum) {
+      ethereum.on('accountsChanged', handleAccountsChanged);
+      return () => {
+        if (ethereum.removeListener) {
+          ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        }
+      };
+    }
   }, []);
+
+  const handleReloadPageIfEthereumRequestNotResponse = async (ethereum: any) => {
+    const waitingTime = 1500;
+    const reloadPageTimeOut = setTimeout(() => {
+      window.location.reload();
+    }, waitingTime);
+    await ethereum.request({ method: 'eth_requestAccounts' });
+    clearTimeout(reloadPageTimeOut);
+  };
+
+  useEffect(() => {
+    // this is for fixing bug ethereum.request does not response on metamask mobile
+    if (ethereum && ethereum.isMetaMask && size < 600 && getToken()) {
+      handleReloadPageIfEthereumRequestNotResponse(ethereum);
+    }
+  }, [ethereum, size, getToken()]);
 
   useEffect(() => {
     if (!tried && active) {
@@ -36,12 +71,6 @@ export const useInactiveListener = (suppress = false) => {
   const { active, error, activate, deactivate } = useWeb3React();
   const { createToast } = useToast();
   const validChainId = ethers.utils.hexlify(Number(process.env.REACT_APP_CHAIN_ID));
-
-  const handleAccountsChanged = (accounts: string[]) => {
-    if (!accounts[0]) {
-      unAuthenticateUser();
-    }
-  };
 
   useEffect((): any => {
     const { ethereum } = window as any;
@@ -59,7 +88,7 @@ export const useInactiveListener = (suppress = false) => {
           return;
         }
       };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       injected.on('Web3ReactDeactivate', unAuthenticateUser);
 
       return () => {
@@ -69,18 +98,4 @@ export const useInactiveListener = (suppress = false) => {
       };
     }
   }, [active, error, suppress, activate, deactivate]);
-
-  useEffect(() => {
-    const { ethereum } = window as any;
-    if (ethereum) {
-      ethereum.on('accountsChanged', handleAccountsChanged);
-      return () => {
-        if (ethereum.removeListener) {
-          ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        }
-      };
-    } else {
-      unAuthenticateUser();
-    }
-  }, []);
 };

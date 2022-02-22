@@ -3,7 +3,7 @@ export const paramsLast30DaysApi = {
   days: '30',
 };
 
-export const paramsCurrentPriceApi = {
+export const paramsCurrentMarketApi = {
   localization: false,
   tickers: false,
   market_data: true,
