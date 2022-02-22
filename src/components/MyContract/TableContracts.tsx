@@ -35,9 +35,7 @@ import {
 } from 'assets/images';
 import { sleep } from 'helpers/delayTime';
 import { DELAY_TIME } from 'consts/typeReward';
-import { errorMessage } from 'messages/errorMessages';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
-import { useToast } from 'hooks/useToast';
 import { infoMessage } from 'messages/infoMessages';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 
@@ -255,7 +253,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
 
-  const { createToast } = useToast();
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [claimType, setClaimType] = useState<string>('');
@@ -338,12 +335,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       if (response.hash) setStatus(STATUS[0]);
     } catch (e: any) {
       if (!openStatus) setOpenStatus(true);
-      if (e.code === -32603) {
-        createToast({
-          message: errorMessage.REWARDS_NOT_READY.message,
-          type: 'error',
-        });
-      }
       setStatus(STATUS[1]);
     } finally {
       dispatch(unSetIsClaimingReward());
