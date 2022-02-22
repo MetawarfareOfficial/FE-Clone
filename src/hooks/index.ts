@@ -43,14 +43,14 @@ export const useEagerConnect = () => {
   }, []);
 
   const handleReloadPageIfEthereumRequestNotResponse = async (ethereum: any) => {
-    const waitingTime = 1500;
+    const waitingTime = 2000;
     alert('debug');
     const reloadPageTimeOut = setTimeout(() => {
       window.location.reload();
     }, waitingTime);
     const account = await ethereum.request({ method: 'eth_requestAccounts' });
-    alert(`account: ${account}`);
     clearTimeout(reloadPageTimeOut);
+    alert(`account: ${account}`);
   };
 
   useEffect(() => {
