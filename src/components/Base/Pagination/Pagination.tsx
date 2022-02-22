@@ -55,7 +55,7 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
         '&:hover': {
           background: 'none',
         },
-        '&:focus': {
+        '&:active': {
           // background: 'none',
           background: '#3864FF',
           color: '#fff',
