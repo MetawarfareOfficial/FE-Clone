@@ -24,6 +24,7 @@ import {
   TooltipProps,
   tooltipClasses,
 } from '@mui/material';
+// import RefreshIcon from '@mui/icons-material/Refresh';
 
 // import MySwitch from 'components/Base/Switch';
 import SwitchMode from 'components/Base/SwitchMode';
@@ -36,13 +37,16 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LogoImg from 'assets/images/logo.svg';
 // import LogoIcon from 'assets/images/logo-ic.svg';
 import LogoDarkImg from 'assets/images/logo-dark.svg';
-import RefreshIcon from 'assets/images/refresh.svg';
-import ImportTokenIcon from 'assets/images/import-token.svg';
+import RefreshLightIcon from 'assets/images/load-light.svg';
+import RefreshWhiteIcon from 'assets/images/foundation_refresh.svg';
+import ImportTokenIcon from 'assets/images/bx_import.svg';
+// import ImportTokenIcon from 'assets/images/import-token.svg';
 import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
+import BuyLightIcon from 'assets/images/buy.svg';
+
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
-import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
 
 interface Props {
   name?: string;
@@ -75,6 +79,14 @@ interface ListItemTextCustomProps extends ListItemTextProps {
 }
 
 interface LogoProps extends LinkProps {
+  open: boolean;
+}
+
+interface BoxPropsAction extends BoxProps {
+  open: boolean;
+}
+
+interface ButtonRefreshProps extends ButtonProps {
   open: boolean;
 }
 
@@ -265,10 +277,38 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   marginBottom: '20px',
   fontSize: '14px',
   lineHeight: '21px',
-  width: '126px',
+  width: '152px',
+
+  '&:hover': {
+    color: theme.palette.primary[theme.palette.mode],
+    borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
+    opacity: 0.7,
+  },
 }));
 
-const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
+const ButtonBuy = styled(Button)<ButtonProps>(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: '700',
+  fontFamily: 'Poppins',
+  color: '#fff',
+  background: theme.palette.mode === 'light' ? '#3864FF' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+  borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
+  padding: '8px 35px',
+  borderRadius: '8px',
+  marginBottom: '20px',
+  fontSize: '14px',
+  lineHeight: '21px',
+  width: '152px',
+
+  '&:hover': {
+    background:
+      theme.palette.mode === 'light' ? '#3864FF' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+    borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
+    opacity: 0.7,
+  },
+}));
+
+const ButtonIconAdd = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.primary[theme.palette.mode],
   marginBottom: '20px',
   minWidth: '34px',
@@ -278,7 +318,43 @@ const ButtonIconRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   padding: '10px',
 
   img: {
-    width: '13px',
+    width: '18px',
+  },
+
+  '.addImg': {
+    width: '18px',
+  },
+}));
+
+const ButtonIconRefresh = styled(Button)<ButtonRefreshProps>(({ theme, open }) => ({
+  color: '#fff',
+  background:
+    theme.palette.mode === 'light'
+      ? open
+        ? '#3864FF'
+        : 'none'
+      : open
+      ? 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+      : 'none',
+  minWidth: '30px',
+  width: open ? '30px' : '34px',
+  height: open ? '30px' : '34px',
+  borderRadius: open ? '50%' : '10px',
+  padding: open ? '4px' : '10px',
+  marginBottom: open ? '0px' : '20px',
+
+  img: {
+    width: open ? '20px' : '18px',
+  },
+
+  '&:hover': {
+    color: '#fff',
+    background:
+      theme.palette.mode === 'light'
+        ? open
+          ? '#3864FF'
+          : 'none'
+        : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   },
 }));
 
@@ -410,6 +486,12 @@ const LinkCustom = styled(Link)<any>(({ active }) => ({
   },
 }));
 
+const OtherActions = styled(Box)<BoxPropsAction>(({ open }) => ({
+  display: open ? 'flex' : 'inline-block',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
 const ListItemTextCustom = styled(ListItemText)<ListItemTextCustomProps>(({ open, theme }) => ({
   // transition: 'width 3s linear 1s',
   transition: theme.transitions.create('width', {
@@ -430,9 +512,6 @@ const Layout: React.FC<Props> = ({ children }) => {
   const [width] = useWindowSize([null, null] as unknown as number[]);
   const [open, setOpen] = React.useState(width ? (width < 1200 ? false : true) : null);
   const colorMode = React.useContext<any>(ColorModeContext);
-
-  const { ethereumOk } = useCheckEthereumResponse();
-
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
   };
@@ -463,147 +542,171 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
-      {ethereumOk && (
+      <Header onChangeMode={handleChangeMode} />
+
+      {open !== null && (
         <>
-          <Header onChangeMode={handleChangeMode} />
+          <Drawer
+            variant="permanent"
+            open={open}
+            sx={{
+              display: {
+                md: 'block',
+                xs: 'none',
+              },
+            }}
+          >
+            <DrawerHeader open={open}>
+              <Logo open={open} to="/">
+                {
+                  // open ? (
+                  theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
+                  // ) : (
+                  //   <img alt="" src={LogoIcon} />
+                  // )
+                }
+              </Logo>
+              <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
+            </DrawerHeader>
 
-          {open !== null && (
-            <>
-              <Drawer
-                variant="permanent"
-                open={open}
-                sx={{
-                  display: {
-                    md: 'block',
-                    xs: 'none',
-                  },
-                }}
-              >
-                <DrawerHeader open={open}>
-                  <Logo open={open} to="/">
-                    {
-                      // open ? (
-                      theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
-                      // ) : (
-                      //   <img alt="" src={LogoIcon} />
-                      // )
-                    }
-                  </Logo>
-                  <ToggleButton onClick={handleToggle}>
-                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                  </ToggleButton>
-                </DrawerHeader>
+            <SideMenus open={open}>
+              {menus &&
+                menus.map((item, i) => (
+                  <MenuCustom
+                    key={i}
+                    open={open}
+                    active={location.pathname === item.path}
+                    onClick={() => openMenu(item.path)}
+                  >
+                    <MenuIconCustom open={open}>
+                      {!open ? (
+                        <TooltipCustom title={item.name} arrow placement="right">
+                          {location.pathname === item.path ? (
+                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                          ) : (
+                            <img alt="" src={item.icon} />
+                          )}
+                        </TooltipCustom>
+                      ) : (
+                        <>
+                          {location.pathname === item.path ? (
+                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                          ) : (
+                            <img alt="" src={item.icon} />
+                          )}
+                        </>
+                      )}
+                    </MenuIconCustom>
+                    <ListItemTextCustom
+                      primary={item.name}
+                      open={open}
+                      // sx={{  }}
+                    />
+                    {/* {open && <ListItemText primary={item.name} />} */}
+                  </MenuCustom>
+                ))}
+            </SideMenus>
 
-                <SideMenus open={open}>
+            <SideAction>
+              <Box>
+                {open ? (
+                  <ButtonBuy onClick={addAssets} variant="contained" color="primary">
+                    Buy 0XB
+                  </ButtonBuy>
+                ) : (
+                  <TooltipCustom title="Buy 0xB" arrow placement="right">
+                    <ButtonIconAdd
+                      onClick={addAssets}
+                      variant="outlined"
+                      color="primary"
+                      disabled={!currentUserAddress}
+                    >
+                      <img
+                        className="addImg"
+                        alt="import token icon"
+                        src={currentUserAddress ? BuyLightIcon : ImportTokenDarkIcon}
+                      />
+                    </ButtonIconAdd>
+                  </TooltipCustom>
+                )}
+              </Box>
+
+              <Box>
+                {open ? (
+                  <ButtonRefresh onClick={addAssets} variant="outlined" color="primary" disabled={!currentUserAddress}>
+                    Add 0XB
+                  </ButtonRefresh>
+                ) : (
+                  <TooltipCustom title="Add 0xB" arrow placement="right">
+                    <ButtonIconAdd
+                      onClick={addAssets}
+                      variant="outlined"
+                      color="primary"
+                      disabled={!currentUserAddress}
+                    >
+                      <img alt="import token icon" src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon} />
+                    </ButtonIconAdd>
+                  </TooltipCustom>
+                )}
+              </Box>
+
+              {/* <Box>
+                {open ? (
+                  <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                    Refresh
+                  </ButtonRefresh>
+                ) : (
+                  <TooltipCustom title="Refresh" arrow placement="right">
+                    <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
+                      <img alt="" src={RefreshIcon} />
+                    </ButtonIconRefresh>
+                  </TooltipCustom>
+                )}
+              </Box> */}
+
+              <OtherActions open={open}>
+                <TooltipCustom title="Refresh" arrow placement="right">
+                  <ButtonIconRefresh open={open} onClick={handleRefresh} variant="outlined" color="primary">
+                    <img alt="" src={open ? RefreshLightIcon : RefreshWhiteIcon} />
+                  </ButtonIconRefresh>
+                </TooltipCustom>
+
+                <BoxSwitch>
+                  {/* {open && <label>Light</label>} */}
+                  {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
+                  <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
+                  {/* {open && <label>Dark</label>} */}
+                </BoxSwitch>
+              </OtherActions>
+            </SideAction>
+          </Drawer>
+
+          <MainLayout component="main" open={open}>
+            <MenusMobile>
+              <div className="scroll-area scroll-area--horizontal">
+                <div className="scroll-area__body">
                   {menus &&
                     menus.map((item, i) => (
-                      <MenuCustom
-                        key={i}
-                        open={open}
-                        active={location.pathname === item.path}
-                        onClick={() => openMenu(item.path)}
-                      >
-                        <MenuIconCustom open={open}>
-                          {!open ? (
-                            <TooltipCustom title={item.name} arrow placement="right">
-                              {location.pathname === item.path ? (
-                                <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                              ) : (
-                                <img alt="" src={item.icon} />
-                              )}
-                            </TooltipCustom>
-                          ) : (
-                            <>
-                              {location.pathname === item.path ? (
-                                <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                              ) : (
-                                <img alt="" src={item.icon} />
-                              )}
-                            </>
-                          )}
-                        </MenuIconCustom>
-                        <ListItemTextCustom
-                          primary={item.name}
-                          open={open}
-                          // sx={{  }}
-                        />
-                        {/* {open && <ListItemText primary={item.name} />} */}
-                      </MenuCustom>
+                      <div key={i} className={`scroll-area__column item${i + 1}`}>
+                        <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                          <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                        </LinkCustom>
+                      </div>
                     ))}
-                </SideMenus>
+                </div>
+              </div>
+              {/* </SliderScroll> */}
+            </MenusMobile>
 
-                <SideAction>
-                  <Box>
-                    {open ? (
-                      <ButtonRefresh
-                        onClick={addAssets}
-                        variant="outlined"
-                        color="primary"
-                        disabled={!currentUserAddress}
-                      >
-                        Import 0XB
-                      </ButtonRefresh>
-                    ) : (
-                      <ButtonIconRefresh
-                        onClick={addAssets}
-                        variant="outlined"
-                        color="primary"
-                        disabled={!currentUserAddress}
-                      >
-                        <img alt="import token icon" src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon} />
-                      </ButtonIconRefresh>
-                    )}
-                  </Box>
+            {
+              // location.pathname !== '/treasury' &&
+              width > 899 && (
+                <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
+              )
+            }
 
-                  <Box>
-                    {open ? (
-                      <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                        Refresh
-                      </ButtonRefresh>
-                    ) : (
-                      <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                        <img alt="" src={RefreshIcon} />
-                      </ButtonIconRefresh>
-                    )}
-                  </Box>
-
-                  <BoxSwitch>
-                    {open && <label>Light</label>}
-                    {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
-                    <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
-                    {open && <label>Dark</label>}
-                  </BoxSwitch>
-                </SideAction>
-              </Drawer>
-
-              <MainLayout component="main" open={open}>
-                <MenusMobile>
-                  <div className="scroll-area scroll-area--horizontal">
-                    <div className="scroll-area__body">
-                      {menus &&
-                        menus.map((item, i) => (
-                          <div key={i} className={`scroll-area__column item${i + 1}`}>
-                            <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
-                              <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
-                            </LinkCustom>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                  {/* </SliderScroll> */}
-                </MenusMobile>
-
-                {
-                  // location.pathname !== '/treasury' &&
-                  width > 899 && (
-                    <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
-                  )
-                }
-
-                {children}
-              </MainLayout>
-            </>
-          )}
+            {children}
+          </MainLayout>
         </>
       )}
     </Box>
