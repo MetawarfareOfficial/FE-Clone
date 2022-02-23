@@ -13,6 +13,9 @@ import {
 } from 'assets/images';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
+import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/connectWallet';
 
 interface Props {
   title?: string;
@@ -53,6 +56,13 @@ const TypesReward: React.FC<Props> = () => {
   const [width] = useWindowSize();
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
+  const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+
+  const { fetchAccount0XB } = useFetchAccountBalance();
+
+  useInterval(() => {
+    if (currentUserAddress) fetchAccount0XB(currentUserAddress);
+  }, DELAY_TIME);
 
   return (
     <Wrapper>

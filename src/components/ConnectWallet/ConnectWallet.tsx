@@ -4,33 +4,18 @@ import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
 import { UnsupportedChainIdError } from '@web3-react/core';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import {
-  setAccount,
-  setLogin,
-  setNativeBalance,
-  setZeroXBlockBalance,
-  unSetAccount,
-  unSetLogin,
-  unSetNativeBalance,
-  unSetZeroXBlockBalance,
-} from 'services/account';
+import { setAccount, setLogin, unSetAccount, unSetLogin } from 'services/account';
 import { styled } from '@mui/material/styles';
 import { ButtonProps, Button, Link, LinkProps } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
-import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
-import { bigNumber2Number } from 'helpers/formatNumber';
-import { unSetNodes, unSetRewardAmount } from 'services/contract';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { useToast } from 'hooks/useToast';
 import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
-import useInterval from 'hooks/useInterval';
-import { DELAY_TIME } from 'consts/connectWallet';
-
 interface Props {
   name?: string;
 }
@@ -167,22 +152,6 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   };
 
-  const fetchBalance = async (address: string): Promise<void> => {
-    try {
-      const nativeToken = await getBalanceNativeTokenOf(address);
-      const nativeBalance = bigNumber2Number(nativeToken);
-      dispatch(setNativeBalance(nativeBalance));
-
-      const zeroXBlockToken = await getBalanceTokenOf(address);
-      if (zeroXBlockToken[0]) {
-        const zeroXBlockBalance = bigNumber2Number(zeroXBlockToken[0]);
-        dispatch(setZeroXBlockBalance(zeroXBlockBalance));
-      }
-    } catch (e) {
-      throw error?.message;
-    }
-  };
-
   useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
@@ -210,30 +179,8 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   }, [error?.name]);
 
-  useEffect(() => {
-    try {
-      if (currentUserAddress) {
-        fetchBalance(currentUserAddress);
-        return;
-      }
-      dispatch(unSetNativeBalance());
-      dispatch(unSetZeroXBlockBalance());
-      dispatch(unSetNodes());
-      dispatch(unSetRewardAmount());
-    } catch (e) {
-      // TODO: fixme: move message to file error message
-      createToast({
-        message: 'Oop! Something went wrong',
-        type: 'error',
-      });
-    }
-  }, [currentUserAddress]);
-
   useFetchRewardAmount();
   useMobileChangeAccountMetamask();
-  useInterval(() => {
-    if (currentUserAddress) fetchBalance(currentUserAddress);
-  }, DELAY_TIME);
 
   if (width < 900) {
     return (

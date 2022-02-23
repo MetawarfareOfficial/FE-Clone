@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
 import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
-import { formatNumberWithComas } from 'helpers/formatPrice';
+import { formatPrice } from 'helpers/formatPrice';
 import PaginationCustom from 'components/Base/Pagination';
 import Skeleton from '@mui/material/Skeleton';
 import { useAppSelector } from 'stores/hooks';
@@ -213,7 +213,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Our Investment (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatNumberWithComas(item.initial)}
+                      {formatPrice(item.initial)}
                     </TextCenter>
                   </Grid>
 
@@ -221,7 +221,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Token Price</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatNumberWithComas(item.token_price)}
+                      {formatPrice(item.token_price)}
                     </TextCenter>
                   </Grid>
                   <Grid item xs={7}>
@@ -234,7 +234,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
 
                   <Grid item xs={5}>
                     <Title>Our Holdings</Title>
-                    <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
+                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>

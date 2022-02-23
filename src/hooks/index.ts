@@ -3,14 +3,11 @@ import { useWeb3React } from '@web3-react/core';
 import { injected } from 'connectors';
 import { ethers } from 'ethers';
 import { errorMessage } from 'messages/errorMessages';
-import { getToken, unAuthenticateUser } from 'services/auth';
+import { unAuthenticateUser } from 'services/auth';
 import { useToast } from './useToast';
-import { useWindowSize } from './useWindowSize';
 export const useEagerConnect = () => {
   const { activate, active } = useWeb3React();
-  const { ethereum } = window as any;
   const [tried, setTried] = useState(false);
-  const [size] = useWindowSize();
 
   const handleAccountsChanged = (accounts: string[]) => {
     if (!accounts[0]) {
@@ -41,22 +38,6 @@ export const useEagerConnect = () => {
       };
     }
   }, []);
-
-  const handleReloadPageIfEthereumRequestNotResponse = async (ethereum: any) => {
-    const waitingTime = 1500;
-    const reloadPageTimeOut = setTimeout(() => {
-      window.location.reload();
-    }, waitingTime);
-    await ethereum.request({ method: 'eth_requestAccounts' });
-    clearTimeout(reloadPageTimeOut);
-  };
-
-  useEffect(() => {
-    // this is for fixing bug ethereum.request does not response on metamask mobile
-    if (ethereum && ethereum.isMetaMask && size < 600 && getToken()) {
-      handleReloadPageIfEthereumRequestNotResponse(ethereum);
-    }
-  }, [ethereum, size, getToken()]);
 
   useEffect(() => {
     if (!tried && active) {

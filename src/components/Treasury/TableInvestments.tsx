@@ -24,8 +24,7 @@ import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
 import { useAppSelector } from 'stores/hooks';
 import Skeleton from '@mui/material/Skeleton';
 import { range } from 'lodash';
-import { formatNumberWithComas } from 'helpers/formatPrice';
-import { formatInvestmentValue } from 'helpers/formatInvestmentValue';
+import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   data: Array<any>;
@@ -308,11 +307,11 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           <TableHead>
             <TableRowHead>
               <TableCellHead>Token Name</TableCellHead>
-              <TableCellHead align="left">Token Price</TableCellHead>
-              <TableCellHead align="left">Our Holdings</TableCellHead>
-              <TableCellHead align="left">Our Investment (USD)</TableCellHead>
-              <TableCellHead align="left">Average Buying Price (USD)</TableCellHead>
-              <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
+              <TableCellHead align="center">Token Price</TableCellHead>
+              <TableCellHead align="center">Our Holdings</TableCellHead>
+              <TableCellHead align="center">Our Investment (USD)</TableCellHead>
+              <TableCellHead align="center">Average Buying Price (USD)</TableCellHead>
+              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
           </TableHead>
 
@@ -326,31 +325,31 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       <Text>{formatCapitalizeLetters(item.name)}</Text>
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="left">
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatNumberWithComas(item.token_price)}
+                      {formatPrice(item.token_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="left">
-                    <TextCenter>{formatNumberWithComas(item.our_holdings)}</TextCenter>
+                  <TableCellContent align="center">
+                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="left">
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatNumberWithComas(item.initial)}
+                      {formatPrice(item.initial)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="left">
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatInvestmentValue(item.avg_buy_price)}
+                      {formatPrice(item.avg_buy_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="left">
+                  <TableCellContent align="right">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatInvestmentValue(item.current_investment)}
+                      {formatPrice(item.current_investment)}
                     </TextCenter>
                   </TableCellContent>
                 </TableRowContent>
