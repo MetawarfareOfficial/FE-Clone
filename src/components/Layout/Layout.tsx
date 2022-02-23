@@ -41,7 +41,7 @@ import RefreshLightIcon from 'assets/images/load-light.svg';
 import RefreshWhiteIcon from 'assets/images/foundation_refresh.svg';
 import ImportTokenIcon from 'assets/images/bx_import.svg';
 // import ImportTokenIcon from 'assets/images/import-token.svg';
-import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
+// import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
 import BuyLightIcon from 'assets/images/buy.svg';
 
@@ -323,6 +323,10 @@ const ButtonIconAdd = styled(Button)<ButtonProps>(({ theme }) => ({
 
   '.addImg': {
     width: '18px',
+  },
+
+  '&:disabled': {
+    borderColor: 'rgba(56, 100, 255, 0.5)',
   },
 }));
 
@@ -624,7 +628,8 @@ const Layout: React.FC<Props> = ({ children }) => {
                       <img
                         className="addImg"
                         alt="import token icon"
-                        src={currentUserAddress ? BuyLightIcon : ImportTokenDarkIcon}
+                        src={BuyLightIcon}
+                        // src={currentUserAddress ? BuyLightIcon : ImportTokenDarkIcon}
                       />
                     </ButtonIconAdd>
                   </TooltipCustom>
@@ -644,7 +649,9 @@ const Layout: React.FC<Props> = ({ children }) => {
                       color="primary"
                       disabled={!currentUserAddress}
                     >
-                      <img alt="import token icon" src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon} />
+                      <img alt="import token icon" src={ImportTokenIcon} />
+                      {/* <img alt="import token icon" src={currentUserAddress 
+                        ? ImportTokenIcon : ImportTokenDarkIcon} /> */}
                     </ButtonIconAdd>
                   </TooltipCustom>
                 )}
