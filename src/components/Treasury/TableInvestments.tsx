@@ -282,11 +282,11 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
             <TableHead>
               <TableRowHead>
                 <TableCellHead>Token Name</TableCellHead>
-                <TableCellHead align="left">Token Price</TableCellHead>
-                <TableCellHead align="left">Our Holdings</TableCellHead>
-                <TableCellHead align="left">Our Investment (USD)</TableCellHead>
-                <TableCellHead align="left">Average Buying Price (USD)</TableCellHead>
-                <TableCellHead align="left">Current Investment value (USD)</TableCellHead>
+                <TableCellHead align="center">Token Price</TableCellHead>
+                <TableCellHead align="center">Our Holdings</TableCellHead>
+                <TableCellHead align="center">Our Investment (USD)</TableCellHead>
+                <TableCellHead align="center">Average Buying Price (USD)</TableCellHead>
+                <TableCellHead align="center">Current Investment value (USD)</TableCellHead>
               </TableRowHead>
             </TableHead>
             <TableBody>
@@ -311,7 +311,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
               <TableCellHead align="center">Our Holdings</TableCellHead>
               <TableCellHead align="center">Our Investment (USD)</TableCellHead>
               <TableCellHead align="center">Average Buying Price (USD)</TableCellHead>
-              <TableCellHead align="right">Current Investment value (USD)</TableCellHead>
+              <TableCellHead align="center">Current Investment value (USD)</TableCellHead>
             </TableRowHead>
           </TableHead>
 
@@ -346,7 +346,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       {formatPrice(item.avg_buy_price)}
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="right">
+                  <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
                       {formatPrice(item.current_investment)}
