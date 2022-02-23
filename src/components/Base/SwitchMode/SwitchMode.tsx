@@ -6,7 +6,7 @@ import { IconButton, IconButtonProps } from '@mui/material';
 import MySwitch from 'components/Base/Switch';
 
 import LightSun from 'assets/images/light-sun.svg';
-import DarkSun from 'assets/images/dark-sun.svg';
+import DarkSun from 'assets/images/dark-moon.svg';
 
 interface Props {
   mode: 'light' | 'dark';
