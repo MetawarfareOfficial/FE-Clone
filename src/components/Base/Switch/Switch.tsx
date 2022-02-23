@@ -2,6 +2,9 @@ import * as React from 'react';
 import { styled } from '@mui/system';
 import SwitchUnstyled, { switchUnstyledClasses, SwitchUnstyledProps } from '@mui/base/SwitchUnstyled';
 
+import LightIcon from 'assets/images/light.svg';
+import DarkIcon from 'assets/images/dark.svg';
+
 const blue = {
   500: '#3864FF',
 };
@@ -15,11 +18,11 @@ const Root = styled('span')`
   font-size: 0;
   position: relative;
   display: inline-block;
-  width: 40px;
-  height: 19px;
+  width: 60px;
+  height: 32px;
   margin: 0 10px;
   cursor: pointer;
-  transform: rotate(180deg);
+  transform: rotate(0deg);
 
   &.${switchUnstyledClasses.disabled} {
     opacity: 0.4;
@@ -27,8 +30,8 @@ const Root = styled('span')`
   }
 
   & .${switchUnstyledClasses.track} {
-    background: ${grey[400]};
-    border-radius: 10px;
+    background: #000;
+    border-radius: 19px;
     display: block;
     height: 100%;
     width: 100%;
@@ -37,14 +40,28 @@ const Root = styled('span')`
 
   & .${switchUnstyledClasses.thumb} {
     display: block;
-    width: 17px;
-    height: 17px;
+    width: 30px;
+    height: 30px;
     top: 1px;
     left: 1px;
-    border-radius: 16px;
-    background-color: #fff;
+    border-radius: 19px;
+    background: linear-gradient(141.34deg, #2978f4 28.42%, #23abf8 132.6%);
     position: relative;
     transition: 0.7s ease-in-out;
+    /* background: url(${LightIcon}) no-repeat center center #fff;
+    background-size: 50%; */
+
+    &:before {
+      display: 'inline-block';
+      width: 14px;
+      height: 14px;
+      content: '';
+      background: url(${DarkIcon}) no-repeat center center;
+      background-size: cover;
+      position: absolute;
+      top: 8px;
+      left: 7px;
+    }
   }
 
   &.${switchUnstyledClasses.focusVisible} .${switchUnstyledClasses.thumb} {
@@ -54,9 +71,24 @@ const Root = styled('span')`
 
   &.${switchUnstyledClasses.checked} {
     .${switchUnstyledClasses.thumb} {
-      left: 22px;
+      left: 29px;
       top: 1px;
-      background-color: #fff;
+      background: #fff;
+      position: relative;
+      /* background: url(${LightIcon}) no-repeat center center #fff; */
+      /* background-size: 50%; */
+
+      &:before {
+        display: 'inline-block';
+        width: 17px;
+        height: 14px;
+        content: '';
+        background: url(${LightIcon}) no-repeat center center;
+        background-size: cover;
+        position: absolute;
+        top: 8px;
+        right: 6px;
+      }
     }
 
     .${switchUnstyledClasses.track} {

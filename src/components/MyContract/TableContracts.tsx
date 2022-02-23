@@ -190,7 +190,7 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
     height: '0px',
   },
   '&::-webkit-scrollbar': {
-    width: '0px',
+    width: '4px',
     height: '0px',
   },
   '&::-webkit-scrollbar-track': {
@@ -211,7 +211,7 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
       height: '0px',
     },
     '&::-webkit-scrollbar': {
-      width: '0px',
+      width: '4px',
       height: '0px',
     },
   },
