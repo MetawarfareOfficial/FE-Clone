@@ -207,7 +207,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
 
   ul: {
     padding: '0 8px 0 0',
-    maxHeight: '235px',
+    maxHeight: '256px',
     overflow: 'auto',
 
     '&::-webkit-scrollbar': {
