@@ -7,7 +7,6 @@ import PaginationCustom from 'components/Base/Pagination';
 import Skeleton from '@mui/material/Skeleton';
 import { useAppSelector } from 'stores/hooks';
 import { range } from 'lodash';
-import { formatInvestmentValue } from 'helpers/formatInvestmentValue';
 
 interface Props {
   data: Array<any>;
@@ -228,7 +227,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Average Buying Price (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatInvestmentValue(item.avg_buy_price)}
+                      {formatPrice(item.avg_buy_price)}
                     </TextCenter>
                   </Grid>
 
@@ -240,7 +239,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Current investment value (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatInvestmentValue(item.current_investment)}
+                      {formatPrice(item.current_investment)}
                     </TextCenter>
                   </Grid>
                 </Grid>
