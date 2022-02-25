@@ -262,12 +262,6 @@ const ViewChart = styled('div')<any>`
   }
 `;
 
-// const TooltipCustom = styled(Tooltip)<TooltipProps>(({ theme }) => ({
-//    [`& .${tooltipClasses.tooltip}`]: {
-//     backgroundColor: theme.palette.common.black,
-//   },
-// }));
-
 const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -290,6 +284,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
     lineHeight: '22px',
     borderRadius: '7px',
     padding: '2px 10px',
+    zIndex: 1200,
   },
 }));
 

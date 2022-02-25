@@ -358,7 +358,9 @@ const ButtonIconRefresh = styled(Button)<ButtonRefreshProps>(({ theme, open }) =
         ? open
           ? '#3864FF'
           : 'none'
-        : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+        : open
+        ? 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)'
+        : 'none',
   },
 }));
 
