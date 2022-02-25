@@ -267,7 +267,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 ))(({ theme }) => ({
   [`& .${tooltipClasses.arrow}`]: {
     color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
-    top: '7px !important',
+    top: '5px !important',
 
     ['&::before']: {
       boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
@@ -440,7 +440,9 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
             arrow
             placement={width > 600 ? 'right-end' : 'right-end'}
           >
-            <ViewChart onMouseEnter={() => setOpenTooltip(true)} onMouseLeave={() => setOpenTooltip(false)}>
+            <ViewChart
+            // onMouseEnter={() => setOpenTooltip(true)} onMouseLeave={() => setOpenTooltip(false)}
+            >
               <TooltipCustom open={openTooltip} title="Rewards" arrow placement="left-start">
                 <span />
               </TooltipCustom>
