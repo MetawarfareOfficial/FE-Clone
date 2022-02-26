@@ -69,6 +69,7 @@ interface Contract {
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
+  zIndex: 1700,
 
   '.MuiDialog-container': {
     background: theme.palette.mode === 'light' ? 'rgba(165, 199, 251, 0.38)' : 'rgba(28, 28, 28, 0.36)',
