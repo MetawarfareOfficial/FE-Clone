@@ -440,9 +440,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
             arrow
             placement={width > 600 ? 'right-end' : 'right-end'}
           >
-            <ViewChart
-            // onMouseEnter={() => setOpenTooltip(true)} onMouseLeave={() => setOpenTooltip(false)}
-            >
+            <ViewChart onMouseEnter={() => setOpenTooltip(true)} onMouseLeave={() => setOpenTooltip(false)}>
               <TooltipCustom open={openTooltip} title="Rewards" arrow placement="left-start">
                 <span />
               </TooltipCustom>
