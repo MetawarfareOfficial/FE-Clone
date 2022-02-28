@@ -119,7 +119,11 @@ const Stats: React.FC<Props> = ({ countMyContract, data }) => {
             //     : '#262626'
             // }
             title={width < 600 ? 'Rewards' : 'My Rewards'}
-            value={`${formatForNumberLessThanCondition(String(dataRewardAmount), 0.001, formatReward)}`}
+            value={`${formatForNumberLessThanCondition({
+              value: String(dataRewardAmount),
+              minValueCondition: 0.001,
+              callback: formatReward,
+            })}`}
             icon={width < 600 ? (theme.palette.mode === 'light' ? RewardsIcon : RewardsDarkIcon) : null}
             connected={currentUserAddress}
             data={data}

@@ -25,6 +25,7 @@ import { useAppSelector } from 'stores/hooks';
 import Skeleton from '@mui/material/Skeleton';
 import { range } from 'lodash';
 import { formatPrice } from 'helpers/formatPrice';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 
 interface Props {
   data: Array<any>;
@@ -328,28 +329,50 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price)}
-                    </TextCenter>
-                  </TableCellContent>
-                  <TableCellContent align="center">
-                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
-                  </TableCellContent>
-                  <TableCellContent align="center">
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial)}
+                      {formatForNumberLessThanCondition({
+                        value: item.token_price,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.avg_buy_price)}
+                      {formatForNumberLessThanCondition({
+                        value: item.our_holdings,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment)}
+                      {formatForNumberLessThanCondition({
+                        value: item.initial,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatForNumberLessThanCondition({
+                        value: item.avg_buy_price,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
+                    </TextCenter>
+                  </TableCellContent>
+                  <TableCellContent align="center">
+                    <TextCenter>
+                      <TextUnit status={item.status}>$</TextUnit>
+                      {formatForNumberLessThanCondition({
+                        value: item.current_investment,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </TableCellContent>
                 </TableRowContent>
