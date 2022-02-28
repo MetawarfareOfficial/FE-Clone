@@ -1,6 +1,6 @@
 import { formatPrice, truncateNumber } from 'helpers/formatPrice';
 
-export const formatInvestmentValue = (number: number, decimals = 4) => {
+export const formatAndTruncateNumber = (number: number, decimals = 3) => {
   const truncatedNumber = truncateNumber(number, decimals);
   return formatPrice(truncatedNumber, decimals, decimals);
 };

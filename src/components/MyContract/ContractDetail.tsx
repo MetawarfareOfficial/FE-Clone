@@ -4,10 +4,10 @@ import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps, 
 
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatCType } from 'helpers/formatCType';
-import { formatPrice } from 'helpers/formatPrice';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { useAppSelector } from 'stores/hooks';
+import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 
 interface Props {
   mintDate: string;
@@ -123,15 +123,15 @@ const ContractDetail: React.FC<Props> = ({
             <Tooltip
               title={formatForNumberLessThanCondition({
                 value: bigNumber2NumberV3(String(rewards), 1e18),
-                minValueCondition: 0.01,
-                callback: formatPrice,
+                minValueCondition: 0.001,
+                callback: formatAndTruncateNumber,
               })}
             >
               <Text>
                 {formatForNumberLessThanCondition({
                   value: bigNumber2NumberV3(String(rewards), 1e18),
-                  minValueCondition: 0.01,
-                  callback: formatPrice,
+                  minValueCondition: 0.001,
+                  callback: formatAndTruncateNumber,
                 })}
               </Text>
             </Tooltip>
