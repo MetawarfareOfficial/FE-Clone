@@ -551,7 +551,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
           <TextName
             onChange={(event) => handleContractNameChange(event, index)}
             InputProps={{
-              startAdornment: <ContractIndex>{index + 1}.</ContractIndex>,
+              startAdornment: <ContractIndex>{index + 1}.&nbsp;</ContractIndex>,
             }}
             error={!!item.error}
             helperText={
