@@ -6,5 +6,6 @@ const config: Config = {
 };
 
 export const generateContractName = (): string => {
-  return uniqueNamesGenerator(config);
+  const contractName = uniqueNamesGenerator(config);
+  return contractName.charAt(0).toUpperCase() + contractName.slice(1);
 };
