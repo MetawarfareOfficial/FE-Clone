@@ -7,6 +7,7 @@ import PaginationCustom from 'components/Base/Pagination';
 import Skeleton from '@mui/material/Skeleton';
 import { useAppSelector } from 'stores/hooks';
 import { range } from 'lodash';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 
 interface Props {
   data: Array<any>;
@@ -212,7 +213,11 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Our Investment (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.initial)}
+                      {formatForNumberLessThanCondition({
+                        value: item.initial,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </Grid>
 
@@ -220,26 +225,44 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                     <Title>Token Price</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.token_price)}
+                      {formatForNumberLessThanCondition({
+                        value: item.token_price,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Average Buying Price (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.avg_buy_price)}
+                      {formatForNumberLessThanCondition({
+                        value: item.avg_buy_price,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </Grid>
 
                   <Grid item xs={5}>
                     <Title>Our Holdings</Title>
-                    <TextCenter>{formatPrice(item.our_holdings)}</TextCenter>
+                    <TextCenter>
+                      {formatForNumberLessThanCondition({
+                        value: item.our_holdings,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
+                    </TextCenter>
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>
                     <TextCenter>
                       <TextUnit status={item.status}>$</TextUnit>
-                      {formatPrice(item.current_investment)}
+                      {formatForNumberLessThanCondition({
+                        value: item.current_investment,
+                        minValueCondition: 0.01,
+                        callback: formatPrice,
+                      })}
                     </TextCenter>
                   </Grid>
                 </Grid>

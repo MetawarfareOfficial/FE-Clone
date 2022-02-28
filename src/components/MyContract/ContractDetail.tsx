@@ -121,10 +121,18 @@ const ContractDetail: React.FC<Props> = ({
           <Box>
             <Title>Rewards</Title>
             <Tooltip
-              title={formatForNumberLessThanCondition(bigNumber2NumberV3(String(rewards), 1e18), 0.01, formatPrice)}
+              title={formatForNumberLessThanCondition({
+                value: bigNumber2NumberV3(String(rewards), 1e18),
+                minValueCondition: 0.01,
+                callback: formatPrice,
+              })}
             >
               <Text>
-                {formatForNumberLessThanCondition(bigNumber2NumberV3(String(rewards), 1e18), 0.01, formatPrice)}
+                {formatForNumberLessThanCondition({
+                  value: bigNumber2NumberV3(String(rewards), 1e18),
+                  minValueCondition: 0.01,
+                  callback: formatPrice,
+                })}
               </Text>
             </Tooltip>
           </Box>

@@ -616,13 +616,17 @@ const Layout: React.FC<Props> = ({ children }) => {
             <SideAction>
               <Box>
                 {open ? (
-                  <ButtonBuy onClick={addAssets} variant="contained" color="primary">
+                  <ButtonBuy
+                    onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                    variant="contained"
+                    color="primary"
+                  >
                     Buy 0XB
                   </ButtonBuy>
                 ) : (
                   <TooltipCustom title="Buy 0xB" arrow placement="right">
                     <ButtonIconAdd
-                      onClick={addAssets}
+                      onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
                       variant="outlined"
                       color="primary"
                       disabled={!currentUserAddress}
