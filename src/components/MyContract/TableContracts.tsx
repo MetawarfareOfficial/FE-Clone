@@ -190,12 +190,14 @@ const TableWrapper = styled(TableContainer)<TableContainerProps>(({ theme }) => 
     height: '0px',
   },
   '&::-webkit-scrollbar': {
-    width: '4px',
+    width: '9px',
     height: '0px',
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#292929',
   },
   '&::-webkit-scrollbar-track': {
     boxShadow: 'none',
     webkitBoxShadow: 'none',
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#292929',
   },
   '&::-webkit-scrollbar-thumb': {
     backgroundColor: '#3864FF',
