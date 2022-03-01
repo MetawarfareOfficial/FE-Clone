@@ -183,7 +183,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item1">
               <SliderItem>
                 <BoxSale>
-                  <Sale>10%</Sale>
+                  <Sale>{`${tokenDistribution.developmentFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Development/ Marketing Wallet as 100% USDC
                   </Text>
@@ -194,7 +194,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item2">
               <SliderItem>
                 <BoxSale>
-                  <Sale>20%</Sale>
+                  <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
                   </Text>
@@ -205,7 +205,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item3">
               <SliderItem>
                 <BoxSale>
-                  <Sale>20%</Sale>
+                  <Sale>{`${tokenDistribution.treasuryFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Treasury Wallet as 100% USDC
                   </Text>
@@ -216,7 +216,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item4">
               <SliderItem>
                 <BoxSale>
-                  <Sale>50%</Sale>
+                  <Sale>{`${tokenDistribution.rewardsFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Rewards Wallet as 100% 0xB
                   </Text>
