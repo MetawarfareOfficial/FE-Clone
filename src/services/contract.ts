@@ -13,6 +13,7 @@ const initialState = {
   isLimitOwnedNodes: false,
   isCloseMintContractModal: false,
   isOverMaxMintNodes: false,
+  tokenDistribution: { developmentFee: 0, liquidityPoolFee: 0, rewardsFee: 0, treasuryFee: 0 },
 };
 
 const dataContractSlice = createSlice({
@@ -85,6 +86,12 @@ const dataContractSlice = createSlice({
     setIsOverMaxMintNodes: (state, action) => {
       state.isOverMaxMintNodes = action.payload;
     },
+    setTokenDistribution: (state, action) => {
+      state.tokenDistribution = action.payload;
+    },
+    unSetTokenDistribution: (state) => {
+      state.tokenDistribution = { developmentFee: 0, liquidityPoolFee: 0, rewardsFee: 0, treasuryFee: 0 };
+    },
   },
 });
 
@@ -111,6 +118,8 @@ export const {
   unSetIsLimitOwnedNodes,
   toggleIsCloseMintContractModal,
   setIsOverMaxMintNodes,
+  setTokenDistribution,
+  unSetTokenDistribution,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;
