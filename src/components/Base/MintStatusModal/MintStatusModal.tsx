@@ -213,12 +213,10 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
         <ViewImage>
           {status === 'success' ? (
             <img alt="" src={theme.palette.mode === 'light' ? SuccessGif : SuccessDarkGif} />
-          ) : status === 'error' ? (
+          ) : ['error', 'permission denied'].includes(status) ? (
             <img alt="" src={theme.palette.mode === 'light' ? ErrorGif : ErrorDarkGif} />
-          ) : status === 'pending' ? (
-            <img alt="" src={theme.palette.mode === 'light' ? PendingGif : PendingDarkGif} />
           ) : (
-            <img alt="" src={theme.palette.mode === 'light' ? ErrorGif : ErrorDarkGif} />
+            <img alt="" src={theme.palette.mode === 'light' ? PendingGif : PendingDarkGif} />
           )}
         </ViewImage>
 

@@ -254,11 +254,12 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
 
   const [openStatus, setOpenStatus] = useState(false);
-  const [status, setStatus] = useState<any>(null);
+  const [status, setStatus] = useState<any>(STATUS[2]);
   const [claimType, setClaimType] = useState<string>('');
   const [claimingType, setClaimingType] = useState<ClaimingType | null>(null);
 
   const handleToggleStatus = () => {
+    if (openStatus) setStatus(STATUS[2]);
     setOpenStatus(!openStatus);
   };
 

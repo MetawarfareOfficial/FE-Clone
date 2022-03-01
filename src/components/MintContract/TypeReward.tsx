@@ -300,7 +300,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
 
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
-  const [status, setStatus] = useState<any>(null);
+  const [status, setStatus] = useState<any>(STATUS[2]);
   const [maxMint, setMaxMint] = useState<number>(-1);
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
@@ -347,6 +347,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   };
 
   const handleToggleStatus = () => {
+    if (openStatus) setStatus(STATUS[2]);
     setOpenStatus(!openStatus);
   };
 
@@ -364,11 +365,11 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
       const key = type.split(' ')[0].toLowerCase();
       const cType = contractType[`${key}`];
 
-      const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
-
       setOpen(false);
       setStatus(STATUS[2]);
       setOpenStatus(true);
+
+      const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
       await sleep(DELAY_TIME);
 
       if (response.hash) {
