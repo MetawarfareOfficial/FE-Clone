@@ -112,9 +112,9 @@ export const getPriceAllNode = async (): Promise<any[]> => {
 
 export const getTotalNodeByType = async (): Promise<any[]> => {
   try {
-    const squareTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.square);
-    const cubeTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.cube);
-    const tesseractTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.tesseract);
+    const squareTotal = contractWithoutSigner.functions.getTotalNodesPerContractType(contractType.square);
+    const cubeTotal = contractWithoutSigner.functions.getTotalNodesPerContractType(contractType.cube);
+    const tesseractTotal = contractWithoutSigner.functions.getTotalNodesPerContractType(contractType.tesseract);
 
     return await Promise.all([squareTotal, cubeTotal, tesseractTotal]);
   } catch (e) {
