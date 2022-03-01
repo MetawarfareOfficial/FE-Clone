@@ -25,7 +25,7 @@ interface Props {
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
-  overflow: 'hidden',
+  // overflow: 'hidden',
   boxSizing: 'border-box',
   margin: '30px 0',
 
