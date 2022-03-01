@@ -11,5 +11,5 @@ export const formatApr = (data: BN): string => {
 
 export const formatAprV3 = (data: BN): string => {
   const data2BN = bigNumber2Number(data, 1e6);
-  return new BigNumber(data2BN).toString();
+  return new BigNumber(data2BN).integerValue(BigNumber.ROUND_DOWN).toString();
 };

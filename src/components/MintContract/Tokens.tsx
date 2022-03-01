@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
 
 import bgBox from 'assets/images/bg-box.png';
+import { useAppSelector } from '../../stores/hooks';
 
 interface Props {
   title?: string;
@@ -131,6 +132,8 @@ const SliderItem = styled(Box)<BoxProps>(() => ({
 }));
 
 const Tokens: React.FC<Props> = () => {
+  const tokenDistribution = useAppSelector((state) => state.contract.tokenDistribution);
+
   return (
     <Wrapper>
       <Title>Minted Contract Tokens Distribution</Title>
@@ -139,7 +142,7 @@ const Tokens: React.FC<Props> = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} sm={6} md={3} lg={3}>
             <BoxSale>
-              <Sale>10%</Sale>
+              <Sale>{`${tokenDistribution.developmentFee}%`}</Sale>
               <Text>
                 <span>Token</span> in Development/ Marketing Wallet as 100% USDC
               </Text>
@@ -147,7 +150,7 @@ const Tokens: React.FC<Props> = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={3}>
             <BoxSale>
-              <Sale>20%</Sale>
+              <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>
               <Text>
                 <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
               </Text>
@@ -155,7 +158,7 @@ const Tokens: React.FC<Props> = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={3}>
             <BoxSale>
-              <Sale>20%</Sale>
+              <Sale>{`${tokenDistribution.treasuryFee}%`}</Sale>
               <Text>
                 <span>Token</span> in Treasury Wallet as 100% USDC
               </Text>
@@ -163,7 +166,7 @@ const Tokens: React.FC<Props> = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3} lg={3}>
             <BoxSale>
-              <Sale>50%</Sale>
+              <Sale>{`${tokenDistribution.rewardsFee}%`}</Sale>
               <Text>
                 <span>Token</span> in Rewards Wallet as 100% 0xB
               </Text>
@@ -180,7 +183,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item1">
               <SliderItem>
                 <BoxSale>
-                  <Sale>10%</Sale>
+                  <Sale>{`${tokenDistribution.developmentFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Development/ Marketing Wallet as 100% USDC
                   </Text>
@@ -191,7 +194,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item2">
               <SliderItem>
                 <BoxSale>
-                  <Sale>20%</Sale>
+                  <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
                   </Text>
@@ -202,7 +205,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item3">
               <SliderItem>
                 <BoxSale>
-                  <Sale>20%</Sale>
+                  <Sale>{`${tokenDistribution.treasuryFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Treasury Wallet as 100% USDC
                   </Text>
@@ -213,7 +216,7 @@ const Tokens: React.FC<Props> = () => {
             <div className="scroll-area__column item4">
               <SliderItem>
                 <BoxSale>
-                  <Sale>50%</Sale>
+                  <Sale>{`${tokenDistribution.rewardsFee}%`}</Sale>
                   <Text>
                     <span>Token</span> in Rewards Wallet as 100% 0xB
                   </Text>

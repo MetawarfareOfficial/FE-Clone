@@ -32,6 +32,7 @@ import get from 'lodash/get';
 import { getToken } from 'services/auth';
 import { infoMessage } from 'messages/infoMessages';
 import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
+import { formatNumberWithComas } from 'helpers/formatPrice';
 
 interface Props {
   id: any;
@@ -404,8 +405,6 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   }, [zeroXBlockBalance, nodes]);
 
   useEffect(() => {
-    setOpen(false);
-    setOpenStatus(false);
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
   }, [currentUserAddress, zeroXBlockBalance]);
@@ -435,7 +434,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
         <ViewInfo>
           <Info>
             <Text>{value} 0xB</Text>
-            <Text>{Number(apy)}% APR</Text>
+            <Text>{formatNumberWithComas(Number(apy))}% APR</Text>
             <Text>Earn {earn} 0xB/day</Text>
           </Info>
 

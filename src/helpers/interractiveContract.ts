@@ -201,3 +201,16 @@ export const getMintPermit = async (): Promise<[boolean]> => {
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getTokenDistribution = async (): Promise<any[]> => {
+  try {
+    const developmentFee = contractWithoutSigner.functions.developmentFee.call({});
+    const liquidityPoolFee = contractWithoutSigner.functions.liquidityPoolFee.call({});
+    const rewardsFee = contractWithoutSigner.functions.rewardsFee.call({});
+    const treasuryFee = contractWithoutSigner.functions.treasuryFee.call({});
+
+    return await Promise.all([developmentFee, liquidityPoolFee, rewardsFee, treasuryFee]);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
