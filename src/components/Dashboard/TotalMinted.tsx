@@ -13,6 +13,7 @@ import TessIcon from 'assets/images/tess.gif';
 import TessDarkIcon from 'assets/images/tess-dark.gif';
 import { useAppSelector } from 'stores/hooks';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
+import { formatNumberWithComas } from 'helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -277,7 +278,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       dataPrice.square,
                       dataApy.square,
                     )} 0xB/day`}</Description>
-                    <Description>{`${Number(dataApy.square)}% APR`}</Description>
+                    <Description>{`${formatNumberWithComas(Number(dataApy.square))}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
@@ -310,7 +311,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       dataPrice.cube,
                       dataApy.cube,
                     )} 0xB/day`}</Description>
-                    <Description>{`${Number(dataApy.cube)}% APR`}</Description>
+                    <Description>{`${formatNumberWithComas(Number(dataApy.cube))}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
@@ -348,7 +349,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       dataPrice.tesseract,
                       dataApy.tesseract,
                     )} 0xB/day`}</Description>
-                    <Description>{`${Number(dataApy.tesseract)}% APR`}</Description>
+                    <Description>{`${formatNumberWithComas(Number(dataApy.tesseract))}% APR`}</Description>
                   </Box>
                 </BoxRight>
               </BoxTotal>
