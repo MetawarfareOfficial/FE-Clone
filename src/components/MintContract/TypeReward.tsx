@@ -31,6 +31,7 @@ import { useWeb3React } from '@web3-react/core';
 import get from 'lodash/get';
 import { getToken } from 'services/auth';
 import { infoMessage } from 'messages/infoMessages';
+import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
 
 interface Props {
   id: any;
@@ -306,13 +307,8 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
   const [openTooltip, setOpenTooltip] = useState(true);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setOpenTooltip(false);
-    }, 5000);
-  }, []);
-
   const { error } = useWeb3React();
+  const { fetchAccount0XB } = useFetchAccountBalance();
 
   const handleToggle = () => {
     if (
@@ -328,6 +324,9 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
       customToast({ message: errorMessage.MINT_CONTRACT_NOT_CONNECT_WALLET.message, type: 'error' });
       return;
     }
+
+    if (!currentUserAddress) return;
+    fetchAccount0XB(currentUserAddress);
 
     setOpen(!open);
     dispatch(unSetInsuffBalance());
@@ -389,6 +388,12 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
     setOpenStatus(false);
     setOpen(true);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setOpenTooltip(false);
+    }, 5000);
+  }, []);
 
   useEffect(() => {
     const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;

@@ -208,7 +208,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
 
   ul: {
     padding: '0 8px 0 0',
-    maxHeight: '256px',
+    maxHeight: '258px',
     overflow: 'auto',
 
     '&::-webkit-scrollbar': {
@@ -234,7 +234,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
 
       ['.MuiInput-root']: {
         padding: '7px 20px',
-        border: theme.palette.mode === 'light' ? '1px solid #BDBDBD' : 'unset',
+        border: theme.palette.mode === 'light' ? '1px solid #BDBDBD' : '1px solid transparent',
         boxSizing: 'border-box',
         borderRadius: '13px',
         background: theme.palette.mode === 'light' ? 'unset' : '#252525',

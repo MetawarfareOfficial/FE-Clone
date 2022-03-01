@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
-import { formatPrice } from 'helpers/formatPrice';
 import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
@@ -38,6 +37,7 @@ import { DELAY_TIME } from 'consts/typeReward';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { infoMessage } from 'messages/infoMessages';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 
 interface Props {
   title?: string;
@@ -379,8 +379,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">
                     {formatForNumberLessThanCondition({
                       value: bigNumber2NumberV3(item.rewards, 1e18),
-                      minValueCondition: 0.01,
-                      callback: formatPrice,
+                      minValueCondition: 0.001,
+                      callback: formatAndTruncateNumber,
                     })}
                   </TableCellContent>
                   <TableCellContent align="right">

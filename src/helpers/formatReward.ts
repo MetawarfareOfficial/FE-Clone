@@ -1,5 +1,6 @@
 import { calculateToFixedNumber } from './calculateToFixedNumber';
 import { formatBigNumber } from './formatBigNumber';
+import { truncateNumber } from './formatPrice';
 
 const convertLessThanThreeNumberValue = (value: string) => {
   if (value.length === 3) {
@@ -21,7 +22,7 @@ export const formatReward = (value: string, isAbbreviated = true) => {
   } else if (beforePeriodNumber.length <= 3 && !afterPeriodNumber) {
     return convertLessThanThreeNumberValue(beforePeriodNumber);
   } else if (afterPeriodNumber) {
-    return Number(value).toFixed(calculateToFixedNumber(value, false));
+    return truncateNumber(Number(value), calculateToFixedNumber(value, false));
   }
   return beforePeriodNumber;
 };
