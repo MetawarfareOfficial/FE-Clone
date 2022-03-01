@@ -403,8 +403,6 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   }, [zeroXBlockBalance, nodes]);
 
   useEffect(() => {
-    setOpen(false);
-    setOpenStatus(false);
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
   }, [currentUserAddress, zeroXBlockBalance]);
