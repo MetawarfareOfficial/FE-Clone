@@ -163,7 +163,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
           value: myReward,
           minValueCondition: 0.01,
           callback: formatAndTruncateNumber,
-          callBackParams: [2], // params for callback function, 2 is number of digit after decimal
+          callBackParams: [2], // params for callback function, 2 is number of digits after decimal
         }),
         nameBtn: 'Claim all',
         linkTo: '/my-contracts',
