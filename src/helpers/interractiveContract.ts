@@ -112,9 +112,9 @@ export const getPriceAllNode = async (): Promise<any[]> => {
 
 export const getTotalNodeByType = async (): Promise<any[]> => {
   try {
-    const squareTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.square);
-    const cubeTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.cube);
-    const tesseractTotal = contractWithoutSigner.functions.getTotalCreatedNodesPerContractType(contractType.tesseract);
+    const squareTotal = contractWithoutSigner.functions.getTotalNodesPerContractType(contractType.square);
+    const cubeTotal = contractWithoutSigner.functions.getTotalNodesPerContractType(contractType.cube);
+    const tesseractTotal = contractWithoutSigner.functions.getTotalNodesPerContractType(contractType.tesseract);
 
     return await Promise.all([squareTotal, cubeTotal, tesseractTotal]);
   } catch (e) {
@@ -218,6 +218,19 @@ export const getHoldingsWalletAddress = async (): Promise<string[][]> => {
 export const getUsdcTokenAddress = async (): Promise<string[]> => {
   try {
     return contractWithoutSigner.functions.usdcToken.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getTokenDistribution = async (): Promise<any[]> => {
+  try {
+    const developmentFee = contractWithoutSigner.functions.developmentFee.call({});
+    const liquidityPoolFee = contractWithoutSigner.functions.liquidityPoolFee.call({});
+    const rewardsFee = contractWithoutSigner.functions.rewardsFee.call({});
+    const treasuryFee = contractWithoutSigner.functions.treasuryFee.call({});
+
+    return await Promise.all([developmentFee, liquidityPoolFee, rewardsFee, treasuryFee]);
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
