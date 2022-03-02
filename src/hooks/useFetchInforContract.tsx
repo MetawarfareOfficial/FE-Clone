@@ -17,7 +17,7 @@ import {
 } from 'services/contract';
 import { formatAprV3 } from 'helpers/formatApy';
 import { useAppDispatch } from 'stores/hooks';
-import { bigNumber2NumberV2 } from 'helpers/formatNumber';
+import { bigNumber2NumberV2, bigNumber2NumberV4 } from 'helpers/formatNumber';
 import { useEffect } from 'react';
 
 const useFetchInforContract = () => {
@@ -81,10 +81,10 @@ const useFetchInforContract = () => {
 
       dispatch(
         setTokenDistribution({
-          developmentFee: bigNumber2NumberV2(data[0], 1),
-          liquidityPoolFee: bigNumber2NumberV2(data[1], 1),
-          rewardsFee: bigNumber2NumberV2(data[2], 1),
-          treasuryFee: bigNumber2NumberV2(data[3], 1),
+          developmentFee: bigNumber2NumberV4(data[0], 1),
+          liquidityPoolFee: bigNumber2NumberV4(data[1], 1),
+          rewardsFee: bigNumber2NumberV4(data[2], 1),
+          treasuryFee: bigNumber2NumberV4(data[3], 1),
         }),
       );
     } catch (e) {
