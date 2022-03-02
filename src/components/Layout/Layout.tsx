@@ -40,6 +40,7 @@ import LogoDarkImg from 'assets/images/logo-dark.svg';
 import RefreshLightIcon from 'assets/images/load-light.svg';
 import RefreshWhiteIcon from 'assets/images/foundation_refresh.svg';
 import ImportTokenIcon from 'assets/images/bx_import.svg';
+import ImportTokenDarkIcon from 'assets/images/bx_dark_import.svg';
 // import ImportTokenIcon from 'assets/images/import-token.svg';
 // import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
@@ -327,7 +328,7 @@ const ButtonIconAdd = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 
   '&:disabled': {
-    borderColor: 'rgba(56, 100, 255, 0.5)',
+    borderColor: '#808080',
   },
 }));
 
@@ -636,14 +637,8 @@ const Layout: React.FC<Props> = ({ children }) => {
                           onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
                           variant="outlined"
                           color="primary"
-                          disabled={!currentUserAddress}
                         >
-                          <img
-                            className="addImg"
-                            alt="import token icon"
-                            src={BuyLightIcon}
-                            // src={currentUserAddress ? BuyLightIcon : ImportTokenDarkIcon}
-                          />
+                          <img className="addImg" alt="import token icon" src={BuyLightIcon} />
                         </ButtonIconAdd>
                       </TooltipCustom>
                     )}
@@ -667,9 +662,10 @@ const Layout: React.FC<Props> = ({ children }) => {
                           color="primary"
                           disabled={!currentUserAddress}
                         >
-                          <img alt="import token icon" src={ImportTokenIcon} />
-                          {/* <img alt="import token icon" src={currentUserAddress 
-                        ? ImportTokenIcon : ImportTokenDarkIcon} /> */}
+                          <img
+                            alt="import token icon"
+                            src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon}
+                          />
                         </ButtonIconAdd>
                       </TooltipCustom>
                     )}
