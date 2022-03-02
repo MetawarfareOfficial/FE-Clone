@@ -29,7 +29,7 @@ export const useCheckEthereumResponse = () => {
       return () => {
         clearTimeout(reloadPageTimeOut);
       };
-    } else {
+    } else if (windowSize > 0) {
       setEthereumOk(true);
     }
   }, [ethereum, windowSize, getToken()]);
