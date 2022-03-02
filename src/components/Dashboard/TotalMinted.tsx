@@ -267,7 +267,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     </BoxHeaderContent>
                   </BoxHeader>
 
-                  <TitleBox>{dataTotal.square}</TitleBox>
+                  <TitleBox>{formatNumberWithComas(dataTotal.square)}</TitleBox>
                   <TextBox>Contracts minted</TextBox>
                 </BoxLeft>
 
@@ -300,7 +300,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     </BoxHeaderContent>
                   </BoxHeader>
 
-                  <TitleBox>{dataTotal.cube}</TitleBox>
+                  <TitleBox>{formatNumberWithComas(dataTotal.cube)}</TitleBox>
                   <TextBox>Contracts minted</TextBox>
                 </BoxLeft>
 
@@ -338,7 +338,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                     </BoxHeaderContent>
                   </BoxHeader>
 
-                  <TitleBox>{dataTotal.tesseract}</TitleBox>
+                  <TitleBox>{formatNumberWithComas(dataTotal.tesseract)}</TitleBox>
                   <TextBox>Contracts minted</TextBox>
                 </BoxLeft>
 
@@ -379,7 +379,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       </BoxHeaderContent>
                     </BoxHeader>
 
-                    <TitleBox>{dataTotal.square}</TitleBox>
+                    <TitleBox>{formatNumberWithComas(dataTotal.square)}</TitleBox>
                     <TextBox>Contracts minted</TextBox>
                   </BoxLeft>
 
@@ -415,7 +415,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       </BoxHeaderContent>
                     </BoxHeader>
 
-                    <TitleBox>{dataTotal.cube}</TitleBox>
+                    <TitleBox>{formatNumberWithComas(dataTotal.cube)}</TitleBox>
                     <TextBox>Contracts minted</TextBox>
                   </BoxLeft>
 
@@ -456,7 +456,7 @@ const TotalMinted: React.FC<Props> = ({ onChangeHeight }) => {
                       </BoxHeaderContent>
                     </BoxHeader>
 
-                    <TitleBox>{dataTotal.tesseract}</TitleBox>
+                    <TitleBox>{formatNumberWithComas(dataTotal.tesseract)}</TitleBox>
                     <TextBox>Contracts minted</TextBox>
                   </BoxLeft>
 
