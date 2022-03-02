@@ -47,6 +47,7 @@ import BuyLightIcon from 'assets/images/buy.svg';
 
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
+import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
 
 interface Props {
   name?: string;
@@ -518,6 +519,8 @@ const Layout: React.FC<Props> = ({ children }) => {
   const [width] = useWindowSize([null, null] as unknown as number[]);
   const [open, setOpen] = React.useState(width ? (width < 1200 ? false : true) : null);
   const colorMode = React.useContext<any>(ColorModeContext);
+  const { ethereumOk } = useCheckEthereumResponse();
+
   const handleChangeMode = () => {
     colorMode.toggleColorMode();
   };
@@ -548,122 +551,131 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>
-      <Header onChangeMode={handleChangeMode} />
-
-      {open !== null && (
+      {ethereumOk && (
         <>
-          <Drawer
-            variant="permanent"
-            open={open}
-            sx={{
-              display: {
-                md: 'block',
-                xs: 'none',
-              },
-            }}
-          >
-            <DrawerHeader open={open}>
-              <Logo open={open} to="/">
-                {
-                  // open ? (
-                  theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
-                  // ) : (
-                  //   <img alt="" src={LogoIcon} />
-                  // )
-                }
-              </Logo>
-              <ToggleButton onClick={handleToggle}>{open ? <ChevronLeftIcon /> : <ChevronRightIcon />}</ToggleButton>
-            </DrawerHeader>
+          <Header onChangeMode={handleChangeMode} />
 
-            <SideMenus open={open}>
-              {menus &&
-                menus.map((item, i) => (
-                  <MenuCustom
-                    key={i}
-                    open={open}
-                    active={location.pathname === item.path}
-                    onClick={() => openMenu(item.path)}
-                  >
-                    <MenuIconCustom open={open}>
-                      {!open ? (
-                        <TooltipCustom title={item.name} arrow placement="right">
-                          {location.pathname === item.path ? (
-                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+          {open !== null && (
+            <>
+              <Drawer
+                variant="permanent"
+                open={open}
+                sx={{
+                  display: {
+                    md: 'block',
+                    xs: 'none',
+                  },
+                }}
+              >
+                <DrawerHeader open={open}>
+                  <Logo open={open} to="/">
+                    {
+                      // open ? (
+                      theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
+                      // ) : (
+                      //   <img alt="" src={LogoIcon} />
+                      // )
+                    }
+                  </Logo>
+                  <ToggleButton onClick={handleToggle}>
+                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                  </ToggleButton>
+                </DrawerHeader>
+
+                <SideMenus open={open}>
+                  {menus &&
+                    menus.map((item, i) => (
+                      <MenuCustom
+                        key={i}
+                        open={open}
+                        active={location.pathname === item.path}
+                        onClick={() => openMenu(item.path)}
+                      >
+                        <MenuIconCustom open={open}>
+                          {!open ? (
+                            <TooltipCustom title={item.name} arrow placement="right">
+                              {location.pathname === item.path ? (
+                                <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                              ) : (
+                                <img alt="" src={item.icon} />
+                              )}
+                            </TooltipCustom>
                           ) : (
-                            <img alt="" src={item.icon} />
+                            <>
+                              {location.pathname === item.path ? (
+                                <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                              ) : (
+                                <img alt="" src={item.icon} />
+                              )}
+                            </>
                           )}
-                        </TooltipCustom>
-                      ) : (
-                        <>
-                          {location.pathname === item.path ? (
-                            <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                          ) : (
-                            <img alt="" src={item.icon} />
-                          )}
-                        </>
-                      )}
-                    </MenuIconCustom>
-                    <ListItemTextCustom
-                      primary={item.name}
-                      open={open}
-                      // sx={{  }}
-                    />
-                    {/* {open && <ListItemText primary={item.name} />} */}
-                  </MenuCustom>
-                ))}
-            </SideMenus>
+                        </MenuIconCustom>
+                        <ListItemTextCustom
+                          primary={item.name}
+                          open={open}
+                          // sx={{  }}
+                        />
+                        {/* {open && <ListItemText primary={item.name} />} */}
+                      </MenuCustom>
+                    ))}
+                </SideMenus>
 
-            <SideAction>
-              <Box>
-                {open ? (
-                  <ButtonBuy
-                    onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
-                    variant="contained"
-                    color="primary"
-                  >
-                    Buy 0XB
-                  </ButtonBuy>
-                ) : (
-                  <TooltipCustom title="Buy 0xB" arrow placement="right">
-                    <ButtonIconAdd
-                      onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
-                      variant="outlined"
-                      color="primary"
-                      disabled={!currentUserAddress}
-                    >
-                      <img
-                        className="addImg"
-                        alt="import token icon"
-                        src={BuyLightIcon}
-                        // src={currentUserAddress ? BuyLightIcon : ImportTokenDarkIcon}
-                      />
-                    </ButtonIconAdd>
-                  </TooltipCustom>
-                )}
-              </Box>
+                <SideAction>
+                  <Box>
+                    {open ? (
+                      <ButtonBuy
+                        onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                        variant="contained"
+                        color="primary"
+                      >
+                        Buy 0XB
+                      </ButtonBuy>
+                    ) : (
+                      <TooltipCustom title="Buy 0xB" arrow placement="right">
+                        <ButtonIconAdd
+                          onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                          variant="outlined"
+                          color="primary"
+                          disabled={!currentUserAddress}
+                        >
+                          <img
+                            className="addImg"
+                            alt="import token icon"
+                            src={BuyLightIcon}
+                            // src={currentUserAddress ? BuyLightIcon : ImportTokenDarkIcon}
+                          />
+                        </ButtonIconAdd>
+                      </TooltipCustom>
+                    )}
+                  </Box>
 
-              <Box>
-                {open ? (
-                  <ButtonRefresh onClick={addAssets} variant="outlined" color="primary" disabled={!currentUserAddress}>
-                    Add 0XB
-                  </ButtonRefresh>
-                ) : (
-                  <TooltipCustom title="Add 0xB" arrow placement="right">
-                    <ButtonIconAdd
-                      onClick={addAssets}
-                      variant="outlined"
-                      color="primary"
-                      disabled={!currentUserAddress}
-                    >
-                      <img alt="import token icon" src={ImportTokenIcon} />
-                      {/* <img alt="import token icon" src={currentUserAddress 
+                  <Box>
+                    {open ? (
+                      <ButtonRefresh
+                        onClick={addAssets}
+                        variant="outlined"
+                        color="primary"
+                        disabled={!currentUserAddress}
+                      >
+                        Add 0XB
+                      </ButtonRefresh>
+                    ) : (
+                      <TooltipCustom title="Add 0xB" arrow placement="right">
+                        <ButtonIconAdd
+                          onClick={addAssets}
+                          variant="outlined"
+                          color="primary"
+                          disabled={!currentUserAddress}
+                        >
+                          <img alt="import token icon" src={ImportTokenIcon} />
+                          {/* <img alt="import token icon" src={currentUserAddress 
                         ? ImportTokenIcon : ImportTokenDarkIcon} /> */}
-                    </ButtonIconAdd>
-                  </TooltipCustom>
-                )}
-              </Box>
+                        </ButtonIconAdd>
+                      </TooltipCustom>
+                    )}
+                  </Box>
 
-              {/* <Box>
+                  {/* <Box>
                 {open ? (
                   <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
                     Refresh
@@ -677,49 +689,51 @@ const Layout: React.FC<Props> = ({ children }) => {
                 )}
               </Box> */}
 
-              <OtherActions open={open}>
-                <TooltipCustom title="Refresh" arrow placement="right">
-                  <ButtonIconRefresh open={open} onClick={handleRefresh} variant="outlined" color="primary">
-                    <img alt="" src={open ? RefreshLightIcon : RefreshWhiteIcon} />
-                  </ButtonIconRefresh>
-                </TooltipCustom>
+                  <OtherActions open={open}>
+                    <TooltipCustom title="Refresh" arrow placement="right">
+                      <ButtonIconRefresh open={open} onClick={handleRefresh} variant="outlined" color="primary">
+                        <img alt="" src={open ? RefreshLightIcon : RefreshWhiteIcon} />
+                      </ButtonIconRefresh>
+                    </TooltipCustom>
 
-                <BoxSwitch>
-                  {/* {open && <label>Light</label>} */}
-                  {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
-                  <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
-                  {/* {open && <label>Dark</label>} */}
-                </BoxSwitch>
-              </OtherActions>
-            </SideAction>
-          </Drawer>
+                    <BoxSwitch>
+                      {/* {open && <label>Light</label>} */}
+                      {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
+                      <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
+                      {/* {open && <label>Dark</label>} */}
+                    </BoxSwitch>
+                  </OtherActions>
+                </SideAction>
+              </Drawer>
 
-          <MainLayout component="main" open={open}>
-            <MenusMobile>
-              <div className="scroll-area scroll-area--horizontal">
-                <div className="scroll-area__body">
-                  {menus &&
-                    menus.map((item, i) => (
-                      <div key={i} className={`scroll-area__column item${i + 1}`}>
-                        <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
-                          <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
-                        </LinkCustom>
-                      </div>
-                    ))}
-                </div>
-              </div>
-              {/* </SliderScroll> */}
-            </MenusMobile>
+              <MainLayout component="main" open={open}>
+                <MenusMobile>
+                  <div className="scroll-area scroll-area--horizontal">
+                    <div className="scroll-area__body">
+                      {menus &&
+                        menus.map((item, i) => (
+                          <div key={i} className={`scroll-area__column item${i + 1}`}>
+                            <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                              <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                            </LinkCustom>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                  {/* </SliderScroll> */}
+                </MenusMobile>
 
-            {
-              // location.pathname !== '/treasury' &&
-              width > 899 && (
-                <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
-              )
-            }
+                {
+                  // location.pathname !== '/treasury' &&
+                  width > 899 && (
+                    <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
+                  )
+                }
 
-            {children}
-          </MainLayout>
+                {children}
+              </MainLayout>
+            </>
+          )}
         </>
       )}
     </Box>
