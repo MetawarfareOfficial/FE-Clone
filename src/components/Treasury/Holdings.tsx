@@ -12,10 +12,11 @@ import { bigNumber2Number } from 'helpers/formatNumber';
 import OxBCoin from 'assets/images/coin-0xb.svg';
 import USDCoin from 'assets/images/coin-usd.svg';
 import AVAXCoin from 'assets/images/avalanche-avax-logo.svg';
-import { holdingsWalletAddresses, holdingWalletTokenID } from 'consts/holdings';
+import { holdingWalletTokenID } from 'consts/holdings';
 import { usdcAbi } from 'abis/usdcAbi';
 import { formatReward, getTokenBalanceFromWalletAddress } from 'helpers';
 import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
+import { useFetchHoldingsWalletAddress } from 'helpers/useFetchHoldingsWalletAddress';
 
 interface HoldingWallet {
   icon: string;
@@ -140,6 +141,7 @@ const Holdings: React.FC<Props> = () => {
   const holdingWalletTokenPrice = useAppSelector((state) => state.coingeko.holdingWalletTokenPrice);
   const holdingTokenLoadCompleted = useAppSelector((state) => state.coingeko.holdingTokenLoadCompleted);
 
+  const { holdingsWalletAddresses, usdcTokenAddress } = useFetchHoldingsWalletAddress();
   const [treasury, setTreasury] = useState<HoldingWallet[]>([
     {
       name: 'USDC',
@@ -182,67 +184,75 @@ const Holdings: React.FC<Props> = () => {
   const getTokenData = (params: object) => dispatch(getHoldingWalletTokenData(params));
 
   const handleGetDevAndMarketingOrTreasuryWalletData = async (key: string) => {
-    const isTreasury = key === 'treasury';
-    const usdToken = await getTokenBalanceFromWalletAddress(
-      process.env.REACT_APP_USDC_CONTRACT_ADDRESS,
-      usdcAbi,
-      isTreasury ? holdingsWalletAddresses.treasury : holdingsWalletAddresses.dev_marketing,
-    );
-    if (key === 'treasury') {
-      setTreasury([
-        {
-          ...treasury[0],
-          amount: formatReward(String(usdToken)),
-          value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
-        },
-      ]);
-    } else {
-      setDev_marketing([
-        {
-          ...dev_marketing[0],
-          amount: formatReward(String(usdToken)),
-          value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
-        },
-      ]);
+    if (holdingsWalletAddresses) {
+      const isTreasury = key === 'treasury';
+      const usdToken = await getTokenBalanceFromWalletAddress(
+        usdcTokenAddress,
+        usdcAbi,
+        isTreasury ? holdingsWalletAddresses.treasury : holdingsWalletAddresses.dev_marketing,
+      );
+      if (key === 'treasury') {
+        setTreasury([
+          {
+            ...treasury[0],
+            amount: formatReward(String(usdToken)),
+            value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
+          },
+        ]);
+      } else {
+        setDev_marketing([
+          {
+            ...dev_marketing[0],
+            amount: formatReward(String(usdToken)),
+            value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
+          },
+        ]);
+      }
     }
   };
 
   const handleGetLiquidityWalletData = async () => {
-    const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.liquidity);
-    const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
-    const avaxToken = await getBalanceNativeTokenOf(holdingsWalletAddresses.liquidity);
-    const avaxAmount = bigNumber2Number(avaxToken);
-    if (holdingWalletTokenID.zeroToken) {
-      setLiquidity([
-        {
-          ...liquidity[0],
-          amount: formatReward(String(zeroTokenAmount)),
-          value: `${formatReward(
-            String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
-          )}`,
-        },
-        {
-          ...liquidity[1],
-          amount: formatReward(String(avaxAmount)),
-          value: `${formatReward(String(Number(avaxAmount) * holdingWalletTokenPrice[holdingWalletTokenID.avax].usd))}`,
-        },
-      ]);
+    if (holdingsWalletAddresses) {
+      const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.liquidity);
+      const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
+      const avaxToken = await getBalanceNativeTokenOf(holdingsWalletAddresses.liquidity);
+      const avaxAmount = bigNumber2Number(avaxToken);
+      if (holdingWalletTokenID.zeroToken) {
+        setLiquidity([
+          {
+            ...liquidity[0],
+            amount: formatReward(String(zeroTokenAmount)),
+            value: `${formatReward(
+              String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
+            )}`,
+          },
+          {
+            ...liquidity[1],
+            amount: formatReward(String(avaxAmount)),
+            value: `${formatReward(
+              String(Number(avaxAmount) * holdingWalletTokenPrice[holdingWalletTokenID.avax].usd),
+            )}`,
+          },
+        ]);
+      }
     }
   };
 
   const handleGetRewardsWalletData = async () => {
-    const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.rewards);
-    const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
-    if (holdingWalletTokenID.zeroToken) {
-      setRewards([
-        {
-          ...rewards[0],
-          amount: formatReward(String(zeroTokenAmount)),
-          value: `${formatReward(
-            String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
-          )}`,
-        },
-      ]);
+    if (holdingsWalletAddresses) {
+      const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.rewards);
+      const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
+      if (holdingWalletTokenID.zeroToken) {
+        setRewards([
+          {
+            ...rewards[0],
+            amount: formatReward(String(zeroTokenAmount)),
+            value: `${formatReward(
+              String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
+            )}`,
+          },
+        ]);
+      }
     }
   };
 
@@ -251,13 +261,13 @@ const Holdings: React.FC<Props> = () => {
       ids: `${holdingWalletTokenID.zeroToken},${holdingWalletTokenID.usdc},${holdingWalletTokenID.avax}`,
       vs_currencies: 'usd',
     });
-    if (holdingTokenLoadCompleted) {
+    if (holdingTokenLoadCompleted && holdingsWalletAddresses && usdcTokenAddress) {
       handleGetRewardsWalletData();
       handleGetLiquidityWalletData();
       handleGetDevAndMarketingOrTreasuryWalletData('treasury');
       handleGetDevAndMarketingOrTreasuryWalletData('dev_marketing');
     }
-  }, [holdingTokenLoadCompleted]);
+  }, [holdingTokenLoadCompleted, holdingsWalletAddresses, usdcTokenAddress]);
 
   const renderData = (k: string) => {
     if (k === 'treasury') return treasury;

@@ -202,6 +202,27 @@ export const getMintPermit = async (): Promise<[boolean]> => {
   }
 };
 
+export const getHoldingsWalletAddress = async (): Promise<string[][]> => {
+  try {
+    const devWallet = contractWithoutSigner.functions.developmentFundPool.call({});
+    const treasuryWallet = contractWithoutSigner.functions.treasuryPool.call({});
+    const rewardWallet = contractWithoutSigner.functions.rewardsPool.call({});
+    const liquidityWallet = contractWithoutSigner.functions.liquidityPool.call({});
+
+    return Promise.all([treasuryWallet, liquidityWallet, rewardWallet, devWallet]);
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
+export const getUsdcTokenAddress = async (): Promise<string[]> => {
+  try {
+    return contractWithoutSigner.functions.usdcToken.call({});
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
+
 export const getTokenDistribution = async (): Promise<any[]> => {
   try {
     const developmentFee = contractWithoutSigner.functions.developmentFee.call({});
