@@ -49,6 +49,7 @@ import BuyLightIcon from 'assets/images/buy.svg';
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
 import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
+import { useWindowClose } from '../../hooks/useWindowClose';
 
 interface Props {
   name?: string;
@@ -549,6 +550,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   };
 
   useFetchInforContract();
+  useWindowClose();
 
   return (
     <Box sx={{ display: 'flex', overflow: 'hidden' }}>

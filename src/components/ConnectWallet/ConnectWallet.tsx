@@ -170,7 +170,7 @@ const ConnectWallet: React.FC<Props> = () => {
   }, [getToken()]);
 
   useEffect(() => {
-    if (error?.name === 'UnsupportedChainIdError') {
+    if (error?.name === 'UnsupportedChainIdError' || error?.name === 't') {
       createToast({
         message: errorMessage.META_MASK_WRONG_NETWORK.message,
         type: 'error',
