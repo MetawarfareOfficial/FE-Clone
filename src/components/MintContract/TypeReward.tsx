@@ -310,8 +310,9 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
 
   const { error } = useWeb3React();
   const { fetchAccount0XB } = useFetchAccountBalance();
+  const { fetchNodesOfUser } = useFetchNodes();
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
     if (
       (error?.name === 'UnsupportedChainIdError' ||
         get(window, 'ethereum.networkVersion', 1) !== process.env.REACT_APP_CHAIN_ID) &&
@@ -327,7 +328,8 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
     }
 
     if (!currentUserAddress) return;
-    fetchAccount0XB(currentUserAddress);
+    await fetchAccount0XB(currentUserAddress);
+    await fetchNodesOfUser(currentUserAddress);
 
     setOpen(!open);
     dispatch(unSetInsuffBalance());
