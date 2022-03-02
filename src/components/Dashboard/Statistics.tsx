@@ -13,6 +13,8 @@ import TokenBg from 'assets/images/bg-token.png';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/typeReward';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 
 interface Props {
   title?: string;
@@ -157,7 +159,12 @@ const Statistics: React.FC<Props> = ({ data }) => {
       },
       {
         title: 'My Rewards',
-        value: formatPrice(`${myReward}`),
+        value: formatForNumberLessThanCondition({
+          value: myReward,
+          minValueCondition: 0.01,
+          callback: formatAndTruncateNumber,
+          callBackParams: [2], // params for callback function, 2 is number of digits after decimal
+        }),
         nameBtn: 'Claim all',
         linkTo: '/my-contracts',
       },
