@@ -402,7 +402,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
     const restMintableContracts = LIMIT_MAX_MINT - nodes;
     const numberMintableContracts = _maxMint >= LIMIT_ONE_TIME_MINT ? LIMIT_ONE_TIME_MINT : _maxMint;
     setMaxMint(numberMintableContracts >= restMintableContracts ? restMintableContracts : numberMintableContracts);
-  }, [zeroXBlockBalance, nodes]);
+  }, [zeroXBlockBalance, nodes, value]);
 
   useEffect(() => {
     dispatch(unSetInsuffBalance());
