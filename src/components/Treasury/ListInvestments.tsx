@@ -175,6 +175,28 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
   const handleChangePage = (index: number) => {
     setPage(index - 1);
   };
+  const renderContent = (value: string, status: TextUnitProps['status']) => {
+    return (
+      <TextCenter>
+        {String(
+          formatForNumberLessThanCondition({
+            value,
+            minValueCondition: 0.01,
+            callback: formatPrice,
+          }),
+        ).includes('<')
+          ? '<'
+          : ''}
+        <TextUnit status={status}>$</TextUnit>
+        {formatForNumberLessThanCondition({
+          value,
+          minValueCondition: 0.01,
+          callback: formatPrice,
+          addLessThanSymbol: false,
+        })}
+      </TextCenter>
+    );
+  };
 
   if (status === 'loading') {
     return (
@@ -211,37 +233,16 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Our Investment (USD)</Title>
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.initial,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
+                    {renderContent(item.initial, item.status)}
                   </Grid>
 
                   <Grid item xs={5}>
                     <Title>Token Price</Title>
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.token_price,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
+                    {renderContent(item.token_price, item.status)}
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Average Buying Price (USD)</Title>
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.avg_buy_price,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
+                    {renderContent(item.avg_buy_price, item.status)}
                   </Grid>
 
                   <Grid item xs={5}>
@@ -256,14 +257,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.current_investment,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
+                    {renderContent(item.current_investment, item.status)}
                   </Grid>
                 </Grid>
               </BoxContent>
