@@ -191,13 +191,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
   const location = useLocation();
 
   return (
-    <Wrapper
-      open={open}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={onClose}
-      aria-describedby="alert-dialog-slide-description"
-    >
+    <Wrapper open={open} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
         <ViewIcon>
           <img alt="" src={icon} />
