@@ -2,6 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
+import { useAppSelector } from '../../stores/hooks';
 
 // import bgBorder from 'assets/images/bg-box-gradient.png';
 
@@ -75,12 +76,14 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
 }));
 
 const ClaimRewards: React.FC<Props> = () => {
+  const cashOutFee = useAppSelector((state) => state.contract.tokenDistribution.cashOutFee);
+
   return (
     <Wrapper>
       <Title>Claim Rewards Tax</Title>
       <Pool>
-        Every time a user claims rewards, a 10% tax will be applied and redirected to the 0xBlock Liquidity Pool as 50%
-        0xB & 50% AVAX
+        {`Every time a user claims rewards, a ${cashOutFee}% tax will be applied and redirected 
+          to the 0xBlock Liquidity Pool as 50% 0xB & 50% AVAX`}
       </Pool>
     </Wrapper>
   );

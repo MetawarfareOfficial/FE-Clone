@@ -85,6 +85,7 @@ const useFetchInforContract = () => {
           liquidityPoolFee: bigNumber2NumberV4(data[1], 1),
           rewardsFee: bigNumber2NumberV4(data[2], 1),
           treasuryFee: bigNumber2NumberV4(data[3], 1),
+          cashOutFee: bigNumber2NumberV4(data[4], 1),
         }),
       );
     } catch (e) {

@@ -13,7 +13,7 @@ const initialState = {
   isLimitOwnedNodes: false,
   isCloseMintContractModal: false,
   isOverMaxMintNodes: false,
-  tokenDistribution: { developmentFee: 0, liquidityPoolFee: 0, rewardsFee: 0, treasuryFee: 0 },
+  tokenDistribution: { developmentFee: 0, liquidityPoolFee: 0, rewardsFee: 0, treasuryFee: 0, cashOutFee: 0 },
 };
 
 const dataContractSlice = createSlice({
@@ -90,7 +90,13 @@ const dataContractSlice = createSlice({
       state.tokenDistribution = action.payload;
     },
     unSetTokenDistribution: (state) => {
-      state.tokenDistribution = { developmentFee: 0, liquidityPoolFee: 0, rewardsFee: 0, treasuryFee: 0 };
+      state.tokenDistribution = {
+        developmentFee: 0,
+        liquidityPoolFee: 0,
+        rewardsFee: 0,
+        treasuryFee: 0,
+        cashOutFee: 0,
+      };
     },
   },
 });
