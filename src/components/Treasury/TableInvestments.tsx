@@ -275,6 +275,29 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
     setPage(index - 1);
   };
 
+  const renderContent = (value: string, status: TextUnitProps['status']) => {
+    return (
+      <TextCenter>
+        {String(
+          formatForNumberLessThanCondition({
+            value,
+            minValueCondition: 0.01,
+            callback: formatPrice,
+          }),
+        ).includes('<')
+          ? '<'
+          : ''}
+        <TextUnit status={status}>$</TextUnit>
+        {formatForNumberLessThanCondition({
+          value,
+          minValueCondition: 0.01,
+          callback: formatPrice,
+          addLessThanSymbol: false,
+        })}
+      </TextCenter>
+    );
+  };
+
   if (status === 'loading') {
     return (
       <Box>
@@ -326,16 +349,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       <Text>{formatCapitalizeLetters(item.name)}</Text>
                     </TextCenter>
                   </TableCellContent>
-                  <TableCellContent align="center">
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.token_price,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
-                  </TableCellContent>
+                  <TableCellContent align="center">{renderContent(item.token_price, item.status)}</TableCellContent>
                   <TableCellContent align="center">
                     <TextCenter>
                       {formatForNumberLessThanCondition({
@@ -345,35 +359,10 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                       })}
                     </TextCenter>
                   </TableCellContent>
+                  <TableCellContent align="center">{renderContent(item.initial, item.status)}</TableCellContent>
+                  <TableCellContent align="center">{renderContent(item.avg_buy_price, item.status)}</TableCellContent>
                   <TableCellContent align="center">
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.initial,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
-                  </TableCellContent>
-                  <TableCellContent align="center">
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.avg_buy_price,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
-                  </TableCellContent>
-                  <TableCellContent align="center">
-                    <TextCenter>
-                      <TextUnit status={item.status}>$</TextUnit>
-                      {formatForNumberLessThanCondition({
-                        value: item.current_investment,
-                        minValueCondition: 0.01,
-                        callback: formatPrice,
-                      })}
-                    </TextCenter>
+                    {renderContent(item.current_investment, item.status)}
                   </TableCellContent>
                 </TableRowContent>
               ),

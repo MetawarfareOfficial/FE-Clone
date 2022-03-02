@@ -35,6 +35,7 @@ interface ValueProps extends TypographyProps {
 interface BoxCustomProps {
   color: string;
   opacity?: string;
+  number?: string;
 }
 
 interface TypographyCustomProps extends TypographyProps {
@@ -43,12 +44,12 @@ interface TypographyCustomProps extends TypographyProps {
   connected: any;
 }
 
-const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
+const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, opacity, number }) => ({
   background: color,
   opacity: opacity,
   padding: '20px 20px',
   borderRadius: '20px',
-  boxShadow: '1px 19px 22px -16px rgba(50, 71, 117, 0.18)',
+  boxShadow: Number(number) > 0 ? '1px 19px 22px -16px rgba(50, 71, 117, 0.18)' : 'unset',
   display: 'inline-flex',
   width: '100%',
   alignItems: 'center',
@@ -59,13 +60,13 @@ const Wrapper = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
   },
 }));
 
-const WrapperMobile = styled(Box)<BoxCustomProps>(({ color, theme, opacity }) => ({
+const WrapperMobile = styled(Box)<BoxCustomProps>(({ color, theme, opacity, number }) => ({
   width: '100%',
   display: 'none',
   background: color,
   padding: '16px 13px 21px 20px',
   borderRadius: '20px',
-  boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.11)',
+  boxShadow: Number(number) > 0 ? '0px 28px 37px -17px rgba(25, 21, 48, 0.11)' : 'unset',
   boxSizing: 'border-box',
   height: '100%',
   opacity: opacity,
@@ -252,7 +253,7 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected
       : '0.3';
   if (width < 600) {
     return (
-      <WrapperMobile color={color} opacity={opacity}>
+      <WrapperMobile color={color} opacity={opacity} number={value}>
         <BoxHeader>
           <ViewImage>
             {title === 'Rewards' && theme.palette.mode === 'dark' && data.length === 0 ? '' : <img alt="" src={icon} />}
@@ -275,7 +276,7 @@ const Statistic: React.FC<Props> = ({ icon, title, value, color, text, connected
     );
   } else {
     return (
-      <Wrapper color={color} opacity={opacity}>
+      <Wrapper color={color} opacity={opacity} number={value}>
         {icon && (
           <ViewImage>
             <img alt="" src={icon} />
