@@ -693,7 +693,13 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
               </InputAdornment>
             }
             endAdornment={
-              <InputAdornment position="end" onClick={() => handleAddContract(1)}>
+              <InputAdornment
+                position="end"
+                onClick={() => {
+                  handleAddContract(1);
+                  dispatch(setIsOverMaxMintNodes(false));
+                }}
+              >
                 <IconButton>
                   <AddIcon />
                 </IconButton>
@@ -702,7 +708,14 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             aria-describedby="outlined-weight-helper-text"
           />
 
-          <ButtonMax variant="outlined" color="primary" onClick={() => handleAddManyContracts(maxMint)}>
+          <ButtonMax
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              handleAddManyContracts(maxMint);
+              dispatch(setIsOverMaxMintNodes(false));
+            }}
+          >
             Max
           </ButtonMax>
         </BoxActions>
