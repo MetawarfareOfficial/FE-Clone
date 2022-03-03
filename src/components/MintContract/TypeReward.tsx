@@ -313,6 +313,11 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   const { fetchNodesOfUser } = useFetchNodes();
 
   const handleToggle = async () => {
+    if (open) {
+      setOpen(!open);
+      return;
+    }
+
     if (
       (error?.name === 'UnsupportedChainIdError' ||
         get(window, 'ethereum.networkVersion', 1) !== process.env.REACT_APP_CHAIN_ID) &&
@@ -401,9 +406,9 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   useEffect(() => {
     const balances = zeroXBlockBalance !== '' ? zeroXBlockBalance : 0;
     const _maxMint = new BigNumber(balances).div(value).integerValue(BigNumber.ROUND_DOWN).toNumber();
-    const restMintableContracts = LIMIT_MAX_MINT - nodes;
-    const numberMintableContracts = _maxMint >= LIMIT_ONE_TIME_MINT ? LIMIT_ONE_TIME_MINT : _maxMint;
-    setMaxMint(numberMintableContracts >= restMintableContracts ? restMintableContracts : numberMintableContracts);
+    const restMintAbleContracts = LIMIT_MAX_MINT - nodes;
+    const numberMintAbleContracts = _maxMint >= LIMIT_ONE_TIME_MINT ? LIMIT_ONE_TIME_MINT : _maxMint;
+    setMaxMint(numberMintAbleContracts >= restMintAbleContracts ? restMintAbleContracts : numberMintAbleContracts);
   }, [zeroXBlockBalance, nodes, value]);
 
   useEffect(() => {

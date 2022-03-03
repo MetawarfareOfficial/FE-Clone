@@ -707,16 +707,15 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
           </ButtonMax>
         </BoxActions>
 
-        <BoxError color={'#F62D33'}>
+        <BoxError color={'#F62D33'} style={{ display: valueInput !== '' ? 'block' : 'none' }}>
           {isInsuffBalances
             ? infoMessage.INSUFFICIENT_TOKEN.message
             : isLimitNodes
             ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
             : isOverMaxMintNodes
             ? nodes + contracts.length >= LIMIT_MAX_MINT
-              ? !isBlankInput && infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
-              : !isBlankInput &&
-                `${infoMessage.OVER_NODES.message
+              ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
+              : `${infoMessage.OVER_NODES.message
                   .replace('#number', String(maxMint))
                   .replace('#transaction', maxMint < 10 ? 'this' : 'one')
                   .replace('#plusal', maxMint > 1 ? 'contracts' : 'contract')}`

@@ -52,6 +52,10 @@ interface DialogContentCustomProps {
   denied: boolean;
 }
 
+interface BoxCustomProps {
+  denied: boolean;
+}
+
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
   zIndex: 1700,
@@ -82,12 +86,13 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ViewIcon = styled(Box)<BoxProps>(() => ({
+const ViewIcon = styled(Box)<BoxCustomProps>(({ denied }) => ({
   width: '55px',
   height: '55px',
   marginRight: '10px',
   borderRadius: '7px',
   overflow: 'hidden',
+  visibility: denied ? 'hidden' : 'visible',
 
   img: {
     width: '100%',
@@ -198,7 +203,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
   return (
     <Wrapper open={open} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header denied={text === infoMessage.PERMISSION_DENIED.message}>
-        <ViewIcon>
+        <ViewIcon denied={text === infoMessage.PERMISSION_DENIED.message}>
           <img alt="" src={icon} />
         </ViewIcon>
         <HeaderText>{name}</HeaderText>
