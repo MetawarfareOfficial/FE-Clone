@@ -9,9 +9,7 @@ import {
   Dialog,
   DialogProps,
   DialogTitle,
-  DialogTitleProps,
   DialogContent,
-  DialogContentProps,
   Slide,
   // Button,
   ButtonProps,
@@ -46,6 +44,14 @@ interface TypographyCustomProps {
   permissionDenied: boolean;
 }
 
+interface DialogTitleCustomProps {
+  denied: boolean;
+}
+
+interface DialogContentCustomProps {
+  denied: boolean;
+}
+
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
   zIndex: 1700,
@@ -60,7 +66,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     boxShadow: '0px 10px 36px rgba(38, 29, 77, 0.1)',
     borderRadius: '24px',
     padding: '0',
-    margin: 0,
+    margin: '0',
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
     border: theme.palette.mode === 'light' ? 'unset' : '1px solid #6F6F6F',
@@ -110,16 +116,15 @@ const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
   },
 }));
 
-const Header = styled(DialogTitle)<DialogTitleProps>(() => ({
+const Header = styled(DialogTitle)<DialogTitleCustomProps>(({ denied }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: '20px 21px',
-  marginBottom: '20px',
+  padding: denied ? '0px 21px' : '20px 21px',
+  marginBottom: denied ? '0' : '20px',
 }));
 
-const Content = styled(DialogContent)<DialogContentProps>(() => ({
-  padding: '20px 13px 20px 21px',
-  // marginBottom: '21px',
+const Content = styled(DialogContent)<DialogContentCustomProps>(({ denied }) => ({
+  padding: denied ? '0px 0px 20px 0px' : '20px 13px 20px 21px',
 
   '.MuiDialogContentText-root': {
     color: '#828282',
@@ -192,7 +197,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
 
   return (
     <Wrapper open={open} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">
-      <Header>
+      <Header denied={text === infoMessage.PERMISSION_DENIED.message}>
         <ViewIcon>
           <img alt="" src={icon} />
         </ViewIcon>
@@ -203,7 +208,7 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
         </CloseIcon>
       </Header>
 
-      <Content>
+      <Content denied={text === infoMessage.PERMISSION_DENIED.message}>
         <ViewImage>
           {status === 'success' ? (
             <img alt="" src={theme.palette.mode === 'light' ? SuccessGif : SuccessDarkGif} />
