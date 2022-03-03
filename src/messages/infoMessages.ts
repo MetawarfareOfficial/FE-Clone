@@ -9,7 +9,7 @@ export const infoMessage = {
   },
   OVER_NODES: {
     title: 'mint contract modal',
-    message: 'You cannot mint more than #number contracts in one transaction.',
+    message: 'You can not mint more than #number #plusal in #transaction transaction.',
   },
   REWARD_CLAIM_FAILED: {
     title: 'mint status modal',

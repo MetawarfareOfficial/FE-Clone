@@ -37,8 +37,6 @@ interface Props {
   title?: string;
 }
 
-declare let window: any;
-
 const MyContract: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const defaultData = {
@@ -104,23 +102,17 @@ const MyContract: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    fetchUserContractsData();
-    const handleChangeAccounts = () => {
+    if (currentUserAddress) {
       resetData();
       createToast({
         promise: {
           callback: fetchUserContractsData,
           pendingMessage: 'Loading...',
-          successMessage: 'Your contracts data is fetched successfully 👌',
+          successMessage: 'Your contracts data is fetched successfully',
         },
       });
-    };
-
-    if (window.ethereum) {
-      window.ethereum.removeListener('accountsChanged', handleChangeAccounts);
-      window.ethereum.on('accountsChanged', handleChangeAccounts);
     }
-  }, []);
+  }, [currentUserAddress]);
 
   useEffect(() => {
     if (currentUserAddress) {
@@ -128,9 +120,8 @@ const MyContract: React.FC<Props> = () => {
         createToast({
           promise: {
             callback: fetchUserContractsData,
-            // TODO: fixme: move these message to file
             pendingMessage: 'Loading...',
-            successMessage: 'Your contracts data is fetched successfully 👌',
+            successMessage: 'Your contracts data is fetched successfully',
           },
         });
       }
