@@ -25,6 +25,8 @@ const useFetchRewardAmount = () => {
   useEffect(() => {
     fetchRewardAmount();
   }, [currentUserAddress]);
+
+  return { fetchRewardAmount };
 };
 
 export default useFetchRewardAmount;

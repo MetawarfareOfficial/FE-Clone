@@ -1,20 +1,16 @@
 import { BigNumber, ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
-import { getInstanceEtherJs } from 'BaseEtherJs';
 import { contractType } from 'consts/typeReward';
-
-declare let window: any;
+import { contractWithSigner as contractWithSignerInstance } from 'utils/contractWithSigner';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URLS);
-const signer = window.ethereum && getInstanceEtherJs().getSigner();
-const contractWithSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, signer);
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
 
 /** write contract **/
 export const approveToken = async (address?: string, amount?: string): Promise<void> => {
   try {
-    return contractWithSigner.functions.approve(address, amount);
+    return contractWithSignerInstance().functions.approve(address, amount);
   } catch (err: any) {
     if (err.code === 4001) throw err;
     throw new Error('Oop! Something went wrong');
@@ -23,7 +19,7 @@ export const approveToken = async (address?: string, amount?: string): Promise<v
 
 export const cashOutAll = async (): Promise<void> => {
   try {
-    return contractWithSigner.functions.cashoutAll();
+    return contractWithSignerInstance().functions.cashoutAll();
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -31,7 +27,7 @@ export const cashOutAll = async (): Promise<void> => {
 
 export const publicDistributeRewards = async (): Promise<void> => {
   try {
-    return contractWithSigner.functions.publicDistributeRewards();
+    return contractWithSignerInstance().functions.publicDistributeRewards();
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -39,7 +35,7 @@ export const publicDistributeRewards = async (): Promise<void> => {
 
 export const transferTokenTo = async (address: string, amount: string): Promise<void> => {
   try {
-    return contractWithSigner.functions.transfer(address, amount);
+    return contractWithSignerInstance().functions.transfer(address, amount);
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -47,7 +43,7 @@ export const transferTokenTo = async (address: string, amount: string): Promise<
 
 export const createMultipleNodesWithTokens = async (names: string[], cType: string): Promise<Record<string, any>> => {
   try {
-    return contractWithSigner.functions.mintConts(names, cType.toString());
+    return contractWithSignerInstance().functions.mintConts(names, cType.toString());
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -55,7 +51,7 @@ export const createMultipleNodesWithTokens = async (names: string[], cType: stri
 
 export const claimAllNodes = async () => {
   try {
-    return contractWithSigner.functions.cashoutAll();
+    return contractWithSignerInstance().functions.cashoutAll();
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -63,7 +59,7 @@ export const claimAllNodes = async () => {
 
 export const claimNodeByNode = async (nodeIndex: number) => {
   try {
-    return contractWithSigner.functions.cashoutReward(nodeIndex);
+    return contractWithSignerInstance().functions.cashoutReward(nodeIndex);
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -132,7 +128,7 @@ export const getNumberNodeOf = async (address: string): Promise<[BigNumber]> => 
 
 export const getTimeCreatedOfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getContsCreationTime.call({});
+    return contractWithSignerInstance().functions.getContsCreationTime.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -140,7 +136,7 @@ export const getTimeCreatedOfNodes = async (): Promise<[string]> => {
 
 export const getNameOfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getContsNames.call({});
+    return contractWithSignerInstance().functions.getContsNames.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -148,7 +144,7 @@ export const getNameOfNodes = async (): Promise<[string]> => {
 
 export const getRewardOfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getContsRewards.call({});
+    return contractWithSignerInstance().functions.getContsRewards.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -156,7 +152,7 @@ export const getRewardOfNodes = async (): Promise<[string]> => {
 
 export const getTypeOfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getContsTypes.call({});
+    return contractWithSignerInstance().functions.getContsTypes.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -164,7 +160,7 @@ export const getTypeOfNodes = async (): Promise<[string]> => {
 
 export const getRewardAmount = async (): Promise<[BigNumber]> => {
   try {
-    return contractWithSigner.functions.getRewardAmount.call({});
+    return contractWithSignerInstance().functions.getRewardAmount.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -172,7 +168,7 @@ export const getRewardAmount = async (): Promise<[BigNumber]> => {
 
 export const getInitAPROfNodes = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getContsInitialAPR.call({});
+    return contractWithSignerInstance().functions.getContsInitialAPR.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }
@@ -180,7 +176,7 @@ export const getInitAPROfNodes = async (): Promise<[string]> => {
 
 export const getNodesCurrentAPR = async (): Promise<[string]> => {
   try {
-    return contractWithSigner.functions.getContsCurrentAPR.call({});
+    return contractWithSignerInstance().functions.getContsCurrentAPR.call({});
   } catch (e) {
     throw new Error('Oop! Something went wrong');
   }

@@ -15,6 +15,7 @@ import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/typeReward';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
+import useFetchRewardAmount from '../../hooks/useFetchRewardAmount';
 
 interface Props {
   title?: string;
@@ -142,6 +143,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
 
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
   const { fetchNodesOfUser } = useFetchNodes();
+  const { fetchRewardAmount } = useFetchRewardAmount();
 
   useEffect(() => {
     setStatistic([
@@ -172,7 +174,10 @@ const Statistics: React.FC<Props> = ({ data }) => {
   }, [myContracts, myReward, data?.price, nodes]);
 
   useInterval(async () => {
-    if (currentUserAddress) await fetchNodesOfUser(currentUserAddress);
+    if (currentUserAddress) {
+      await fetchNodesOfUser(currentUserAddress);
+      await fetchRewardAmount();
+    }
   }, DELAY_TIME);
 
   return (
