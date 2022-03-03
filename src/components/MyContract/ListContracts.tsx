@@ -23,6 +23,7 @@ import { formatCType } from 'helpers/formatCType';
 import { errorMessage } from 'messages/errorMessages';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useToast } from 'hooks/useToast';
+import { infoMessage } from '../../messages/infoMessages';
 
 interface Props {
   data: Array<any>;
@@ -87,7 +88,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#FFFFFF' : 'rgba(255, 255, 255, 0.03)',
 }));
 
-const STATUS = ['success', 'error', 'pending'];
+const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
 const ListContracts: React.FC<Props> = ({ data }) => {
   const dispatch = useAppDispatch();
@@ -237,11 +238,13 @@ const ListContracts: React.FC<Props> = ({ data }) => {
         status={status}
         text={
           status === 'success'
-            ? 'Rewards claimed successfully'
+            ? infoMessage.REWARD_CLAIM_OK.message
             : status === 'error'
-            ? 'Rewards claiming failed'
+            ? infoMessage.REWARD_CLAIM_FAILED.message
             : status === 'pending'
-            ? 'Processing'
+            ? infoMessage.PROCESSING.message
+            : status === 'permission denied'
+            ? infoMessage.PERMISSION_DENIED.message
             : 'Insufficient Tokens'
         }
         onClose={handleToggleStatus}
