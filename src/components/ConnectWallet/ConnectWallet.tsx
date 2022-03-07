@@ -9,7 +9,7 @@ import { styled } from '@mui/material/styles';
 import { ButtonProps, Button, Link, LinkProps } from '@mui/material';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
-import { isMetaMaskInstalled, onClickConnect, addEthereumChain, getSignerSignMessage } from 'helpers';
+import { isMetaMaskInstalled, onClickConnect, addEthereumChain } from 'helpers';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 import WalletButton from 'components/Base/WalletButton';
@@ -105,10 +105,9 @@ const ConnectWallet: React.FC<Props> = () => {
         return;
       }
       await onClickConnect();
-      const signature = await getSignerSignMessage();
       await activate(injected);
       if (!getToken()) dispatch(setLogin());
-      authenticateUser(signature as string);
+      authenticateUser(Math.random().toString(36).substr(2, 10));
       createToast({
         message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
         type: 'success',
