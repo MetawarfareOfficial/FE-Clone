@@ -442,7 +442,10 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const dispatch = useAppDispatch();
   const theme = useTheme();
 
-  const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
+  const isCreatingSquareContracts = useAppSelector((state) => state.contract.isCreatingSquareContracts);
+  const isCreatingCubeContracts = useAppSelector((state) => state.contract.isCreatingCubeContracts);
+  const isCreatingTesseractContracts = useAppSelector((state) => state.contract.isCreatingTesseractContracts);
+
   const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
   const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
   const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
@@ -455,6 +458,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const [valueInput, setValueInput] = useState<number | string>(contracts.length);
   const [isBlankInput, setIsBlankInput] = useState<boolean>(false);
 
+  const isCreatingContracts = isCreatingSquareContracts || isCreatingCubeContracts || isCreatingTesseractContracts;
   const handleAddContract = (numberContracts = 1) => {
     if (contracts.length >= maxMint) {
       return;
@@ -574,11 +578,11 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   };
 
   useEffect(() => {
-    if (!(isCloseMintContractModal && isCreatingNodes)) {
+    if (!(isCloseMintContractModal && isCreatingContracts)) {
       handleAddManyContracts(1);
       setValueInput(contracts.length);
     }
-  }, [isCloseMintContractModal, isCreatingNodes]);
+  }, [isCloseMintContractModal, isCreatingSquareContracts, isCreatingCubeContracts, isCreatingSquareContracts]);
 
   useEffect(() => {
     setContracts([]);
@@ -740,7 +744,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             ).length > 0 ||
             contracts.length === 0 ||
             valueInput === '' ||
-            isCreatingNodes ||
+            isCreatingContracts ||
             isInsuffBalances ||
             isLimitNodes
           }

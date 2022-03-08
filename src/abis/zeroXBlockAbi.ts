@@ -11,6 +11,12 @@ export const zeroXBlockAbi = [
   },
   {
     anonymous: false,
+    inputs: [{ indexed: false, internalType: 'address', name: 'sender', type: 'address' }],
+    name: 'ContsMinted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
     inputs: [
       { indexed: true, internalType: 'contract IERC20Upgradeable', name: 'token', type: 'address' },
       { indexed: false, internalType: 'address', name: 'to', type: 'address' },
@@ -53,6 +59,21 @@ export const zeroXBlockAbi = [
       { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     name: 'PaymentReleased',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: 'address', name: 'sender', type: 'address' }],
+    name: 'RewardCashoutAll',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'index', type: 'uint256' },
+    ],
+    name: 'RewardCashoutOne',
     type: 'event',
   },
   {
@@ -502,13 +523,6 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
-    name: 'swapTokensAmount',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
     name: 'symbol',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
@@ -657,13 +671,6 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
     name: 'updateRewardsWallet',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: 'newVal', type: 'uint256' }],
-    name: 'updateSwapTokensAmount',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
