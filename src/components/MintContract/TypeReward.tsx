@@ -455,7 +455,7 @@ const TypeReward: React.FC<Props> = ({
 
   useEffect(() => {
     const provider = contractWithSigner();
-    const handle = (address: string) => {
+    const mintContractListener = (address: string) => {
       if (address === currentUserAddress) {
         setOpenStatus(true);
         setStatus(STATUS[0]);
@@ -464,10 +464,10 @@ const TypeReward: React.FC<Props> = ({
       }
     };
     if (loading) {
-      provider.once('ContsMinted', handle);
+      provider.once('ContsMinted', mintContractListener);
     }
     return () => {
-      provider.off('ContsMinted', handle);
+      provider.off('ContsMinted', mintContractListener);
     };
   }, [loading, currentUserAddress]);
 
