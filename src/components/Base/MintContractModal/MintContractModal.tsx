@@ -47,7 +47,7 @@ import BigNumber from 'bignumber.js';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { errorMessage } from 'messages/errorMessages';
 import { infoMessage } from 'messages/infoMessages';
-import { setIsOverMaxMintNodes } from 'services/contract';
+import { setInsuffBalance, setIsOverMaxMintNodes } from 'services/contract';
 import { REGEX_DIGIT } from 'consts/regrex';
 import { LIMIT_MAX_MINT } from 'consts/typeReward';
 
@@ -448,6 +448,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
   const isOverMaxMintNodes = useAppSelector((state) => state.contract.isOverMaxMintNodes);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
+  const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
@@ -581,14 +582,13 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
 
   useEffect(() => {
     setContracts([]);
-    if (maxMint > 0) {
-      handleAddManyContracts(1);
-    }
+    if (maxMint > 0) handleAddManyContracts(1);
   }, [maxMint]);
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
     setValueInput(isBlankInput && contracts.length === 0 ? '' : contracts.length);
+    if (new BigNumber(zeroXBlockBalance).isLessThan(valueRequire)) dispatch(setInsuffBalance());
   }, [contracts.length]);
 
   useEffect(() => {
@@ -596,9 +596,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   }, [valueInput]);
 
   useEffect(() => {
-    if (!open) {
-      setIsBlankInput(false);
-    }
+    if (!open) setIsBlankInput(false);
   }, [open]);
 
   return (
