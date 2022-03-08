@@ -7,7 +7,9 @@ const initialState = {
   nodes: 0,
   dataMyContracts: [],
   dataRewardAmount: 0,
-  isCreatingNodes: false,
+  isCreatingSquareContracts: false,
+  isCreatingCubeContracts: false,
+  isCreatingTesseractContracts: false,
   isClaimingReward: false,
   insuffBalance: false,
   isLimitOwnedNodes: false,
@@ -56,11 +58,19 @@ const dataContractSlice = createSlice({
     unSetRewardAmount: (state) => {
       state.dataRewardAmount = 0;
     },
-    setIsCreatingNodes: (state) => {
-      state.isCreatingNodes = true;
+    setIsCreatingNodes: (state, action) => {
+      if (action.payload.type === 'square') {
+        state.isCreatingSquareContracts = true;
+      } else if (action.payload.type === 'cube') {
+        state.isCreatingCubeContracts = true;
+      } else if (action.payload.type === 'tesseract') {
+        state.isCreatingTesseractContracts = true;
+      }
     },
     unSetIsCreatingNodes: (state) => {
-      state.isCreatingNodes = false;
+      state.isCreatingSquareContracts = false;
+      state.isCreatingCubeContracts = false;
+      state.isCreatingTesseractContracts = false;
     },
     setIsClaimingReward: (state) => {
       state.isClaimingReward = true;

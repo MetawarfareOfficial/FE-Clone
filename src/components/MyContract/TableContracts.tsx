@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -32,12 +32,11 @@ import {
   AllContract,
   AllDarkContract,
 } from 'assets/images';
-import { sleep } from 'helpers/delayTime';
-import { DELAY_TIME } from 'consts/typeReward';
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { infoMessage } from 'messages/infoMessages';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
+import { contractWithSigner } from 'utils/contractWithSigner';
 
 interface Props {
   title?: string;
@@ -259,9 +258,13 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const [status, setStatus] = useState<any>(STATUS[2]);
   const [claimType, setClaimType] = useState<string>('');
   const [claimingType, setClaimingType] = useState<ClaimingType | null>(null);
+  const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
 
   const handleToggleStatus = () => {
     if (openStatus) setStatus(STATUS[2]);
+    if (openStatus && !isMetamaskConfirmPopupOpening) {
+      dispatch(unSetIsClaimingReward());
+    }
     setOpenStatus(!openStatus);
   };
 
@@ -303,16 +306,17 @@ const TableContracts: React.FC<Props> = ({ data }) => {
         setStatus(STATUS[3]);
         return;
       }
-
+      setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await claimAllNodes();
-      await sleep(DELAY_TIME);
+      setIsMetamaskConfirmPopupOpening(false);
 
-      if (!openStatus) setOpenStatus(true);
-      if (response.hash) setStatus(STATUS[0]);
+      if (!response.hash) {
+        throw new Error('Oop! Something went wrong');
+      }
     } catch (err: any) {
+      setIsMetamaskConfirmPopupOpening(false);
       if (!openStatus) setOpenStatus(true);
       setStatus(STATUS[1]);
-    } finally {
       dispatch(unSetIsClaimingReward());
     }
   };
@@ -330,19 +334,46 @@ const TableContracts: React.FC<Props> = ({ data }) => {
         setStatus(STATUS[3]);
         return;
       }
-
+      setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
-      await sleep(DELAY_TIME);
+      setIsMetamaskConfirmPopupOpening(false);
 
-      if (!openStatus) setOpenStatus(true);
-      if (response.hash) setStatus(STATUS[0]);
+      if (!response.hash) {
+        throw new Error('Oop! Something went wrong');
+      }
     } catch (e: any) {
+      setIsMetamaskConfirmPopupOpening(false);
       if (!openStatus) setOpenStatus(true);
       setStatus(STATUS[1]);
-    } finally {
       dispatch(unSetIsClaimingReward());
     }
   };
+
+  useEffect(() => {
+    // if user close loading popup, claim reward status listener will be closed
+    if (!openStatus && isClaimingReward && !isMetamaskConfirmPopupOpening) {
+      dispatch(unSetIsClaimingReward());
+    }
+  }, [openStatus, isClaimingReward, isMetamaskConfirmPopupOpening]);
+
+  useEffect(() => {
+    const provider = contractWithSigner();
+    const claimRewardListener = (address: string) => {
+      if (address === currentUserAddress) {
+        setOpenStatus(true);
+        setStatus(STATUS[0]);
+        dispatch(unSetIsClaimingReward());
+      }
+    };
+    if (isClaimingReward) {
+      provider.once('RewardCashoutOne', claimRewardListener);
+      provider.once('RewardCashoutAll', claimRewardListener);
+    }
+    return () => {
+      provider.off('RewardCashoutOne', claimRewardListener);
+      provider.off('RewardCashoutAll', claimRewardListener);
+    };
+  }, [isClaimingReward, currentUserAddress]);
 
   return (
     <Box>

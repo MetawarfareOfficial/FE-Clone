@@ -53,7 +53,10 @@ const TypesReward: React.FC<Props> = () => {
   const [width] = useWindowSize();
   const dataApy = useAppSelector((state) => state.contract.apy);
   const dataPrice = useAppSelector((state) => state.contract.price);
-
+  const isCreatingSquareContracts = useAppSelector((state) => state.contract.isCreatingSquareContracts);
+  const isCreatingCubeContracts = useAppSelector((state) => state.contract.isCreatingCubeContracts);
+  const isCreatingTesseractContracts = useAppSelector((state) => state.contract.isCreatingTesseractContracts);
+  const isCreatingContracts = isCreatingSquareContracts || isCreatingCubeContracts || isCreatingTesseractContracts;
   return (
     <Wrapper>
       <Title>Types of Reward Contracts</Title>
@@ -67,6 +70,8 @@ const TypesReward: React.FC<Props> = () => {
         value={dataPrice.square}
         apy={dataApy.square}
         earn={computeEarnedTokenPerDay(dataPrice.square, dataApy.square)}
+        loading={isCreatingSquareContracts}
+        isCreatingContracts={isCreatingContracts}
       />
       <TypeReward
         id={1}
@@ -78,6 +83,8 @@ const TypesReward: React.FC<Props> = () => {
         value={dataPrice.cube}
         apy={dataApy.cube}
         earn={computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)}
+        loading={isCreatingCubeContracts}
+        isCreatingContracts={isCreatingContracts}
       />
       <TypeReward
         id={2}
@@ -91,6 +98,8 @@ const TypesReward: React.FC<Props> = () => {
         value={dataPrice.tesseract}
         apy={dataApy.tesseract}
         earn={computeEarnedTokenPerDay(dataPrice.tesseract, dataApy.tesseract)}
+        loading={isCreatingTesseractContracts}
+        isCreatingContracts={isCreatingContracts}
       />
     </Wrapper>
   );
