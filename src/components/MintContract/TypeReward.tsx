@@ -418,9 +418,13 @@ const TypeReward: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setOpenTooltip(false);
     }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -434,6 +438,8 @@ const TypeReward: React.FC<Props> = ({
   useEffect(() => {
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
+    if (new BigNumber(zeroXBlockBalance).isLessThan(value)) dispatch(setInsuffBalance());
+    if (new BigNumber(nodes).isEqualTo(LIMIT_MAX_MINT)) dispatch(setIsLimitOwnedNodes());
   }, [currentUserAddress, zeroXBlockBalance]);
 
   useEffect(() => {
