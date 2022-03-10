@@ -34,15 +34,17 @@ const Dashboard: React.FC<DashboardProps> = () => {
   }, []);
 
   useEffect(() => {
-    const data: TokenDataChart[] = tokenData
-      .map((item: TokenDataTraderJoe) => ({
-        date: Number(item.date),
-        price: Number(item.priceUSD),
-        marketCap: Number(item.volumeUSD),
-      }))
-      .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
+    if (tokenData.length > 0) {
+      const data: TokenDataChart[] = tokenData
+        .map((item: TokenDataTraderJoe) => ({
+          date: Number(item.date),
+          price: Number(item.priceUSD),
+          marketCap: Number(item.volumeUSD),
+        }))
+        .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
 
-    setDataChart(data);
+      setDataChart(data);
+    }
   }, [tokenData]);
 
   useInterval(() => {

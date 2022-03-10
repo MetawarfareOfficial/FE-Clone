@@ -9,7 +9,11 @@ const traderJoeSlide = createSlice({
   initialState,
   reducers: {
     setTokenData: (state, action) => {
-      state.tokenData = action.payload;
+      if (action.payload) {
+        state.tokenData = action.payload;
+        return;
+      }
+      state.tokenData = [];
     },
   },
 });
