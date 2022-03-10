@@ -12,6 +12,8 @@ import { Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
+import { createClient } from 'urql';
+import { Provider as ProviderURQL } from 'urql';
 
 function getLibrary(provider: any) {
   const library = new Web3Provider(provider);
@@ -25,12 +27,18 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
+const client = createClient({
+  url: process.env.REACT_APP_GRAPH_API_URL || '',
+});
+
 ReactDOM.render(
   <Provider store={store}>
     <Web3ReactProvider getLibrary={getLibrary}>
       <HashRouter>
         <React.StrictMode>
-          <App />
+          <ProviderURQL value={client}>
+            <App />
+          </ProviderURQL>
           <ToastContainer pauseOnHover={false} newestOnTop={true} autoClose={3000} limit={1} />
         </React.StrictMode>
       </HashRouter>
