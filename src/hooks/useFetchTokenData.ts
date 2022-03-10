@@ -6,7 +6,7 @@ import { setTokenData } from 'services/traderJoe';
 const useFetchTokenData = () => {
   const dispatch = useAppDispatch();
 
-  const [result] = useQuery({
+  const [result, reExecuteQuery] = useQuery({
     query: TokenQuery,
     variables: {
       tokenId: process.env.REACT_APP_CONTRACT_ADDRESS_IN_TRADER_JOE,
@@ -17,6 +17,12 @@ const useFetchTokenData = () => {
   if (result.data) {
     dispatch(setTokenData(result.data?.token?.dayData));
   }
+
+  const refresh = () => {
+    reExecuteQuery({ requestPolicy: 'network-only' });
+  };
+
+  return { refresh };
 };
 
 export default useFetchTokenData;

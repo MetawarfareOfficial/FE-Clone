@@ -9,6 +9,8 @@ import { toast } from 'react-toastify';
 import useFetchTokenData from 'hooks/useFetchTokenData';
 import { useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
+import useInterval from '../../hooks/useInterval';
+import { DELAY_TIME } from '../../consts/dashboard';
 
 interface DashboardProps {
   name?: string;
@@ -19,17 +21,17 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   const [heightTotal, setHeightTotal] = useState<any>(null);
   const [dataChart, setDataChart] = useState<TokenDataChart[]>([]);
+  const { refresh } = useFetchTokenData();
 
   const handleChangeHeightTotal = (height: number) => {
     setHeightTotal(height);
   };
 
+  useFetchInforContract();
+
   useEffect(() => {
     toast.clearWaitingQueue();
   }, []);
-
-  useFetchInforContract();
-  useFetchTokenData();
 
   useEffect(() => {
     const data: TokenDataChart[] = tokenData
@@ -42,6 +44,10 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
     setDataChart(data);
   }, [tokenData]);
+
+  useInterval(() => {
+    refresh();
+  }, DELAY_TIME);
 
   return (
     <Box>
