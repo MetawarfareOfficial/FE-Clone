@@ -12,6 +12,7 @@ import { getJsonDataFromString } from './getJsonDataFromString';
 import { customToast } from './customToast';
 import { formatReward } from './formatReward';
 import { getTokenBalanceFromWalletAddress } from './getTokenBalanceFromWalletAddress';
+import { checkTransactionIsValid } from './checkTransactionIsValid';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -27,4 +28,5 @@ export {
   customToast,
   formatReward,
   getTokenBalanceFromWalletAddress,
+  checkTransactionIsValid,
 };
