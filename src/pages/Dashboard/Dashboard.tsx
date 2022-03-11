@@ -11,6 +11,7 @@ import { useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
 import useInterval from '../../hooks/useInterval';
 import { DELAY_TIME } from '../../consts/dashboard';
+import BigNumber from 'bignumber.js';
 
 interface DashboardProps {
   name?: string;
@@ -39,7 +40,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         .map((item: TokenDataTraderJoe) => ({
           date: Number(item.date),
           price: Number(item.priceUSD),
-          marketCap: Number(item.volumeUSD),
+          marketCap: new BigNumber(item.liquidity).times(item.priceUSD).toNumber(),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
 

@@ -6,7 +6,7 @@ export interface TokenPrice {
 export interface TokenDataTraderJoe {
   date: number;
   priceUSD: string;
-  volumeUSD: string;
+  liquidity: string;
 }
 
 export interface TokenDataChart {
