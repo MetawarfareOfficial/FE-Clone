@@ -37,6 +37,7 @@ import { infoMessage } from 'messages/infoMessages';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 import { contractWithSigner } from 'utils/contractWithSigner';
+import { checkTransactionIsValid } from 'helpers';
 
 interface Props {
   title?: string;
@@ -295,6 +296,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimAll = async () => {
     try {
+      const gasLimit = await contractWithSigner().estimateGas.cashoutAll();
       processModal('ALL CONTRACTS');
       setClaimingType(ClaimingType.AllContracts);
       dispatch(setIsClaimingReward());
@@ -310,9 +312,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       const response: Record<string, any> = await claimAllNodes();
       setIsMetamaskConfirmPopupOpening(false);
 
-      if (!response.hash) {
-        throw new Error('Oop! Something went wrong');
-      }
+      checkTransactionIsValid(response, gasLimit);
     } catch (err: any) {
       setIsMetamaskConfirmPopupOpening(false);
       if (!openStatus) setOpenStatus(true);
@@ -323,6 +323,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
     try {
+      const gasLimit = await contractWithSigner().estimateGas.cashoutReward(nodeIndex);
       processModal(`${formatCType(cType)} Contract`);
       setClaimingType(convertCType(cType));
       dispatch(setIsClaimingReward());
@@ -337,10 +338,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       setIsMetamaskConfirmPopupOpening(false);
-
-      if (!response.hash) {
-        throw new Error('Oop! Something went wrong');
-      }
+      checkTransactionIsValid(response, gasLimit);
     } catch (e: any) {
       setIsMetamaskConfirmPopupOpening(false);
       if (!openStatus) setOpenStatus(true);

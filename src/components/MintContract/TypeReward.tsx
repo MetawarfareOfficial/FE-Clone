@@ -24,7 +24,7 @@ import {
 } from 'services/contract';
 import { computedRewardRatioPerYear } from 'helpers/computedRewardRatioPerYear';
 import { RewardRatioChart } from 'interfaces/RewardRatioChart';
-import { customToast } from 'helpers';
+import { checkTransactionIsValid, customToast } from 'helpers';
 import { errorMessage } from 'messages/errorMessages';
 import { useWeb3React } from '@web3-react/core';
 import get from 'lodash/get';
@@ -397,13 +397,13 @@ const TypeReward: React.FC<Props> = ({
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
       const cType = contractType[`${key}`];
+      const gasLimit = await contractWithSigner().estimateGas.mintConts(names, cType);
 
       setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
       setIsMetamaskConfirmPopupOpening(false);
-      if (!response.hash) {
-        throw new Error('Oop! Something went wrong');
-      }
+
+      checkTransactionIsValid(response, gasLimit);
     } catch (e: any) {
       setIsMetamaskConfirmPopupOpening(false);
       setStatus(STATUS[1]);
