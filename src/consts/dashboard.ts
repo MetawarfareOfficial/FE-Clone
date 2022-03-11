@@ -17,3 +17,4 @@ export const tickFormatDate = 'DD/MMM';
 export const tickFormatInterval = 2;
 export const labelDate = 'MM/DD/YYYY';
 export const labelGroupDate = 'DD-MM';
+export const labelFormatterTooltip = 'MMM DD YYYY';

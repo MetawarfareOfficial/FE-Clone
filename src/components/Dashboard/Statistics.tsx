@@ -3,7 +3,7 @@ import 'styles/menus.css';
 import { styled } from '@mui/material/styles';
 
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
-import { TokenPrice } from 'interfaces/TokenPrice';
+import { TokenDataChart } from 'interfaces/TokenPrice';
 import { useAppSelector } from 'stores/hooks';
 import { formatPrice } from 'helpers/formatPrice';
 import { StatisticDashboard } from 'interfaces/StatisticDashboard';
@@ -19,7 +19,7 @@ import useFetchRewardAmount from '../../hooks/useFetchRewardAmount';
 
 interface Props {
   title?: string;
-  data?: TokenPrice;
+  data?: TokenDataChart;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({

@@ -3,8 +3,8 @@ import { styled, useTheme } from '@mui/material/styles';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Box, BoxProps, TypographyProps, Typography } from '@mui/material';
 import { ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { tickFormatDate, tickFormatInterval } from 'consts/dashboard';
-import { formatTimestamp } from 'helpers/formatTimestamp';
+import { labelFormatterTooltip, tickFormatDate, tickFormatInterval } from 'consts/dashboard';
+import { formatTimestampV3 } from 'helpers/formatTimestamp';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
 import { formatReward } from 'helpers';
 import { formatPrice } from 'helpers/formatPrice';
@@ -14,8 +14,7 @@ interface Props {
   heightTotal: number;
   data: Array<any>;
   XDataKey?: string;
-  YDataKey?: string;
-  changeChart: (isOpenPriceChart: boolean) => void;
+  yDataKey?: string;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -70,10 +69,21 @@ const ViewChart = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDataKey = 'price', changeChart }) => {
-  const [width] = useWindowSize();
+const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
   const theme = useTheme();
+  const [width] = useWindowSize();
+
   const [heightChart, setHeightChart] = useState(500);
+  const [showPriceChart, setShowPriceChart] = useState(true);
+  const [yDataKey, setYDataKey] = useState('price');
+
+  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setShowPriceChart(false);
+      return;
+    }
+    setShowPriceChart(true);
+  };
 
   useEffect(() => {
     if (heightTotal) {
@@ -82,11 +92,13 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
     }
   }, [heightTotal]);
 
-  const handleCheckBoxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      changeChart(false);
-    } else changeChart(true);
-  };
+  useEffect(() => {
+    if (showPriceChart) {
+      setYDataKey('price');
+      return;
+    }
+    setYDataKey('marketCap');
+  }, [showPriceChart]);
 
   return (
     <Wrapper>
@@ -146,8 +158,8 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 fontSize="10px"
                 fontFamily="Helvetica"
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
-                dataKey={XDataKey}
-                tickFormatter={(timestamp: any) => formatTimestamp(timestamp, tickFormatDate)}
+                dataKey={'date'}
+                tickFormatter={(timestamp: any) => formatTimestampV3(timestamp, tickFormatDate)}
                 interval={width < 1200 ? 6 : tickFormatInterval}
                 padding={{ left: 15 }}
                 dy={width < 1200 ? 10 : 0}
@@ -160,9 +172,9 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
                 color={theme.palette.mode === 'light' ? '#000000' : '#4F4F4F'}
                 fontFamily="Helvetica"
                 orientation="right"
-                dataKey={YDataKey}
+                dataKey={yDataKey}
                 tickFormatter={(value) =>
-                  YDataKey === 'price' ? formatPrice(String(value), 0, 0) : formatReward(String(value))
+                  yDataKey === 'price' ? formatPrice(String(value), 0, 0) : formatReward(String(value))
                 }
               />
 
@@ -170,15 +182,15 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal, XDataKey = 'time', YDa
 
               <Tooltip
                 formatter={(value: string, name: string) => [
-                  `$${YDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0, 0)}`,
+                  `$${yDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0, 0)}`,
                   convertCamelCaseToPascalCase(name),
                 ]}
-                labelFormatter={(value: string) => formatTimestamp(value, 'MMM DD YYYY')}
+                labelFormatter={(value: number) => formatTimestampV3(value, labelFormatterTooltip)}
               />
 
               <Area
                 type="monotone"
-                dataKey={YDataKey}
+                dataKey={yDataKey}
                 stroke={theme.palette.mode === 'light' ? '#3864FF' : '#2978F4'}
                 strokeWidth={2}
                 fillOpacity={1}

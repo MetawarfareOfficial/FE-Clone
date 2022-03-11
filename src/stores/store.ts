@@ -3,6 +3,7 @@ import accountReducer from 'services/account';
 import coingekoReducer from 'services/coingeko';
 import dataContractReducer from 'services/contract';
 import investmentsReducer from 'services/investments';
+import traderJoeReducer from 'services/traderJoe';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     coingeko: coingekoReducer,
     contract: dataContractReducer,
     investments: investmentsReducer,
+    traderJoe: traderJoeReducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false,

@@ -9,9 +9,8 @@ import MintContractModal from 'components/Base/MintContractModal';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
-import { contractType, DELAY_TIME, LIMIT_MAX_MINT, LIMIT_ONE_TIME_MINT } from 'consts/typeReward';
+import { contractType, LIMIT_MAX_MINT, LIMIT_ONE_TIME_MINT } from 'consts/typeReward';
 import { createMultipleNodesWithTokens, getMintPermit } from 'helpers/interractiveContract';
-import { sleep } from 'helpers/delayTime';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import {
   setInsuffBalance,
@@ -25,7 +24,7 @@ import {
 } from 'services/contract';
 import { computedRewardRatioPerYear } from 'helpers/computedRewardRatioPerYear';
 import { RewardRatioChart } from 'interfaces/RewardRatioChart';
-import { customToast } from 'helpers';
+import { checkTransactionIsValid, customToast } from 'helpers';
 import { errorMessage } from 'messages/errorMessages';
 import { useWeb3React } from '@web3-react/core';
 import get from 'lodash/get';
@@ -33,6 +32,7 @@ import { getToken } from 'services/auth';
 import { infoMessage } from 'messages/infoMessages';
 import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
 import { formatNumberWithComas } from 'helpers/formatPrice';
+import { contractWithSigner } from 'utils/contractWithSigner';
 
 interface Props {
   id: any;
@@ -44,6 +44,8 @@ interface Props {
   color: string;
   colorChart: string;
   // dataChart: Array<any>;
+  loading: boolean;
+  isCreatingContracts?: boolean;
 }
 
 const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
@@ -292,7 +294,18 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 
 const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
-const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, colorChart }) => {
+const TypeReward: React.FC<Props> = ({
+  id,
+  icon,
+  name,
+  value,
+  apy,
+  earn,
+  color,
+  colorChart,
+  loading,
+  isCreatingContracts = false,
+}) => {
   const dispatch = useAppDispatch();
   const [width] = useWindowSize();
 
@@ -307,6 +320,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   const [crtNodeOk, setCreateNodeOk] = useState<boolean>(false);
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
   const [openTooltip, setOpenTooltip] = useState(true);
+  const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
 
   const { error } = useWeb3React();
   const { fetchAccount0XB } = useFetchAccountBalance();
@@ -357,11 +371,23 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
     if (openStatus) setStatus(STATUS[2]);
     setOpenStatus(!openStatus);
   };
-
+  const convertIdToName = (id: number) => {
+    if (id === 0) {
+      return 'square';
+    } else if (id === 1) {
+      return 'cube';
+    } else return 'tesseract';
+  };
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
     try {
-      dispatch(setIsCreatingNodes());
-
+      setOpen(false);
+      setStatus(STATUS[2]);
+      setOpenStatus(true);
+      dispatch(
+        setIsCreatingNodes({
+          type: convertIdToName(id),
+        }),
+      );
       const mintPermit = await getMintPermit();
       if (!mintPermit[0]) {
         setStatus(STATUS[3]);
@@ -371,24 +397,18 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
       const names = params.map((item) => item.name);
       const key = type.split(' ')[0].toLowerCase();
       const cType = contractType[`${key}`];
+      const gasLimit = await contractWithSigner().estimateGas.mintConts(names, cType);
 
-      setOpen(false);
-      setStatus(STATUS[2]);
-      setOpenStatus(true);
-
+      setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
-      await sleep(DELAY_TIME);
+      setIsMetamaskConfirmPopupOpening(false);
 
-      if (response.hash) {
-        setCreateNodeOk(!crtNodeOk);
-        setStatus(STATUS[0]);
-      }
+      checkTransactionIsValid(response, gasLimit);
     } catch (e: any) {
+      setIsMetamaskConfirmPopupOpening(false);
       setStatus(STATUS[1]);
-    } finally {
       setOpen(false);
       setOpenStatus(true);
-      dispatch(unSetIsCreatingNodes());
     }
   };
 
@@ -398,9 +418,13 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   };
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setOpenTooltip(false);
     }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -414,6 +438,8 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   useEffect(() => {
     dispatch(unSetInsuffBalance());
     dispatch(unSetIsLimitOwnedNodes());
+    if (new BigNumber(zeroXBlockBalance).isLessThan(value)) dispatch(setInsuffBalance());
+    if (new BigNumber(nodes).isEqualTo(LIMIT_MAX_MINT)) dispatch(setIsLimitOwnedNodes());
   }, [currentUserAddress, zeroXBlockBalance]);
 
   useEffect(() => {
@@ -425,6 +451,31 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
   useEffect(() => {
     setDataChart(computedRewardRatioPerYear(earn));
   }, [earn]);
+
+  useEffect(() => {
+    // if user close loading popup, mint status listener will be closed
+    if (!openStatus && loading && !isMetamaskConfirmPopupOpening) {
+      dispatch(unSetIsCreatingNodes());
+    }
+  }, [openStatus, loading, isMetamaskConfirmPopupOpening]);
+
+  useEffect(() => {
+    const provider = contractWithSigner();
+    const mintContractListener = (address: string) => {
+      if (address === currentUserAddress) {
+        setOpenStatus(true);
+        setStatus(STATUS[0]);
+        setCreateNodeOk(!crtNodeOk);
+        dispatch(unSetIsCreatingNodes());
+      }
+    };
+    if (loading) {
+      provider.once('ContsMinted', mintContractListener);
+    }
+    return () => {
+      provider.off('ContsMinted', mintContractListener);
+    };
+  }, [loading, currentUserAddress]);
 
   useFetchNodes(crtNodeOk);
 
@@ -461,7 +512,7 @@ const TypeReward: React.FC<Props> = ({ id, icon, name, value, apy, earn, color, 
           </TooltipCustom>
         </ViewInfo>
 
-        <ButtonMint variant="outlined" color="primary" onClick={handleToggle}>
+        <ButtonMint disabled={isCreatingContracts} variant="outlined" color="primary" onClick={handleToggle}>
           Mint
         </ButtonMint>
       </BoxContent>

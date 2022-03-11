@@ -47,7 +47,7 @@ import BigNumber from 'bignumber.js';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { errorMessage } from 'messages/errorMessages';
 import { infoMessage } from 'messages/infoMessages';
-import { setIsOverMaxMintNodes } from 'services/contract';
+import { setInsuffBalance, setIsOverMaxMintNodes } from 'services/contract';
 import { REGEX_DIGIT } from 'consts/regrex';
 import { LIMIT_MAX_MINT } from 'consts/typeReward';
 
@@ -442,18 +442,23 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   const dispatch = useAppDispatch();
   const theme = useTheme();
 
-  const isCreatingNodes = useAppSelector((state) => state.contract.isCreatingNodes);
+  const isCreatingSquareContracts = useAppSelector((state) => state.contract.isCreatingSquareContracts);
+  const isCreatingCubeContracts = useAppSelector((state) => state.contract.isCreatingCubeContracts);
+  const isCreatingTesseractContracts = useAppSelector((state) => state.contract.isCreatingTesseractContracts);
+
   const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
   const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
   const isCloseMintContractModal = useAppSelector((state) => state.contract.isCloseMintContractModal);
   const isOverMaxMintNodes = useAppSelector((state) => state.contract.isOverMaxMintNodes);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
+  const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
 
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [valueCost, setValueCost] = useState<number>(valueRequire);
   const [valueInput, setValueInput] = useState<number | string>(contracts.length);
   const [isBlankInput, setIsBlankInput] = useState<boolean>(false);
 
+  const isCreatingContracts = isCreatingSquareContracts || isCreatingCubeContracts || isCreatingTesseractContracts;
   const handleAddContract = (numberContracts = 1) => {
     if (contracts.length >= maxMint) {
       return;
@@ -573,22 +578,21 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   };
 
   useEffect(() => {
-    if (!(isCloseMintContractModal && isCreatingNodes)) {
+    if (!(isCloseMintContractModal && isCreatingContracts)) {
       handleAddManyContracts(1);
       setValueInput(contracts.length);
     }
-  }, [isCloseMintContractModal, isCreatingNodes]);
+  }, [isCloseMintContractModal, isCreatingSquareContracts, isCreatingCubeContracts, isCreatingSquareContracts]);
 
   useEffect(() => {
     setContracts([]);
-    if (maxMint > 0) {
-      handleAddManyContracts(1);
-    }
+    if (maxMint > 0) handleAddManyContracts(1);
   }, [maxMint]);
 
   useEffect(() => {
     setValueCost(new BigNumber(valueRequire).times(contracts.length).toNumber());
     setValueInput(isBlankInput && contracts.length === 0 ? '' : contracts.length);
+    if (new BigNumber(zeroXBlockBalance).isLessThan(valueRequire)) dispatch(setInsuffBalance());
   }, [contracts.length]);
 
   useEffect(() => {
@@ -596,9 +600,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
   }, [valueInput]);
 
   useEffect(() => {
-    if (!open) {
-      setIsBlankInput(false);
-    }
+    if (!open) setIsBlankInput(false);
   }, [open]);
 
   return (
@@ -742,7 +744,7 @@ const MintContractModal: React.FC<Props> = ({ open, icon, name, maxMint = 10, on
             ).length > 0 ||
             contracts.length === 0 ||
             valueInput === '' ||
-            isCreatingNodes ||
+            isCreatingContracts ||
             isInsuffBalances ||
             isLimitNodes
           }
