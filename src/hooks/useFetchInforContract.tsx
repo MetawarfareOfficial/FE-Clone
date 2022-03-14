@@ -1,9 +1,3 @@
-import {
-  getPriceAllNode,
-  getRewardAPRAllNode,
-  getTokenDistribution,
-  getTotalNodeByType,
-} from 'helpers/interractiveContract';
 import _ from 'lodash';
 import {
   setApy,
@@ -19,9 +13,11 @@ import { formatAprV3 } from 'helpers/formatApy';
 import { useAppDispatch } from 'stores/hooks';
 import { bigNumber2NumberV2, bigNumber2NumberV4 } from 'helpers/formatNumber';
 import { useEffect } from 'react';
+import { useInteractiveContract } from './useInteractiveContract';
 
 const useFetchInforContract = () => {
   const dispatch = useAppDispatch();
+  const { getRewardAPRAllNode, getPriceAllNode, getTotalNodeByType, getTokenDistribution } = useInteractiveContract();
 
   const fetchApy = async () => {
     try {

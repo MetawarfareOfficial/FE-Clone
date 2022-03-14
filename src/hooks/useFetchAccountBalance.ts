@@ -1,15 +1,15 @@
 import { bigNumber2Number } from 'helpers/formatNumber';
-import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { useEffect, useState } from 'react';
 import { setNativeBalance, setZeroXBlockBalance, unSetNativeBalance, unSetZeroXBlockBalance } from 'services/account';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { useInteractiveContract } from './useInteractiveContract';
 import { useToast } from './useToast';
 
 export const useFetchAccountBalance = () => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nativeBalance = useAppSelector((state) => state.user.nativeBalance);
-
+  const { getBalanceTokenOf, getBalanceNativeTokenOf } = useInteractiveContract();
   const [zeroXBLoading, setZeroXBLoading] = useState<boolean>(false);
   const [nativeTokenLoading, setNativeTokenLoading] = useState<boolean>(false);
 

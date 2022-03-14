@@ -2,22 +2,14 @@ import { Box } from '@mui/material';
 import { ListContracts, Stats, TableContracts } from 'components/MyContract';
 import { DELAY_TIME } from 'consts/myContract';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
-import {
-  getInitAPROfNodes,
-  getNameOfNodes,
-  getNodesCurrentAPR,
-  getPriceAllNode,
-  getRewardAmount,
-  getRewardOfNodes,
-  getTimeCreatedOfNodes,
-  getTypeOfNodes,
-} from 'helpers/interractiveContract';
+
 import {
   parseDataCurrentApr,
   parseDataInitApy,
   parseDataMyContract,
   zipDataMyContract,
 } from 'helpers/zipDataMyContract';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import useInterval from 'hooks/useInterval';
 import { useToast } from 'hooks/useToast';
 import { useWindowSize } from 'hooks/useWindowSize';
@@ -46,7 +38,16 @@ const MyContract: React.FC<Props> = () => {
   };
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-
+  const {
+    getTimeCreatedOfNodes,
+    getNameOfNodes,
+    getRewardOfNodes,
+    getTypeOfNodes,
+    getRewardAmount,
+    getInitAPROfNodes,
+    getPriceAllNode,
+    getNodesCurrentAPR,
+  } = useInteractiveContract();
   const { createToast } = useToast();
   const [width] = useWindowSize();
   const [countMyContract, setCountMyContract] = useState(defaultData);
