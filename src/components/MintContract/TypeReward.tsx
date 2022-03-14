@@ -10,7 +10,6 @@ import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
 import { contractType, LIMIT_MAX_MINT, LIMIT_ONE_TIME_MINT } from 'consts/typeReward';
-import { createMultipleNodesWithTokens, getMintPermit } from 'helpers/interractiveContract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import {
   setInsuffBalance,
@@ -32,7 +31,7 @@ import { getToken } from 'services/auth';
 import { infoMessage } from 'messages/infoMessages';
 import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
 import { formatNumberWithComas } from 'helpers/formatPrice';
-import { contractWithSigner } from 'utils/contractWithSigner';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 interface Props {
   id: any;
@@ -312,6 +311,7 @@ const TypeReward: React.FC<Props> = ({
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const { getMintPermit, createMultipleNodesWithTokens, contractWithSigner } = useInteractiveContract();
 
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
@@ -321,6 +321,9 @@ const TypeReward: React.FC<Props> = ({
   const [dataChart, setDataChart] = useState<Array<RewardRatioChart>>([]);
   const [openTooltip, setOpenTooltip] = useState(true);
   const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
+  const [claimingTransactionHash, setClaimingTransactionHash] = useState('');
+  const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
+  const [transactionError, setTransactionError] = useState('');
 
   const { error } = useWeb3React();
   const { fetchAccount0XB } = useFetchAccountBalance();
@@ -332,11 +335,7 @@ const TypeReward: React.FC<Props> = ({
       return;
     }
 
-    if (
-      (error?.name === 'UnsupportedChainIdError' ||
-        get(window, 'ethereum.networkVersion', 1) !== process.env.REACT_APP_CHAIN_ID) &&
-      getToken()
-    ) {
+    if (get(error, 'name') === 'UnsupportedChainIdError' && getToken()) {
       customToast({ message: errorMessage.META_MASK_WRONG_NETWORK.message, type: 'error' });
       return;
     }
@@ -367,10 +366,28 @@ const TypeReward: React.FC<Props> = ({
     }
   };
 
+  const handleResetTransactionWaiting = () => {
+    setClaimingTransactionHash('');
+    setTransactionHasCompleted('');
+    setTransactionError('');
+  };
+
   const handleToggleStatus = () => {
-    if (openStatus) setStatus(STATUS[2]);
+    if (openStatus && !isMetamaskConfirmPopupOpening) {
+      dispatch(unSetIsCreatingNodes());
+      handleResetTransactionWaiting();
+    }
     setOpenStatus(!openStatus);
   };
+
+  const handleTransactionCompleted = (txHash: string) => {
+    setTransactionHasCompleted(txHash);
+  };
+
+  const handleTransactionError = (txHash: string) => {
+    setTransactionError(txHash);
+  };
+
   const convertIdToName = (id: number) => {
     if (id === 0) {
       return 'square';
@@ -379,6 +396,7 @@ const TypeReward: React.FC<Props> = ({
     } else return 'tesseract';
   };
   const handleSubmit = async (params: Record<string, string>[], type: string) => {
+    let txHash = '';
     try {
       setOpen(false);
       setStatus(STATUS[2]);
@@ -401,14 +419,22 @@ const TypeReward: React.FC<Props> = ({
       setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await createMultipleNodesWithTokens(names, cType);
       setIsMetamaskConfirmPopupOpening(false);
-      if (!response.hash) {
-        throw new Error('Oop! Something went wrong');
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
       }
     } catch (e: any) {
-      setIsMetamaskConfirmPopupOpening(false);
-      setStatus(STATUS[1]);
-      setOpen(false);
-      setOpenStatus(true);
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        setStatus(STATUS[1]);
+        setOpen(false);
+        setOpenStatus(true);
+        dispatch(unSetIsCreatingNodes());
+      }
     }
   };
 
@@ -453,20 +479,37 @@ const TypeReward: React.FC<Props> = ({
   }, [earn]);
 
   useEffect(() => {
+    if (transactionError !== '' && claimingTransactionHash === transactionError) {
+      setIsMetamaskConfirmPopupOpening(false);
+      setOpenStatus(true);
+      setStatus(STATUS[1]);
+      dispatch(unSetIsCreatingNodes());
+      setTransactionError('');
+    }
+  }, [claimingTransactionHash, transactionError]);
+
+  useEffect(() => {
     // if user close loading popup, mint status listener will be closed
     if (!openStatus && loading && !isMetamaskConfirmPopupOpening) {
       dispatch(unSetIsCreatingNodes());
+      handleResetTransactionWaiting();
     }
   }, [openStatus, loading, isMetamaskConfirmPopupOpening]);
 
   useEffect(() => {
-    const provider = contractWithSigner();
+    if (claimingTransactionHash === transactionHashCompleted && claimingTransactionHash !== '') {
+      setOpenStatus(true);
+      setStatus(STATUS[0]);
+      dispatch(unSetIsCreatingNodes());
+      setClaimingTransactionHash('');
+      setTransactionHasCompleted('');
+    }
+  }, [claimingTransactionHash, transactionHashCompleted]);
+  useEffect(() => {
+    const provider = contractWithSigner;
     const mintContractListener = (address: string) => {
       if (address === currentUserAddress) {
-        setOpenStatus(true);
-        setStatus(STATUS[0]);
         setCreateNodeOk(!crtNodeOk);
-        dispatch(unSetIsCreatingNodes());
       }
     };
     if (loading) {

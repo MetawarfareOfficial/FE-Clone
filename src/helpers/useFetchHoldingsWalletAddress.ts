@@ -1,5 +1,5 @@
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useEffect, useState } from 'react';
-import { getHoldingsWalletAddress, getUsdcTokenAddress } from './interractiveContract';
 
 interface HoldingsWalletAddresses {
   treasury: string;
@@ -12,6 +12,7 @@ export const useFetchHoldingsWalletAddress = () => {
   const [loading, setLoading] = useState(false);
   const [holdingsWalletAddresses, setHoldingsWalletAddresses] = useState<HoldingsWalletAddresses>();
   const [usdcTokenAddress, setUsdcTokenAddress] = useState<string>();
+  const { getHoldingsWalletAddress, getUsdcTokenAddress } = useInteractiveContract();
   const fetchWalletAndUsdcToken = async () => {
     setLoading(true);
     const [treasuryWallet, liquidityWallet, rewardWallet, devWallet] = await getHoldingsWalletAddress();

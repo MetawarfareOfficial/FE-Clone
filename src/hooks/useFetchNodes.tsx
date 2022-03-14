@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
-import { getNameOfNodes } from 'helpers/interractiveContract';
 import { setNodes, unSetNodes } from 'services/contract';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { contractWithSigner } from 'utils/contractWithSigner';
+import { useInteractiveContract } from './useInteractiveContract';
 
 export function useFetchNodes(crtNodeOk?: boolean) {
   const dispatch = useAppDispatch();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const contractWithSignerInstance = contractWithSigner();
+  const { getNameOfNodes, contractWithSigner } = useInteractiveContract();
 
   const fetchNodesOfUser = async (address?: string): Promise<void> => {
     try {
@@ -24,7 +23,7 @@ export function useFetchNodes(crtNodeOk?: boolean) {
   const fetchNodesOfUserV2 = async (address?: string): Promise<void> => {
     try {
       if (address) {
-        const response = await contractWithSignerInstance.functions.getContsNames.call({});
+        const response = await contractWithSigner.functions.getContsNames.call({});
         const nodes = response[0].split('#');
         dispatch(setNodes(nodes.length));
       }
