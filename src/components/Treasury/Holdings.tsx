@@ -15,8 +15,8 @@ import AVAXCoin from 'assets/images/avalanche-avax-logo.svg';
 import { holdingWalletTokenID } from 'consts/holdings';
 import { usdcAbi } from 'abis/usdcAbi';
 import { formatReward, getTokenBalanceFromWalletAddress } from 'helpers';
-import { getBalanceNativeTokenOf, getBalanceTokenOf } from 'helpers/interractiveContract';
 import { useFetchHoldingsWalletAddress } from 'helpers/useFetchHoldingsWalletAddress';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 interface HoldingWallet {
   icon: string;
@@ -140,7 +140,7 @@ const Holdings: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const holdingWalletTokenPrice = useAppSelector((state) => state.coingeko.holdingWalletTokenPrice);
   const holdingTokenLoadCompleted = useAppSelector((state) => state.coingeko.holdingTokenLoadCompleted);
-
+  const { getBalanceTokenOf, getBalanceNativeTokenOf } = useInteractiveContract();
   const { holdingsWalletAddresses, usdcTokenAddress } = useFetchHoldingsWalletAddress();
   const [treasury, setTreasury] = useState<HoldingWallet[]>([
     {

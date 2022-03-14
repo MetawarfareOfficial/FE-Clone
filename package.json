@@ -20,6 +20,7 @@
     "@types/styled-components": "^5.1.19",
     "@web3-react/core": "6.1.9",
     "@web3-react/injected-connector": "6.0.7",
+    "@web3-react/walletconnect-connector": "^6.2.13",
     "autoprefixer": "10.4.0",
     "axios": "^0.24.0",
     "bignumber.js": "9.0.1",
@@ -51,9 +52,9 @@
     "yup": "0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "GENERATE_SOURCEMAP=false react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "lint": "eslint src --color --max-warnings=0",
     "format": "prettier --write .",
@@ -94,6 +95,7 @@
     "eslint-plugin-react": "7.28.0",
     "eslint-plugin-react-hooks": "4.3.0",
     "husky": "7.0.4",
-    "prettier": "2.5.1"
+    "prettier": "2.5.1",
+    "react-app-rewired": "^2.2.1"
   }
 }
