@@ -7,7 +7,7 @@ import { labelFormatterTooltip, tickFormatDate, tickFormatInterval } from 'const
 import { formatTimestampV3 } from 'helpers/formatTimestamp';
 import { convertCamelCaseToPascalCase } from 'helpers/convertCamelCaseToPascalCase';
 import { formatReward } from 'helpers';
-import { formatPrice } from 'helpers/formatPrice';
+import { formatNumberWithComas, truncateNumber } from 'helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -174,15 +174,21 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
                 orientation="right"
                 dataKey={yDataKey}
                 tickFormatter={(value) =>
-                  yDataKey === 'price' ? formatPrice(String(value), 0, 0) : formatReward(String(value))
+                  yDataKey === 'price'
+                    ? formatNumberWithComas(Number(truncateNumber(value, 0)))
+                    : formatReward(String(value))
                 }
               />
 
               {theme.palette.mode === 'dark' && <CartesianGrid stroke="#1D1D1D" strokeOpacity={0.7} />}
 
               <Tooltip
-                formatter={(value: string, name: string) => [
-                  `$${yDataKey === 'price' ? formatPrice(String(value)) : formatPrice(String(value), 0, 0)}`,
+                formatter={(value: number, name: string) => [
+                  `$${
+                    yDataKey === 'price'
+                      ? formatNumberWithComas(Number(truncateNumber(value, 2)))
+                      : formatNumberWithComas(Number(truncateNumber(value, 0)))
+                  }`,
                   convertCamelCaseToPascalCase(name),
                 ]}
                 labelFormatter={(value: number) => formatTimestampV3(value, labelFormatterTooltip)}
