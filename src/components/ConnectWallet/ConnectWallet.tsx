@@ -299,7 +299,11 @@ const ConnectWallet: React.FC<Props> = () => {
         }}
         open={open}
         isConnecting={isConnecting}
-        onClickBackBtn={() => setIsConnecting(false)}
+        onClickBackBtn={() => {
+          setIsConnecting(false);
+          setConnectError(false);
+          setConnectingTo(undefined);
+        }}
         connectingTo={connectingTo}
         isError={connectError}
       />
