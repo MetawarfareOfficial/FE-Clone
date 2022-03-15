@@ -9,10 +9,10 @@ import { toast } from 'react-toastify';
 import useFetchTokenData from 'hooks/useFetchTokenData';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
-import useInterval from '../../hooks/useInterval';
-import { DELAY_TIME } from '../../consts/dashboard';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/dashboard';
 import BigNumber from 'bignumber.js';
-import { getBars } from '../../services/traderJoe';
+import { getBars } from 'services/traderJoe';
 
 interface DashboardProps {
   name?: string;
