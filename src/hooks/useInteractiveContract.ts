@@ -2,9 +2,10 @@ import { useWeb3React } from '@web3-react/core';
 import { BigNumber, ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { contractType } from 'consts/typeReward';
+import { getNetWorkRpcUrl } from 'connectors';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
-const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URLS);
+const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
 
 export const useInteractiveContract = () => {

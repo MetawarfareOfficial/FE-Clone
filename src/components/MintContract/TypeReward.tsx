@@ -287,8 +287,8 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
     lineHeight: '22px',
     borderRadius: '7px',
     padding: '2px 10px',
-    zIndex: 1200,
   },
+  zIndex: 1200,
 }));
 
 const STATUS = ['success', 'error', 'pending', 'permission denied'];
