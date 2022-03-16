@@ -207,6 +207,13 @@ const ConnectWallet: React.FC<Props> = () => {
   };
 
   useEffect(() => {
+    if (account && open) {
+      setOpen(false);
+      handleResetModal();
+    }
+  }, [account]);
+
+  useEffect(() => {
     if (account && active && chainId && isLogin) {
       dispatch(setAccount({ address: account }));
       return;

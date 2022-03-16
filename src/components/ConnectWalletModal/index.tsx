@@ -47,10 +47,13 @@ const BootstrapDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
     maxWidth: '437px',
     minWidth: 'fit-content',
     background: theme.palette.mode === 'dark' ? '#171717' : '#ffffff',
+    borderRadius: '20px',
+    boxShadow: '0px 4px 67px rgba(0, 0, 0, 0.02)',
   },
   [theme.breakpoints.down('sm')]: {
     '& .MuiPaper-root': {
       maxWidth: '329px',
+      borderRadius: '16px',
     },
   },
 }));
