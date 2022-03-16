@@ -237,7 +237,7 @@ export const ConnectWalletModal = ({
   };
 
   return (
-    <BootstrapDialog onClose={onClose} className="Wallet-dialog" open={open}>
+    <BootstrapDialog className="Wallet-dialog" open={open}>
       <Header>
         {isConnecting ? (
           <>
