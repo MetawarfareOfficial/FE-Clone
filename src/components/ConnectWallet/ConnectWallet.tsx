@@ -121,6 +121,7 @@ const ConnectWallet: React.FC<Props> = () => {
       setConnectingTo(id);
       if (id === 'metamask') {
         if (!isMetaMaskInstalled()) {
+          setConnectError(true);
           createToast({
             message: CustomToastWithLink,
             type: 'error',
