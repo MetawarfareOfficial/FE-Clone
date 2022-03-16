@@ -107,12 +107,21 @@ const ConnectWallet: React.FC<Props> = () => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const { createToast } = useToast();
 
+  const handleResetModal = () => {
+    setTimeout(() => {
+      setConnectingTo(undefined);
+      setConnectError(false);
+      setIsConnecting(false);
+    }, 500);
+  };
+
   const handleConnectWallet = async (id: WalletId) => {
     try {
       setIsConnecting(true);
       setConnectingTo(id);
       if (id === 'metamask') {
         if (!isMetaMaskInstalled()) {
+          setConnectError(true);
           createToast({
             message: CustomToastWithLink,
             type: 'error',
@@ -123,7 +132,9 @@ const ConnectWallet: React.FC<Props> = () => {
         await activate(injected);
         if (!getToken()) dispatch(setLogin());
         authenticateUser(Math.random().toString(36).substr(2, 10));
+        setOpen(false);
       } else if (id === 'walletConnect') {
+        setOpen(false);
         await activate(walletConnect, undefined, true);
         if (!getToken()) dispatch(setLogin());
         authenticateUser(Math.random().toString(36).substr(2, 10));
@@ -133,8 +144,9 @@ const ConnectWallet: React.FC<Props> = () => {
         type: 'success',
         toastId: 2,
       });
-      setOpen(false);
+      handleResetModal();
     } catch (ex: any) {
+      setOpen(true);
       setConnectError(true);
       if (ex.name === 'UnsupportedChainIdError' || ex.name === 't') {
         createToast({
@@ -221,16 +233,6 @@ const ConnectWallet: React.FC<Props> = () => {
     }
   }, [error?.name]);
 
-  useEffect(() => {
-    if (!open) {
-      setTimeout(() => {
-        setConnectingTo(undefined);
-        setConnectError(false);
-        setIsConnecting(false);
-      }, 500);
-    }
-  }, [open]);
-
   useFetchRewardAmount();
   useMobileChangeAccountMetamask();
 
@@ -296,6 +298,7 @@ const ConnectWallet: React.FC<Props> = () => {
         ]}
         onClose={() => {
           setOpen(false);
+          handleResetModal();
         }}
         open={open}
         isConnecting={isConnecting}
