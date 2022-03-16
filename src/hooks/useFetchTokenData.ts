@@ -6,11 +6,12 @@ import { useEffect } from 'react';
 
 const useFetchTokenData = () => {
   const dispatch = useAppDispatch();
+  const tokenId = process.env.REACT_APP_CONTRACT_ADDRESS_IN_TRADER_JOE || '';
 
   const [result, reExecuteQuery] = useQuery({
     query: TokenQuery,
     variables: {
-      tokenId: process.env.REACT_APP_CONTRACT_ADDRESS_IN_TRADER_JOE,
+      tokenId: tokenId.toLowerCase(),
       first: 30,
     },
   });

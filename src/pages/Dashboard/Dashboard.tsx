@@ -7,18 +7,22 @@ import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import useFetchTokenData from 'hooks/useFetchTokenData';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
-import useInterval from '../../hooks/useInterval';
-import { DELAY_TIME } from '../../consts/dashboard';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/dashboard';
 import BigNumber from 'bignumber.js';
+import { getBars } from 'services/traderJoe';
 
 interface DashboardProps {
   name?: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = () => {
+  const dispatch = useAppDispatch();
+
   const tokenData = useAppSelector((state) => state.traderJoe.tokenData);
+  const bars = useAppSelector((state) => state.traderJoe.bars);
 
   const [heightTotal, setHeightTotal] = useState<any>(null);
   const [dataChart, setDataChart] = useState<TokenDataChart[]>([]);
@@ -32,14 +36,15 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
   useEffect(() => {
     toast.clearWaitingQueue();
+    dispatch(getBars());
   }, []);
 
   useEffect(() => {
-    if (tokenData.length > 0) {
+    if (tokenData.length > 0 && bars.length > 0) {
       const data: TokenDataChart[] = tokenData
-        .map((item: TokenDataTraderJoe) => ({
+        .map((item: TokenDataTraderJoe, index: number) => ({
           date: Number(item.date),
-          price: Number(item.priceUSD),
+          price: index !== 0 && bars[index] ? Number(bars[index]['highUsd']) : Number(item.priceUSD),
           marketCap: new BigNumber(item.liquidity).times(item.priceUSD).toNumber(),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
