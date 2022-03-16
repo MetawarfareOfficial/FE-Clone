@@ -572,13 +572,7 @@ const Layout: React.FC<Props> = ({ children }) => {
               >
                 <DrawerHeader open={open}>
                   <Logo open={open} to="/">
-                    {
-                      // open ? (
-                      theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
-                      // ) : (
-                      //   <img alt="" src={LogoIcon} />
-                      // )
-                    }
+                    {theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />}
                   </Logo>
                   <ToggleButton onClick={handleToggle}>
                     {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
@@ -613,12 +607,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                             </>
                           )}
                         </MenuIconCustom>
-                        <ListItemTextCustom
-                          primary={item.name}
-                          open={open}
-                          // sx={{  }}
-                        />
-                        {/* {open && <ListItemText primary={item.name} />} */}
+                        <ListItemTextCustom primary={item.name} open={open} />
                       </MenuCustom>
                     ))}
                 </SideMenus>
