@@ -1,7 +1,8 @@
+import { getNetWorkRpcUrl } from 'connectors';
 import { ethers } from 'ethers';
 import { bigNumber2Number } from './formatNumber';
 
-const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URLS);
+const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 
 export const getTokenBalanceFromWalletAddress = async (
   contractAddress: string | undefined,
