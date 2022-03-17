@@ -17,7 +17,7 @@ import { Provider as ProviderURQL } from 'urql';
 
 function getLibrary(provider: any) {
   const library = new Web3Provider(provider);
-  library.pollingInterval = 3000;
+  library.pollingInterval = 12000;
   return library;
 }
 
