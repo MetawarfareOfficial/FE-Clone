@@ -40,4 +40,11 @@ export const menus = [
     activeIcon: BankActIcon,
     darkIcon: BankDarkIcon,
   },
+  {
+    name: 'Swap',
+    path: '/swap',
+    icon: SliderIcon,
+    activeIcon: SliderActIcon,
+    darkIcon: SliderDarkIcon,
+  },
 ];
