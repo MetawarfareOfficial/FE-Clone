@@ -49,6 +49,8 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   overrides: [
     {

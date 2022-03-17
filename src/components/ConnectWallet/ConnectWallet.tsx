@@ -115,6 +115,26 @@ const ConnectWallet: React.FC<Props> = () => {
     }, 500);
   };
 
+  const handleResetWalletConnect = (connector: WalletConnectConnector) => {
+    connector.walletConnectProvider = null;
+    localStorage.removeItem('walletconnect');
+  };
+
+  const handleSaveLastWalletConnect = (id: WalletId) => {
+    localStorage.setItem('walletConnect', id);
+  };
+
+  const handleRemoveLastWalletConnect = () => {
+    localStorage.removeItem('walletConnect');
+  };
+
+  const handleCheckLastWalletConnect = () => {
+    const lastWalletConnect = localStorage.getItem('walletConnect');
+    if (lastWalletConnect !== WalletId.WalletConnect) {
+      localStorage.removeItem('walletconnect');
+    }
+  };
+
   const handleConnectWallet = async (id: WalletId) => {
     try {
       setIsConnecting(true);
@@ -133,11 +153,14 @@ const ConnectWallet: React.FC<Props> = () => {
         if (!getToken()) dispatch(setLogin());
         authenticateUser(Math.random().toString(36).substr(2, 10));
         setOpen(false);
+        handleSaveLastWalletConnect(WalletId.Metamask);
       } else if (id === 'walletConnect') {
         setOpen(false);
+        handleCheckLastWalletConnect();
         await activate(walletConnect, undefined, true);
         if (!getToken()) dispatch(setLogin());
         authenticateUser(Math.random().toString(36).substr(2, 10));
+        handleSaveLastWalletConnect(WalletId.WalletConnect);
       }
       createToast({
         message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
@@ -148,6 +171,9 @@ const ConnectWallet: React.FC<Props> = () => {
     } catch (ex: any) {
       setOpen(true);
       setConnectError(true);
+      if (walletConnect.walletConnectProvider) {
+        handleResetWalletConnect(walletConnect);
+      }
       if (ex.name === 'UnsupportedChainIdError' || ex.name === 't') {
         createToast({
           message: errorMessage.META_MASK_WRONG_NETWORK.message,
@@ -171,6 +197,10 @@ const ConnectWallet: React.FC<Props> = () => {
     try {
       await deactivate();
       unAuthenticateUser();
+      handleRemoveLastWalletConnect();
+      if (connector instanceof WalletConnectConnector) {
+        handleResetWalletConnect(connector);
+      }
       dispatch(unSetLogin());
       dispatch(unSetAccount());
       createToast({
@@ -218,8 +248,11 @@ const ConnectWallet: React.FC<Props> = () => {
       dispatch(setAccount({ address: account }));
       return;
     }
+    if (!chainId && !account && connector instanceof WalletConnectConnector) {
+      handleRemoveLastWalletConnect();
+    }
     dispatch(unSetAccount());
-  }, [account, active, chainId, isLogin, currentUserAddress]);
+  }, [account, active, chainId, isLogin, currentUserAddress, connector]);
 
   useEffect(() => {
     if (getToken()) {

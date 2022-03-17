@@ -17,4 +17,5 @@ export const walletConnect = new WalletConnectConnector({
   qrcode: true,
   bridge: 'https://bridge.walletconnect.org',
   chainId: Number(process.env.REACT_APP_CHAIN_ID),
+  pollingInterval: 12000,
 });
