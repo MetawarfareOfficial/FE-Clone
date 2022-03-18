@@ -15,7 +15,5 @@ export const walletConnect = new WalletConnectConnector({
     [Number(process.env.REACT_APP_CHAIN_ID as string)]: getNetWorkRpcUrl(),
   },
   qrcode: true,
-  bridge: 'https://bridge.walletconnect.org',
-  chainId: Number(process.env.REACT_APP_CHAIN_ID),
-  pollingInterval: 12000,
+  supportedChainIds: [Number(process.env.REACT_APP_CHAIN_ID)],
 });

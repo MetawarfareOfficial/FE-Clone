@@ -1226,6 +1226,19 @@ export const zeroXBlockAbi = [
     inputs: [
       {
         internalType: 'address',
+        name: 'newAddress',
+        type: 'address',
+      },
+    ],
+    name: 'setUSDCAddress',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
         name: 'account',
         type: 'address',
       },
@@ -1239,6 +1252,32 @@ export const zeroXBlockAbi = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'tokens',
+        type: 'uint256',
+      },
+    ],
+    name: 'swapAVAX',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'tokens',
+        type: 'uint256',
+      },
+    ],
+    name: 'swapUSDC',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
