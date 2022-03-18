@@ -45,7 +45,9 @@ const Dashboard: React.FC<DashboardProps> = () => {
         .map((item: TokenDataTraderJoe, index: number) => ({
           date: Number(item.date),
           price: index !== 0 && bars[index] ? Number(bars[index]['highUsd']) : Number(item.priceUSD),
-          marketCap: new BigNumber(item.liquidity).times(item.priceUSD).toNumber(),
+          marketCap: new BigNumber(item.liquidity)
+            .times(index !== 0 && bars[index] ? Number(bars[index]['highUsd']) : Number(item.priceUSD))
+            .toNumber(),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
 
