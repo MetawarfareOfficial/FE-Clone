@@ -78,6 +78,12 @@ const ButtonMax = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   padding: '0px',
   minWidth: '51px',
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '12px',
+    lineHeight: '22px',
+    minWidth: '47px',
+  },
 }));
 
 const TokenActive = styled(Link)<LinkProps>(({ theme }) => ({
@@ -112,6 +118,16 @@ const TokenActive = styled(Link)<LinkProps>(({ theme }) => ({
   svg: {
     marginLeft: 'auto',
     marginRight: '10px',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '14px',
+    lineHeight: '26px',
+
+    p: {
+      fontSize: '14px',
+      lineHeight: '26px',
+    },
   },
 }));
 

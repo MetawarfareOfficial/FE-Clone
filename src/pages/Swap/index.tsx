@@ -54,7 +54,7 @@ interface ExchangeType {
   toBalance: number;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   height: '100%',
   boxSizing: 'border-box',
@@ -63,6 +63,20 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
   // alignItems: 'center',
   paddingTop: '150px',
   paddingBottom: '100px',
+
+  [theme.breakpoints.down('lg')]: {
+    paddingTop: '90px',
+    paddingBottom: '70px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    paddingTop: '0',
+    paddingBottom: '70px',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 18px 100px',
+  },
 }));
 
 const TitleBlack = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -75,6 +89,21 @@ const TitleBlack = styled(Typography)<TypographyProps>(({ theme }) => ({
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
   marginTop: '68px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '58px',
+    lineHeight: '64px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    fontSize: '43px',
+    lineHeight: '59px',
+    marginTop: '30px',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    marginTop: '20px',
+  },
 }));
 
 const TitleWhite = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -87,6 +116,17 @@ const TitleWhite = styled(Typography)<TypographyProps>(({ theme }) => ({
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
   marginBottom: '21px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '68px',
+    lineHeight: '88px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    fontSize: '52px',
+    lineHeight: '96px',
+    marginBottom: '33px',
+  },
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -98,6 +138,14 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.57)' : 'rgba(255, 255, 255, 0.57)',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '14px',
+    lineHeight: '24px',
+  },
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
+  },
 }));
 
 const SwapBox = styled(Box)<BoxProps>(({ theme }) => ({
@@ -108,6 +156,15 @@ const SwapBox = styled(Box)<BoxProps>(({ theme }) => ({
   boxShadow: '0px 2px 30px rgba(56, 100, 255, 0.03)',
   borderRadius: '14px',
   padding: '35px 24px 35px',
+
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '100%',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '35px 18px',
+    borderRadius: '9px',
+  },
 }));
 
 const SwapHeader = styled(Box)<BoxProps>(({ theme }) => ({
@@ -134,8 +191,9 @@ const IconButtonCustom = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   marginLeft: '25px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 
-  svg: {
-    stroke: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  [theme.breakpoints.down('sm')]: {
+    width: '17px',
+    height: '17px',
   },
 }));
 
@@ -241,6 +299,10 @@ const SwapSubmit = styled(Button)<ButtonProps>(({ theme }) => ({
     border: '1px solid rgba(56, 100, 255, 0.26)',
     color: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
     boxShadow: '0px 5px 11px rgba(0, 82, 255, 0.38)',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '8px',
   },
 }));
 
@@ -361,8 +423,8 @@ const SwapPage: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Box>
-        <Grid container spacing={'88px'}>
+      <Box sx={{ width: '100%' }}>
+        <Grid container spacing={{ xs: 0, lg: '88px' }}>
           <Grid item xs={12} md={6}>
             <TitleBlack>Swap</TitleBlack>
             <TitleWhite>Tokens</TitleWhite>

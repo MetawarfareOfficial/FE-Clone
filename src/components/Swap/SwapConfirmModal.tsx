@@ -8,7 +8,7 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  Slide,
+  // Slide,
   IconButton,
   IconButtonProps,
   Avatar,
@@ -21,7 +21,7 @@ import {
   ButtonProps,
   Divider,
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
+// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 
@@ -68,17 +68,22 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#171717',
     border: theme.palette.mode === 'light' ? 'unset' : 'unset',
+
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100%  - 36px)',
+      borderRadius: '14px',
+    },
   },
 }));
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// const Transition = React.forwardRef(function Transition(
+//   props: TransitionProps & {
+//     children: React.ReactElement<any, any>;
+//   },
+//   ref: React.Ref<unknown>,
+// ) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -226,6 +231,10 @@ const SwapSubmit = styled(Button)<ButtonProps>(({ theme }) => ({
     color: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
     boxShadow: '0px 5px 11px rgba(0, 82, 255, 0.38)',
   },
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '8px',
+  },
 }));
 
 const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
@@ -273,7 +282,7 @@ const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm }) => {
     <Wrapper
       className="swapDialog"
       open={open}
-      TransitionComponent={Transition}
+      // TransitionComponent={Transition}
       keepMounted
       aria-describedby="alert-dialog-slide-description"
     >

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
 import {
@@ -10,7 +10,7 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  Slide,
+  // Slide,
   IconButton,
   IconButtonProps,
   Tooltip,
@@ -21,8 +21,9 @@ import {
   TextFieldProps,
   Button,
   ButtonProps,
+  ClickAwayListener,
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
+// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/help-dark.svg';
@@ -64,17 +65,23 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#171717',
     border: theme.palette.mode === 'light' ? 'unset' : 'unset',
+
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100%  - 36px)',
+      borderRadius: '14px',
+      padding: '27px 28px 27px',
+    },
   },
 }));
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// const Transition = React.forwardRef(function Transition(
+//   props: TransitionProps & {
+//     children: React.ReactElement<any, any>;
+//   },
+//   ref: React.Ref<unknown>,
+// ) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -98,11 +105,15 @@ const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
   },
 }));
 
-const Header = styled(DialogTitle)<DialogTitleCustomProps>(({}) => ({
+const Header = styled(DialogTitle)<DialogTitleCustomProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '0px',
   marginBottom: '26px',
+
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: '39px',
+  },
 }));
 
 const Content = styled(DialogContent)<DialogContentCustomProps>(({}) => ({
@@ -158,6 +169,13 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
     maxWidth: '214px',
     minWidth: '204px',
     boxSizing: 'border-box',
+
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '12px',
+      lineHeight: '18px',
+      padding: '10px 16px',
+      maxWidth: '152px',
+    },
   },
   [`& .${tooltipClasses.arrow}`]: {
     color: theme.palette.mode === 'light' ? '#fff' : '#171717',
@@ -166,11 +184,14 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 
   [theme.breakpoints.down('lg')]: {
     [`& .${tooltipClasses.tooltip}`]: {
-      padding: '8px 20px',
       fontSize: '12px',
       lineHeight: '22px',
       borderRadius: '10px',
       left: '10px',
+      padding: '10px 16px',
+      marginLeft: '0 !important',
+      maxWidth: '162px',
+      minWidth: '140px',
     },
   },
 }));
@@ -275,12 +296,24 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
   const theme = useTheme();
+  const [tooltip, setTooltip] = useState<any>({
+    slippage: false,
+    transaction: false,
+  });
+
+  const handleTooltipToggle = (name: string) => {
+    const value = tooltip[name];
+    setTooltip({
+      ...tooltip,
+      [name]: !value,
+    });
+  };
 
   return (
     <Wrapper
       className="swapDialog"
       open={open}
-      TransitionComponent={Transition}
+      // TransitionComponent={Transition}
       keepMounted
       aria-describedby="alert-dialog-slide-description"
     >
@@ -296,13 +329,23 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
         <FormBox>
           <Description>
             Slippage tolerance{' '}
-            <TooltipCustom title={`The % slippage could range from 0.1% to 49.99%`} arrow placement="right">
-              {theme.palette.mode === 'light' ? (
-                <HelpCircleIcon style={{ marginLeft: '6px' }} />
-              ) : (
-                <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-              )}
-            </TooltipCustom>
+            <ClickAwayListener onClickAway={() => handleTooltipToggle('slippage')}>
+              <TooltipCustom
+                title={`The % slippage could range from 0.1% to 49.99%`}
+                arrow
+                placement="right"
+                open={tooltip.slippage}
+                onClose={() => handleTooltipToggle('slippage')}
+                disableFocusListener
+                disableTouchListener
+              >
+                {theme.palette.mode === 'light' ? (
+                  <HelpCircleIcon onClick={() => handleTooltipToggle('slippage')} style={{ marginLeft: '6px' }} />
+                ) : (
+                  <HelpCircleDarkIcon onClick={() => handleTooltipToggle('slippage')} style={{ marginLeft: '6px' }} />
+                )}
+              </TooltipCustom>
+            </ClickAwayListener>
           </Description>
 
           <TextFieldSwap
@@ -330,17 +373,26 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
         <FormBox>
           <Description>
             Transaction Deadline{' '}
-            <TooltipCustom
-              title={`Your transaction will revert if it is spending more than this long`}
-              arrow
-              placement="right"
-            >
-              {theme.palette.mode === 'light' ? (
-                <HelpCircleIcon style={{ marginLeft: '6px' }} />
-              ) : (
-                <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-              )}
-            </TooltipCustom>
+            <ClickAwayListener onClickAway={() => handleTooltipToggle('transaction')}>
+              <TooltipCustom
+                title={`Your transaction will revert if it is spending more than this long`}
+                arrow
+                placement="right"
+                open={tooltip.transaction}
+                onClose={() => handleTooltipToggle('transaction')}
+                disableFocusListener
+                disableTouchListener
+              >
+                {theme.palette.mode === 'light' ? (
+                  <HelpCircleIcon onClick={() => handleTooltipToggle('transaction')} style={{ marginLeft: '6px' }} />
+                ) : (
+                  <HelpCircleDarkIcon
+                    onClick={() => handleTooltipToggle('transaction')}
+                    style={{ marginLeft: '6px' }}
+                  />
+                )}
+              </TooltipCustom>
+            </ClickAwayListener>
           </Description>
 
           <TextFieldSwap
