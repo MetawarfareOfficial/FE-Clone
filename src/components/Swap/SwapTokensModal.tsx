@@ -8,7 +8,7 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  Slide,
+  // Slide,
   IconButton,
   IconButtonProps,
   List,
@@ -20,7 +20,7 @@ import {
   Box,
   BoxProps,
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
+// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 
@@ -61,17 +61,22 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#171717',
     border: theme.palette.mode === 'light' ? 'unset' : 'unset',
+
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100%  - 36px)',
+      borderRadius: '14px',
+    },
   },
 }));
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// const Transition = React.forwardRef(function Transition(
+//   props: TransitionProps & {
+//     children: React.ReactElement<any, any>;
+//   },
+//   ref: React.Ref<unknown>,
+// ) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -222,7 +227,7 @@ const SwapTokensModal: React.FC<Props> = ({ open, tokens, active, onSelect, onCl
     <Wrapper
       className="swapDialog"
       open={open}
-      TransitionComponent={Transition}
+      // TransitionComponent={Transition}
       keepMounted
       aria-describedby="alert-dialog-slide-description"
     >

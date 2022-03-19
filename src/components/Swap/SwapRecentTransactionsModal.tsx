@@ -8,14 +8,14 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  Slide,
+  // Slide,
   IconButton,
   IconButtonProps,
   Avatar,
   Box,
   BoxProps,
 } from '@mui/material';
-import { TransitionProps } from '@mui/material/transitions';
+// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { ReactComponent as SwitchIcon } from 'assets/images/switch.svg';
@@ -52,17 +52,22 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#171717',
     border: theme.palette.mode === 'light' ? 'unset' : 'unset',
+
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100%  - 36px)',
+      borderRadius: '14px',
+    },
   },
 }));
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement<any, any>;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// const Transition = React.forwardRef(function Transition(
+//   props: TransitionProps & {
+//     children: React.ReactElement<any, any>;
+//   },
+//   ref: React.Ref<unknown>,
+// ) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -122,6 +127,11 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
     textTransform: 'capitalize',
     color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     margin: '0 0 3px',
+
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '14px',
+      lineHeight: '26px',
+    },
   },
 
   p: {
@@ -176,7 +186,7 @@ const SwapRecentTransactionsModal: React.FC<Props> = ({ open, data, onClose }) =
     <Wrapper
       className="swapDialog"
       open={open}
-      TransitionComponent={Transition}
+      // TransitionComponent={Transition}
       keepMounted
       aria-describedby="alert-dialog-slide-description"
     >
