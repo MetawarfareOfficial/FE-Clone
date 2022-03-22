@@ -32,11 +32,14 @@ import { ReactComponent as SwapConvertDarkIcon } from 'assets/images/ic_round-sw
 
 import AvaxImg from 'assets/images/avax-token.png';
 import OxImg from 'assets/images/0x-token.png';
+import { Exchange, TokenItem } from 'pages/Swap';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  exchange: Exchange;
+  tokenList: TokenItem[];
 }
 
 interface TooltipCustomProps extends TooltipProps {
@@ -275,9 +278,10 @@ const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
   },
 }));
 
-const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm }) => {
+const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm, exchange, tokenList }) => {
   const theme = useTheme();
-
+  const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
+  const toTokenInfo = tokenList.filter((item) => item.id === exchange.to);
   return (
     <Wrapper
       className="swapDialog"
@@ -297,10 +301,13 @@ const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm }) => {
       <Content>
         <ExchangeBox>
           <TokenBox>
-            <Avatar sx={{ width: '53px', height: '53px', margin: 0, display: 'inline-flex' }} src={AvaxImg} />
+            <Avatar
+              sx={{ width: '53px', height: '53px', margin: 0, display: 'inline-flex' }}
+              src={fromTokenInfo[0] ? fromTokenInfo[0].logo : AvaxImg}
+            />
 
-            <h3>Avax</h3>
-            <p>0.0003</p>
+            <h3>{fromTokenInfo[0] ? fromTokenInfo[0].name : ''}</h3>
+            <p>{exchange.fromValue}</p>
           </TokenBox>
 
           <ViewConvertIcon>
@@ -308,10 +315,13 @@ const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm }) => {
           </ViewConvertIcon>
 
           <TokenBox>
-            <Avatar sx={{ width: '53px', height: '53px', margin: 0, display: 'inline-flex' }} src={OxImg} />
+            <Avatar
+              sx={{ width: '53px', height: '53px', margin: 0, display: 'inline-flex' }}
+              src={toTokenInfo[0] ? toTokenInfo[0].logo : OxImg}
+            />
 
-            <h3>Avax</h3>
-            <p>0.0003</p>
+            <h3>{toTokenInfo[0] ? toTokenInfo[0].name : ''}</h3>
+            <p>{exchange.toValue}</p>
           </TokenBox>
         </ExchangeBox>
 

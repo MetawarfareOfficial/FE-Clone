@@ -13,7 +13,8 @@ export const getTokenBalanceFromWalletAddress = async (
     if (contractAddress && abi && walletAddress) {
       const contract = new ethers.Contract(contractAddress, abi, provider);
       const balance = await contract.functions.balanceOf(walletAddress);
-      return bigNumber2Number(balance[0], 1e6);
+      const decimal = await contract.functions.decimals.call({});
+      return bigNumber2Number(balance[0], Number(`1e${decimal}`));
     }
   } catch (error) {
     return 0;

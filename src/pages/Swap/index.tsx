@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -33,9 +33,14 @@ import { ReactComponent as ReloadIcon } from 'assets/images/carbon_recently-view
 import { ReactComponent as ReloadDarkIcon } from 'assets/images/reload-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/swap-icon.svg';
 import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
+import { SwapTokenId, useSwapToken } from 'hooks/swap';
 
 import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/bx_help-circle-dark.svg';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { handleDisableToken, handleSetTokenBalances } from 'services/swap';
+import { intervalTime } from 'consts/swap';
+import { useToast } from 'hooks/useToast';
 
 interface Props {
   title?: string;
@@ -45,12 +50,21 @@ interface TooltipCustomProps extends TooltipProps {
   size?: string;
 }
 
-interface ExchangeType {
-  from: number;
-  fromValue: number | any;
+export interface TokenItem {
+  id: SwapTokenId;
+  logo: string;
+  name: string;
+  balance: number | string;
+  disabled: boolean;
+  isNative?: boolean;
+}
+
+export interface Exchange {
+  from: SwapTokenId;
+  fromValue: number | null;
   fromBalance: number;
-  to: number;
-  toValue: number | any;
+  to: SwapTokenId;
+  toValue: number | null;
   toBalance: number;
 }
 
@@ -346,15 +360,19 @@ const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
 
 const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
-  const [tokens] = useState(TokensList);
-  const [exchange, setExchange] = useState<ExchangeType>({
-    from: 0,
-    fromValue: null,
-    fromBalance: 10,
-    to: 1,
-    toValue: null,
-    toBalance: 0,
-  });
+  const {
+    getSwappaleTokens,
+    getSwapTokenBalances,
+    account,
+    TokenAddressesLoading,
+    exchange,
+    setExchange,
+    handleSwapToken,
+  } = useSwapToken();
+  const tokenList = useAppSelector((state) => state.swap.tokenList);
+  const dispatch = useAppDispatch();
+  const { createToast } = useToast();
+
   const [selectedName, setSelectedName] = useState<any>(null);
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
@@ -397,10 +415,10 @@ const SwapPage: React.FC<Props> = () => {
     setOpenSelect(!openSelect);
   };
 
-  const handelSelectToken = (index: number) => {
+  const handelSelectToken = (tokenId: SwapTokenId) => {
     setExchange({
       ...exchange,
-      [selectedName]: index,
+      [selectedName]: tokenId,
     });
   };
 
@@ -416,10 +434,49 @@ const SwapPage: React.FC<Props> = () => {
     setOpenStatus(!openStatus);
   };
 
-  const handleConfirm = () => {
-    handleToggleConfirm();
-    handleToggleStatus();
+  const handleConfirm = async () => {
+    try {
+      await handleSwapToken();
+      handleToggleConfirm();
+      handleToggleStatus();
+    } catch (error: any) {
+      createToast({
+        message: error.message,
+        type: 'error',
+      });
+    }
   };
+
+  useEffect(() => {
+    if (openSelect && selectedName === 'from') {
+      const selectableTokens = getSwappaleTokens(exchange.from);
+      dispatch(handleDisableToken(selectableTokens));
+    } else if (openSelect && selectedName === 'to') {
+      const selectableTokens = getSwappaleTokens(exchange.to);
+      dispatch(handleDisableToken(selectableTokens));
+    }
+  }, [openSelect, selectedName, exchange]);
+  const handleGetTokenBalances = async () => {
+    const newTokens = await getSwapTokenBalances(tokenList);
+    dispatch(handleSetTokenBalances(newTokens));
+  };
+  useEffect(() => {
+    let getTokenBalancesInterval: NodeJS.Timer;
+    if (!TokenAddressesLoading && account) {
+      handleGetTokenBalances();
+      getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
+    }
+    return () => {
+      if (getTokenBalancesInterval) {
+        clearInterval(getTokenBalancesInterval);
+      }
+    };
+  }, [account, TokenAddressesLoading]);
+
+  useEffect;
+
+  const fromTokens = tokenList.filter((item) => item.id === exchange.from);
+  const ToTokens = tokenList.filter((item) => item.id === exchange.to);
 
   return (
     <Wrapper>
@@ -450,7 +507,7 @@ const SwapPage: React.FC<Props> = () => {
               <ExchangeBox>
                 <ExchangeHeader>
                   <h5>From</h5>
-                  <p>Balance: 0</p>
+                  <p>Balance: {fromTokens.length > 0 ? fromTokens[0].balance : 0}</p>
                 </ExchangeHeader>
 
                 <InputSwap
@@ -465,16 +522,51 @@ const SwapPage: React.FC<Props> = () => {
                 />
               </ExchangeBox>
 
-              <ExchangeIcon>{theme.palette.mode === 'light' ? <SwapIcon /> : <SwapDarkIcon />}</ExchangeIcon>
+              <ExchangeIcon
+                style={{
+                  cursor: 'pointer',
+                }}
+              >
+                {theme.palette.mode === 'light' ? (
+                  <SwapIcon
+                    onClick={() => {
+                      setExchange({
+                        from: exchange.to,
+                        fromBalance: exchange.toBalance,
+                        fromValue: exchange.toValue,
+                        to: exchange.from,
+                        toBalance: exchange.fromBalance,
+                        toValue: exchange.fromValue,
+                      });
+                    }}
+                  />
+                ) : (
+                  <SwapDarkIcon
+                    style={{
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => {
+                      setExchange({
+                        from: exchange.to,
+                        fromBalance: exchange.toBalance,
+                        fromValue: exchange.toValue,
+                        to: exchange.from,
+                        toBalance: exchange.fromBalance,
+                        toValue: exchange.fromValue,
+                      });
+                    }}
+                  />
+                )}
+              </ExchangeIcon>
 
               <ExchangeBox>
                 <ExchangeHeader>
                   <h5>To(estimated)</h5>
-                  <p>Balance: 0</p>
+                  <p>Balance: {ToTokens.length > 0 ? ToTokens[0].balance : 0}</p>
                 </ExchangeHeader>
 
                 <InputSwap
-                  tokens={tokens}
+                  tokens={tokenList}
                   value={exchange.toValue}
                   selected={exchange.to}
                   onChange={handleChange}
@@ -484,7 +576,7 @@ const SwapPage: React.FC<Props> = () => {
                 />
               </ExchangeBox>
 
-              {exchange.fromValue && exchange.fromValue !== 0 && exchange.toValue && exchange.toValue !== 0 && (
+              {exchange.fromValue && exchange.fromValue !== 0 && exchange.toValue && exchange.toValue !== 0 ? (
                 <>
                   <BillingBox>
                     <BillingLine>
@@ -562,22 +654,30 @@ const SwapPage: React.FC<Props> = () => {
                     Swap
                   </SwapSubmit>
                 </>
+              ) : (
+                ''
               )}
             </SwapBox>
           </Grid>
         </Grid>
       </Box>
 
-      <SwapSettingModal open={openSetting} onClose={handleToggleSetting} />
+      {openSetting && <SwapSettingModal open={openSetting} onClose={handleToggleSetting} />}
       <SwapTokensModal
         open={openSelect}
         onClose={handleToggleSelect}
-        tokens={tokens}
+        tokens={tokenList}
         onSelect={handelSelectToken}
         active={selectedName === 'from' ? exchange.from : exchange.to}
       />
       <SwapRecentTransactionsModal open={openRecent} onClose={handleToggleRecent} data={recentData} />
-      <SwapConfirmModal open={openConfirm} onClose={handleToggleConfirm} onConfirm={handleConfirm} />
+      <SwapConfirmModal
+        tokenList={tokenList}
+        exchange={exchange}
+        open={openConfirm}
+        onClose={handleToggleConfirm}
+        onConfirm={handleConfirm}
+      />
       {openStatus && <SwapStatusModal open={openStatus} onClose={handleToggleStatus} />}
     </Wrapper>
   );

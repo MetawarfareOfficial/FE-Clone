@@ -7,7 +7,7 @@ import { ReactComponent as DownDarkIcon } from 'assets/images/down-dark-icon.svg
 
 interface Props {
   name: string;
-  value: number;
+  value: number | null;
   isMax?: boolean;
   max?: number;
   min?: number;
@@ -144,10 +144,10 @@ const InputSwap: React.FC<Props> = ({
   isMax,
 }) => {
   const theme = useTheme();
-
+  const selectedToken = tokens.filter((item) => item.id === selected)[0];
   return (
     <TextFieldSwap
-      placeholder="0.0"
+      placeholder="0.0000"
       type="number"
       name={name}
       fullWidth
@@ -161,8 +161,8 @@ const InputSwap: React.FC<Props> = ({
         startAdornment: (
           <InputAdornment position="start">
             <TokenActive onClick={() => onChangeToken(name)}>
-              <img alt="" src={tokens[selected].logo} width={27} style={{ marginRight: 9 }} />{' '}
-              <p>{tokens[selected].name}</p> {theme.palette.mode === 'light' ? <DownIcon /> : <DownDarkIcon />}
+              <img alt="" src={selectedToken.logo} width={27} style={{ marginRight: 9 }} />
+              <p>{selectedToken.name}</p> {theme.palette.mode === 'light' ? <DownIcon /> : <DownDarkIcon />}
             </TokenActive>
 
             {isMax && <ButtonMax onClick={onMax}>Max</ButtonMax>}

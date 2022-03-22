@@ -1,18 +1,31 @@
 import AvaxImg from 'assets/images/avax-token.png';
 import OxImg from 'assets/images/0x-token.png';
-
+import USDCImg from 'assets/images/coin-usd.svg';
+import { SwapTokenId } from 'hooks/swap';
 export const TokensList = [
   {
+    id: SwapTokenId.AVAX,
     logo: AvaxImg,
     name: 'AVAX',
-    balance: 5643.3432,
-    active: true,
+    balance: 0,
+    disabled: true,
+    isNative: true,
   },
   {
+    id: SwapTokenId.OXB,
     logo: OxImg,
     name: '0xB',
-    balance: 7453.7436,
-    active: false,
+    balance: 0,
+    disabled: false,
+    isNative: false,
+  },
+  {
+    id: SwapTokenId.USDC,
+    logo: USDCImg,
+    name: 'USDC',
+    balance: 0,
+    disabled: false,
+    isNative: false,
   },
 ];
 
