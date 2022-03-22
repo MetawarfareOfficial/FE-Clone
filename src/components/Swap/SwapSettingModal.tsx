@@ -29,6 +29,9 @@ import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.s
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/help-dark.svg';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
+import { getSwapSettingData } from 'helpers';
+import { defaultSettingData, localStorageSwapSettingKey } from 'consts/swap';
+import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 // import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 
 interface Props {
@@ -243,6 +246,9 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
     '&.Mui-focused fieldset': {
       borderColor: 'rgba(56, 100, 255, 0.26)',
     },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'unset !important',
+    },
   },
 }));
 
@@ -295,7 +301,50 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
+  const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
+  const { validateSlippageInput, validateDeadlineInput } = useSwapHelpers();
+  const [errors, setErrors] = useState({
+    slippageError: '',
+    deadlineError: '',
+  });
   const theme = useTheme();
+
+  const handleSlippageChange = (value: string) => {
+    const error = validateSlippageInput(value);
+    if (error !== '' || errors.slippageError !== '') {
+      setErrors({
+        ...errors,
+        slippageError: error,
+      });
+    }
+    const newSettings = {
+      ...settings,
+      slippage: value,
+    };
+    setSetting(newSettings);
+    if (error === '') {
+      localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
+    }
+  };
+
+  const handleDeadlineChange = (value: string) => {
+    const error = validateDeadlineInput(value);
+    if (error !== '' || errors.slippageError !== '') {
+      setErrors({
+        ...errors,
+        deadlineError: error,
+      });
+    }
+    const newSettings = {
+      ...settings,
+      deadline: value,
+    };
+    setSetting(newSettings);
+    if (error === '') {
+      localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
+    }
+  };
+
   const [tooltip, setTooltip] = useState<any>({
     slippage: false,
     transaction: false,
@@ -352,8 +401,8 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
             placeholder="0.0"
             type="number"
             fullWidth
-            // value={value}
-            // onChange={onChange}
+            value={settings.slippage}
+            onChange={(event) => handleSlippageChange(event.target.value)}
             InputProps={{
               inputProps: {
                 // max: max,
@@ -362,12 +411,20 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
               endAdornment: (
                 <InputAdornment position="end">
                   <PercentText>%</PercentText>
-                  <ButtonPerCent>0.1%</ButtonPerCent>
-                  <ButtonPerCent active={true}>0.5%</ButtonPerCent>
-                  <ButtonPerCent>1%</ButtonPerCent>
+                  <ButtonPerCent onClick={() => handleSlippageChange('0.1')} active={settings.slippage === '0.1'}>
+                    0.1%
+                  </ButtonPerCent>
+                  <ButtonPerCent onClick={() => handleSlippageChange('0.5')} active={settings.slippage === '0.5'}>
+                    0.5%
+                  </ButtonPerCent>
+                  <ButtonPerCent onClick={() => handleSlippageChange('1')} active={settings.slippage === '1'}>
+                    1%
+                  </ButtonPerCent>
                 </InputAdornment>
               ),
             }}
+            error={errors.slippageError !== ''}
+            helperText={errors.slippageError}
           />
         </FormBox>
         <FormBox>
@@ -399,8 +456,10 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
             placeholder="0.0"
             type="number"
             fullWidth
-            // value={value}
-            // onChange={onChange}
+            value={settings.deadline}
+            onChange={(event) => handleDeadlineChange(event.target.value)}
+            error={errors.deadlineError !== ''}
+            helperText={errors.deadlineError}
             InputProps={{
               inputProps: {
                 // max: max,

@@ -3,10 +3,24 @@ import { BigNumber, ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { contractType } from 'consts/typeReward';
 import { getNetWorkRpcUrl } from 'connectors';
+import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
+
+interface MultiCallItem {
+  reference: string;
+  methodName: string;
+  methodParameters: any[];
+}
+
+export interface MultiCallList {
+  reference: string;
+  contractAddress: string;
+  abi: any;
+  calls: MultiCallItem[];
+}
 
 export const useInteractiveContract = () => {
   const { library, account } = useWeb3React();
@@ -219,6 +233,14 @@ export const useInteractiveContract = () => {
     }
   };
 
+  const getPairAddress = async (): Promise<string> => {
+    try {
+      return contractWithoutSigner.functions.uniswapV2Pair.call({});
+    } catch (e) {
+      throw new Error('Oop! Something went wrong');
+    }
+  };
+
   const getTokenDistribution = async (): Promise<any[]> => {
     try {
       const developmentFee = contractWithoutSigner.functions.developmentFee.call({});
@@ -231,6 +253,38 @@ export const useInteractiveContract = () => {
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
+  };
+
+  const swap0xbToAvax = async (amount: number): Promise<any[]> => {
+    try {
+      return contractWithSigner.functions.swapAVAX(amount);
+    } catch (e) {
+      throw new Error('Oop! Something went wrong');
+    }
+  };
+
+  const swap0xbToUsdc = async (amount: number): Promise<any[]> => {
+    try {
+      return contractWithSigner.functions.swapUSDC(amount);
+    } catch (e) {
+      throw new Error('Oop! Something went wrong');
+    }
+  };
+
+  const multipleCall = async (params: MultiCallList[]) => {
+    const multiCall = new Multicall({ ethersProvider: provider, tryAggregate: true });
+    const contractCallContext: ContractCallContext<{ extraContext: string; foo4: boolean }>[] = params.map(
+      ({ reference, contractAddress, abi, calls }) => {
+        return {
+          reference,
+          contractAddress,
+          abi,
+          calls,
+        };
+      },
+    );
+    const results: ContractCallResults = await multiCall.call(contractCallContext);
+    return results.results;
   };
 
   return {
@@ -258,6 +312,11 @@ export const useInteractiveContract = () => {
     getHoldingsWalletAddress,
     getUsdcTokenAddress,
     getTokenDistribution,
+    getPairAddress,
+    multipleCall,
+    swap0xbToAvax,
+    swap0xbToUsdc,
     contractWithSigner,
+    provider,
   };
 };

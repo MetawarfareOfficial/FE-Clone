@@ -23,13 +23,14 @@ import {
 // import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
+import { SwapTokenId } from 'hooks/swap';
 
 interface Props {
   open: boolean;
   active: number | any;
   tokens: Array<any>;
   onClose: () => void;
-  onSelect: (index: number) => void;
+  onSelect: (tokenId: SwapTokenId) => void;
 }
 
 interface DialogTitleCustomProps {
@@ -217,9 +218,9 @@ const ListHeader = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const SwapTokensModal: React.FC<Props> = ({ open, tokens, active, onSelect, onClose }) => {
-  const handleListItemClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, index: number) => {
-    onSelect(index);
+const SwapTokensModal: React.FC<Props> = ({ open, tokens, onSelect, onClose }) => {
+  const handleListItemClick = (tokenId: SwapTokenId) => {
+    onSelect(tokenId);
     onClose();
   };
 
@@ -248,8 +249,12 @@ const SwapTokensModal: React.FC<Props> = ({ open, tokens, active, onSelect, onCl
           {tokens.map((item, i) => (
             <ListItemButton
               key={i}
-              onClick={(event) => handleListItemClick(event, i)}
-              style={{ opacity: active === i ? '0.7' : '1' }}
+              onClick={() => {
+                if (!item.disabled) {
+                  handleListItemClick(item.id);
+                }
+              }}
+              style={{ opacity: item.disabled ? '0.7' : '1' }}
             >
               <ListItemAvatar>
                 <Avatar sx={{ width: '27px', height: '27px' }} src={item.logo} />
