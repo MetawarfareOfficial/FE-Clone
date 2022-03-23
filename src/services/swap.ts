@@ -87,8 +87,14 @@ export const swapSlice = createSlice({
   },
 });
 
-export const { setTokenAddress, setPairAddress, setPairData, handleDisableToken, handleSetTokenBalances } =
-  swapSlice.actions;
+export const {
+  setTokenAddress,
+  setPairAddress,
+  setPairData,
+  handleDisableToken,
+  handleSetTokenBalances,
+  setRecentTransactions,
+} = swapSlice.actions;
 
 const { reducer: swapReducer } = swapSlice;
 

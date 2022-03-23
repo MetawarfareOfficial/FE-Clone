@@ -30,7 +30,7 @@ import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/help-dark.sv
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { getSwapSettingData } from 'helpers';
-import { defaultSettingData, localStorageSwapSettingKey } from 'consts/swap';
+import { deadlineInputRegex, defaultSettingData, localStorageSwapSettingKey, slippageInputRegex } from 'consts/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 // import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 
@@ -310,38 +310,42 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
   const theme = useTheme();
 
   const handleSlippageChange = (value: string) => {
-    const error = validateSlippageInput(value);
-    if (error !== '' || errors.slippageError !== '') {
-      setErrors({
-        ...errors,
-        slippageError: error,
-      });
-    }
-    const newSettings = {
-      ...settings,
-      slippage: value,
-    };
-    setSetting(newSettings);
-    if (error === '') {
-      localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
+    if (slippageInputRegex.test(value) || value.trim() === '') {
+      const error = validateSlippageInput(value);
+      if (error !== '' || errors.slippageError !== '') {
+        setErrors({
+          ...errors,
+          slippageError: error,
+        });
+      }
+      const newSettings = {
+        ...settings,
+        slippage: value,
+      };
+      setSetting(newSettings);
+      if (error === '') {
+        localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
+      }
     }
   };
 
   const handleDeadlineChange = (value: string) => {
-    const error = validateDeadlineInput(value);
-    if (error !== '' || errors.slippageError !== '') {
-      setErrors({
-        ...errors,
-        deadlineError: error,
-      });
-    }
-    const newSettings = {
-      ...settings,
-      deadline: value,
-    };
-    setSetting(newSettings);
-    if (error === '') {
-      localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
+    if (deadlineInputRegex.test(value) || value.trim() === '') {
+      const error = validateDeadlineInput(value);
+      if (error !== '' || errors.deadlineError !== '') {
+        setErrors({
+          ...errors,
+          deadlineError: error,
+        });
+      }
+      const newSettings = {
+        ...settings,
+        deadline: value,
+      };
+      setSetting(newSettings);
+      if (error === '') {
+        localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
+      }
     }
   };
 
@@ -369,7 +373,14 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
       <Header>
         <HeaderText>Settings</HeaderText>
 
-        <CloseIcon onClick={onClose}>
+        <CloseIcon
+          onClick={() => {
+            if (errors.slippageError !== '' || errors.deadlineError !== '') {
+              localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(defaultSettingData));
+            }
+            onClose();
+          }}
+        >
           <CloseImg />
         </CloseIcon>
       </Header>
@@ -398,14 +409,14 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
           </Description>
 
           <TextFieldSwap
-            placeholder="0.0"
-            type="number"
+            placeholder="0.00"
+            type="text"
             fullWidth
             value={settings.slippage}
             onChange={(event) => handleSlippageChange(event.target.value)}
             InputProps={{
               inputProps: {
-                // max: max,
+                // max: 3,
                 min: 0,
               },
               endAdornment: (
@@ -453,8 +464,8 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
           </Description>
 
           <TextFieldSwap
-            placeholder="0.0"
-            type="number"
+            placeholder="0"
+            type="text"
             fullWidth
             value={settings.deadline}
             onChange={(event) => handleDeadlineChange(event.target.value)}

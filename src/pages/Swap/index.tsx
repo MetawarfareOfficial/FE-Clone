@@ -16,7 +16,7 @@ import {
   ButtonProps,
 } from '@mui/material';
 
-import { TokensList, recentData } from './data';
+import { TokensList } from './data';
 
 import InputSwap from 'components/Base/InputSwap';
 import {
@@ -41,6 +41,7 @@ import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { handleDisableToken, handleSetTokenBalances } from 'services/swap';
 import { intervalTime } from 'consts/swap';
 import { useToast } from 'hooks/useToast';
+import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 
 interface Props {
   title?: string;
@@ -369,7 +370,9 @@ const SwapPage: React.FC<Props> = () => {
     setExchange,
     handleSwapToken,
   } = useSwapToken();
+  const { handleConvertRecentTransactionData } = useSwapHelpers();
   const tokenList = useAppSelector((state) => state.swap.tokenList);
+  const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
   const dispatch = useAppDispatch();
   const { createToast } = useToast();
 
@@ -456,10 +459,12 @@ const SwapPage: React.FC<Props> = () => {
       dispatch(handleDisableToken(selectableTokens));
     }
   }, [openSelect, selectedName, exchange]);
+
   const handleGetTokenBalances = async () => {
     const newTokens = await getSwapTokenBalances(tokenList);
     dispatch(handleSetTokenBalances(newTokens));
   };
+
   useEffect(() => {
     let getTokenBalancesInterval: NodeJS.Timer;
     if (!TokenAddressesLoading && account) {
@@ -670,7 +675,11 @@ const SwapPage: React.FC<Props> = () => {
         onSelect={handelSelectToken}
         active={selectedName === 'from' ? exchange.from : exchange.to}
       />
-      <SwapRecentTransactionsModal open={openRecent} onClose={handleToggleRecent} data={recentData} />
+      <SwapRecentTransactionsModal
+        open={openRecent}
+        onClose={handleToggleRecent}
+        data={handleConvertRecentTransactionData(recentTransactions, tokenList)}
+      />
       <SwapConfirmModal
         tokenList={tokenList}
         exchange={exchange}
