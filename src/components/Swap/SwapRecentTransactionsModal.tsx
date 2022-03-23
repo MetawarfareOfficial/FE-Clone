@@ -197,32 +197,39 @@ const SwapRecentTransactionsModal: React.FC<Props> = ({ open, data, onClose }) =
           <CloseImg />
         </CloseIcon>
       </Header>
+      {data.length > 0 ? (
+        <Content>
+          <ListHeader>
+            <h5>Transaction</h5>
+          </ListHeader>
 
-      <Content>
-        <ListHeader>
-          <h5>Transaction</h5>
-        </ListHeader>
-
-        <ListView>
-          {data.map((item, i) => (
-            <ListItem key={i}>
-              <Avatar sx={{ width: '31px', height: '31px' }} src={item.from} />
-              {theme.palette.mode === 'light' ? (
-                <SwitchIcon style={{ margin: '0 12px', width: '15px' }} />
-              ) : (
-                <SwitchDarkIcon style={{ margin: '0 12px', width: '15px' }} />
-              )}
-              <Avatar sx={{ width: '31px', height: '31px' }} src={item.to} />
-              <BoxDetail>
-                <h3>{item.title}</h3>
-                <p>
-                  {item.date} <span>{item.time}</span>
-                </p>
-              </BoxDetail>
-            </ListItem>
-          ))}
-        </ListView>
-      </Content>
+          <ListView>
+            {data.map((item, i) => (
+              <ListItem key={i}>
+                <Avatar sx={{ width: '31px', height: '31px' }} src={item.from} />
+                {theme.palette.mode === 'light' ? (
+                  <SwitchIcon style={{ margin: '0 12px', width: '15px' }} />
+                ) : (
+                  <SwitchDarkIcon style={{ margin: '0 12px', width: '15px' }} />
+                )}
+                <Avatar sx={{ width: '31px', height: '31px' }} src={item.to} />
+                <BoxDetail>
+                  <h3>{item.title}</h3>
+                  <p>
+                    {item.date} <span>{item.time}</span>
+                  </p>
+                </BoxDetail>
+              </ListItem>
+            ))}
+          </ListView>
+        </Content>
+      ) : (
+        <Content>
+          <ListHeader>
+            <h5>No records found</h5>
+          </ListHeader>
+        </Content>
+      )}
     </Wrapper>
   );
 };

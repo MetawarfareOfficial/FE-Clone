@@ -1,12 +1,13 @@
 import { useWeb3React } from '@web3-react/core';
 import { usdcAbi } from 'abis/usdcAbi';
 import BigNumber from 'bignumber.js';
+import { intervalTime } from 'consts/swap';
 import { bigNumber2Number } from 'helpers/formatNumber';
 import { formatPrice } from 'helpers/formatPrice';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import get from 'lodash/get';
 import { Exchange, TokenItem } from 'pages/Swap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from 'stores/hooks';
 import { useLoadSwapData } from './useLoadSwapData';
 
@@ -24,7 +25,7 @@ const SwappableToken = {
 
 export const useSwapToken = () => {
   const { account } = useWeb3React();
-  const { loading: TokenAddressesLoading } = useLoadSwapData();
+  const { loading: TokenAddressesLoading, loadRecentTransaction } = useLoadSwapData();
   const { getBalanceNativeTokenOf, multipleCall, swap0xbToAvax } = useInteractiveContract();
   const tokenList = useAppSelector((state) => state.swap.tokenList);
 
@@ -123,6 +124,15 @@ export const useSwapToken = () => {
       };
     });
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadRecentTransaction();
+    }, intervalTime);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [account]);
 
   return {
     getSwappaleTokens,

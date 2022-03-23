@@ -4,6 +4,7 @@ export const defaultSettingData = {
   slippage: '0.5',
   deadline: '10',
 };
-export const lodashDebounceTime = 500;
 export const minSlippageValue = 0.1;
 export const maxSlippageValue = 50;
+export const slippageInputRegex = /^([0-9]+\.[0-9]{0,2})$|^([0-9]+)$/;
+export const deadlineInputRegex = /^[0-9]+$/;

@@ -1,9 +1,13 @@
+import { useWeb3React } from '@web3-react/core';
+import { recentTransactionQuery } from 'consts/query';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
-import { useEffect, useState } from 'react';
-import { setTokenAddress } from 'services/swap';
+import { useEffect, useMemo, useState } from 'react';
+import { setRecentTransactions, setTokenAddress } from 'services/swap';
 import { useAppDispatch } from 'stores/hooks';
+import { useQuery } from 'urql';
 import { SwapTokenId } from './useSwapToken';
-
+import get from 'lodash/get';
+import moment from 'moment';
 export interface TokenAddresses {
   [SwapTokenId.OXB]: string;
   [SwapTokenId.AVAX]: string;
@@ -11,8 +15,24 @@ export interface TokenAddresses {
 }
 export const useLoadSwapData = () => {
   const { getUsdcTokenAddress } = useInteractiveContract();
+  const { account } = useWeb3React();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
+
+  const [result, reExecuteQuery] = useQuery({
+    query: recentTransactionQuery,
+    variables: {
+      address: account,
+      date: moment().subtract('7', 'days').endOf('day').unix(),
+    },
+    pause: !account,
+    context: useMemo(
+      () => ({
+        url: process.env.REACT_APP_GRAPH_RECENT_TRANSACTION_API_URL,
+      }),
+      [],
+    ),
+  });
 
   const loadSwapData = async () => {
     setLoading(true);
@@ -28,16 +48,24 @@ export const useLoadSwapData = () => {
           [SwapTokenId.USDC]: usdcTokenAddress[0] || '',
         }),
       );
-      // load histories transactions
     } catch {}
     setLoading(false);
   };
+
+  const loadRecentTransaction = () => {
+    reExecuteQuery({ requestPolicy: 'network-only' });
+  };
+
+  useEffect(() => {
+    dispatch(setRecentTransactions(get(result, 'data.swaps', [])));
+  }, [result.data]);
 
   useEffect(() => {
     loadSwapData();
   }, []);
 
   return {
+    loadRecentTransaction,
     loading,
   };
 };
