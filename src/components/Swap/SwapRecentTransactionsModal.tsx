@@ -113,6 +113,21 @@ const Content = styled(DialogContent)<DialogContentCustomProps>(({}) => ({
 
 const ListView = styled(Box)<BoxProps>(() => ({
   width: '100%',
+  overflowY: 'scroll',
+  maxHeight: '370px',
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    height: '4px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'none',
+    webkitBoxShadow: 'none',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#3864FF',
+    outline: 'none',
+    borderRadius: '10px',
+  },
 }));
 
 const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
