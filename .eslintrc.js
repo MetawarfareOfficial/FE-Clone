@@ -48,6 +48,8 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off',
     'import/prefer-default-export': 'off',
     'react/prop-types': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   overrides: [
     {
