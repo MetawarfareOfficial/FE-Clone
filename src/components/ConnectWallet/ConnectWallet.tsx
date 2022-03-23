@@ -19,10 +19,16 @@ import { setAccount, setLogin, unSetAccount, unSetLogin } from 'services/account
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { ConnectWalletModal } from '../ConnectWalletModal';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   name?: string;
 }
+
+interface ButtonWalletProps extends ButtonProps {
+  isPrivateDashboard?: boolean;
+}
+
 export enum WalletId {
   Metamask = 'metamask',
   WalletConnect = 'walletConnect',
@@ -46,13 +52,13 @@ const ButtonConnect = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ButtonWallet = styled(Button)<ButtonProps>(({ theme }) => ({
-  fontSize: '14px',
-  lineHeight: '21px',
+const ButtonWallet = styled(Button)<ButtonWalletProps>(({ theme, isPrivateDashboard }) => ({
+  fontSize: isPrivateDashboard ? '13px' : '14px',
+  lineHeight: isPrivateDashboard ? '19px' : '21px',
   fontFamily: 'Poppins',
   fontWeight: 'bold',
-  padding: '12px 24px',
-  borderRadius: '14px',
+  padding: isPrivateDashboard ? '11px 20px' : '12px 24px',
+  borderRadius: isPrivateDashboard ? '10px' : '14px',
   textTransform: 'capitalize',
   boxShadow: 'none',
   background:
@@ -94,6 +100,7 @@ const CustomToastWithLink = () => (
 
 const ConnectWallet: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const [width] = useWindowSize();
   const { active, account, activate, deactivate, error, chainId, connector } = useWeb3React<Web3Provider>();
   const [open, setOpen] = useState(false);
@@ -282,7 +289,12 @@ const ConnectWallet: React.FC<Props> = () => {
           )}
           {active && isLogin && (
             <div>
-              <ButtonWallet variant="contained" color="primary" onClick={logout}>
+              <ButtonWallet
+                isPrivateDashboard={location.pathname === '/private-dashboard'}
+                variant="contained"
+                color="primary"
+                onClick={logout}
+              >
                 Disconnect Wallet
               </ButtonWallet>
             </div>

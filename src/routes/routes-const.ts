@@ -3,6 +3,7 @@ const MINT_CONTRACT = '/mint-contracts';
 const MY_CONTRACT = '/my-contracts';
 const TREASURY = '/treasury';
 const SWAP = '/swap';
+const PRIVATE_DASHBOARD = '/private-dashboard';
 
 export default {
   DASHBOARD,
@@ -10,4 +11,5 @@ export default {
   MY_CONTRACT,
   TREASURY,
   SWAP,
+  PRIVATE_DASHBOARD,
 };
