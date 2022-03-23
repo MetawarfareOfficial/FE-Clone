@@ -22,7 +22,6 @@ import { errorMessage } from 'messages/errorMessages';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useToast } from 'hooks/useToast';
 import { infoMessage } from '../../messages/infoMessages';
-import { contractWithSigner } from 'utils/contractWithSigner';
 
 interface Props {
   data: Array<any>;
@@ -102,12 +101,24 @@ const ListContracts: React.FC<Props> = ({ data }) => {
   const [claimType, setClaimType] = useState<string>('');
   const [icon, setIcon] = useState<string>('');
   const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
+  const [claimingTransactionHash, setClaimingTransactionHash] = useState('');
+  const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
+  const [transactionError, setTransactionError] = useState('');
 
   const handleToggleStatus = () => {
     if (openStatus && !isMetamaskConfirmPopupOpening) {
       dispatch(unSetIsClaimingReward());
+      setClaimingTransactionHash('');
+      setTransactionHasCompleted('');
+      setTransactionError('');
     }
     setOpenStatus(!openStatus);
+  };
+  const handleTransactionCompleted = (txHash: string) => {
+    setTransactionHasCompleted(txHash);
+  };
+  const handleTransactionError = (txHash: string) => {
+    setTransactionError(txHash);
   };
 
   const processModal = (type: string) => {
@@ -141,6 +152,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
   };
 
   const handleClickClaimAll = async () => {
+    let txHash = '';
     try {
       processModal('ALL CONTRACTS');
       processIcon('');
@@ -156,19 +168,26 @@ const ListContracts: React.FC<Props> = ({ data }) => {
       setIsMetamaskConfirmPopupOpening(true);
       const response: Record<string, any> = await claimAllNodes();
       setIsMetamaskConfirmPopupOpening(false);
-
-      if (!response.hash) {
-        throw new Error('Oop! Something went wrong');
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
       }
     } catch (err: any) {
-      setIsMetamaskConfirmPopupOpening(false);
-      if (!openStatus) setOpenStatus(true);
-      setStatus(STATUS[1]);
-      dispatch(unSetIsClaimingReward());
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        if (!openStatus) setOpenStatus(true);
+        setStatus(STATUS[1]);
+        dispatch(unSetIsClaimingReward());
+      }
     }
   };
 
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
+    let txHash = '';
     try {
       processModal(formatCType(cType));
       processIcon(cType);
@@ -186,47 +205,58 @@ const ListContracts: React.FC<Props> = ({ data }) => {
       const response: Record<string, any> = await claimNodeByNode(nodeIndex);
       setIsMetamaskConfirmPopupOpening(false);
 
-      if (!response.hash) {
-        throw new Error('Oop! Something went wrong');
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
       }
     } catch (e: any) {
-      setIsMetamaskConfirmPopupOpening(false);
-      if (!openStatus) setOpenStatus(true);
-      if (e.code === -32603) {
-        createToast({
-          message: errorMessage.REWARDS_NOT_READY.message,
-          type: 'error',
-        });
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        if (!openStatus) setOpenStatus(true);
+        if (e.code === -32603) {
+          createToast({
+            message: errorMessage.REWARDS_NOT_READY.message,
+            type: 'error',
+          });
+        }
+        setStatus(STATUS[1]);
+        dispatch(unSetIsClaimingReward());
       }
-      setStatus(STATUS[1]);
-      dispatch(unSetIsClaimingReward());
     }
   };
+  useEffect(() => {
+    if (transactionError !== '' && claimingTransactionHash === transactionError) {
+      setIsMetamaskConfirmPopupOpening(false);
+      if (!openStatus) setOpenStatus(true);
+      setStatus(STATUS[1]);
+      dispatch(unSetIsClaimingReward());
+      setTransactionError('');
+    }
+  }, [claimingTransactionHash, transactionError]);
+
   useEffect(() => {
     // if user close loading popup, claim reward status listener will be closed
     if (!openStatus && isClaimingReward && !isMetamaskConfirmPopupOpening) {
       dispatch(unSetIsClaimingReward());
+      setClaimingTransactionHash('');
+      setTransactionHasCompleted('');
+      setTransactionError('');
     }
   }, [openStatus, isClaimingReward, isMetamaskConfirmPopupOpening]);
 
   useEffect(() => {
-    const provider = contractWithSigner();
-    const claimRewardListener = (address: string) => {
-      if (address === currentUserAddress) {
-        setOpenStatus(true);
-        setStatus(STATUS[0]);
-        dispatch(unSetIsClaimingReward());
-      }
-    };
-    if (isClaimingReward) {
-      provider.once('RewardCashoutOne', claimRewardListener);
-      provider.once('RewardCashoutAll', claimRewardListener);
+    if (claimingTransactionHash === transactionHashCompleted && claimingTransactionHash !== '') {
+      setOpenStatus(true);
+      setStatus(STATUS[0]);
+      dispatch(unSetIsClaimingReward());
+      setClaimingTransactionHash('');
+      setTransactionHasCompleted('');
     }
-    return () => {
-      provider.off('RewardCashoutOne', claimRewardListener);
-      provider.off('RewardCashoutAll', claimRewardListener);
-    };
-  }, [isClaimingReward, currentUserAddress]);
+  }, [claimingTransactionHash, transactionHashCompleted]);
 
   return (
     <Wrapper>
