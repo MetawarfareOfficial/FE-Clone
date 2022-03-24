@@ -1,8 +1,8 @@
 import { localStorageSwapSettingKey } from 'consts/swap';
 
 interface SwapSettingData {
-  slippage: String;
-  deadline: String;
+  slippage: string;
+  deadline: string;
 }
 
 export const getSwapSettingData = (): SwapSettingData | null => {

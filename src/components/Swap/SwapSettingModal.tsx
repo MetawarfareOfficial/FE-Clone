@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
 import {
@@ -32,6 +32,7 @@ import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { getSwapSettingData } from 'helpers';
 import { deadlineInputRegex, defaultSettingData, localStorageSwapSettingKey, slippageInputRegex } from 'consts/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
+import { errorMessage } from 'messages/errorMessages';
 // import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 
 interface Props {
@@ -311,43 +312,43 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
 
   const handleSlippageChange = (value: string) => {
     if (slippageInputRegex.test(value) || value.trim() === '') {
-      const error = validateSlippageInput(value);
-      if (error !== '' || errors.slippageError !== '') {
-        setErrors({
-          ...errors,
-          slippageError: error,
-        });
-      }
       const newSettings = {
         ...settings,
         slippage: value,
       };
       setSetting(newSettings);
-      if (error === '') {
-        localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
-      }
     }
   };
 
   const handleDeadlineChange = (value: string) => {
     if (deadlineInputRegex.test(value) || value.trim() === '') {
-      const error = validateDeadlineInput(value);
-      if (error !== '' || errors.deadlineError !== '') {
-        setErrors({
-          ...errors,
-          deadlineError: error,
-        });
-      }
       const newSettings = {
         ...settings,
         deadline: value,
       };
       setSetting(newSettings);
-      if (error === '') {
-        localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSettings));
-      }
     }
   };
+
+  useEffect(() => {
+    let isDeadlineError = false;
+    let isSlippageError = false;
+
+    const deadLineError = validateDeadlineInput(settings.deadline);
+    if (deadLineError !== '' || errors.deadlineError !== '') {
+      isDeadlineError = true;
+    }
+    //
+    const slippageError = validateSlippageInput(settings.slippage);
+    if (slippageError !== '' || errors.slippageError !== '') {
+      isSlippageError = true;
+    }
+    setErrors({
+      deadlineError: isDeadlineError ? deadLineError : errors.deadlineError,
+      slippageError: isSlippageError ? slippageError : errors.slippageError,
+    });
+    localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(settings));
+  }, [settings]);
 
   const [tooltip, setTooltip] = useState<any>({
     slippage: false,
@@ -375,9 +376,17 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
 
         <CloseIcon
           onClick={() => {
-            if (errors.slippageError !== '' || errors.deadlineError !== '') {
-              localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(defaultSettingData));
-            }
+            const inValidSlippage =
+              errors.slippageError === errorMessage.SWAP_SLIPPAGE_INVALID.message ||
+              errors.slippageError === errorMessage.SWAP_SLIPPAGE_TOO_HIGH.message;
+
+            const invalidDeadline = errors.deadlineError === errorMessage.SWAP_SLIPPAGE_INVALID.message;
+
+            const newSetting = {
+              slippage: inValidSlippage ? defaultSettingData.slippage : settings.slippage,
+              deadline: invalidDeadline ? defaultSettingData.deadline : settings.deadline,
+            };
+            localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
             onClose();
           }}
         >
@@ -391,7 +400,9 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
             Slippage tolerance{' '}
             <ClickAwayListener onClickAway={() => handleTooltipToggle('slippage')}>
               <TooltipCustom
-                title={`The % slippage could range from 0.1% to 49.99%`}
+                title={`Your transaction will revert if the price changes 
+                unfavorably by more than this percentage. Default is  0.5%
+                `}
                 arrow
                 placement="right"
                 open={tooltip.slippage}

@@ -370,7 +370,7 @@ const SwapPage: React.FC<Props> = () => {
     setExchange,
     handleSwapToken,
   } = useSwapToken();
-  const { handleConvertRecentTransactionData } = useSwapHelpers();
+  const { handleConvertRecentTransactionData, checkSwapSetting } = useSwapHelpers();
   const tokenList = useAppSelector((state) => state.swap.tokenList);
   const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
   const dispatch = useAppDispatch();
@@ -478,7 +478,9 @@ const SwapPage: React.FC<Props> = () => {
     };
   }, [account, TokenAddressesLoading]);
 
-  useEffect;
+  useEffect(() => {
+    checkSwapSetting();
+  }, []);
 
   const fromTokens = tokenList.filter((item) => item.id === exchange.from);
   const ToTokens = tokenList.filter((item) => item.id === exchange.to);
