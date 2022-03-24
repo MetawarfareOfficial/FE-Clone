@@ -1,3 +1,6 @@
+import { defaultSettingData, localStorageSwapSettingKey } from 'consts/swap';
+import { getSwapSettingData } from 'helpers';
+import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { TokenItem } from 'pages/Swap';
 interface RecentTransaction {
@@ -12,19 +15,19 @@ interface RecentTransaction {
 export const useSwapHelpers = () => {
   const validateSlippageInput = (value: string): string => {
     if (!value || (value && value.trim()) === '') {
-      return 'Please enter a valid amount';
+      return errorMessage.SWAP_SLIPPAGE_INVALID.message;
     } else if (Number(value) < 0.1) {
-      return `Your transaction may fail`;
-    } else if (Number(value) >= 5) {
-      return `Your transaction may be frontrun`;
+      return errorMessage.SWAP_SLIPPAGE_TOO_SMALL.message;
     } else if (Number(value) >= 50) {
-      return `Enter a valid slippage percentage`;
+      return errorMessage.SWAP_SLIPPAGE_TOO_HIGH.message;
+    } else if (Number(value) >= 5) {
+      return errorMessage.SWAP_SLIPPAGE_HIGH.message;
     }
     return '';
   };
   const validateDeadlineInput = (value: string) => {
     if (!value || (value && value.trim() === '') || Number(value) > 9999999999) {
-      return 'Please enter a valid amount';
+      return errorMessage.SWAP_SLIPPAGE_INVALID.message;
     }
     return '';
   };
@@ -41,9 +44,27 @@ export const useSwapHelpers = () => {
       };
     });
   };
+  const checkSwapSetting = () => {
+    const settings = getSwapSettingData();
+    if (settings) {
+      const deadLineError = validateDeadlineInput(settings.deadline);
+      const slippageError = validateSlippageInput(settings.slippage);
+      const inValidSlippage =
+        slippageError === errorMessage.SWAP_SLIPPAGE_INVALID.message ||
+        slippageError === errorMessage.SWAP_SLIPPAGE_TOO_HIGH.message;
+
+      const invalidDeadline = deadLineError === errorMessage.SWAP_SLIPPAGE_INVALID.message;
+      const newSetting = {
+        slippage: inValidSlippage ? defaultSettingData.slippage : settings.slippage,
+        deadline: invalidDeadline ? defaultSettingData.deadline : settings.deadline,
+      };
+      localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
+    }
+  };
   return {
     validateSlippageInput,
     validateDeadlineInput,
     handleConvertRecentTransactionData,
+    checkSwapSetting,
   };
 };
