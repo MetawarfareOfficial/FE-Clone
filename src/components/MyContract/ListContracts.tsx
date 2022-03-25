@@ -274,19 +274,21 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
       <Box>
         {data && data.length > 0 ? (
-          data.map((item, i) => (
-            <ContractDetail
-              key={i}
-              mintDate={item.mintDate}
-              type={item.type}
-              initial={item.initial}
-              name={item.name}
-              rewards={item.rewards}
-              current={item.current}
-              nodeIndex={data.length - i - 1}
-              onClaimClick={handleClickClaimNodeByNode}
-            />
-          ))
+          data
+            .filter((r) => r.mintDate !== '')
+            .map((item, i) => (
+              <ContractDetail
+                key={i}
+                mintDate={item.mintDate}
+                type={item.type}
+                initial={item.initial}
+                name={item.name}
+                rewards={item.rewards}
+                current={item.current}
+                nodeIndex={data.length - i - 1}
+                onClaimClick={handleClickClaimNodeByNode}
+              />
+            ))
         ) : (
           <EmptyContracts>{currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}</EmptyContracts>
         )}

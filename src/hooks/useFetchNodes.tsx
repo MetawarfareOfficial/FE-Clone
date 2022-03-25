@@ -13,6 +13,11 @@ export function useFetchNodes(crtNodeOk?: boolean) {
     try {
       if (address) {
         const response = await getNameOfNodes();
+        if (response[0] === '') {
+          dispatch(setNodes(0));
+          return;
+        }
+
         const nodes = response[0].split('#');
         dispatch(setNodes(nodes.length));
       }
@@ -25,6 +30,11 @@ export function useFetchNodes(crtNodeOk?: boolean) {
     try {
       if (address) {
         const response = await contractWithSignerInstance.functions.getContsNames.call({});
+        if (response[0] === '') {
+          dispatch(setNodes(0));
+          return;
+        }
+
         const nodes = response[0].split('#');
         dispatch(setNodes(nodes.length));
       }
