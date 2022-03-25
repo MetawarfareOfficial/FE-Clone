@@ -2,6 +2,15 @@ export const zeroXBlockAbi = [
   {
     anonymous: false,
     inputs: [
+      { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'tokens', type: 'uint256' },
+    ],
+    name: 'AddLiquidity',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
       { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
       { indexed: true, internalType: 'address', name: 'spender', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'value', type: 'uint256' },
@@ -101,12 +110,26 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: '_lastBuyOnLaunch',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'address', name: 'owner', type: 'address' },
       { internalType: 'address', name: 'spender', type: 'address' },
     ],
     name: 'allowance',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'antiBotEnabled',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -327,13 +350,6 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'getRewardAmountOf',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'getTotalConts',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -370,6 +386,20 @@ export const zeroXBlockAbi = [
     name: 'initialize',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'launchBuyLimit',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'launchBuyTimeout',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -501,6 +531,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'bool', name: '_enable', type: 'bool' }],
+    name: 'setEnableAntiBot',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'bool', name: '_enableCashout', type: 'bool' }],
     name: 'setEnableCashout',
     outputs: [],
@@ -510,6 +547,27 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'bool', name: 'value', type: 'bool' }],
     name: 'setEnableMintConts',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'newLimit', type: 'uint256' }],
+    name: 'setLaunchBuyLimit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'newTimeout', type: 'uint256' }],
+    name: 'setLaunchBuyTimeout',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newAddress', type: 'address' }],
+    name: 'setUSDCAddress',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
