@@ -10,13 +10,8 @@ import {
   TableBody,
   TableCellProps,
 } from '@mui/material';
-
-// interface TokenType {
-//   coin: string;
-//   name: string;
-//   amount: number;
-//   value: number;
-// }
+import { useAppSelector } from 'stores/hooks';
+import Skeleton from '@mui/material/Skeleton';
 
 interface Props {
   data?: Array<any>;
@@ -92,6 +87,8 @@ const TextToken = styled('div')`
 `;
 
 const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
+  const { loading } = useAppSelector((state) => state.holdings);
+
   return (
     <TableCustom>
       <Table size="small">
@@ -115,8 +112,21 @@ const TableTokens: React.FC<Props> = ({ data, fontSize }) => {
                       <ViewCoin alt="" src={item.icon} /> {item.name}
                     </TextToken>
                   </TableContentText>
-                  <TableContentText align="center">{item.amount}</TableContentText>
-                  <TableContentText align="center">${item.value}</TableContentText>
+                  {loading ? (
+                    <>
+                      <TableContentText align="center">
+                        <Skeleton variant="text" />
+                      </TableContentText>
+                      <TableContentText align="center">
+                        <Skeleton variant="text" />
+                      </TableContentText>
+                    </>
+                  ) : (
+                    <>
+                      <TableContentText align="center">{item.amount}</TableContentText>
+                      <TableContentText align="center">${item.value}</TableContentText>
+                    </>
+                  )}
                 </TableRow>
               ))
             : ''}
