@@ -39,7 +39,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
         .map((item: TokenDataTraderJoe) => ({
           date: Number(item.date),
           price: Number(item.priceUSD),
-          marketCap: Number(item.volumeUSD),
+          marketCap: Number(item.liquidityUSD),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
 

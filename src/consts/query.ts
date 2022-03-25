@@ -5,7 +5,9 @@ export const TokenQuery = `
       dayData(first: $first, orderBy: date, orderDirection: desc) {
         date
         volumeUSD
-        priceUSD
+        priceUSD,
+        liquidityUSD,
+        liquidity
       }
     }
   }
