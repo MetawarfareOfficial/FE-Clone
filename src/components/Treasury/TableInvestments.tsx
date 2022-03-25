@@ -370,7 +370,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
 
             {data.length === 0 && (
               <TableRowContent className="noData">
-                <TableCellContent colSpan={5}>
+                <TableCellContent colSpan={6}>
                   <TextNoData>No investments yet!</TextNoData>
                 </TableCellContent>
               </TableRowContent>
