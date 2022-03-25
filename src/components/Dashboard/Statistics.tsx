@@ -15,7 +15,7 @@ import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/typeReward';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
-import useFetchRewardAmount from '../../hooks/useFetchRewardAmount';
+import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
 
 interface Props {
   title?: string;
@@ -151,7 +151,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
         title: 'Token Price',
         value: data?.price ? formatPrice(String(data.price)) : '0.00',
         nameBtn: 'Buy now',
-        linkTo: 'https://traderjoexyz.com/home',
+        linkTo: 'https://traderjoexyz.com/trade/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
       },
       {
         title: 'MY CONTRACTS',

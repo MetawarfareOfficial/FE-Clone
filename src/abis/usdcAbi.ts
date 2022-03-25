@@ -2,12 +2,63 @@ export const usdcAbi = [
   { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
   {
     anonymous: false,
+    inputs: [{ indexed: false, internalType: 'uint256', name: 'chainId', type: 'uint256' }],
+    name: 'AddSupportedChainId',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'contractAddress', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'supplyIncrement', type: 'uint256' },
+    ],
+    name: 'AddSwapToken',
+    type: 'event',
+  },
+  {
+    anonymous: false,
     inputs: [
       { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
       { indexed: true, internalType: 'address', name: 'spender', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'value', type: 'uint256' },
     ],
     name: 'Approval',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [{ indexed: false, internalType: 'address', name: 'newBridgeRoleAddress', type: 'address' }],
+    name: 'MigrateBridgeRole',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'to', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { indexed: false, internalType: 'address', name: 'feeAddress', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'feeAmount', type: 'uint256' },
+      { indexed: false, internalType: 'bytes32', name: 'originTxId', type: 'bytes32' },
+    ],
+    name: 'Mint',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'contractAddress', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'supplyDecrement', type: 'uint256' },
+    ],
+    name: 'RemoveSwapToken',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'token', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+    ],
+    name: 'Swap',
     type: 'event',
   },
   {
@@ -19,6 +70,32 @@ export const usdcAbi = [
     ],
     name: 'Transfer',
     type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'chainId', type: 'uint256' },
+    ],
+    name: 'Unwrap',
+    type: 'event',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'chainId', type: 'uint256' }],
+    name: 'addSupportedChainId',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'contractAddress', type: 'address' },
+      { internalType: 'uint256', name: 'supplyIncrement', type: 'uint256' },
+    ],
+    name: 'addSwapToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
@@ -48,13 +125,27 @@ export const usdcAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
+    name: 'burn',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'address', name: 'account', type: 'address' },
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
-    name: 'burn',
+    name: 'burnFrom',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'chainIds',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -85,9 +176,19 @@ export const usdcAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: 'newBridgeRoleAddress', type: 'address' }],
+    name: 'migrateBridgeRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
-      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { internalType: 'address', name: 'feeAddress', type: 'address' },
+      { internalType: 'uint256', name: 'feeAmount', type: 'uint256' },
+      { internalType: 'bytes32', name: 'originTxId', type: 'bytes32' },
     ],
     name: 'mint',
     outputs: [],
@@ -98,6 +199,33 @@ export const usdcAbi = [
     inputs: [],
     name: 'name',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'contractAddress', type: 'address' },
+      { internalType: 'uint256', name: 'supplyDecrement', type: 'uint256' },
+    ],
+    name: 'removeSwapToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'token', type: 'address' },
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
+    ],
+    name: 'swap',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'token', type: 'address' }],
+    name: 'swapSupply',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -133,6 +261,16 @@ export const usdcAbi = [
     ],
     name: 'transferFrom',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { internalType: 'uint256', name: 'chainId', type: 'uint256' },
+    ],
+    name: 'unwrap',
+    outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },

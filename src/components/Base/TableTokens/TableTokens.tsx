@@ -19,7 +19,7 @@ import {
 // }
 
 interface Props {
-  data: Array<any>;
+  data?: Array<any>;
   fontSize?: string;
 }
 

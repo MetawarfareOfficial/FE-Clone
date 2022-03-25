@@ -2,7 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
-import { useAppSelector } from '../../stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 
 // import bgBorder from 'assets/images/bg-box-gradient.png';
 

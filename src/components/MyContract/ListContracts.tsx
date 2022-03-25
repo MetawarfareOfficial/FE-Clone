@@ -21,7 +21,7 @@ import { formatCType } from 'helpers/formatCType';
 import { errorMessage } from 'messages/errorMessages';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useToast } from 'hooks/useToast';
-import { infoMessage } from '../../messages/infoMessages';
+import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
   data: Array<any>;

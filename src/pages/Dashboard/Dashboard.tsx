@@ -9,8 +9,8 @@ import { toast } from 'react-toastify';
 import useFetchTokenData from 'hooks/useFetchTokenData';
 import { useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
-import useInterval from '../../hooks/useInterval';
-import { DELAY_TIME } from '../../consts/dashboard';
+import useInterval from 'hooks/useInterval';
+import { DELAY_TIME } from 'consts/dashboard';
 
 interface DashboardProps {
   name?: string;

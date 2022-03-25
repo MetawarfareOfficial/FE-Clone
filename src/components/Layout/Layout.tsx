@@ -49,7 +49,7 @@ import BuyLightIcon from 'assets/images/buy.svg';
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
 import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
-import { useWindowClose } from '../../hooks/useWindowClose';
+import { useWindowClose } from 'hooks/useWindowClose';
 
 interface Props {
   name?: string;
@@ -627,7 +627,12 @@ const Layout: React.FC<Props> = ({ children }) => {
                   <Box>
                     {open ? (
                       <ButtonBuy
-                        onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                        onClick={() =>
+                          window.open(
+                            'https://traderjoexyz.com/trade/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
+                            '_blank',
+                          )
+                        }
                         variant="contained"
                         color="primary"
                       >
@@ -636,7 +641,12 @@ const Layout: React.FC<Props> = ({ children }) => {
                     ) : (
                       <TooltipCustom title="Buy 0xB" arrow placement="right">
                         <ButtonIconAdd
-                          onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                          onClick={() =>
+                            window.open(
+                              'https://traderjoexyz.com/trade/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
+                              '_blank',
+                            )
+                          }
                           variant="outlined"
                           color="primary"
                         >

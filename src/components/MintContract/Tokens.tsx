@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
 
 import bgBox from 'assets/images/bg-box.png';
-import { useAppSelector } from '../../stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   title?: string;

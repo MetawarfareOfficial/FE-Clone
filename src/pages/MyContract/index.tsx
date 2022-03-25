@@ -64,6 +64,7 @@ const MyContract: React.FC<Props> = () => {
       if (!currentUserAddress) {
         throw new Error('user address is undefined');
       }
+
       const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentAPRs] = await Promise.all([
         getTimeCreatedOfNodes(),
         getNameOfNodes(),
@@ -74,6 +75,8 @@ const MyContract: React.FC<Props> = () => {
         getPriceAllNode(),
         getNodesCurrentAPR(),
       ]);
+
+      if (!mintDates.includes('#')) return;
 
       const dataPrices = _.flatten(prices);
       const _prices = {
