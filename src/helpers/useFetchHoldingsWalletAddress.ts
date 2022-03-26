@@ -9,7 +9,7 @@ import USDCoin from 'assets/images/coin-usd.svg';
 import AVAXCoin from 'assets/images/avalanche-avax-logo.svg';
 import axiosInstance from 'utils/AxiosInstance';
 import BigNumber from 'bignumber.js';
-import { formatReward } from './formatReward';
+import { formatReward } from 'helpers/formatReward';
 
 export const useFetchHoldingsWalletAddress = () => {
   const dispatch = useAppDispatch();

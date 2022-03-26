@@ -232,3 +232,11 @@ export const getTokenDistribution = async (): Promise<any[]> => {
     throw new Error('Oop! Something went wrong');
   }
 };
+
+export const getTotalSupply = async (): Promise<[BigNumber]> => {
+  try {
+    return contractWithoutSigner.functions.totalSupply();
+  } catch (e) {
+    throw new Error('Oop! Something went wrong');
+  }
+};
