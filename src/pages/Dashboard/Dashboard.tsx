@@ -11,8 +11,8 @@ import { useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/dashboard';
-import { getTotalSupply } from '../../helpers/interractiveContract';
-import { bigNumber2Number } from '../../helpers/formatNumber';
+import { getTotalSupply } from 'helpers/interractiveContract';
+import { bigNumber2Number } from 'helpers/formatNumber';
 import BigNumber from 'bignumber.js';
 
 interface DashboardProps {
