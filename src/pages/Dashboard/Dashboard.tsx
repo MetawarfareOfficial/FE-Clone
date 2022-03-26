@@ -56,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
 
       setDataChart(data);
     }
-  }, [tokenData]);
+  }, [tokenData, totalSupply]);
 
   useInterval(() => {
     refresh();
