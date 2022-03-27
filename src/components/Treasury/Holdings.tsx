@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'styles/menus.css';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
+import { Box, BoxProps, IconButton, Typography, TypographyProps } from '@mui/material';
 import { dataHoldings } from './data';
 import TableTokens from 'components/Base/TableTokens';
 import { useAppSelector } from 'stores/hooks';
@@ -9,6 +9,8 @@ import { useFetchHoldingsWalletAddress } from 'helpers/useFetchHoldingsWalletAdd
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface Props {
   title?: string;
@@ -36,7 +38,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '24px',
   lineHeight: '28px',
   color: theme.palette.mode === 'light' ? '#293247' : '#828282',
-  marginBottom: '30px',
+  // marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '20px',
@@ -120,6 +122,52 @@ const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#fff' : '#252525',
 }));
 
+const ToggleButton = styled(IconButton)(({ theme }) => ({
+  width: '18px',
+  height: '18px',
+  background:
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.light
+      : `linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)`,
+  borderRadius: '50%',
+  zIndex: 200,
+  position: 'absolute',
+  color: '#fff',
+  fontSize: '10px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+
+  svg: {
+    width: '16px',
+  },
+
+  '&:hover': {
+    backgroundColor: `${theme.palette.primary.light}`,
+    color: '#fff',
+  },
+}));
+
+function ButtonArrowLeft(props: any) {
+  const { className, onClick } = props;
+  return (
+    <div className={className} onClick={onClick}>
+      <ToggleButton>
+        <ChevronLeftIcon />
+      </ToggleButton>
+    </div>
+  );
+}
+
+function ButtonArrowRight(props: any) {
+  const { className, onClick } = props;
+  return (
+    <div className={className} onClick={onClick}>
+      <ToggleButton>
+        <ChevronRightIcon />
+      </ToggleButton>
+    </div>
+  );
+}
+
 const Holdings: React.FC<Props> = () => {
   const theme = useTheme();
 
@@ -138,19 +186,21 @@ const Holdings: React.FC<Props> = () => {
     infinite: false,
     slidesToShow: 3,
     swipeToSlide: true,
-    arrows: false,
+    arrows: true,
+    nextArrow: <ButtonArrowRight />,
+    prevArrow: <ButtonArrowLeft />,
   };
 
   return (
     <Wrapper>
       <Title>Holdings</Title>
 
-      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+      <Box sx={{ display: { xs: 'none', sm: 'block' }, padding: '0 30px' }}>
         <Box>
           <Slider {...settings}>
             {dataHoldingsResources.map((item, i) => (
               <Box key={i}>
-                <BoxItem sx={{ cursor: 'pointer', margin: '31px 31px 31px 0' }}>
+                <BoxItem sx={{ cursor: 'pointer', margin: '15px' }}>
                   <BoxDetail>
                     <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
                       {item.title}
