@@ -64,7 +64,7 @@ const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
   overflow: 'hidden',
   height: '100%',
   // minHeight: '288px',
-  boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.05)',
+  boxShadow: '0px 15px 37px -17px rgba(25, 21, 48, 0.05)',
   position: 'relative',
   padding: '1px',
   boxSizing: 'border-box',
