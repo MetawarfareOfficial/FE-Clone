@@ -20,29 +20,33 @@ export const useFetchHoldingsWalletAddress = () => {
     const uAvax = `${process.env.REACT_APP_API_URL_PRICE_TOKEN_TO_USD}/${process.env.REACT_APP_AVAX_CONTRACT_ADDRESS}`;
 
     try {
-      const price0xb = await axiosInstance.get(uOxb);
-      const priceAvax = await axiosInstance.get(uAvax);
-      const priceUsdc = await axiosInstance.get(uUsdc);
+      const [price0xb, priceAvax, priceUsdc] = await Promise.all([
+        axiosInstance.get(uOxb),
+        axiosInstance.get(uAvax),
+        axiosInstance.get(uUsdc),
+      ]);
 
       return [
-        { name: '0xb', price: bigNumber2NumberV3(price0xb.data) },
-        { name: 'Avax', price: bigNumber2NumberV3(priceAvax.data) },
-        { name: 'Usdc', price: bigNumber2NumberV3(priceUsdc.data) },
+        { name: '0xB', price: bigNumber2NumberV3(price0xb.data) },
+        { name: 'AVAX', price: bigNumber2NumberV3(priceAvax.data) },
+        { name: 'USDC', price: bigNumber2NumberV3(priceUsdc.data) },
       ];
     } catch (e) {
       return [
-        { name: '0xb', price: '0' },
-        { name: 'Avax', price: '0' },
-        { name: 'Usdc', price: '0' },
+        { name: '0xB', price: '0' },
+        { name: 'AVAX', price: '0' },
+        { name: 'USDC', price: '0' },
       ];
     }
   };
 
   const fetchBalanceAssetsWallet = async (address: string) => {
-    const _0xbBalance = await getBalanceTokenOf(address);
-    const _avaxBalance = await getBalanceNativeTokenOf(address);
-    const _usdcBalance = await getBalanceTokenUsdcOf(address);
-    const _prices = await fetchTokenPrices();
+    const [_0xbBalance, _avaxBalance, _usdcBalance, _prices] = await Promise.all([
+      getBalanceTokenOf(address),
+      getBalanceNativeTokenOf(address),
+      getBalanceTokenUsdcOf(address),
+      fetchTokenPrices(),
+    ]);
 
     const amount0xb = bigNumber2Number(_0xbBalance[0]);
     const value0xb = new BigNumber(_prices[0].price).times(amount0xb).toString();
@@ -54,9 +58,9 @@ export const useFetchHoldingsWalletAddress = () => {
     const valueUsdc = new BigNumber(_prices[2].price).times(amountUsdc).toString();
 
     return [
-      { name: '0xb', icon: OxBCoin, value: formatReward(value0xb), amount: formatReward(amount0xb) },
-      { name: 'Avax', icon: AVAXCoin, value: formatReward(valueAvax), amount: formatReward(amountAvax) },
-      { name: 'Usdc', icon: USDCoin, value: formatReward(valueUsdc), amount: formatReward(amountUsdc) },
+      { name: '0xB', icon: OxBCoin, value: formatReward(value0xb), amount: formatReward(amount0xb) },
+      { name: 'AVAX', icon: AVAXCoin, value: formatReward(valueAvax), amount: formatReward(amountAvax) },
+      { name: 'USDC', icon: USDCoin, value: formatReward(valueUsdc), amount: formatReward(amountUsdc) },
     ];
   };
 
@@ -64,11 +68,13 @@ export const useFetchHoldingsWalletAddress = () => {
     const [treasuryWallet, liquidityWallet, rewardWallet, devWallet] = await getHoldingsWalletAddress();
     const reserveRewardsWallet = '0xfa4eCa6D583a825B80146B87d10EB24fa79EEdCb';
 
-    const treasuryAssets = await fetchBalanceAssetsWallet(treasuryWallet[0]);
-    const liquidityAssets = await fetchBalanceAssetsWallet(liquidityWallet[0]);
-    const rewardAssets = await fetchBalanceAssetsWallet(rewardWallet[0]);
-    const devAssets = await fetchBalanceAssetsWallet(devWallet[0]);
-    const reserveRewardsAssets = await fetchBalanceAssetsWallet(reserveRewardsWallet);
+    const [treasuryAssets, liquidityAssets, rewardAssets, devAssets, reserveRewardsAssets] = await Promise.all([
+      fetchBalanceAssetsWallet(treasuryWallet[0]),
+      fetchBalanceAssetsWallet(liquidityWallet[0]),
+      fetchBalanceAssetsWallet(rewardWallet[0]),
+      fetchBalanceAssetsWallet(devWallet[0]),
+      fetchBalanceAssetsWallet(reserveRewardsWallet),
+    ]);
 
     return {
       treasury: treasuryAssets,

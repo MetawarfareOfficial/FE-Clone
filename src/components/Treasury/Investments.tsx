@@ -36,7 +36,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '24px',
   lineHeight: '28px',
   color: theme.palette.mode === 'light' ? '#293247' : '#828282',
-  marginBottom: '30px',
+  marginBottom: '15px',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '20px',
