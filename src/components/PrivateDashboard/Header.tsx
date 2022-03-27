@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { Link } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, BoxProps, Typography, TypographyProps, Tabs, TabsProps, Tab } from '@mui/material';
+import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 
 import { useAppSelector } from 'stores/hooks';
 import { formatUserAddress } from 'helpers';
 
 import ConnectWallet from 'components/ConnectWallet';
+import Filters from './Filters';
 
 import LogoImg from 'assets/images/logo.svg';
 import LogoDarkImg from 'assets/images/logo-dark.svg';
@@ -18,14 +20,19 @@ interface Props {
   wallet?: string;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   padding: '37px 25px 49px 20px',
   boxSizing: 'border-box',
   display: 'flex',
+  alignItems: 'center',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '20px',
+  },
 }));
 
-const BoxContent = styled(Box)<BoxProps>(() => ({
+const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   background: '#FFFFFF',
   boxShadow: '0px 20px 45px #F0EDF7',
   borderRadius: '10px',
@@ -41,6 +48,12 @@ const BoxContent = styled(Box)<BoxProps>(() => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+
+  [theme.breakpoints.down('lg')]: {
+    background: 'none',
+    boxShadow: 'unset',
+    padding: 0,
+  },
 }));
 
 const ViewLogo = styled(Box)<BoxProps>(() => ({
@@ -54,7 +67,7 @@ const ViewLogo = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const Wallet = styled(Box)<BoxProps>(() => ({
+const Wallet = styled(Box)<BoxProps>(({ theme }) => ({
   maxWidth: '126px',
   marginRight: '23px',
   overflow: 'hidden',
@@ -64,6 +77,10 @@ const Wallet = styled(Box)<BoxProps>(() => ({
     fontFamily: 'Poppins',
     fontSize: '12px',
     lineHeight: '18px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    display: 'none',
   },
 }));
 
@@ -80,112 +97,33 @@ const TitleWallet = styled(Typography)<TypographyProps>(({ theme }) => ({
   minWidth: '114px',
 }));
 
-const TabsCustom = styled(Tabs)<TabsProps>(() => ({
-  '.MuiTab-root': {
-    padding: '9px 0px',
-    minWidth: 'auto',
-    marginRight: '24px',
-    position: 'relative',
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '500',
-    fontSize: '16px',
-    lineHeight: '24px',
-    letterSpacing: '0.045em',
-    textTransform: 'capitalize',
-    color: 'rgba(35, 40, 89, 0.53)',
-
-    '&:last-child': {
-      margin: 0,
-    },
-
-    '&::before': {
-      content: '""',
-      width: '27px',
-      height: '2px',
-      background: '#fff',
-      position: 'absolute',
-      bottom: 0,
-      zIndex: '2',
-    },
-  },
-
-  '.Mui-selected': {
-    color: '#232859',
-
-    '&::before': {
-      background: '#0052FF',
-    },
-  },
-
-  '.MuiTabs-indicator': {
-    width: '0 !important',
-    display: 'none',
-  },
-}));
-
 const Header: React.FC<Props> = () => {
   const theme = useTheme();
+  const [width] = useWindowSize();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isLogin = useAppSelector((state) => state.user.isLogin);
-  const [filter, setFilter] = useState({
-    time: 4,
-    contract: 0,
-  });
-
-  const a11yProps = (index: number) => {
-    return {
-      id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
-    };
-  };
-
-  const handleChangeContract = (event: React.SyntheticEvent, newValue: number) => {
-    setFilter({
-      ...filter,
-      contract: newValue,
-    });
-  };
-
-  const handleChangeTime = (event: React.SyntheticEvent, newValue: number) => {
-    setFilter({
-      ...filter,
-      time: newValue,
-    });
-  };
 
   return (
     <Wrapper>
-      <BoxContent width={'291px'}>
+      {width > 1024 ? (
+        <BoxContent width={'291px'}>
+          <Link to="/">
+            <ViewLogo>
+              <img alt="" src={theme.palette.mode === 'light' ? LogoImg : LogoDarkImg} />
+            </ViewLogo>
+          </Link>
+        </BoxContent>
+      ) : (
         <Link to="/">
           <ViewLogo>
             <img alt="" src={theme.palette.mode === 'light' ? LogoImg : LogoDarkImg} />
           </ViewLogo>
         </Link>
-      </BoxContent>
+      )}
 
-      <BoxContent width={'calc(100% - 291px - 345px - 60px)'} sx={{ margin: '0 30px' }}>
-        <Box sx={{ marginRight: 'auto' }}>
-          <TabsCustom value={filter.contract} onChange={handleChangeContract} aria-label="basic tabs example">
-            <Tab label="Square" {...a11yProps(0)} />
-            <Tab label="Cube" {...a11yProps(1)} />
-            <Tab label="Tesseract" {...a11yProps(2)} />
-            <Tab label="All" {...a11yProps(3)} />
-          </TabsCustom>
-        </Box>
+      {width > 1024 && <Filters />}
 
-        <Box sx={{ marginLeft: 'auto' }}>
-          <TabsCustom value={filter.time} onChange={handleChangeTime} aria-label="basic tabs example">
-            <Tab label="D" {...a11yProps(0)} />
-            <Tab label="W" {...a11yProps(1)} />
-            <Tab label="M" {...a11yProps(2)} />
-            <Tab label="Y" {...a11yProps(3)} />
-            <Tab label="All" {...a11yProps(4)} />
-          </TabsCustom>
-        </Box>
-      </BoxContent>
-
-      <BoxContent width={'345px'} style={{ justifyContent: 'flex-end' }}>
+      <BoxContent width={'345px'} style={{ justifyContent: 'flex-end', marginLeft: 'auto' }}>
         {currentUserAddress && isLogin && (
           <Wallet>
             <span>Wallet</span>

@@ -6,10 +6,19 @@ interface Props {
   data: Array<any>;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   display: 'flex',
   margin: '40px 0',
+
+  [theme.breakpoints.down('lg')]: {
+    display: 'inline-block',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    display: 'inline-block',
+    margin: 0,
+  },
 }));
 
 const ViewLogo = styled(Box)<BoxProps>(() => ({
@@ -25,7 +34,7 @@ const ViewLogo = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const BoxItem = styled(Box)<BoxProps>(() => ({
+const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
   width: 'calc((100% - (68px * 4)) / 5)',
   display: 'inline-flex',
   padding: '20px',
@@ -43,6 +52,33 @@ const BoxItem = styled(Box)<BoxProps>(() => ({
     marginRight: '0',
   },
 
+  [theme.breakpoints.down('xl')]: {
+    width: 'calc((100% - (30px * 4)) / 5)',
+    margin: '0 15px',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    width: 'calc((100% - 40px) / 2)',
+    margin: '0 0 40px',
+    float: 'left',
+
+    '&:nth-child(even)': {
+      marginLeft: '40px',
+    },
+  },
+
+  [theme.breakpoints.down('md')]: {
+    border: '1px solid #E1E8FF',
+    boxShadow: 'unset',
+    width: 'calc((100% - 24px) / 2)',
+    margin: '0 0 24px',
+    padding: '19px',
+
+    '&:nth-child(even)': {
+      marginLeft: '24px',
+    },
+  },
+
   p: {
     fontFamily: 'Poppins',
     fontStyle: 'normal',
@@ -52,6 +88,11 @@ const BoxItem = styled(Box)<BoxProps>(() => ({
     textTransform: 'capitalize',
     color: '#5A5881',
     margin: '19px 0 4px',
+
+    [theme.breakpoints.down('md')]: {
+      fontSize: '14px',
+      lineHeight: '21px',
+    },
   },
 
   h4: {
@@ -63,6 +104,11 @@ const BoxItem = styled(Box)<BoxProps>(() => ({
     textTransform: 'capitalize',
     color: '#15134B',
     margin: '0',
+
+    [theme.breakpoints.down('md')]: {
+      fontSize: '24px',
+      lineHeight: '36px',
+    },
   },
 }));
 
