@@ -1,4 +1,5 @@
 import React from 'react';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Grid } from '@mui/material';
 
@@ -17,7 +18,7 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
   paddingBottom: '38px',
 }));
 
-const CardItem = styled(Box)<BoxProps>(() => ({
+const CardItem = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   background: '#FFFFFF',
   boxShadow: '0px 20px 45px #F0EDF7',
@@ -25,6 +26,15 @@ const CardItem = styled(Box)<BoxProps>(() => ({
   padding: '30px 20px',
   boxSizing: 'border-box',
   minHeight: '388px',
+
+  [theme.breakpoints.down('xl')]: {
+    minHeight: '200px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    border: '1px solid #E1E8FF',
+    boxShadow: 'unset',
+  },
 }));
 
 const CardHeader = styled(Box)<CardHeaderProps>(({ color }) => ({
@@ -72,18 +82,20 @@ const CardContent = styled(Box)<BoxProps>(() => ({
 }));
 
 const StatisticCharts: React.FC<Props> = ({ data }) => {
+  const [width] = useWindowSize();
+
   return (
     <Wrapper>
       <Grid container spacing={'26px'}>
         {data.map((item, i) => (
-          <Grid item md={4} key={i}>
+          <Grid item xs={12} md={6} lg={4} key={i}>
             <CardItem>
               <CardHeader color={item.color}>
                 <h5>{item.title}</h5>
                 <h6>{item.label}</h6>
               </CardHeader>
               <CardContent>
-                <div style={{ width: '100%', height: '287px' }}>
+                <div style={{ width: '100%', height: width > 1441 ? '287px' : width < 426 ? '160px' : '240px' }}>
                   <ChartDetail data={item.chartData} color={item.color} id={`chartView${i}`} />
                 </div>
               </CardContent>
