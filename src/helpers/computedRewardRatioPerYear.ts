@@ -4,7 +4,7 @@ import { truncateNumber } from 'helpers/formatPrice';
 
 export const calcRewardRatio = (earn: string | number, index: number): string => {
   if (index === 0) return earn.toString();
-  const earnedReward = new BigNumber(earn).times(0.9).toNumber();
+  const earnedReward = new BigNumber(earn).times(0.85).toNumber();
   return truncateNumber(earnedReward, 3);
 };
 
