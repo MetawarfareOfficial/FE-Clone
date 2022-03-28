@@ -38,10 +38,14 @@ import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/bx_help-circle-dark.svg';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { handleDisableToken, handleSetTokenBalances } from 'services/swap';
-import { intervalTime } from 'consts/swap';
-import { useToast } from 'hooks/useToast';
+import get from 'lodash/get';
+import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
+import { defaultSettingData, intervalTime } from 'consts/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
+import { getSwapSettingData } from 'helpers';
+import { removeCharacterInString } from 'helpers/removeCharacterInString';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -61,12 +65,17 @@ export interface TokenItem {
 }
 
 export interface Exchange {
-  from: SwapTokenId;
+  fromId: SwapTokenId;
   fromValue: number | null;
-  fromBalance: number;
-  to: SwapTokenId;
+  fromRawValue: number | null;
+  toId: SwapTokenId;
   toValue: number | null;
-  toBalance: number;
+  toRawValue: number | null;
+}
+export interface ExchangeItem {
+  id: SwapTokenId;
+  value: string | null;
+  rawValue: string | null;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -366,48 +375,145 @@ const SwapPage: React.FC<Props> = () => {
     getSwapTokenBalances,
     account,
     TokenAddressesLoading,
-    exchange,
-    setExchange,
     handleSwapToken,
+    loadEstimateToken,
   } = useSwapToken();
-  const { handleConvertRecentTransactionData, checkSwapSetting } = useSwapHelpers();
+  const {
+    handleConvertRecentTransactionData,
+    checkSwapSetting,
+    calculateSwapTokenRate,
+    calculateTradingFee,
+    getMinReceiveSwapToken,
+    calculatePriceImpact,
+  } = useSwapHelpers();
+
   const tokenList = useAppSelector((state) => state.swap.tokenList);
   const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
+  const isInsufficientError = useAppSelector((state) => state.swap.isInsufficientError);
+  const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);
+  const selectedName = useAppSelector((state) => state.swap.selectedName) as any;
+  const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
+  const exchange = useAppSelector((state) => state.swap.exchange);
   const dispatch = useAppDispatch();
-  const { createToast } = useToast();
+  const isEstimateFrom = useAppSelector((state) => state.swap.isEstimateFrom);
+  const swapTokenRates = useAppSelector((state) => state.swap.swapTokenRates);
+  const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
 
-  const [selectedName, setSelectedName] = useState<any>(null);
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
+  const [isSelectedFrom, setIsSelectedFrom] = useState(false);
   const [openRecent, setOpenRecent] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = event.target;
+    const inputValue = value !== null && value.trim() === '' ? null : value;
     if (name === 'from') {
-      setExchange({
-        ...exchange,
-        fromValue: Number(value),
+      dispatch(setSelectedName('from'));
+      loadEstimateToken({
+        _selectedName: 'from',
+        _exchangeFrom: {
+          id: exchange.fromId,
+          value: inputValue,
+          rawValue: inputValue,
+        },
+        _exchangeTo: {
+          id: exchange.toId,
+          value: exchange.toValue,
+          rawValue: exchange.toRawValue,
+        },
+        _tokenList: tokenList,
+        _isSwap: false,
+        _isEstimateFrom: isEstimateFrom,
+        _changeEstimateFrom: name !== selectedName,
       });
     } else {
-      setExchange({
-        ...exchange,
-        toValue: Number(value),
+      dispatch(setSelectedName('to'));
+      loadEstimateToken({
+        _selectedName: 'to',
+        _exchangeFrom: {
+          id: exchange.fromId,
+          value: exchange.fromValue,
+          rawValue: exchange.fromRawValue,
+        },
+        _exchangeTo: {
+          id: exchange.toId,
+          value: inputValue,
+          rawValue: inputValue,
+        },
+        _tokenList: tokenList,
+        _isSwap: false,
+        _isEstimateFrom: isEstimateFrom,
+        _changeEstimateFrom: name !== selectedName,
       });
     }
   };
 
   const handleChangeToken = (name: string) => {
-    setSelectedName(name);
+    if (name === 'from') {
+      setIsSelectedFrom(true);
+    } else {
+      setIsSelectedFrom(false);
+    }
     setOpenSelect(true);
   };
 
+  const handleSwapIconClick = () => {
+    try {
+      if (selectedName && !isLoadEstimateToken) {
+        if (selectedName === 'from') {
+          dispatch(setSelectedName('swap'));
+          loadEstimateToken({
+            _selectedName: 'to',
+            _exchangeFrom: {
+              id: exchange.toId,
+              value: exchange.toValue,
+              rawValue: exchange.toRawValue,
+            },
+            _exchangeTo: {
+              id: exchange.fromId,
+              value: exchange.fromValue,
+              rawValue: exchange.fromRawValue,
+            },
+            _tokenList: tokenList,
+            _isSwap: true,
+            _isEstimateFrom: isEstimateFrom,
+            _changeEstimateFrom: true,
+          });
+          return;
+        }
+      }
+      if (selectedName === 'to') {
+        dispatch(setSelectedName('swap'));
+
+        loadEstimateToken({
+          _selectedName: 'from',
+          _exchangeFrom: {
+            id: exchange.toId,
+            value: exchange.toValue,
+            rawValue: exchange.toRawValue,
+          },
+          _exchangeTo: {
+            id: exchange.fromId,
+            value: exchange.fromValue,
+            rawValue: exchange.fromRawValue,
+          },
+          _tokenList: tokenList,
+          _isSwap: true,
+          _isEstimateFrom: isEstimateFrom,
+          _changeEstimateFrom: true,
+        });
+        return;
+      }
+    } catch (error) {}
+  };
+
   const handleFromMax = () => {
-    setExchange({
-      ...exchange,
-      fromValue: exchange.fromBalance,
-    });
+    // setExchange({
+    //   ...exchange,
+    //   fromValue: exchange.fromBalance,
+    // });
   };
 
   const handleToggleSetting = () => {
@@ -419,10 +525,43 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   const handelSelectToken = (tokenId: SwapTokenId) => {
-    setExchange({
-      ...exchange,
-      [selectedName]: tokenId,
-    });
+    if (isSelectedFrom) {
+      dispatch(setSelectedName('swap'));
+      loadEstimateToken({
+        _selectedName: selectedName,
+        _exchangeFrom: {
+          id: tokenId,
+          value: exchange.fromValue,
+          rawValue: exchange.fromRawValue,
+        },
+        _exchangeTo: {
+          id: exchange.toId,
+          value: exchange.toValue,
+          rawValue: exchange.toRawValue,
+        },
+        _tokenList: tokenList,
+        _isSwap: true,
+        _isEstimateFrom: isEstimateFrom,
+      });
+    } else if (!isSelectedFrom) {
+      dispatch(setSelectedName('swap'));
+      loadEstimateToken({
+        _selectedName: selectedName,
+        _exchangeFrom: {
+          id: exchange.fromId,
+          value: exchange.fromValue,
+          rawValue: exchange.fromRawValue,
+        },
+        _exchangeTo: {
+          id: tokenId,
+          value: exchange.toValue,
+          rawValue: exchange.toRawValue,
+        },
+        _tokenList: tokenList,
+        _isSwap: true,
+        _isEstimateFrom: isEstimateFrom,
+      });
+    }
   };
 
   const handleToggleRecent = () => {
@@ -438,27 +577,45 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   const handleConfirm = async () => {
+    handleToggleConfirm();
+    handleToggleStatus();
     try {
-      await handleSwapToken();
-      handleToggleConfirm();
-      handleToggleStatus();
+      setSwapStatus('pending');
+      const transaction = await handleSwapToken(exchange, selectedName === 'to');
+      if (transaction.hash) {
+        await transaction.wait();
+        setSwapStatus('success');
+      }
     } catch (error: any) {
-      createToast({
-        message: error.message,
-        type: 'error',
-      });
+      setSwapStatus('error');
     }
   };
 
   useEffect(() => {
-    if (openSelect && selectedName === 'from') {
-      const selectableTokens = getSwappaleTokens(exchange.from);
+    if (openSelect && isSelectedFrom) {
+      const selectableTokens = getSwappaleTokens(exchange.fromId);
       dispatch(handleDisableToken(selectableTokens));
-    } else if (openSelect && selectedName === 'to') {
-      const selectableTokens = getSwappaleTokens(exchange.to);
+    } else if (openSelect && !isSelectedFrom) {
+      const selectableTokens = getSwappaleTokens(exchange.toId);
       dispatch(handleDisableToken(selectableTokens));
     }
-  }, [openSelect, selectedName, exchange]);
+  }, [openSelect, selectedName, exchange.toId, exchange.fromId, isSelectedFrom]);
+
+  useEffect(() => {
+    const selectedTokenId = exchange.fromId;
+    const selectedTokenValue = exchange.fromValue;
+    const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
+    if (selectedToken[0]) {
+      if (
+        selectedToken[0].balance === 0 ||
+        Number(removeCharacterInString(String(selectedToken[0].balance), ',')) < (selectedTokenValue || 0)
+      ) {
+        dispatch(setIsInsufficientError(true));
+      } else {
+        dispatch(setIsInsufficientError(false));
+      }
+    }
+  }, [exchange.fromId, exchange.fromValue, tokenList]);
 
   const handleGetTokenBalances = async () => {
     const newTokens = await getSwapTokenBalances(tokenList);
@@ -481,10 +638,15 @@ const SwapPage: React.FC<Props> = () => {
   useEffect(() => {
     checkSwapSetting();
   }, []);
+  const fromTokens = tokenList.filter((item) => item.id === exchange.fromId);
+  const toTokens = tokenList.filter((item) => item.id === exchange.toId);
 
-  const fromTokens = tokenList.filter((item) => item.id === exchange.from);
-  const ToTokens = tokenList.filter((item) => item.id === exchange.to);
+  const isInvalidInput =
+    selectedName === 'from'
+      ? exchange.fromValue === null || Number(exchange.fromValue) === 0
+      : exchange.toValue === null || Number(exchange.toValue) === 0;
 
+  const settingData = getSwapSettingData() ? getSwapSettingData() : {};
   return (
     <Wrapper>
       <Box sx={{ width: '100%' }}>
@@ -513,14 +675,28 @@ const SwapPage: React.FC<Props> = () => {
 
               <ExchangeBox>
                 <ExchangeHeader>
-                  <h5>From</h5>
-                  <p>Balance: {fromTokens.length > 0 ? fromTokens[0].balance : 0}</p>
+                  <h5>From{isEstimateFrom ? '(estimated)' : ''}</h5>
+                  <p>
+                    Balance:{' '}
+                    {fromTokens.length > 0
+                      ? Number(fromTokens[0].balance) > 0
+                        ? formatForNumberLessThanCondition({
+                            value: fromTokens[0].balance,
+                            minValueCondition: 0.000001,
+                            callback: formatPrice,
+                            callBackParams: [6],
+                            addLessThanSymbol: true,
+                          })
+                        : 0.0
+                      : 0.0}
+                  </p>
                 </ExchangeHeader>
 
                 <InputSwap
+                  tokenIds={[exchange.fromId, exchange.toId]}
                   tokens={TokensList}
                   value={exchange.fromValue}
-                  selected={exchange.from}
+                  selected={exchange.fromId}
                   onChange={handleChange}
                   onChangeToken={handleChangeToken}
                   onMax={handleFromMax}
@@ -529,22 +705,16 @@ const SwapPage: React.FC<Props> = () => {
                 />
               </ExchangeBox>
 
-              <ExchangeIcon
-                style={{
-                  cursor: 'pointer',
-                }}
-              >
+              <ExchangeIcon>
                 {theme.palette.mode === 'light' ? (
                   <SwapIcon
+                    style={{
+                      cursor: 'pointer',
+                    }}
                     onClick={() => {
-                      setExchange({
-                        from: exchange.to,
-                        fromBalance: exchange.toBalance,
-                        fromValue: exchange.toValue,
-                        to: exchange.from,
-                        toBalance: exchange.fromBalance,
-                        toValue: exchange.fromValue,
-                      });
+                      if (!isLoadEstimateToken) {
+                        handleSwapIconClick();
+                      }
                     }}
                   />
                 ) : (
@@ -553,14 +723,9 @@ const SwapPage: React.FC<Props> = () => {
                       cursor: 'pointer',
                     }}
                     onClick={() => {
-                      setExchange({
-                        from: exchange.to,
-                        fromBalance: exchange.toBalance,
-                        fromValue: exchange.toValue,
-                        to: exchange.from,
-                        toBalance: exchange.fromBalance,
-                        toValue: exchange.fromValue,
-                      });
+                      if (!isLoadEstimateToken) {
+                        handleSwapIconClick();
+                      }
                     }}
                   />
                 )}
@@ -568,14 +733,28 @@ const SwapPage: React.FC<Props> = () => {
 
               <ExchangeBox>
                 <ExchangeHeader>
-                  <h5>To(estimated)</h5>
-                  <p>Balance: {ToTokens.length > 0 ? ToTokens[0].balance : 0}</p>
+                  <h5>To{!isEstimateFrom ? '(estimated)' : ''}</h5>
+                  <p>
+                    Balance:{' '}
+                    {toTokens.length > 0
+                      ? Number(toTokens[0].balance) > 0
+                        ? formatForNumberLessThanCondition({
+                            value: toTokens[0].balance,
+                            minValueCondition: 0.000001,
+                            callback: formatPrice,
+                            callBackParams: [6],
+                            addLessThanSymbol: true,
+                          })
+                        : 0.0
+                      : 0.0}
+                  </p>
                 </ExchangeHeader>
 
                 <InputSwap
+                  tokenIds={[exchange.fromId, exchange.toId]}
                   tokens={tokenList}
                   value={exchange.toValue}
-                  selected={exchange.to}
+                  selected={exchange.toId}
                   onChange={handleChange}
                   onChangeToken={handleChangeToken}
                   onMax={handleFromMax}
@@ -583,23 +762,30 @@ const SwapPage: React.FC<Props> = () => {
                 />
               </ExchangeBox>
 
-              {exchange.fromValue && exchange.fromValue !== 0 && exchange.toValue && exchange.toValue !== 0 ? (
+              {!isInsufficientError &&
+              exchange.fromValue &&
+              Number(exchange.fromValue) !== 0 &&
+              exchange.toValue &&
+              Number(exchange.toValue) !== 0 ? (
                 <>
                   <BillingBox>
                     <BillingLine>
                       <h4>Rate</h4>
-                      <p>1 0xBlock per 0.0001 AVAX</p>
+                      <p>
+                        {`${calculateSwapTokenRate(Number(exchange.fromRawValue), Number(exchange.toRawValue))} 
+                        ${exchange.fromId.toUpperCase()} Per ${exchange.toId.toUpperCase()}`}
+                      </p>
                     </BillingLine>
                     <BillingLine>
                       <h4>Slippage tolerance</h4>
-                      <p>0.7%</p>
+                      <p>{get(settingData, 'slippage', 0)}%</p>
                     </BillingLine>
 
                     <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
 
                     <BillingLine>
                       <h4>
-                        Min receive{' '}
+                        {!isEstimateFrom ? 'Min Receive' : 'Max Sold'}
                         <TooltipCustom
                           title={`Your transaction will revert if there is a large, unfavorable 
                           price movement before it is confirmed`}
@@ -614,7 +800,13 @@ const SwapPage: React.FC<Props> = () => {
                           )}
                         </TooltipCustom>
                       </h4>
-                      <p>0.0001</p>
+                      <p>
+                        {getMinReceiveSwapToken(
+                          Number(get(getSwapSettingData(), 'slippage') || defaultSettingData.slippage),
+                          isEstimateFrom ? exchange.fromValue : exchange.toValue,
+                          isEstimateFrom,
+                        )}
+                      </p>
                     </BillingLine>
 
                     <BillingLine>
@@ -634,7 +826,10 @@ const SwapPage: React.FC<Props> = () => {
                           )}
                         </TooltipCustom>
                       </h4>
-                      <p>0.0001 0xBlock</p>
+                      <p>
+                        {`${calculateTradingFee(exchange.fromValue)} 
+                        ${exchange.fromId.toLocaleUpperCase()}`}
+                      </p>
                     </BillingLine>
 
                     <BillingLine>
@@ -653,17 +848,30 @@ const SwapPage: React.FC<Props> = () => {
                           )}
                         </TooltipCustom>
                       </h4>
-                      <p>0.10%</p>
+                      <p>{calculatePriceImpact(swapTokenRates.current, swapTokenRates.afterSwap)}%</p>
                     </BillingLine>
                   </BillingBox>
-
-                  <SwapSubmit fullWidth onClick={handleToggleConfirm}>
-                    Swap
-                  </SwapSubmit>
                 </>
               ) : (
                 ''
               )}
+              <SwapSubmit
+                fullWidth
+                onClick={() => {
+                  if (isInvalidInput || isInsufficientError || isInsufficientLiquidityError) {
+                    return;
+                  }
+                  handleToggleConfirm();
+                }}
+              >
+                {isInvalidInput
+                  ? 'Please enter a valid amount'
+                  : isInsufficientLiquidityError
+                  ? 'Insufficient liquidity for this trade'
+                  : isInsufficientError
+                  ? `Insufficient ${exchange.fromId} balance`
+                  : 'Swap'}
+              </SwapSubmit>
             </SwapBox>
           </Grid>
         </Grid>
@@ -675,7 +883,7 @@ const SwapPage: React.FC<Props> = () => {
         onClose={handleToggleSelect}
         tokens={tokenList}
         onSelect={handelSelectToken}
-        active={selectedName === 'from' ? exchange.from : exchange.to}
+        active={selectedName === 'from' ? exchange.fromId : exchange.toId}
       />
       <SwapRecentTransactionsModal
         open={openRecent}
@@ -683,13 +891,30 @@ const SwapPage: React.FC<Props> = () => {
         data={handleConvertRecentTransactionData(recentTransactions, tokenList)}
       />
       <SwapConfirmModal
+        tradingFee={`${calculateTradingFee(Number(exchange.fromValue))} 
+        ${exchange.fromId.toLocaleUpperCase()}`}
         tokenList={tokenList}
-        exchange={exchange}
+        swapRate={`${calculateSwapTokenRate(Number(exchange.fromRawValue), Number(exchange.toRawValue))} 
+        ${exchange.fromId.toUpperCase()} Per ${exchange.toId.toUpperCase()}`}
+        exchange={{
+          from: exchange.fromId,
+          fromValue: String(exchange.fromValue),
+          to: exchange.toId,
+          toValue: String(exchange.toValue),
+        }}
+        slippage={(settingData as any).slippage}
+        minReceive={getMinReceiveSwapToken(
+          Number(get(getSwapSettingData(), 'slippage') || defaultSettingData.slippage),
+          isEstimateFrom ? Number(exchange.fromValue) : Number(exchange.toValue),
+          isEstimateFrom,
+        )}
         open={openConfirm}
         onClose={handleToggleConfirm}
         onConfirm={handleConfirm}
       />
-      {openStatus && <SwapStatusModal open={openStatus} onClose={handleToggleStatus} />}
+      {openStatus && swapStatus != null && (
+        <SwapStatusModal status={swapStatus} open={openStatus} onClose={handleToggleStatus} />
+      )}
     </Wrapper>
   );
 };

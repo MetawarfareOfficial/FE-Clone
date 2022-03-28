@@ -1,8 +1,10 @@
+import BigNumber from 'bignumber.js';
 import { defaultSettingData, localStorageSwapSettingKey } from 'consts/swap';
 import { getSwapSettingData } from 'helpers';
 import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { TokenItem } from 'pages/Swap';
+import get from 'lodash/get';
 interface RecentTransaction {
   amountIn: string;
   amountOut: string;
@@ -33,8 +35,12 @@ export const useSwapHelpers = () => {
   };
   const handleConvertRecentTransactionData = (data: RecentTransaction[], tokens: TokenItem[]) => {
     return data.map((item) => {
-      const tokenIn = tokens.filter((tokenItem) => tokenItem.id === item.tokenIn.symbol.toLocaleLowerCase());
-      const tokenOut = tokens.filter((tokenItem) => tokenItem.id === item.tokenOut.symbol.toLocaleLowerCase());
+      const tokenIn = tokens.filter(
+        (tokenItem) => tokenItem.id === (get(item, 'tokenIn.symbol') || 'null').toLocaleLowerCase(),
+      );
+      const tokenOut = tokens.filter(
+        (tokenItem) => tokenItem.id === (get(item, 'tokenOut.symbol') || 'null').toLocaleLowerCase(),
+      );
       return {
         from: tokenIn.length > 0 ? tokenIn[0].logo : null,
         to: tokenOut.length > 0 ? tokenOut[0].logo : null,
@@ -61,10 +67,38 @@ export const useSwapHelpers = () => {
       localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
     }
   };
+  const calculateSwapTokenRate = (tokenInAmount: number, tokenOutAmount: number) => {
+    return new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toFixed(6);
+  };
+  const getMinReceiveSwapToken = (slippagePercent: number, amount: number, isEstimateFrom: boolean) => {
+    let result = '0';
+    if (!isEstimateFrom) {
+      result = new BigNumber(amount).minus(new BigNumber(amount).multipliedBy(slippagePercent).div(100)).toFixed(6);
+    } else if (isEstimateFrom) {
+      result = new BigNumber(amount).plus(new BigNumber(amount).multipliedBy(slippagePercent).div(100)).toFixed(6);
+    }
+    return Number(result) > 0.000001 ? result : '<0.000001';
+  };
+  const calculateTradingFee = (amountIn: number) => {
+    const result = new BigNumber(amountIn).multipliedBy(0.25).div(100).toFixed(6);
+    return Number(result) > 0.000001 ? result : '<0.000001';
+  };
+  const calculatePriceImpact = (currentRate: number, afterSwapRate: number) => {
+    return currentRate === Infinity || !Boolean(currentRate)
+      ? new BigNumber(1).div(1e10).toString()
+      : new BigNumber(100)
+          .minus(new BigNumber(currentRate).div(new BigNumber(afterSwapRate)).multipliedBy(100))
+          .abs()
+          .toFixed(2);
+  };
   return {
     validateSlippageInput,
     validateDeadlineInput,
     handleConvertRecentTransactionData,
     checkSwapSetting,
+    calculateSwapTokenRate,
+    calculateTradingFee,
+    getMinReceiveSwapToken,
+    calculatePriceImpact,
   };
 };

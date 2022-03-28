@@ -24,6 +24,8 @@ import {
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { SwapTokenId } from 'hooks/swap';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   open: boolean;
@@ -260,7 +262,15 @@ const SwapTokensModal: React.FC<Props> = ({ open, tokens, onSelect, onClose }) =
                 <Avatar sx={{ width: '27px', height: '27px' }} src={item.logo} />
               </ListItemAvatar>
               <ListItemText secondary={item.name} />
-              <BalanceValue>{item.balance}</BalanceValue>
+              <BalanceValue>
+                {formatForNumberLessThanCondition({
+                  value: item.balance,
+                  minValueCondition: 0.000001,
+                  callback: formatPrice,
+                  callBackParams: [6],
+                  addLessThanSymbol: true,
+                })}
+              </BalanceValue>
             </ListItemButton>
           ))}
         </ListView>

@@ -7,7 +7,7 @@ import { formatPrice } from 'helpers/formatPrice';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import get from 'lodash/get';
 import { Exchange, TokenItem } from 'pages/Swap';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAppSelector } from 'stores/hooks';
 import { useLoadSwapData } from './useLoadSwapData';
 
@@ -25,18 +25,10 @@ const SwappableToken = {
 
 export const useSwapToken = () => {
   const { account } = useWeb3React();
-  const { loading: TokenAddressesLoading, loadRecentTransaction } = useLoadSwapData();
-  const { getBalanceNativeTokenOf, multipleCall, swap0xbToAvax } = useInteractiveContract();
+  const { loading: TokenAddressesLoading, loadRecentTransaction, loadEstimateToken } = useLoadSwapData();
+  const { getBalanceNativeTokenOf, multipleCall, swap0xbToTokens } = useInteractiveContract();
   const tokenList = useAppSelector((state) => state.swap.tokenList);
 
-  const [exchange, setExchange] = useState<Exchange>({
-    from: SwapTokenId.AVAX,
-    fromValue: null,
-    fromBalance: 10,
-    to: SwapTokenId.OXB,
-    toValue: null,
-    toBalance: 0,
-  });
   const tokenAddresses = useAppSelector((state) => state.swap.tokenAddress);
 
   const handleGetNativeToken = async (address: string) => {
@@ -45,21 +37,19 @@ export const useSwapToken = () => {
     return avaxAmount;
   };
 
-  const handleSwapToken = async () => {
-    if (exchange.from === SwapTokenId.OXB && exchange.to === SwapTokenId.AVAX) {
-      if (exchange.fromValue) {
-        await swap0xbToAvax(exchange.fromValue);
-      } else {
-        throw new Error('swap amount token cannot be null');
-      }
-    } else if (exchange.from === SwapTokenId.OXB && exchange.to === SwapTokenId.USDC) {
-      if (exchange.fromValue) {
-        await swap0xbToAvax(exchange.fromValue);
-      } else {
-        throw new Error('swap amount token cannot be null');
-      }
-    } else {
+  const handleSwapToken = async (_exchange: Exchange, isExactOut: boolean) => {
+    const tokenIn = tokenList.filter((item) => _exchange.fromId === item.id);
+    const tokenOut = tokenList.filter((item) => _exchange.toId === item.id);
+    if (_exchange.fromId !== SwapTokenId.OXB) {
       throw new Error('only 0xb -> Avax and 0xb -> usdc is supported');
+    } else if (tokenIn.length === 0 || tokenOut.length === 0) {
+      throw new Error('some thing wrong');
+    } else if (!_exchange.toValue || !_exchange.fromValue) {
+      throw new Error('some thing wrong');
+    } else {
+      const amount = isExactOut ? _exchange.toValue : _exchange.fromValue;
+      const decimal = isExactOut ? tokenOut[0].decimal : tokenIn[0].decimal;
+      return await swap0xbToTokens(tokenOut[0].address, amount, String(decimal), isExactOut);
     }
   };
 
@@ -99,7 +89,7 @@ export const useSwapToken = () => {
           const tokenDecimal = get(results, `[${item.id}].callsReturnContext[1].returnValues[0]`, 18);
           return {
             ...item,
-            balance: formatPrice(new BigNumber(rawBalance.hex).div(Number(`1e${tokenDecimal}`)).toString(), 4),
+            balance: new BigNumber(rawBalance.hex).div(Number(`1e${tokenDecimal}`)).toString(),
           };
         }
       });
@@ -138,8 +128,7 @@ export const useSwapToken = () => {
     getSwappaleTokens,
     getSwapTokenBalances,
     handleSwapToken,
-    exchange,
-    setExchange,
+    loadEstimateToken,
     account,
     TokenAddressesLoading,
   };
