@@ -8,7 +8,6 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  // Slide,
   IconButton,
   IconButtonProps,
   List,
@@ -20,7 +19,6 @@ import {
   Box,
   BoxProps,
 } from '@mui/material';
-// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { SwapTokenId } from 'hooks/swap';
