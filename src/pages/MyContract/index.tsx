@@ -76,7 +76,9 @@ const MyContract: React.FC<Props> = () => {
         getNodesCurrentAPR(),
       ]);
 
-      if (!mintDates.includes('#')) return;
+      if (!mintDates[0].includes('#')) {
+        return;
+      }
 
       const dataPrices = _.flatten(prices);
       const _prices = {
