@@ -76,7 +76,7 @@ const MyContract: React.FC<Props> = () => {
         getNodesCurrentAPR(),
       ]);
 
-      if (!mintDates[0].includes('#')) {
+      if (!mintDates[0].includes('#') && mintDates[0] === '') {
         return;
       }
 

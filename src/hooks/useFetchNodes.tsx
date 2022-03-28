@@ -14,7 +14,7 @@ export function useFetchNodes(crtNodeOk?: boolean) {
       if (address) {
         const response = await getNameOfNodes();
 
-        if (!response[0].includes('#')) {
+        if (!response[0].includes('#') && response[0] === '') {
           dispatch(setNodes(0));
           return;
         }
