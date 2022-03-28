@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { TextField, TextFieldProps, InputAdornment, Button, ButtonProps, Link, LinkProps } from '@mui/material';
 
 import { ReactComponent as DownIcon } from 'assets/images/down-icon.svg';
 import { ReactComponent as DownDarkIcon } from 'assets/images/down-dark-icon.svg';
+import debounce from 'lodash/debounce';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { setIsLoadEstimateToken } from 'services/swap';
+import isEqual from 'lodash/isEqual';
 
 interface Props {
   name: string;
@@ -16,6 +20,7 @@ interface Props {
   onMax?: () => void;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeToken: (name: string) => void;
+  tokenIds: string[];
 }
 
 const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
@@ -142,17 +147,58 @@ const InputSwap: React.FC<Props> = ({
   onChangeToken,
   tokens,
   isMax,
+  tokenIds,
 }) => {
+  const [inputValue, setInputValue] = useState(String(value));
   const theme = useTheme();
   const selectedToken = tokens.filter((item) => item.id === selected)[0];
+  const selectedName = useAppSelector((state) => state.swap.selectedName);
+  const currentExchangeIdsRef = useRef(tokenIds);
+  const selectedNameRef = useRef(selectedName);
+  const dispatch = useAppDispatch();
+
+  const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(event);
+  };
+  const debounceRef = useRef(
+    debounce((event) => {
+      handleValueChange(event);
+    }, 500),
+  );
+
+  useEffect(() => {
+    if (!isEqual(currentExchangeIdsRef.current, tokenIds) || !isEqual(selectedNameRef.current, selectedName)) {
+      debounceRef.current = debounce((event) => {
+        handleValueChange(event);
+      }, 500);
+      currentExchangeIdsRef.current = tokenIds;
+      selectedNameRef.current = selectedName;
+      return () => {
+        debounceRef.current.cancel();
+      };
+    }
+  }, [selectedName, tokenIds]);
+
+  useEffect(() => {
+    if (selectedName !== name) {
+      setInputValue(String(value));
+    }
+  }, [value, selectedName]);
+
   return (
     <TextFieldSwap
       placeholder="0.0000"
       type="number"
       name={name}
       fullWidth
-      value={value}
-      onChange={onChange}
+      value={inputValue}
+      onChange={(event) => {
+        dispatch(setIsLoadEstimateToken(true));
+        if (debounceRef.current) {
+          setInputValue(event.target.value);
+          debounceRef.current(event);
+        }
+      }}
       InputProps={{
         inputProps: {
           max: max,

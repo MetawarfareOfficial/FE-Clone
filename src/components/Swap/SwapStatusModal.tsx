@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 
 import {
@@ -8,7 +8,6 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  // Slide,
   IconButton,
   IconButtonProps,
   Box,
@@ -18,7 +17,6 @@ import {
   Link,
   LinkProps,
 } from '@mui/material';
-// import { TransitionProps } from '@mui/material/transitions';
 
 import Loading from 'components/Base/Loading';
 
@@ -31,6 +29,7 @@ import ErrorDarkGif from 'assets/images/error.gif';
 
 interface Props {
   open: boolean;
+  status: String | null;
   onClose: () => void;
 }
 
@@ -184,20 +183,8 @@ const ViewTokenLink = styled(Link)<LinkProps>(() => ({
   margin: '0',
 }));
 
-const STATUS = ['success', 'error'];
-
-const SwapStatusModal: React.FC<Props> = ({ open, onClose }) => {
+const SwapStatusModal: React.FC<Props> = ({ open, onClose, status }) => {
   const theme = useTheme();
-  const [loading, setLoading] = useState(true);
-  const [status] = useState<'success' | 'error' | any>(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      const randomStatus = STATUS[Math.floor(Math.random() * STATUS.length)];
-      setLoading(false);
-      status(randomStatus);
-    }, 5000);
-  }, []);
 
   return (
     <Wrapper
@@ -216,7 +203,7 @@ const SwapStatusModal: React.FC<Props> = ({ open, onClose }) => {
       </Header>
 
       <Content>
-        {loading ? (
+        {status === 'pending' ? (
           <ViewLoading>
             <Loading />
           </ViewLoading>

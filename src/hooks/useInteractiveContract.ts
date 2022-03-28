@@ -1,5 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, ethers } from 'ethers';
+import { BigNumber as BN } from 'bignumber.js';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { contractType } from 'consts/typeReward';
 import { getNetWorkRpcUrl } from 'connectors';
@@ -14,6 +15,10 @@ interface MultiCallItem {
   methodName: string;
   methodParameters: any[];
 }
+
+BN.config({
+  EXPONENTIAL_AT: 100,
+});
 
 export interface MultiCallList {
   reference: string;
@@ -255,17 +260,19 @@ export const useInteractiveContract = () => {
     }
   };
 
-  const swap0xbToAvax = async (amount: number): Promise<any[]> => {
+  const swap0xbToTokens = async (token: string, amount: number, tokenDecimal: string, isExactOut: boolean) => {
     try {
-      return contractWithSigner.functions.swapAVAX(amount);
-    } catch (e) {
-      throw new Error('Oop! Something went wrong');
-    }
-  };
-
-  const swap0xbToUsdc = async (amount: number): Promise<any[]> => {
-    try {
-      return contractWithSigner.functions.swapUSDC(amount);
+      if (isExactOut) {
+        return contractWithSigner.functions.swap0xBForExactToken(
+          token,
+          new BN(amount).multipliedBy(Number(`1e${tokenDecimal}`)).toString(),
+        );
+      } else {
+        return contractWithSigner.functions.swapExact0xBForToken(
+          token,
+          new BN(amount).multipliedBy(Number(`1e${process.env.REACT_APP_CONTRACT_DECIMAL}`)).toString(),
+        );
+      }
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -285,6 +292,73 @@ export const useInteractiveContract = () => {
     );
     const results: ContractCallResults = await multiCall.call(contractCallContext);
     return results.results;
+  };
+
+  const getAmountTokenOut = async (
+    targetToken: string,
+    amount: number,
+    tokenOutDecimal: number,
+    is0xbOutput: boolean,
+    isNativeToken: boolean,
+  ) => {
+    const multiplied = isNativeToken ? 1 : `1e${tokenOutDecimal}`;
+    return await multipleCall([
+      {
+        reference: 'swapTokenRates',
+        contractAddress: contractAddress,
+        abi: zeroXBlockAbi,
+        calls: [
+          {
+            reference: 'current',
+            methodName: 'getOutputAmount',
+            methodParameters: [
+              is0xbOutput,
+              targetToken,
+              new BN(1).multipliedBy(Number(multiplied)).toString().replace('.', ''),
+            ],
+          },
+          {
+            reference: 'afterSwap',
+            methodName: 'getOutputAmount',
+            methodParameters: [
+              is0xbOutput,
+              targetToken,
+              new BN(amount).multipliedBy(Number(`1e${tokenOutDecimal}`)).toString(),
+            ],
+          },
+        ],
+      },
+    ]);
+  };
+  const getAmountTokenIn = async (
+    targetToken: string,
+    amount: number,
+    tokenOutDecimal: number,
+    is0xbOutput: boolean,
+  ) => {
+    return await multipleCall([
+      {
+        reference: 'swapTokenRates',
+        contractAddress: contractAddress,
+        abi: zeroXBlockAbi,
+        calls: [
+          {
+            reference: 'current',
+            methodName: 'getInputAmount',
+            methodParameters: [is0xbOutput, targetToken, new BN(1).toString()],
+          },
+          {
+            reference: 'afterSwap',
+            methodName: 'getInputAmount',
+            methodParameters: [
+              is0xbOutput,
+              targetToken,
+              new BN(amount).multipliedBy(Number(`1e${tokenOutDecimal}`)).toString(),
+            ],
+          },
+        ],
+      },
+    ]);
   };
 
   return {
@@ -314,8 +388,9 @@ export const useInteractiveContract = () => {
     getTokenDistribution,
     getPairAddress,
     multipleCall,
-    swap0xbToAvax,
-    swap0xbToUsdc,
+    swap0xbToTokens,
+    getAmountTokenOut,
+    getAmountTokenIn,
     contractWithSigner,
     provider,
   };

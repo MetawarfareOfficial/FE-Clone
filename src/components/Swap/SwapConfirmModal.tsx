@@ -8,7 +8,6 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  // Slide,
   IconButton,
   IconButtonProps,
   Avatar,
@@ -21,7 +20,6 @@ import {
   ButtonProps,
   Divider,
 } from '@mui/material';
-// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 
@@ -32,14 +30,23 @@ import { ReactComponent as SwapConvertDarkIcon } from 'assets/images/ic_round-sw
 
 import AvaxImg from 'assets/images/avax-token.png';
 import OxImg from 'assets/images/0x-token.png';
-import { Exchange, TokenItem } from 'pages/Swap';
+import { TokenItem } from 'pages/Swap';
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  exchange: Exchange;
+  exchange: {
+    from: String;
+    fromValue: string;
+    to: String;
+    toValue: String;
+  };
   tokenList: TokenItem[];
+  swapRate: String;
+  slippage: string;
+  minReceive: String;
+  tradingFee: string;
 }
 
 interface TooltipCustomProps extends TooltipProps {
@@ -278,7 +285,17 @@ const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
   },
 }));
 
-const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm, exchange, tokenList }) => {
+const SwapConfirmModal: React.FC<Props> = ({
+  open,
+  onClose,
+  onConfirm,
+  exchange,
+  tokenList,
+  swapRate,
+  slippage,
+  minReceive,
+  tradingFee,
+}) => {
   const theme = useTheme();
   const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
   const toTokenInfo = tokenList.filter((item) => item.id === exchange.to);
@@ -328,11 +345,11 @@ const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm, exchange,
         <BillingBox>
           <BillingLine>
             <h4>Rate</h4>
-            <p>1 0xBlock per 0.0001 AVAX</p>
+            <p>{swapRate}</p>
           </BillingLine>
           <BillingLine>
             <h4>Slippage tolerance</h4>
-            <p>0.7%</p>
+            <p>{slippage}%</p>
           </BillingLine>
 
           <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
@@ -354,7 +371,7 @@ const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm, exchange,
                 )}
               </TooltipCustom>
             </h4>
-            <p>0.0001</p>
+            <p>{minReceive}</p>
           </BillingLine>
 
           <BillingLine>
@@ -374,7 +391,7 @@ const SwapConfirmModal: React.FC<Props> = ({ open, onClose, onConfirm, exchange,
                 )}
               </TooltipCustom>
             </h4>
-            <p>0.0001 0xBlock</p>
+            <p>{tradingFee}</p>
           </BillingLine>
 
           <BillingLine>
