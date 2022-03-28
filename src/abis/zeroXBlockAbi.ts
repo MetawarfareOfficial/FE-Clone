@@ -490,6 +490,16 @@ export const zeroXBlockAbi = [
   },
   { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
+    inputs: [
+      { internalType: 'address', name: 'userAddr', type: 'address' },
+      { internalType: 'uint256', name: 'tokens', type: 'uint256' },
+    ],
+    name: 'rescueMissentToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'rewardsFee',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
