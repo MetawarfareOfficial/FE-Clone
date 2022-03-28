@@ -1,7 +1,7 @@
 import { getInstanceEtherJs } from 'BaseEtherJs';
 import { ethers } from 'ethers';
 import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
-import { usdcAbi } from 'abis/usdcAbi';
+import { usdcEAbi } from 'abis/usdcEAbi';
 
 declare let window: any;
 
@@ -11,8 +11,8 @@ export const contractWithSigner = () => {
   return new ethers.Contract(contractAddress, zeroXBlockAbi, signer);
 };
 
-export const contractUsdc = () => {
+export const contractUsdcE = () => {
   const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URLS);
-  const contractAddress = process.env.REACT_APP_USDC_CONTRACT_ADDRESS || '';
-  return new ethers.Contract(contractAddress, usdcAbi, provider);
+  const contractAddress = process.env.REACT_APP_USDC_E_CONTRACT_ADDRESS || '';
+  return new ethers.Contract(contractAddress, usdcEAbi, provider);
 };

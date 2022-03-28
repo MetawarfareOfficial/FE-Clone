@@ -7,27 +7,27 @@ const DEFAULT_DATA = {
   treasury: [
     { name: '0xB', icon: OxBCoin, value: '0', amount: '0' },
     { name: 'AVAX', icon: AVAXCoin, value: '0', amount: '0' },
-    { name: 'USDC', icon: USDCoin, value: '0', amount: '0' },
+    { name: 'USDC.e', icon: USDCoin, value: '0', amount: '0' },
   ],
   liquidity: [
     { name: '0xB', icon: OxBCoin, value: '0', amount: '0' },
     { name: 'AVAX', icon: AVAXCoin, value: '0', amount: '0' },
-    { name: 'USDC', icon: USDCoin, value: '0', amount: '0' },
+    { name: 'USDC.e', icon: USDCoin, value: '0', amount: '0' },
   ],
   rewards: [
     { name: '0xB', icon: OxBCoin, value: '0', amount: '0' },
     { name: 'AVAX', icon: AVAXCoin, value: '0', amount: '0' },
-    { name: 'USDC', icon: USDCoin, value: '0', amount: '0' },
+    { name: 'USDC.e', icon: USDCoin, value: '0', amount: '0' },
   ],
   dev_marketing: [
     { name: '0xB', icon: OxBCoin, value: '0', amount: '0' },
     { name: 'AVAX', icon: AVAXCoin, value: '0', amount: '0' },
-    { name: 'USDC', icon: USDCoin, value: '0', amount: '0' },
+    { name: 'USDC.e', icon: USDCoin, value: '0', amount: '0' },
   ],
   reserve_rewards: [
     { name: '0xB', icon: OxBCoin, value: '0', amount: '0' },
     { name: 'AVAX', icon: AVAXCoin, value: '0', amount: '0' },
-    { name: 'USDC', icon: USDCoin, value: '0', amount: '0' },
+    { name: 'USDC.e', icon: USDCoin, value: '0', amount: '0' },
   ],
 };
 

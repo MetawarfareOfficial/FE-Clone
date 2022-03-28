@@ -1,4 +1,4 @@
-export const usdcAbi = [
+export const usdcEAbi = [
   { inputs: [], stateMutability: 'nonpayable', type: 'constructor' },
   {
     anonymous: false,

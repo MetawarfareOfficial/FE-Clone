@@ -13,29 +13,30 @@ import { formatReward } from 'helpers/formatReward';
 
 export const useFetchHoldingsWalletAddress = () => {
   const dispatch = useAppDispatch();
+  const baseUrl = process.env.REACT_APP_API_URL_PRICE_TOKEN_TO_USD;
 
   const fetchTokenPrices = async () => {
-    const uOxb = `${process.env.REACT_APP_API_URL_PRICE_TOKEN_TO_USD}/${process.env.REACT_APP_CONTRACT_ADDRESS}`;
-    const uUsdc = `${process.env.REACT_APP_API_URL_PRICE_TOKEN_TO_USD}/${process.env.REACT_APP_USDC_CONTRACT_ADDRESS}`;
-    const uAvax = `${process.env.REACT_APP_API_URL_PRICE_TOKEN_TO_USD}/${process.env.REACT_APP_AVAX_CONTRACT_ADDRESS}`;
+    const uOxb = `${baseUrl}/${process.env.REACT_APP_CONTRACT_ADDRESS}`;
+    const uUsdcE = `${baseUrl}/${process.env.REACT_APP_USDC_E_CONTRACT_ADDRESS}`;
+    const uAvax = `${baseUrl}/${process.env.REACT_APP_AVAX_CONTRACT_ADDRESS}`;
 
     try {
       const [price0xb, priceAvax, priceUsdc] = await Promise.all([
         axiosInstance.get(uOxb),
         axiosInstance.get(uAvax),
-        axiosInstance.get(uUsdc),
+        axiosInstance.get(uUsdcE),
       ]);
 
       return [
         { name: '0xB', price: bigNumber2NumberV3(price0xb.data) },
         { name: 'AVAX', price: bigNumber2NumberV3(priceAvax.data) },
-        { name: 'USDC', price: bigNumber2NumberV3(priceUsdc.data) },
+        { name: 'USDC.e', price: bigNumber2NumberV3(priceUsdc.data) },
       ];
     } catch (e) {
       return [
         { name: '0xB', price: '0' },
         { name: 'AVAX', price: '0' },
-        { name: 'USDC', price: '0' },
+        { name: 'USDC.e', price: '0' },
       ];
     }
   };
@@ -54,13 +55,13 @@ export const useFetchHoldingsWalletAddress = () => {
     const amountAvax = bigNumber2Number(_avaxBalance);
     const valueAvax = new BigNumber(_prices[1].price).times(amountAvax).toString();
 
-    const amountUsdc = bigNumber2Number(_usdcBalance[0], 1e6);
-    const valueUsdc = new BigNumber(_prices[2].price).times(amountUsdc).toString();
+    const amountUsdcE = bigNumber2Number(_usdcBalance[0], 1e6);
+    const valueUsdcE = new BigNumber(_prices[2].price).times(amountUsdcE).toString();
 
     return [
       { name: '0xB', icon: OxBCoin, value: formatReward(value0xb), amount: formatReward(amount0xb) },
       { name: 'AVAX', icon: AVAXCoin, value: formatReward(valueAvax), amount: formatReward(amountAvax) },
-      { name: 'USDC', icon: USDCoin, value: formatReward(valueUsdc), amount: formatReward(amountUsdc) },
+      { name: 'USDC.e', icon: USDCoin, value: formatReward(valueUsdcE), amount: formatReward(amountUsdcE) },
     ];
   };
 
