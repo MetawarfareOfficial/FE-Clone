@@ -50,7 +50,7 @@ import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
 import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
 import { useWindowClose } from 'hooks/useWindowClose';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+// import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 interface Props {
   name?: string;
@@ -625,38 +625,38 @@ const Layout: React.FC<Props> = ({ children }) => {
                 </SideMenus>
 
                 <SideAction>
-                  <Box>
-                    {open ? (
-                      <ButtonBuy
-                        onClick={() =>
-                          window.open(
-                            'https://dexscreener.com/avalanche/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
-                            '_blank',
-                          )
-                        }
-                        variant="contained"
-                        color="primary"
-                      >
-                        Dexscreener
-                      </ButtonBuy>
-                    ) : (
-                      <TooltipCustom title="Dexscreener" arrow placement="right">
-                        <ButtonIconAdd
-                          onClick={() =>
-                            window.open(
-                              'https://dexscreener.com/avalanche/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
-                              '_blank',
-                            )
-                          }
-                          variant="outlined"
-                          color="primary"
-                        >
-                          {/*<img className="addImg" alt="import token icon" src={LinkIcon} />*/}
-                          <OpenInNewIcon color={'primary'} className="addImg" />
-                        </ButtonIconAdd>
-                      </TooltipCustom>
-                    )}
-                  </Box>
+                  {/*<Box>*/}
+                  {/*  {open ? (*/}
+                  {/*    <ButtonBuy*/}
+                  {/*      onClick={() =>*/}
+                  {/*        window.open(*/}
+                  {/*          'https://dexscreener.com/avalanche/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',*/}
+                  {/*          '_blank',*/}
+                  {/*        )*/}
+                  {/*      }*/}
+                  {/*      variant="contained"*/}
+                  {/*      color="primary"*/}
+                  {/*    >*/}
+                  {/*      Dexscreener*/}
+                  {/*    </ButtonBuy>*/}
+                  {/*  ) : (*/}
+                  {/*    <TooltipCustom title="Dexscreener" arrow placement="right">*/}
+                  {/*      <ButtonIconAdd*/}
+                  {/*        onClick={() =>*/}
+                  {/*          window.open(*/}
+                  {/*            'https://dexscreener.com/avalanche/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',*/}
+                  {/*            '_blank',*/}
+                  {/*          )*/}
+                  {/*        }*/}
+                  {/*        variant="outlined"*/}
+                  {/*        color="primary"*/}
+                  {/*      >*/}
+                  {/*        /!*<img className="addImg" alt="import token icon" src={LinkIcon} />*!/*/}
+                  {/*        <OpenInNewIcon color={'primary'} className="addImg" />*/}
+                  {/*      </ButtonIconAdd>*/}
+                  {/*    </TooltipCustom>*/}
+                  {/*  )}*/}
+                  {/*</Box>*/}
 
                   <Box>
                     {open ? (
