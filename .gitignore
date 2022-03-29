@@ -27,4 +27,4 @@ yarn-error.log*
 .vscode/
 *.log
 logs
-*.lock
+ls-files
