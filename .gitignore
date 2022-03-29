@@ -28,3 +28,4 @@ yarn-error.log*
 *.log
 logs
 *.lock
+ls-files
