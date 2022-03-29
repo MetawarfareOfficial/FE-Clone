@@ -12,9 +12,9 @@ phases:
         - echo Prebuild command
         - node -v
         - npm -v
-        - npm install
         - npm install --global yarn
-        - echo Installed!
+        - echo Yarn installed!
+        - yarn
         - printenv
 
   build:
