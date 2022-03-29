@@ -10,7 +10,6 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
-  // Slide,
   IconButton,
   IconButtonProps,
   Tooltip,
@@ -23,7 +22,6 @@ import {
   ButtonProps,
   ClickAwayListener,
 } from '@mui/material';
-// import { TransitionProps } from '@mui/material/transitions';
 
 import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/help-dark.svg';
@@ -33,11 +31,12 @@ import { getSwapSettingData } from 'helpers';
 import { deadlineInputRegex, defaultSettingData, localStorageSwapSettingKey, slippageInputRegex } from 'consts/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { errorMessage } from 'messages/errorMessages';
-// import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  setSlippage: (value: string) => void;
+  // setDeadline: (value: string) => void;
 }
 
 interface DialogTitleCustomProps {
@@ -77,15 +76,6 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     },
   },
 }));
-
-// const Transition = React.forwardRef(function Transition(
-//   props: TransitionProps & {
-//     children: React.ReactElement<any, any>;
-//   },
-//   ref: React.Ref<unknown>,
-// ) {
-//   return <Slide direction="up" ref={ref} {...props} />;
-// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -301,7 +291,7 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
   borderRight: '1px solid rgba(56, 100, 255, 0.2)',
 }));
 
-const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
+const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
   const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
   const { validateSlippageInput, validateDeadlineInput } = useSwapHelpers();
   const [errors, setErrors] = useState({
@@ -387,6 +377,8 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose }) => {
               deadline: invalidDeadline ? defaultSettingData.deadline : settings.deadline,
             };
             localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
+            // setDeadline(newSetting.deadline);
+            setSlippage(newSetting.slippage);
             onClose();
           }}
         >

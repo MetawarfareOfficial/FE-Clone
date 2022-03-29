@@ -1,27 +1,26 @@
+import { InsufficientReservesError, Percent, Route, TokenAmount, Trade, TradeType } from '@traderjoe-xyz/sdk';
 import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
 import { recentTransactionQuery } from 'consts/query';
 import { intervalTime } from 'consts/swap';
-import { convertGetAmountTokenData } from 'helpers/convertGetAmountTokenData';
-import { convertSwapTokenRate } from 'helpers/convertSwapTokenRate';
+import { getSwapSettingData } from 'helpers';
+import { formatPercent } from 'helpers/formatPrice';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
+import { useToast } from 'hooks/useToast';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment';
-import { ExchangeItem } from 'pages/Swap';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
-  handleSetCloneExchange,
-  handleSetExchange,
-  handleSetIsEstimateFrom,
   setIsInsufficientLiquidityError,
   setIsLoadEstimateToken,
+  setPairData,
+  setPairInfoLoaded,
   setRecentTransactions,
-  setSelectedName,
-  setSwapTokenRates,
-  setTokenAddress,
 } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useQuery } from 'urql';
+import { useSwapHelpers } from './useSwapHelpers';
 import { SwapTokenId } from './useSwapToken';
 
 export interface TokenAddresses {
@@ -30,28 +29,23 @@ export interface TokenAddresses {
   [SwapTokenId.USDC]: string;
 }
 
-interface Test {
-  _selectedName: string | null;
-  _tokenList: any;
-  _exchangeFrom: ExchangeItem;
-  _exchangeTo: ExchangeItem;
-  _isSwap: boolean;
-  _isEstimateFrom: boolean;
-  _changeEstimateFrom?: boolean;
+interface loadEstimateTokenParams {
+  isExactInput: boolean;
+  tokenIn: SwapTokenId;
+  tokenOut: SwapTokenId;
+  amount: string;
 }
 
 export const useLoadSwapData = () => {
-  const { getAmountTokenOut, getAmountTokenIn } = useInteractiveContract();
+  const { getPairsInfo } = useInteractiveContract();
   const { account } = useWeb3React();
+  const { calculateTradingFee } = useSwapHelpers();
+  const pairsData = useAppSelector((state) => state.swap.pairsData);
+  const swap = useAppSelector((state) => state.swap);
 
-  const selectedName = useAppSelector((state) => state.swap.selectedName);
-  const tokenList = useAppSelector((state) => state.swap.tokenList);
-  const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
-  const cloneExchange = useAppSelector((state) => state.swap.cloneExchange);
-  const exchange = useAppSelector((state) => state.swap.exchange);
-  const isEstimateFrom = useAppSelector((state) => state.swap.isEstimateFrom);
+  const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(true);
+  const { createToast } = useToast();
 
   const [recentTransactionResult, reExecuteLoadRecentTransactionQuery] = useQuery({
     query: recentTransactionQuery,
@@ -68,24 +62,6 @@ export const useLoadSwapData = () => {
     ),
   });
 
-  const loadSwapData = () => {
-    setLoading(true);
-    try {
-      // load token address
-      const usdcTokenAddress = process.env.REACT_APP_USDC_TOKEN_ADDRESS;
-      const OxbTokenAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
-      const AvaxTokenAddress = process.env.REACT_APP_NATIVE_TOKEN_ADDRESS;
-      dispatch(
-        setTokenAddress({
-          [SwapTokenId.OXB]: OxbTokenAddress || '',
-          [SwapTokenId.AVAX]: AvaxTokenAddress || '',
-          [SwapTokenId.USDC]: usdcTokenAddress || '',
-        }),
-      );
-    } catch {}
-    setLoading(false);
-  };
-
   const loadRecentTransaction = () => {
     reExecuteLoadRecentTransactionQuery({ requestPolicy: 'network-only' });
   };
@@ -94,260 +70,212 @@ export const useLoadSwapData = () => {
     dispatch(setRecentTransactions(get(recentTransactionResult, 'data.swaps', [])));
   }, [recentTransactionResult.data]);
 
-  const loadEstimateToken = async ({
-    _selectedName,
-    _tokenList,
-    _exchangeFrom,
-    _exchangeTo,
-    _isSwap = false,
-    _isEstimateFrom,
-    _changeEstimateFrom = false,
-  }: Test) => {
-    dispatch(setIsLoadEstimateToken(true));
+  const loadEstimateToken = ({ isExactInput, tokenIn, tokenOut, amount }: loadEstimateTokenParams) => {
+    const settingData = getSwapSettingData();
+
     try {
-      const tokenOut = _tokenList.filter((item: any) => item.id === _exchangeTo.id);
-      const tokenIn = _tokenList.filter((item: any) => item.id === _exchangeFrom.id);
-      if (tokenOut[0] && tokenIn[0]) {
-        const is0xbOut = tokenOut[0].id === SwapTokenId.OXB;
-        if (_selectedName === 'from') {
-          if (!_exchangeFrom.value || Number(_exchangeFrom.value) <= 0) {
-            dispatch(
-              handleSetCloneExchange({
-                fromId: _exchangeFrom.id,
-                fromValue: _exchangeFrom.value,
-                fromRawValue: _exchangeFrom.rawValue,
-                toId: _exchangeTo.id,
-                toValue: null,
-                toRawValue: null,
-              }),
-            );
-            if (_isSwap) {
-              dispatch(
-                handleSetExchange({
-                  fromId: _exchangeFrom.id,
-                  fromValue: _exchangeFrom.value,
-                  fromRawValue: _exchangeFrom.rawValue,
-                  toId: _exchangeTo.id,
-                  toValue: null,
-                  toRawValue: null,
-                }),
-              );
-            }
-          } else {
-            const response = await getAmountTokenOut(
-              is0xbOut ? tokenIn[0].address : tokenOut[0].address,
-              Number(_exchangeFrom.value) || 0,
-              Number(tokenOut[0].decimal),
-              tokenOut[0].id === SwapTokenId.OXB,
-              tokenIn[0].id === SwapTokenId.AVAX,
-            );
-            const results = convertGetAmountTokenData(response, _exchangeFrom.id, _exchangeTo.id) as any;
-            if (results) {
-              const afterSwapResult = results.afterSwap;
-              const currentSwapResult = results.current;
-              if (afterSwapResult.length <= 0) {
-                throw new Error('IsInsufficient Liquidity Error');
-              }
-              dispatch(
-                handleSetCloneExchange({
-                  fromId: _exchangeFrom.id,
-                  fromValue: _exchangeFrom.value,
-                  fromRawValue: _exchangeFrom.rawValue,
-                  toId: _exchangeTo.id,
-                  toValue: Number(afterSwapResult[2] ? afterSwapResult[2] : afterSwapResult[1]).toFixed(6),
-                  toRawValue: Number(afterSwapResult[2] ? afterSwapResult[2] : afterSwapResult[1]),
-                }),
-              );
-              dispatch(
-                setSwapTokenRates({
-                  current: convertSwapTokenRate(currentSwapResult),
-                  afterSwap: convertSwapTokenRate(afterSwapResult),
-                }),
-              );
-              if (_isSwap) {
-                dispatch(
-                  handleSetExchange({
-                    fromId: _exchangeFrom.id,
-                    fromValue: _exchangeFrom.value,
-                    fromRawValue: _exchangeFrom.rawValue,
-                    toId: _exchangeTo.id,
-                    toValue: Number(afterSwapResult[2] ? afterSwapResult[2] : afterSwapResult[1]).toFixed(6),
-                    toRawValue: Number(afterSwapResult[2] ? afterSwapResult[2] : afterSwapResult[1]),
-                  }),
-                );
-              }
-            }
-          }
-        } else if (_selectedName === 'to') {
-          if (!_exchangeTo.value || Number(_exchangeTo.value) <= 0) {
-            dispatch(
-              handleSetCloneExchange({
-                fromId: _exchangeFrom.id,
-                fromValue: null,
-                fromRawValue: null,
-                toId: _exchangeTo.id,
-                toValue: _exchangeTo.value,
-                toRawValue: _exchangeTo.rawValue,
-              }),
-            );
-            if (_isSwap) {
-              dispatch(
-                handleSetExchange({
-                  fromId: _exchangeFrom.id,
-                  fromValue: null,
-                  fromRawValue: null,
-                  toId: _exchangeTo.id,
-                  toValue: _exchangeTo.value,
-                  toRawValue: _exchangeTo.rawValue,
-                }),
-              );
-            }
-          } else {
-            const response = await getAmountTokenIn(
-              is0xbOut ? tokenIn[0].address : tokenOut[0].address,
-              Number(_exchangeTo.value) || 0,
-              Number(tokenOut[0].decimal),
-              tokenOut[0].id === SwapTokenId.OXB,
-            );
-            const results = convertGetAmountTokenData(response, _exchangeFrom.id, _exchangeTo.id) as any;
-            if (results) {
-              const afterSwapResult = results.afterSwap;
-              const currentSwapResult = results.current;
-              if (afterSwapResult.length <= 0) {
-                throw new Error('Insufficient Liquidity Error');
-              }
-              dispatch(
-                handleSetCloneExchange({
-                  fromId: _exchangeFrom.id,
-                  fromValue: Number(afterSwapResult[0]).toFixed(6),
-                  fromRawValue: Number(afterSwapResult[0]).toFixed(6),
-                  toId: _exchangeTo.id,
-                  toValue: _exchangeTo.value,
-                  toRawValue: _exchangeTo.rawValue,
-                }),
-              );
-              dispatch(
-                setSwapTokenRates({
-                  current: convertSwapTokenRate(currentSwapResult),
-                  afterSwap: convertSwapTokenRate(afterSwapResult),
-                }),
-              );
-              if (_isSwap) {
-                dispatch(
-                  handleSetExchange({
-                    fromId: _exchangeFrom.id,
-                    fromValue: Number(afterSwapResult[0]).toFixed(6),
-                    fromRawValue: Number(afterSwapResult[0]).toFixed(6),
-                    toId: _exchangeTo.id,
-                    toValue: _exchangeTo.value,
-                    toRawValue: _exchangeTo.rawValue,
-                  }),
-                );
-              }
-            }
-          }
-        }
-        dispatch(setIsInsufficientLiquidityError(false));
+      dispatch(setIsInsufficientLiquidityError(false));
+      dispatch(setIsLoadEstimateToken(true));
+      if (!pairInfoLoaded) {
+        throw Error('Pair is not loaded');
       }
-    } catch (error) {
-      if (_selectedName === 'from') {
-        dispatch(
-          handleSetCloneExchange({
-            fromId: _exchangeFrom.id,
-            fromValue: _exchangeFrom.value,
-            fromRawValue: _exchangeFrom.rawValue,
-            toId: _exchangeTo.id,
-            toValue: null,
-            toRawValue: null,
-          }),
-        );
-        if (_isSwap) {
-          dispatch(
-            handleSetExchange({
-              fromId: _exchangeFrom.id,
-              fromValue: _exchangeFrom.value,
-              fromRawValue: _exchangeFrom.rawValue,
-              toId: _exchangeTo.id,
-              toValue: null,
-              toRawValue: null,
-            }),
+      if (Number(amount) === 0) {
+        throw Error('Invalid token amount');
+      }
+      const isNativeTokenIn = tokenIn === SwapTokenId.AVAX;
+      const isNativeTokenOut = tokenOut === SwapTokenId.AVAX;
+      const zeroSlippageTolerance = new Percent('0', '10000');
+      const currentSlippageTolerance = new Percent(String(Number(settingData!.slippage) * 100), '10000');
+
+      let tokenInRouter;
+      let tokenOutRouter;
+      if (isNativeTokenIn) {
+        tokenInRouter = new Route([pairsData[tokenOut]!], swap[tokenIn], swap[tokenOut]);
+        tokenOutRouter = new Route([pairsData[tokenOut]!], swap[tokenIn], swap[tokenOut]);
+      } else if (isNativeTokenOut) {
+        tokenInRouter = new Route([pairsData[tokenIn]!], swap[tokenIn], swap[tokenOut]);
+        tokenOutRouter = new Route([pairsData[tokenIn]!], swap[tokenIn], swap[tokenOut]);
+      } else {
+        tokenInRouter = new Route([pairsData[tokenIn]!], swap[tokenIn], swap[SwapTokenId.AVAX]);
+        tokenOutRouter = new Route([pairsData[tokenOut]!], swap[SwapTokenId.AVAX], swap[tokenOut]);
+      }
+      if (isExactInput) {
+        if (isEqual(tokenInRouter, tokenOutRouter)) {
+          const trade = new Trade(
+            tokenInRouter,
+            new TokenAmount(
+              swap[tokenIn],
+              new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toString(),
+            ),
+            TradeType.EXACT_INPUT,
+            Number(process.env.REACT_APP_CHAIN_ID),
           );
+          const estimatedAmountToken = trade.minimumAmountOut(zeroSlippageTolerance).raw.toString();
+          return {
+            estimatedAmountToken: formatPercent(
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
+              6,
+            ),
+            slippageTolerance: settingData!.slippage,
+            minReceive: new BigNumber(trade.minimumAmountOut(currentSlippageTolerance).raw.toString())
+              .div(`1e${swap[tokenOut].decimals}`)
+              .toFixed(6),
+            maxSold: null,
+            tradingFee: calculateTradingFee(
+              new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
+              swap[tokenIn],
+            ),
+            priceImpact: formatPercent(Number(trade.priceImpact.toSignificant(6)) - 0.3, 2),
+          };
+        } else {
+          const tradeTokenInToWavax = new Trade(
+            tokenInRouter,
+            new TokenAmount(
+              swap[tokenIn],
+              new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toString(),
+            ),
+            TradeType.EXACT_INPUT,
+            Number(process.env.REACT_APP_CHAIN_ID),
+          );
+          const estimatedWavaxAmountToken = tradeTokenInToWavax.minimumAmountOut(zeroSlippageTolerance).raw.toString();
+          const priceImpact1 = Number(tradeTokenInToWavax.priceImpact.toSignificant(6)) - 0.3;
+          const tradeWavaxToTokenOut = new Trade(
+            tokenOutRouter,
+            new TokenAmount(swap[SwapTokenId.AVAX], estimatedWavaxAmountToken),
+            TradeType.EXACT_INPUT,
+            Number(process.env.REACT_APP_CHAIN_ID),
+          );
+          const estimatedAmountToken = tradeWavaxToTokenOut.minimumAmountOut(zeroSlippageTolerance).raw.toString();
+          const priceImpact2 = Number(tradeWavaxToTokenOut.priceImpact.toSignificant(6)) - 0.3;
+          return {
+            estimatedAmountToken: formatPercent(
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
+              6,
+            ),
+            slippageTolerance: settingData!.slippage,
+            minReceive: new BigNumber(tradeWavaxToTokenOut.minimumAmountOut(currentSlippageTolerance).raw.toString())
+              .div(`1e${swap[tokenOut].decimals}`)
+              .toFixed(6),
+            maxSold: null,
+            tradingFee: calculateTradingFee(
+              new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
+              swap[tokenIn],
+            ),
+            priceImpact: formatPercent(Number(priceImpact1 + priceImpact2), 2),
+          };
         }
       } else {
-        dispatch(
-          handleSetCloneExchange({
-            fromId: _exchangeFrom.id,
-            fromValue: null,
-            fromRawValue: null,
-            toId: _exchangeTo.id,
-            toValue: _exchangeTo.value,
-            toRawValue: _exchangeTo.value,
-          }),
-        );
-        if (_isSwap) {
-          dispatch(
-            handleSetExchange({
-              fromId: _exchangeFrom.id,
-              fromValue: null,
-              fromRawValue: null,
-              toId: _exchangeTo.id,
-              toValue: _exchangeTo.value,
-              toRawValue: _exchangeTo.value,
-            }),
+        if (isEqual(tokenInRouter, tokenOutRouter)) {
+          const trade = new Trade(
+            tokenInRouter,
+            new TokenAmount(
+              swap[tokenOut],
+              new BigNumber(amount).multipliedBy(`1e${swap[tokenOut].decimals}`).toString(),
+            ),
+            TradeType.EXACT_OUTPUT,
+            Number(process.env.REACT_APP_CHAIN_ID),
           );
+          const estimatedAmountToken = trade.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          return {
+            estimatedAmountToken: formatPercent(
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
+              6,
+            ),
+            slippageTolerance: settingData!.slippage,
+            minReceive: null,
+            maxSold: new BigNumber(trade.maximumAmountIn(currentSlippageTolerance).raw.toString())
+              .div(`1e${swap[tokenIn].decimals}`)
+              .toFixed(6),
+            tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
+            priceImpact: formatPercent(Number(trade.priceImpact.toSignificant(6)) - 0.3, 2),
+          };
+        } else {
+          const tradeTokenOutToWavax = new Trade(
+            tokenOutRouter,
+            new TokenAmount(
+              swap[tokenOut],
+              new BigNumber(amount).multipliedBy(`1e${swap[tokenOut].decimals}`).toString(),
+            ),
+            TradeType.EXACT_OUTPUT,
+            Number(process.env.REACT_APP_CHAIN_ID),
+          );
+          const estimatedAmountWAavaxIn = tradeTokenOutToWavax.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          const priceImpact1 = Number(tradeTokenOutToWavax.priceImpact.toSignificant(6)) - 0.3;
+          const tradeWavaxToTokenIn = new Trade(
+            tokenInRouter,
+            new TokenAmount(swap[SwapTokenId.AVAX], estimatedAmountWAavaxIn),
+            TradeType.EXACT_OUTPUT,
+            Number(process.env.REACT_APP_CHAIN_ID),
+          );
+          const estimatedAmountToken = tradeWavaxToTokenIn.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          const priceImpact2 = Number(tradeWavaxToTokenIn.priceImpact.toSignificant(6)) - 0.3;
+          return {
+            estimatedAmountToken: formatPercent(
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
+              6,
+            ),
+            slippageTolerance: settingData!.slippage,
+            minReceive: null,
+            maxSold: new BigNumber(tradeWavaxToTokenIn.maximumAmountIn(currentSlippageTolerance).raw.toString())
+              .div(`1e${swap[tokenIn].decimals}`)
+              .toFixed(6),
+            tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
+            priceImpact: formatPercent(Number(priceImpact1 + priceImpact2), 2),
+          };
         }
       }
-      dispatch(setIsInsufficientLiquidityError(true));
+    } catch (error: any) {
+      if (error instanceof InsufficientReservesError) {
+        dispatch(setIsInsufficientLiquidityError(true));
+      }
+      return {
+        estimatedAmountToken: '0',
+        slippageTolerance: settingData!.slippage,
+        minReceive: null,
+        maxSold: '0',
+        tradingFee: '0',
+        priceImpact: '0',
+      };
+    } finally {
+      dispatch(setIsLoadEstimateToken(false));
     }
-    dispatch(setSelectedName(_selectedName));
-    if (_changeEstimateFrom) {
-      dispatch(handleSetIsEstimateFrom(!_isEstimateFrom));
+  };
+
+  const handleLoadPairInfo = async () => {
+    try {
+      const [WAVAX_OXB, WAVAX_USDC, WAVAX_USDT] = await getPairsInfo();
+      dispatch(
+        setPairData({
+          [SwapTokenId.OXB]: WAVAX_OXB,
+          [SwapTokenId.AVAX]: WAVAX_OXB,
+          [SwapTokenId.USDC]: WAVAX_USDC,
+          [SwapTokenId.USDT]: WAVAX_USDT,
+        }),
+      );
+      dispatch(setPairInfoLoaded(true));
+    } catch (error: any) {
+      createToast({
+        message: error.message,
+        type: 'error',
+      });
     }
-    dispatch(setIsLoadEstimateToken(false));
   };
 
   useEffect(() => {
-    if (!isLoadEstimateToken && !isEqual(cloneExchange, exchange)) {
-      dispatch(handleSetExchange(cloneExchange));
-    }
-  }, [isLoadEstimateToken, cloneExchange, exchange]);
+    handleLoadPairInfo();
+    const interval = setInterval(() => {
+      handleLoadPairInfo();
+    }, intervalTime);
 
-  useEffect(() => {
-    loadSwapData();
-  }, []);
-
-  useEffect(() => {
-    let interval: NodeJS.Timer;
-    if ((exchange.fromId && selectedName == 'from') || (exchange.toId && selectedName == 'to')) {
-      interval = setInterval(() => {
-        loadEstimateToken({
-          _selectedName: selectedName,
-          _exchangeFrom: {
-            id: exchange.fromId,
-            value: exchange.fromValue,
-            rawValue: exchange.fromRawValue,
-          },
-          _exchangeTo: {
-            id: exchange.toId,
-            value: exchange.toValue,
-            rawValue: exchange.toRawValue,
-          },
-          _tokenList: tokenList,
-          _isSwap: false,
-          _isEstimateFrom: isEstimateFrom,
-        });
-      }, intervalTime);
-    }
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
-  }, [selectedName, exchange, isEstimateFrom, tokenList]);
+  }, []);
 
   return {
     loadRecentTransaction,
     loadEstimateToken,
-    loading,
   };
 };

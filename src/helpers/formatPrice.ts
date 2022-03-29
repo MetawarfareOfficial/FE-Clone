@@ -26,3 +26,13 @@ export const truncateNumber = (number: number, decimals: number): string => {
   const factor = Math.pow(10, decimals);
   return new BigNumber(number * factor).div(factor).toFixed(decimals, BigNumber.ROUND_DOWN);
 };
+
+export const formatPercent = (percent: number, maximumFractionDigits = 2, minimumFractionDigits = 0) => {
+  return String(
+    Number(percent).toLocaleString('en-US', {
+      maximumFractionDigits,
+      minimumFractionDigits:
+        maximumFractionDigits < minimumFractionDigits ? maximumFractionDigits : minimumFractionDigits,
+    }),
+  ).replace(',', '');
+};

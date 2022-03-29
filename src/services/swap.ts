@@ -1,18 +1,24 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ChainId, Token } from '@traderjoe-xyz/sdk';
 import OxImg from 'assets/images/0x-token.png';
 import AvaxImg from 'assets/images/avax-token.png';
 import USDCImg from 'assets/images/coin-usd.svg';
 import { SwapTokenId } from 'hooks/swap';
-import { Exchange, TokenItem } from 'pages/Swap';
+import { TokenItem } from 'pages/Swap';
 
 const initialState = {
   tokenAddress: {
-    ['0xb' as SwapTokenId.OXB]: '',
-    ['avax' as SwapTokenId.AVAX]: '',
-    ['usdc' as SwapTokenId.USDC]: '',
+    ['0xb' as SwapTokenId.OXB]: process.env.REACT_APP_CONTRACT_ADDRESS!,
+    ['avax' as SwapTokenId.AVAX]: process.env.REACT_APP_NATIVE_TOKEN_ADDRESS!,
+    ['usdc' as SwapTokenId.USDC]: process.env.REACT_APP_USDC_TOKEN_ADDRESS!,
+    ['usdt' as SwapTokenId.USDT]: process.env.REACT_APP_USDT_TOKEN_ADDRESS!,
   },
-  pairAddress: '',
-  pairsData: [],
+  pairsData: {
+    ['0xb' as SwapTokenId]: null,
+    ['avax' as SwapTokenId]: null,
+    ['usdc' as SwapTokenId]: null,
+    ['usdt' as SwapTokenId]: null,
+  },
   recentTransactions: [],
   tokenList: [
     {
@@ -46,32 +52,39 @@ const initialState = {
       address: process.env.REACT_APP_USDC_TOKEN_ADDRESS || '',
     },
   ],
-  cloneExchange: {
-    fromId: 'avax' as SwapTokenId,
-    fromValue: null,
-    fromRawValue: null,
-    toId: '0xb' as SwapTokenId,
-    toValue: null,
-    toRawValue: null,
-  } as Exchange,
-  exchange: {
-    fromId: 'avax' as SwapTokenId,
-    fromValue: null,
-    fromRawValue: null,
-    toId: '0xb' as SwapTokenId,
-    toValue: null,
-    toRawValue: null,
-  },
   selectedName: 'from' as string | null,
   isInsufficientError: false,
   isLoadEstimateToken: false,
   isInsufficientLiquidityError: false,
-  isEstimateFrom: false,
   swapTokenRates: {
     current: 0,
     afterSwap: 0,
   },
-  subGraphCurrentRate: 0,
+  ['0xb' as SwapTokenId.OXB]: new Token(
+    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+    String(process.env.REACT_APP_CONTRACT_ADDRESS),
+    Number(process.env.REACT_APP_CONTRACT_DECIMAL),
+    String(process.env.REACT_APP_CONTRACT_SYMBOL),
+  ),
+  ['avax' as SwapTokenId.AVAX]: new Token(
+    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+    String(process.env.REACT_APP_NATIVE_TOKEN_ADDRESS),
+    Number(process.env.REACT_APP_NATIVE_CURRENCY_DECIMALS),
+    String(process.env.REACT_APP_NATIVE_CURRENCY_SYMBOL),
+  ),
+  ['usdc' as SwapTokenId.USDC]: new Token(
+    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+    String(process.env.REACT_APP_USDC_TOKEN_ADDRESS),
+    Number(process.env.REACT_APP_USDC_DECIMALS),
+    String(process.env.REACT_APP_USDC_SYMBOL),
+  ),
+  ['usdt' as SwapTokenId.USDT]: new Token(
+    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+    String(process.env.REACT_APP_USDT_TOKEN_ADDRESS),
+    Number(process.env.REACT_APP_USDT_DECIMALS),
+    String(process.env.REACT_APP_USDT_SYMBOL),
+  ),
+  pairInfoLoaded: false,
 };
 
 export const swapSlice = createSlice({
@@ -80,9 +93,6 @@ export const swapSlice = createSlice({
   reducers: {
     setTokenAddress: (state, action: PayloadAction<any>) => {
       state.tokenAddress = action.payload;
-    },
-    setPairAddress: (state, action: PayloadAction<string>) => {
-      state.pairAddress = action.payload;
     },
     setPairData: (state, action: PayloadAction<any>) => {
       state.pairsData = action.payload;
@@ -116,15 +126,6 @@ export const swapSlice = createSlice({
     setRecentTransactions: (state, action: PayloadAction<any>) => {
       state.recentTransactions = action.payload;
     },
-    handleSetIsEstimateFrom: (state, action: PayloadAction<any>) => {
-      state.isEstimateFrom = action.payload;
-    },
-    handleSetCloneExchange: (state, action: PayloadAction<any>) => {
-      state.cloneExchange = action.payload;
-    },
-    handleSetExchange: (state, action: PayloadAction<any>) => {
-      state.exchange = action.payload;
-    },
     setSelectedName: (state, action: PayloadAction<string | null>) => {
       state.selectedName = action.payload;
     },
@@ -140,15 +141,14 @@ export const swapSlice = createSlice({
     setSwapTokenRates: (state, action: PayloadAction<any>) => {
       state.swapTokenRates = action.payload;
     },
-    setSubGraphCurrentRate: (state, action: PayloadAction<any>) => {
-      state.subGraphCurrentRate = action.payload;
+    setPairInfoLoaded: (state, action: PayloadAction<any>) => {
+      state.pairInfoLoaded = action.payload;
     },
   },
 });
 
 export const {
   setTokenAddress,
-  setPairAddress,
   setPairData,
   handleDisableToken,
   handleSetTokenBalances,
@@ -157,11 +157,8 @@ export const {
   setIsInsufficientError,
   setIsLoadEstimateToken,
   setIsInsufficientLiquidityError,
-  handleSetIsEstimateFrom,
-  handleSetCloneExchange,
-  handleSetExchange,
   setSwapTokenRates,
-  setSubGraphCurrentRate,
+  setPairInfoLoaded,
 } = swapSlice.actions;
 
 const { reducer: swapReducer } = swapSlice;

@@ -15,17 +15,19 @@ export enum SwapTokenId {
   AVAX = 'avax',
   OXB = '0xb',
   USDC = 'usdc',
+  USDT = 'usdt',
 }
 
 const SwappableToken = {
   [SwapTokenId.OXB]: [SwapTokenId.AVAX, SwapTokenId.USDC],
   [SwapTokenId.USDC]: [SwapTokenId.OXB],
   [SwapTokenId.AVAX]: [SwapTokenId.OXB],
+  [SwapTokenId.USDT]: [SwapTokenId.OXB],
 };
 
 export const useSwapToken = () => {
   const { account } = useWeb3React();
-  const { loading: TokenAddressesLoading, loadRecentTransaction, loadEstimateToken } = useLoadSwapData();
+  const { loadRecentTransaction, loadEstimateToken } = useLoadSwapData();
   const { getBalanceNativeTokenOf, multipleCall, swap0xbToTokens } = useInteractiveContract();
   const tokenList = useAppSelector((state) => state.swap.tokenList);
 
@@ -54,7 +56,7 @@ export const useSwapToken = () => {
   };
 
   const getSwapTokenBalances = async (TokensList: TokenItem[]) => {
-    if (account && tokenAddresses) {
+    if (account) {
       const nativeTokenBalance = await handleGetNativeToken(account);
       const multiCallParams = tokenList
         .filter((item) => !item.isNative)
@@ -130,6 +132,5 @@ export const useSwapToken = () => {
     handleSwapToken,
     loadEstimateToken,
     account,
-    TokenAddressesLoading,
   };
 };
