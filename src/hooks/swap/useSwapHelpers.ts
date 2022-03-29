@@ -5,6 +5,8 @@ import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { TokenItem } from 'pages/Swap';
 import get from 'lodash/get';
+import { Token } from '@traderjoe-xyz/sdk';
+import { formatPercent } from 'helpers/formatPrice';
 interface RecentTransaction {
   amountIn: string;
   amountOut: string;
@@ -65,22 +67,21 @@ export const useSwapHelpers = () => {
         deadline: invalidDeadline ? defaultSettingData.deadline : settings.deadline,
       };
       localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
+      return newSetting;
+    } else {
+      localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(defaultSettingData));
+      return defaultSettingData;
     }
   };
   const calculateSwapTokenRate = (tokenInAmount: number, tokenOutAmount: number) => {
-    return new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toFixed(6);
+    return formatPercent(new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toNumber(), 6);
   };
-  const getMinReceiveSwapToken = (slippagePercent: number, amount: number, isEstimateFrom: boolean) => {
-    let result = '0';
-    if (!isEstimateFrom) {
-      result = new BigNumber(amount).minus(new BigNumber(amount).multipliedBy(slippagePercent).div(100)).toFixed(6);
-    } else if (isEstimateFrom) {
-      result = new BigNumber(amount).plus(new BigNumber(amount).multipliedBy(slippagePercent).div(100)).toFixed(6);
-    }
-    return Number(result) > 0.000001 ? result : '<0.000001';
-  };
-  const calculateTradingFee = (amountIn: number) => {
-    const result = new BigNumber(amountIn).multipliedBy(0.25).div(100).toFixed(6);
+
+  const calculateTradingFee = (amount: number, token: Token) => {
+    const result = formatPercent(
+      new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(25).div(1000).toNumber(),
+      2,
+    );
     return Number(result) > 0.000001 ? result : '<0.000001';
   };
   const calculatePriceImpact = (currentRate: number, afterSwapRate: number) => {
@@ -98,7 +99,6 @@ export const useSwapHelpers = () => {
     checkSwapSetting,
     calculateSwapTokenRate,
     calculateTradingFee,
-    getMinReceiveSwapToken,
     calculatePriceImpact,
   };
 };

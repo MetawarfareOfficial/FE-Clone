@@ -9,6 +9,7 @@
     "@mui/material": "5.2.7",
     "@mui/styled-engine-sc": "5.1.0",
     "@reduxjs/toolkit": "1.5.1",
+    "@traderjoe-xyz/sdk": "^1.5.9",
     "@sentry/react": "6.17.9",
     "@sentry/tracing": "6.17.9",
     "@types/jest": "27.0.1",

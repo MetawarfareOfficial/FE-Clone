@@ -5,11 +5,29 @@ import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { contractType } from 'consts/typeReward';
 import { getNetWorkRpcUrl } from 'connectors';
 import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
+import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
-
+const OxbToken = new Token(
+  Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+  String(process.env.REACT_APP_CONTRACT_ADDRESS),
+  Number(process.env.REACT_APP_CONTRACT_DECIMAL),
+  String(process.env.REACT_APP_CONTRACT_SYMBOL),
+);
+const UsdcToken = new Token(
+  Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+  String(process.env.REACT_APP_USDC_TOKEN_ADDRESS),
+  Number(process.env.REACT_APP_USDC_DECIMALS),
+  String(process.env.REACT_APP_USDC_SYMBOL),
+);
+const UsdtToken = new Token(
+  Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
+  String(process.env.REACT_APP_USDT_TOKEN_ADDRESS),
+  Number(process.env.REACT_APP_USDT_DECIMALS),
+  String(process.env.REACT_APP_USDT_SYMBOL),
+);
 interface MultiCallItem {
   reference: string;
   methodName: string;
@@ -294,71 +312,11 @@ export const useInteractiveContract = () => {
     return results.results;
   };
 
-  const getAmountTokenOut = async (
-    targetToken: string,
-    amount: number,
-    tokenOutDecimal: number,
-    is0xbOutput: boolean,
-    isNativeToken: boolean,
-  ) => {
-    const multiplied = isNativeToken ? 1 : `1e${tokenOutDecimal}`;
-    return await multipleCall([
-      {
-        reference: 'swapTokenRates',
-        contractAddress: contractAddress,
-        abi: zeroXBlockAbi,
-        calls: [
-          {
-            reference: 'current',
-            methodName: 'getOutputAmount',
-            methodParameters: [
-              is0xbOutput,
-              targetToken,
-              new BN(1).multipliedBy(Number(multiplied)).toString().replace('.', ''),
-            ],
-          },
-          {
-            reference: 'afterSwap',
-            methodName: 'getOutputAmount',
-            methodParameters: [
-              is0xbOutput,
-              targetToken,
-              new BN(amount).multipliedBy(Number(`1e${tokenOutDecimal}`)).toString(),
-            ],
-          },
-        ],
-      },
-    ]);
-  };
-  const getAmountTokenIn = async (
-    targetToken: string,
-    amount: number,
-    tokenOutDecimal: number,
-    is0xbOutput: boolean,
-  ) => {
-    return await multipleCall([
-      {
-        reference: 'swapTokenRates',
-        contractAddress: contractAddress,
-        abi: zeroXBlockAbi,
-        calls: [
-          {
-            reference: 'current',
-            methodName: 'getInputAmount',
-            methodParameters: [is0xbOutput, targetToken, new BN(1).toString()],
-          },
-          {
-            reference: 'afterSwap',
-            methodName: 'getInputAmount',
-            methodParameters: [
-              is0xbOutput,
-              targetToken,
-              new BN(amount).multipliedBy(Number(`1e${tokenOutDecimal}`)).toString(),
-            ],
-          },
-        ],
-      },
-    ]);
+  const getPairsInfo = async () => {
+    const WAVAX_OXB = Fetcher.fetchPairData(WAVAX[OxbToken.chainId], OxbToken, provider);
+    const WAVAX_USDC = Fetcher.fetchPairData(WAVAX[OxbToken.chainId], UsdcToken, provider);
+    const WAVAX_USDT = Fetcher.fetchPairData(WAVAX[OxbToken.chainId], UsdtToken, provider);
+    return Promise.all([WAVAX_OXB, WAVAX_USDC, WAVAX_USDT]);
   };
 
   return {
@@ -389,8 +347,7 @@ export const useInteractiveContract = () => {
     getPairAddress,
     multipleCall,
     swap0xbToTokens,
-    getAmountTokenOut,
-    getAmountTokenIn,
+    getPairsInfo,
     contractWithSigner,
     provider,
   };

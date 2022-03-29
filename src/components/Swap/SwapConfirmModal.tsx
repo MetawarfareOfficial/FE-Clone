@@ -38,14 +38,15 @@ interface Props {
   onConfirm: () => void;
   exchange: {
     from: String;
-    fromValue: string;
+    fromValue: string | null;
     to: String;
-    toValue: String;
+    toValue: String | null;
   };
   tokenList: TokenItem[];
   swapRate: String;
   slippage: string;
   minReceive: String;
+  isMinReceive: Boolean;
   tradingFee: string;
 }
 
@@ -295,6 +296,7 @@ const SwapConfirmModal: React.FC<Props> = ({
   slippage,
   minReceive,
   tradingFee,
+  isMinReceive,
 }) => {
   const theme = useTheme();
   const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
@@ -356,7 +358,7 @@ const SwapConfirmModal: React.FC<Props> = ({
 
           <BillingLine>
             <h4>
-              Min receive{' '}
+              {isMinReceive ? 'Min Receive' : 'Max Sold'}
               <TooltipCustom
                 title={`Your transaction will revert if there is a large, unfavorable 
                           price movement before it is confirmed`}
@@ -371,7 +373,7 @@ const SwapConfirmModal: React.FC<Props> = ({
                 )}
               </TooltipCustom>
             </h4>
-            <p>{minReceive}</p>
+            <p>{`${minReceive} ${isMinReceive ? exchange.to.toLocaleUpperCase() : exchange.from.toUpperCase()}`}</p>
           </BillingLine>
 
           <BillingLine>
