@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { TextField, TextFieldProps, InputAdornment, Button, ButtonProps, Link, LinkProps } from '@mui/material';
 
 import { ReactComponent as DownIcon } from 'assets/images/down-icon.svg';
 import { ReactComponent as DownDarkIcon } from 'assets/images/down-dark-icon.svg';
+import { swapInputRegex } from 'consts/swap';
 
 interface Props {
   name: string;
@@ -14,7 +15,7 @@ interface Props {
   selected: number | any;
   tokens: Array<any>;
   onMax?: () => void;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onChangeToken: (name: string) => void;
   disabled: boolean;
 }
@@ -150,13 +151,18 @@ const InputSwap: React.FC<Props> = ({
 
   return (
     <TextFieldSwap
+      autoComplete="off"
       placeholder="0.0000"
-      type="number"
+      type="text"
       name={name}
       fullWidth
       value={value}
       disabled={disabled}
-      onChange={onChange}
+      onChange={(event) => {
+        if (swapInputRegex.test(event.target.value)) {
+          onChange(event);
+        }
+      }}
       InputProps={{
         inputProps: {
           max: max,

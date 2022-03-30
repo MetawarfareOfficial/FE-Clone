@@ -48,6 +48,7 @@ interface Props {
   minReceive: String;
   isMinReceive: Boolean;
   tradingFee: string;
+  priceImpact: string;
 }
 
 interface TooltipCustomProps extends TooltipProps {
@@ -297,6 +298,7 @@ const SwapConfirmModal: React.FC<Props> = ({
   minReceive,
   tradingFee,
   isMinReceive,
+  priceImpact,
 }) => {
   const theme = useTheme();
   const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
@@ -412,7 +414,7 @@ const SwapConfirmModal: React.FC<Props> = ({
                 )}
               </TooltipCustom>
             </h4>
-            <p>0.10%</p>
+            <p>{priceImpact}%</p>
           </BillingLine>
         </BillingBox>
 

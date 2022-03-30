@@ -3,6 +3,7 @@ import { ChainId, Token } from '@traderjoe-xyz/sdk';
 import OxImg from 'assets/images/0x-token.png';
 import AvaxImg from 'assets/images/avax-token.png';
 import USDCImg from 'assets/images/coin-usd.svg';
+import USDTImg from 'assets/images/coin-usdt.svg';
 import { SwapTokenId } from 'hooks/swap';
 import { TokenItem } from 'pages/Swap';
 
@@ -51,15 +52,22 @@ const initialState = {
       decimal: process.env.REACT_APP_USDC_DECIMALS || 6,
       address: process.env.REACT_APP_USDC_TOKEN_ADDRESS || '',
     },
+    {
+      id: 'usdt' as SwapTokenId.USDT,
+      logo: USDTImg,
+      name: 'USDT',
+      balance: 0,
+      disabled: false,
+      isNative: false,
+      decimal: process.env.REACT_APP_USDT_DECIMALS || 6,
+      address: process.env.REACT_APP_USDT_TOKEN_ADDRESS || '',
+    },
   ],
   selectedName: 'from' as string | null,
   isInsufficientError: false,
   isLoadEstimateToken: false,
   isInsufficientLiquidityError: false,
-  swapTokenRates: {
-    current: 0,
-    afterSwap: 0,
-  },
+
   ['0xb' as SwapTokenId.OXB]: new Token(
     Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
     String(process.env.REACT_APP_CONTRACT_ADDRESS),
@@ -138,9 +146,6 @@ export const swapSlice = createSlice({
     setIsLoadEstimateToken: (state, action: PayloadAction<boolean>) => {
       state.isLoadEstimateToken = action.payload;
     },
-    setSwapTokenRates: (state, action: PayloadAction<any>) => {
-      state.swapTokenRates = action.payload;
-    },
     setPairInfoLoaded: (state, action: PayloadAction<any>) => {
       state.pairInfoLoaded = action.payload;
     },
@@ -157,7 +162,6 @@ export const {
   setIsInsufficientError,
   setIsLoadEstimateToken,
   setIsInsufficientLiquidityError,
-  setSwapTokenRates,
   setPairInfoLoaded,
 } = swapSlice.actions;
 
