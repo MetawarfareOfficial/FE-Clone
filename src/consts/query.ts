@@ -22,6 +22,7 @@ export const recentTransactionQuery = `
       orderDirection: desc
     )
     {
+      id
       sender
       date
       amountIn

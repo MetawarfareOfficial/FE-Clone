@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import { Token } from '@traderjoe-xyz/sdk';
 import { formatPercent } from 'helpers/formatPrice';
 interface RecentTransaction {
+  id: string;
   amountIn: string;
   amountOut: string;
   date: string;
@@ -44,6 +45,7 @@ export const useSwapHelpers = () => {
         (tokenItem) => tokenItem.id === (get(item, 'tokenOut.symbol') || 'null').toLocaleLowerCase(),
       );
       return {
+        id: item.id,
         from: tokenIn.length > 0 ? tokenIn[0].logo : null,
         to: tokenOut.length > 0 ? tokenOut[0].logo : null,
         title: `Swap ${item.amountIn} 0xB for ${item.amountOut} AVAX`,
