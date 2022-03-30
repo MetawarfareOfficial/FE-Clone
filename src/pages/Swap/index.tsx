@@ -62,6 +62,9 @@ export interface TokenItem {
   balance: number | string;
   disabled: boolean;
   isNative?: boolean;
+  decimal: string;
+  address: string;
+  allowanceBalance: string;
 }
 
 export interface Exchange {
@@ -378,12 +381,14 @@ interface SetExchangeParams {
   tradingFee: string;
   priceImpact: string;
   isSwap?: boolean;
+  exchangeId?: SwapTokenId;
 }
 
 const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const { error, connector, activate } = useWeb3React();
-  const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken } = useSwapToken();
+  const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken, approveToken } =
+    useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
 
   const tokenList = useAppSelector((state) => state.swap.tokenList);
@@ -396,21 +401,20 @@ const SwapPage: React.FC<Props> = () => {
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const { createToast } = useToast();
   const [slippage, setSlippage] = useState('0.5');
-  // const [_deadline, setDeadline] = useState('10');
-
+  const [deadline, setDeadline] = useState('10');
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
     'black',
   );
+  const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
-  const [isSelectedFrom, setIsSelectedFrom] = useState(false);
+  const [isOpenSelectTokenFromModal, setIsOpenSelectTokenFromModal] = useState(false);
   const [openRecent, setOpenRecent] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
-
   const [exchangeFrom, setExchangeFrom] = useState<ExchangeItem>({
     id: SwapTokenId.AVAX,
     value: null,
@@ -423,6 +427,27 @@ const SwapPage: React.FC<Props> = () => {
   const [tradingFee, setTradingFee] = useState('0');
   const [priceImpact, setPriceImpact] = useState('0');
 
+  const handleCheckIsApproved = () => {
+    const tokenFrom = tokenList.filter((item) => item.id === exchangeFrom.id);
+    if (tokenFrom[0]) {
+      if (isSwapMaxFromTokens) {
+        if (Number(tokenFrom[0].allowanceBalance) >= Number(tokenFrom[0].balance)) {
+          setIsApproved(true);
+        } else {
+          setIsApproved(false);
+        }
+      } else {
+        if (Number(tokenFrom[0].allowanceBalance) >= Number(exchangeFrom.value)) {
+          setIsApproved(true);
+        } else {
+          setIsApproved(false);
+        }
+      }
+    } else {
+      setIsApproved(false);
+    }
+  };
+
   const handleChangeSwapData = ({
     selectedName,
     estimatedAmountToken,
@@ -431,6 +456,7 @@ const SwapPage: React.FC<Props> = () => {
     tradingFee,
     priceImpact,
     isSwap = false,
+    exchangeId,
   }: SetExchangeParams) => {
     if (selectedName === 'from') {
       if (isSwap) {
@@ -438,28 +464,40 @@ const SwapPage: React.FC<Props> = () => {
           id: exchangeFrom.id,
           value: estimatedAmountToken,
         });
-        setMinReceive(minReceive);
       } else {
-        setExchangeTo({
-          id: exchangeTo.id,
-          value: estimatedAmountToken,
-        });
-        setMinReceive(minReceive);
+        if (exchangeId) {
+          setExchangeTo({
+            id: exchangeId,
+            value: estimatedAmountToken,
+          });
+        } else {
+          setExchangeTo({
+            id: exchangeTo.id,
+            value: estimatedAmountToken,
+          });
+        }
       }
+      setMinReceive(minReceive);
     } else {
       if (isSwap) {
         setExchangeFrom({
           id: exchangeTo.id,
           value: estimatedAmountToken,
         });
-        setMinReceive(maxSold);
       } else {
-        setExchangeFrom({
-          id: exchangeFrom.id,
-          value: estimatedAmountToken,
-        });
-        setMinReceive(maxSold);
+        if (exchangeId) {
+          setExchangeFrom({
+            id: exchangeId,
+            value: estimatedAmountToken,
+          });
+        } else {
+          setExchangeFrom({
+            id: exchangeFrom.id,
+            value: estimatedAmountToken,
+          });
+        }
       }
+      setMinReceive(maxSold);
     }
     setTradingFee(tradingFee);
     setPriceImpact(priceImpact);
@@ -542,9 +580,9 @@ const SwapPage: React.FC<Props> = () => {
 
   const handleChangeToken = (name: string) => {
     if (name === 'from') {
-      setIsSelectedFrom(true);
+      setIsOpenSelectTokenFromModal(true);
     } else {
-      setIsSelectedFrom(false);
+      setIsOpenSelectTokenFromModal(false);
     }
     setOpenSelect(true);
   };
@@ -633,45 +671,108 @@ const SwapPage: React.FC<Props> = () => {
     setOpenSelect(!openSelect);
   };
 
+  const handleToggleStatus = () => {
+    setOpenStatus(!openStatus);
+  };
+
+  const handleGetTokenBalances = async () => {
+    const newTokens = await getSwapTokenBalances(tokenList);
+    dispatch(handleSetTokenBalances(newTokens));
+  };
+
+  const handleApproveToken = async (id: SwapTokenId) => {
+    const tokenIn = tokenList.filter((item) => item.id === id);
+    try {
+      if (!tokenIn[0]) {
+        throw new Error('Some thing wrong');
+      }
+      handleToggleStatus();
+      setSwapStatus('pending');
+      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
+      if (response.hash) {
+        await response.wait();
+        setSwapStatus('success');
+      }
+      handleGetTokenBalances();
+    } catch (error: any) {
+      setSwapStatus('error');
+    }
+  };
   const handelSelectToken = (tokenId: SwapTokenId) => {
-    if (selectedName === 'from') {
+    if (isOpenSelectTokenFromModal) {
       setExchangeFrom({
         id: tokenId,
         value: exchangeFrom.value,
       });
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: tokenId,
-        tokenOut: exchangeTo.id,
-        amount: exchangeFrom.value || '0',
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName,
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
-    } else if (selectedName === 'to') {
+      if (selectedName === 'from') {
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: true,
+          tokenIn: tokenId,
+          tokenOut: exchangeTo.id,
+          amount: exchangeFrom.value || '0',
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'from',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+        });
+      } else {
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: false,
+          tokenIn: tokenId,
+          tokenOut: exchangeTo.id,
+          amount: exchangeTo.value || '0',
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'to',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+          exchangeId: tokenId,
+        });
+      }
+    } else {
       setExchangeTo({
         id: tokenId,
         value: exchangeTo.value,
       });
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: exchangeTo.value || '0',
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName,
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
+      if (selectedName === 'from') {
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: true,
+          tokenIn: exchangeFrom.id,
+          tokenOut: tokenId,
+          amount: exchangeFrom.value || '0',
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'from',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+          exchangeId: tokenId,
+        });
+      } else {
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: false,
+          tokenIn: exchangeFrom.id,
+          tokenOut: tokenId,
+          amount: exchangeTo.value || '0',
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'to',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+        });
+      }
     }
     setIsSwapMaxFromToken(false);
   };
@@ -682,10 +783,6 @@ const SwapPage: React.FC<Props> = () => {
 
   const handleToggleConfirm = () => {
     setOpenConfirm(!openConfirm);
-  };
-
-  const handleToggleStatus = () => {
-    setOpenStatus(!openStatus);
   };
 
   const handleConfirm = async () => {
@@ -702,6 +799,10 @@ const SwapPage: React.FC<Props> = () => {
           toValue: Number(exchangeTo.value),
         },
         selectedName === 'to',
+        {
+          slippage,
+          deadline,
+        },
       );
       if (transaction.hash) {
         await transaction.wait();
@@ -710,37 +811,6 @@ const SwapPage: React.FC<Props> = () => {
     } catch (error: any) {
       setSwapStatus('error');
     }
-  };
-
-  useEffect(() => {
-    if (openSelect && isSelectedFrom) {
-      const selectableTokens = getSwappaleTokens(exchangeFrom.id);
-      dispatch(handleDisableToken(selectableTokens));
-    } else if (openSelect && !isSelectedFrom) {
-      const selectableTokens = getSwappaleTokens(exchangeTo.id);
-      dispatch(handleDisableToken(selectableTokens));
-    }
-  }, [openSelect, selectedName, exchangeTo.id, exchangeFrom.id, isSelectedFrom]);
-
-  useEffect(() => {
-    const selectedTokenId = exchangeFrom.id;
-    const selectedTokenValue = exchangeFrom.value;
-    const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
-    if (selectedToken[0]) {
-      if (
-        selectedToken[0].balance === 0 ||
-        Number(removeCharacterInString(String(selectedToken[0].balance), ',')) < (selectedTokenValue || 0)
-      ) {
-        dispatch(setIsInsufficientError(true));
-      } else {
-        dispatch(setIsInsufficientError(false));
-      }
-    }
-  }, [exchangeFrom.id, exchangeTo.value, tokenList]);
-
-  const handleGetTokenBalances = async () => {
-    const newTokens = await getSwapTokenBalances(tokenList);
-    dispatch(handleSetTokenBalances(newTokens));
   };
 
   const handleSetPriceImpactWarningColor = (_priceImpact: string) => {
@@ -757,27 +827,6 @@ const SwapPage: React.FC<Props> = () => {
       setPriceImpactStatus('red');
     }
   };
-
-  useEffect(() => {
-    const getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
-    handleGetTokenBalances();
-    return () => {
-      if (getTokenBalancesInterval) {
-        clearInterval(getTokenBalancesInterval);
-      }
-    };
-  }, [account]);
-
-  useEffect(() => {
-    const response = checkSwapSetting();
-    setSlippage(response.slippage);
-    // setDeadline(response.deadline);
-  }, []);
-
-  useEffect(() => {
-    handleSetPriceImpactWarningColor(priceImpact);
-  }, [priceImpact]);
-
   const handleSetSlippage = (value: string) => {
     if (selectedName === 'from') {
       const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
@@ -813,6 +862,57 @@ const SwapPage: React.FC<Props> = () => {
     setSlippage(value);
   };
 
+  useEffect(() => {
+    const getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
+    handleGetTokenBalances();
+    return () => {
+      if (getTokenBalancesInterval) {
+        clearInterval(getTokenBalancesInterval);
+      }
+    };
+  }, [account]);
+
+  useEffect(() => {
+    const response = checkSwapSetting();
+    setSlippage(response.slippage);
+    setDeadline(response.deadline);
+  }, []);
+
+  useEffect(() => {
+    handleSetPriceImpactWarningColor(priceImpact);
+  }, [priceImpact]);
+
+  useEffect(() => {
+    handleCheckIsApproved();
+  }, [exchangeFrom, tokenList]);
+
+  useEffect(() => {
+    if (openSelect && isOpenSelectTokenFromModal) {
+      const selectableTokens = getSwappaleTokens(exchangeTo.id, exchangeFrom.id);
+      dispatch(handleDisableToken(selectableTokens));
+    } else if (openSelect && !isOpenSelectTokenFromModal) {
+      const selectableTokens = getSwappaleTokens(exchangeFrom.id, exchangeTo.id);
+      dispatch(handleDisableToken(selectableTokens));
+    }
+  }, [openSelect, selectedName, exchangeTo.id, exchangeFrom.id, isOpenSelectTokenFromModal]);
+
+  useEffect(() => {
+    const selectedTokenId = exchangeFrom.id;
+    const selectedTokenValue = exchangeFrom.value;
+    const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
+    if (selectedToken[0]) {
+      if (
+        selectedToken[0].balance === 0 ||
+        formatPercent(Number(removeCharacterInString(String(selectedToken[0].balance), ',')), 10) <
+          (selectedTokenValue || 0)
+      ) {
+        dispatch(setIsInsufficientError(true));
+      } else {
+        dispatch(setIsInsufficientError(false));
+      }
+    }
+  }, [exchangeFrom.id, exchangeTo.value, tokenList]);
+
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
 
@@ -820,6 +920,8 @@ const SwapPage: React.FC<Props> = () => {
     selectedName === 'from'
       ? exchangeFrom.value === null || Number(exchangeFrom.value) === 0
       : exchangeTo.value === null || Number(exchangeTo.value) === 0;
+
+  const isInvalidSwap = isInvalidInput || isInsufficientError || isInsufficientLiquidityError;
 
   return (
     <Wrapper>
@@ -1046,29 +1148,10 @@ const SwapPage: React.FC<Props> = () => {
               {!isFirstTime ? (
                 !account ? (
                   <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
-                    {'Connect Wallet'}
+                    Connect Wallet
                   </SwapSubmit>
-                ) : (
-                  <SwapSubmit
-                    fullWidth
-                    unEnable={
-                      isInvalidInput ||
-                      isInsufficientError ||
-                      isInsufficientLiquidityError ||
-                      priceImpactStatus === 'red'
-                    }
-                    onClick={() => {
-                      if (
-                        isInvalidInput ||
-                        isInsufficientError ||
-                        isInsufficientLiquidityError ||
-                        priceImpactStatus === 'red'
-                      ) {
-                        return;
-                      }
-                      handleToggleConfirm();
-                    }}
-                  >
+                ) : isInvalidSwap ? (
+                  <SwapSubmit fullWidth unEnable={isInvalidSwap}>
                     {isInsufficientLiquidityError
                       ? 'Insufficient liquidity for this trade'
                       : isInvalidInput
@@ -1078,6 +1161,26 @@ const SwapPage: React.FC<Props> = () => {
                       : priceImpactStatus === 'red'
                       ? 'Price impact too high'
                       : 'Swap'}
+                  </SwapSubmit>
+                ) : isApproved ? (
+                  <SwapSubmit
+                    fullWidth
+                    unEnable={priceImpactStatus === 'red'}
+                    onClick={() => {
+                      handleToggleConfirm();
+                    }}
+                  >
+                    Swap
+                  </SwapSubmit>
+                ) : (
+                  <SwapSubmit
+                    fullWidth
+                    unEnable={false}
+                    onClick={() => {
+                      handleApproveToken(exchangeFrom.id);
+                    }}
+                  >
+                    Approve {exchangeFrom.id.toLocaleUpperCase()}
                   </SwapSubmit>
                 )
               ) : (
@@ -1091,7 +1194,7 @@ const SwapPage: React.FC<Props> = () => {
       {openSetting && (
         <SwapSettingModal
           open={openSetting}
-          // setDeadline={setDeadline}
+          setDeadline={setDeadline}
           setSlippage={handleSetSlippage}
           onClose={handleToggleSetting}
         />
@@ -1109,6 +1212,7 @@ const SwapPage: React.FC<Props> = () => {
         data={handleConvertRecentTransactionData(recentTransactions, tokenList)}
       />
       <SwapConfirmModal
+        priceImpactStatus={priceImpactStatus}
         tradingFee={`${tradingFee} ${exchangeFrom.id.toLocaleUpperCase()}`}
         tokenList={tokenList}
         swapRate={`${calculateSwapTokenRate(Number(exchangeFrom.value), Number(exchangeTo.value))} 

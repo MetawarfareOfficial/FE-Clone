@@ -5,6 +5,7 @@ import { TextField, TextFieldProps, InputAdornment, Button, ButtonProps, Link, L
 import { ReactComponent as DownIcon } from 'assets/images/down-icon.svg';
 import { ReactComponent as DownDarkIcon } from 'assets/images/down-dark-icon.svg';
 import { swapInputRegex } from 'consts/swap';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   name: string;
@@ -19,7 +20,9 @@ interface Props {
   onChangeToken: (name: string) => void;
   disabled: boolean;
 }
-
+BigNumber.config({
+  EXPONENTIAL_AT: 100,
+});
 const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
   borderRadius: '9px',
 
@@ -161,7 +164,7 @@ const InputSwap: React.FC<Props> = ({
       onBlur={(event) => {
         if (swapInputRegex.test(event.target.value)) {
           onChange({
-            value: String(Number(event.target.value)),
+            value: event.target.value !== '' ? new BigNumber(event.target.value).toString() : '',
             name: event.target.name,
             isOnblur: true,
           });

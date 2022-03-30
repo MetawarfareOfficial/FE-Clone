@@ -125,7 +125,7 @@ export const useLoadSwapData = () => {
               new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
               swap[tokenIn],
             ),
-            priceImpact: formatPercent(Number(trade.priceImpact.toSignificant(6)) - 0.3, 2),
+            priceImpact: String(Number(trade.priceImpact.toSignificant(6)) - 0.3),
           };
         } else {
           const tradeTokenInToWavax = new Trade(
@@ -161,7 +161,7 @@ export const useLoadSwapData = () => {
               new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
               swap[tokenIn],
             ),
-            priceImpact: formatPercent(Number(priceImpact1 + priceImpact2), 2),
+            priceImpact: String(Number(priceImpact1 + priceImpact2)),
           };
         }
       } else {
@@ -187,7 +187,7 @@ export const useLoadSwapData = () => {
               .div(`1e${swap[tokenIn].decimals}`)
               .toFixed(6),
             tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
-            priceImpact: formatPercent(Number(trade.priceImpact.toSignificant(6)) - 0.3, 2),
+            priceImpact: String(Number(trade.priceImpact.toSignificant(6)) - 0.3),
           };
         } else {
           const tradeTokenOutToWavax = new Trade(
@@ -220,7 +220,7 @@ export const useLoadSwapData = () => {
               .div(`1e${swap[tokenIn].decimals}`)
               .toFixed(6),
             tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
-            priceImpact: formatPercent(Number(priceImpact1 + priceImpact2), 2),
+            priceImpact: String(Number(priceImpact1 + priceImpact2)),
           };
         }
       }

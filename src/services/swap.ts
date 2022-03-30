@@ -27,9 +27,10 @@ const initialState = {
       logo: AvaxImg,
       name: 'AVAX',
       balance: 0,
+      allowanceBalance: '1000000000000000000',
       disabled: false,
       isNative: true,
-      decimal: process.env.REACT_APP_NATIVE_CURRENCY_DECIMALS || 18,
+      decimal: process.env.REACT_APP_NATIVE_CURRENCY_DECIMALS || '18',
       address: process.env.REACT_APP_NATIVE_TOKEN_ADDRESS || '',
     },
     {
@@ -37,9 +38,10 @@ const initialState = {
       logo: OxImg,
       name: '0xB',
       balance: 0,
+      allowanceBalance: '1000000000000000000',
       disabled: false,
       isNative: false,
-      decimal: process.env.REACT_APP_CONTRACT_DECIMAL || 18,
+      decimal: process.env.REACT_APP_CONTRACT_DECIMAL || '18',
       address: process.env.REACT_APP_CONTRACT_ADDRESS || '',
     },
     {
@@ -47,9 +49,10 @@ const initialState = {
       logo: USDCImg,
       name: 'USDC',
       balance: 0,
+      allowanceBalance: '0',
       disabled: false,
       isNative: false,
-      decimal: process.env.REACT_APP_USDC_DECIMALS || 6,
+      decimal: process.env.REACT_APP_USDC_DECIMALS || '6',
       address: process.env.REACT_APP_USDC_TOKEN_ADDRESS || '',
     },
     {
@@ -57,9 +60,10 @@ const initialState = {
       logo: USDTImg,
       name: 'USDT',
       balance: 0,
+      allowanceBalance: '0',
       disabled: false,
       isNative: false,
-      decimal: process.env.REACT_APP_USDT_DECIMALS || 6,
+      decimal: process.env.REACT_APP_USDT_DECIMALS || '6',
       address: process.env.REACT_APP_USDT_TOKEN_ADDRESS || '',
     },
   ],
@@ -125,6 +129,7 @@ export const swapSlice = createSlice({
           return {
             ...tokenItem,
             balance: foundedToken.balance,
+            allowanceBalance: foundedToken.allowanceBalance,
           };
         }
         return tokenItem;
