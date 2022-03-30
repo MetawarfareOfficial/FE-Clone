@@ -74,7 +74,7 @@ export const useSwapHelpers = () => {
     }
   };
   const calculateSwapTokenRate = (tokenInAmount: number, tokenOutAmount: number) => {
-    return formatPercent(new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toNumber(), 6);
+    return formatPercent(new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toNumber(), 8);
   };
 
   const calculateTradingFee = (amount: number, token: Token) => {

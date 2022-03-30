@@ -861,8 +861,8 @@ const SwapPage: React.FC<Props> = () => {
                             callBackParams: [6],
                             addLessThanSymbol: true,
                           })
-                        : 0.0
-                      : 0.0}
+                        : '0.0'
+                      : '0.0'}
                   </p>
                 </ExchangeHeader>
 
@@ -919,8 +919,8 @@ const SwapPage: React.FC<Props> = () => {
                             callBackParams: [6],
                             addLessThanSymbol: true,
                           })
-                        : 0.0
-                      : 0.0}
+                        : '0.0'
+                      : '0.0'}
                   </p>
                 </ExchangeHeader>
 
