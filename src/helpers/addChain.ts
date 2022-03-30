@@ -4,13 +4,14 @@ declare let window: any;
 
 const regex = /^0x0[0-9]$/;
 
-export const addEthereumChain = async () => {
+export const addEthereumChain = async (externalProvider?: any) => {
   const { ethereum } = window;
+  const provider = externalProvider || ethereum;
   //  with rinkeby network hexlify will return 0x04. it is wrong
   const hexlifyId = ethers.utils.hexlify(Number(process.env.REACT_APP_CHAIN_ID) || '');
   const chainId = regex.test(hexlifyId) ? hexlifyId.slice(0, 2) + hexlifyId[3] : hexlifyId;
   try {
-    await ethereum.request({
+    await provider.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId }],
     });
@@ -18,7 +19,7 @@ export const addEthereumChain = async () => {
     // This error code indicates that the chain has not been added to MetaMask.
     if (switchError.code === 4902) {
       try {
-        await ethereum.request({
+        await provider.request({
           method: 'wallet_addEthereumChain',
           params: [
             {
