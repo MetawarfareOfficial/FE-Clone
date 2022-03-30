@@ -292,8 +292,12 @@ const ExchangeIcon = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const SwapSubmit = styled(Button)<ButtonProps>(({ theme }) => ({
-  background: '#3864FF',
+const SwapSubmit = styled(Button)<
+  ButtonProps & {
+    unEnable: boolean;
+  }
+>(({ theme, unEnable }) => ({
+  background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
   border: '1px solid rgba(56, 100, 255, 0.26)',
   boxSizing: 'border-box',
   borderRadius: '7px',
@@ -305,14 +309,15 @@ const SwapSubmit = styled(Button)<ButtonProps>(({ theme }) => ({
   lineHeight: '33px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
+  color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
   marginTop: '23px',
+  cursor: unEnable ? 'not-allowed !important' : 'pointer',
 
   '&:hover': {
-    background: '#3864FF',
+    background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
     border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
-    boxShadow: '0px 5px 11px rgba(0, 82, 255, 0.38)',
+    color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
+    boxShadow: !unEnable && '0px 5px 11px rgba(0, 82, 255, 0.38)',
   },
 
   [theme.breakpoints.down('sm')]: {
@@ -670,11 +675,8 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    let getTokenBalancesInterval: NodeJS.Timer;
-    if (account) {
-      handleGetTokenBalances();
-      getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
-    }
+    const getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
+    handleGetTokenBalances();
     return () => {
       if (getTokenBalancesInterval) {
         clearInterval(getTokenBalancesInterval);
@@ -935,6 +937,7 @@ const SwapPage: React.FC<Props> = () => {
               )}
               <SwapSubmit
                 fullWidth
+                unEnable={isInvalidInput || isInsufficientError || isInsufficientLiquidityError}
                 onClick={() => {
                   if (isInvalidInput || isInsufficientError || isInsufficientLiquidityError) {
                     return;

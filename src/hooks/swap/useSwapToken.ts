@@ -55,7 +55,7 @@ export const useSwapToken = () => {
     }
   };
 
-  const getSwapTokenBalances = async (TokensList: TokenItem[]) => {
+  const getSwapTokenBalances = async (_tokensList: TokenItem[]) => {
     if (account) {
       const nativeTokenBalance = await handleGetNativeToken(account);
       const multiCallParams = tokenList
@@ -80,7 +80,7 @@ export const useSwapToken = () => {
           };
         });
       const results = await multipleCall(multiCallParams);
-      const newTokenList = TokensList.map((item) => {
+      const newTokenList = _tokensList.map((item) => {
         if (item.isNative) {
           return {
             ...item,
@@ -96,8 +96,14 @@ export const useSwapToken = () => {
         }
       });
       return newTokenList;
+    } else {
+      return _tokensList.map((item) => {
+        return {
+          ...item,
+          balance: 0,
+        };
+      });
     }
-    return TokensList;
   };
 
   const getSwappaleTokens = (tokenId: SwapTokenId) => {
