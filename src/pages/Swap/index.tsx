@@ -488,14 +488,17 @@ const SwapPage: React.FC<Props> = () => {
     }
   };
 
-  const handleChange = (event: { value: string; name: string }) => {
-    const { value, name } = event;
+  const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
+    const { value, name, isOnblur } = event;
+    if (value === '0' && isOnblur) {
+      return;
+    }
     if (name === 'from') {
       setExchangeFrom({
         id: exchangeFrom.id,
         value,
       });
-      dispatch(setSelectedName('from'));
+      !isOnblur && dispatch(setSelectedName('from'));
       const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
         isExactInput: true,
         tokenIn: exchangeFrom.id,
@@ -511,7 +514,7 @@ const SwapPage: React.FC<Props> = () => {
         priceImpact,
       });
     } else if (name === 'to') {
-      dispatch(setSelectedName('to'));
+      !isOnblur && dispatch(setSelectedName('to'));
       setExchangeTo({
         id: exchangeTo.id,
         value,
@@ -531,8 +534,10 @@ const SwapPage: React.FC<Props> = () => {
         priceImpact,
       });
     }
-    setIsSwapMaxFromToken(false);
-    setIsFirstTime(false);
+    if (!isOnblur) {
+      setIsSwapMaxFromToken(false);
+      setIsFirstTime(false);
+    }
   };
 
   const handleChangeToken = (name: string) => {
