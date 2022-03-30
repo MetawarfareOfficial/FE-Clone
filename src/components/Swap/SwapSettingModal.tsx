@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 import {
   Box,
@@ -238,7 +239,7 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
       borderColor: 'rgba(56, 100, 255, 0.26)',
     },
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: 'unset !important',
+      // borderColor: 'unset !important',
     },
   },
 }));
@@ -274,6 +275,17 @@ const ButtonPerCent = styled(Button)<ButtonPercentProps>(({ active, theme }) => 
   minWidth: '51px',
   marginLeft: '15px',
   height: '30px',
+
+  '&:hover': {
+    background: active
+      ? theme.palette.mode === 'light'
+        ? '#3864FF'
+        : ' #3864FF'
+      : theme.palette.mode === 'light'
+      ? '#E9EDFF'
+      : '#171717',
+    opacity: 0.7,
+  },
 }));
 
 const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -292,6 +304,7 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDeadline }) => {
+  const [width] = useWindowSize();
   const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
   const [interactWithSlippageInput, setInteractWithSlippageInput] = useState(false);
   const [interactWithDeadlineInput, setInteractWithDeadlineInput] = useState(false);
@@ -416,6 +429,8 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
                 arrow
                 placement="right"
                 open={tooltip.slippage}
+                onMouseEnter={() => width > 768 && handleTooltipToggle('slippage')}
+                onMouseLeave={() => width > 768 && handleTooltipToggle('slippage')}
                 onClose={() => handleTooltipToggle('slippage')}
                 disableFocusListener
                 disableTouchListener
@@ -487,6 +502,8 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
                 arrow
                 placement="right"
                 open={tooltip.transaction}
+                onMouseEnter={() => width > 768 && handleTooltipToggle('transaction')}
+                onMouseLeave={() => width > 768 && handleTooltipToggle('transaction')}
                 onClose={() => handleTooltipToggle('transaction')}
                 disableFocusListener
                 disableTouchListener

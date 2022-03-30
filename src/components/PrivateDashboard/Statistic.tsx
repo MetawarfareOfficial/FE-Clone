@@ -73,9 +73,30 @@ const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
     width: 'calc((100% - 24px) / 2)',
     margin: '0 0 24px',
     padding: '19px',
+    height: '100%',
 
     '&:nth-child(even)': {
       marginLeft: '24px',
+    },
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    '&:last-child': {
+      width: '100%',
+    },
+  },
+
+  '@media(max-width: 375px)': {
+    padding: '14px',
+    minHeight: '158px',
+  },
+
+  '@media(max-width: 320px)': {
+    width: '100%',
+    margin: '0 0 20px',
+
+    '&:nth-child(even)': {
+      marginLeft: '0px',
     },
   },
 
@@ -92,6 +113,10 @@ const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
     [theme.breakpoints.down('md')]: {
       fontSize: '14px',
       lineHeight: '21px',
+    },
+
+    '@media(max-width: 375px)': {
+      fontSize: '12px',
     },
   },
 

@@ -1,5 +1,6 @@
 import UsdcIcon from 'assets/images/coin-usd1.svg';
 import OxblockIcon from 'assets/images/coin-usd.svg';
+import DefaultIcon from 'assets/images/coin-default.svg';
 import DollarIcon from 'assets/images/coin_dollar-circle-filled.svg';
 import DocIcon from 'assets/images/fluent_document.svg';
 import ClaimedIcon from 'assets/images/clarity_coin-bag-solid.svg';
@@ -63,7 +64,7 @@ export const dataTokens = [
 
 export const statisticData = [
   {
-    icon: OxblockIcon,
+    icon: DefaultIcon,
     name: 'Contracts Minted',
     value: 3050,
     color: '#EBF1FF',

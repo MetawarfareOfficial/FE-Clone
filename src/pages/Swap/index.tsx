@@ -133,7 +133,7 @@ const TitleBlack = styled(Typography)<TypographyProps>(({ theme }) => ({
 const TitleWhite = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
-  fontWeight: '600',
+  fontWeight: '700',
   fontSize: '80px',
   lineHeight: '147px',
   color: theme.palette.mode === 'light' ? '#0052FF' : '#0052FF',
@@ -161,7 +161,6 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   lineHeight: '29px',
   color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.57)' : 'rgba(255, 255, 255, 0.57)',
   letterSpacing: '0.04em',
-  textTransform: 'capitalize',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '14px',
@@ -295,6 +294,10 @@ const ExchangeIcon = styled(Box)<BoxProps>(() => ({
   width: '100%',
   margin: '36px 0 21px',
   textAlign: 'center',
+
+  '&:hover': {
+    opacity: 0.7,
+  },
 
   svg: {
     width: '38px',
