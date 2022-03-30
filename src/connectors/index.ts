@@ -14,6 +14,7 @@ export const walletConnect = new WalletConnectConnector({
   rpc: {
     [Number(process.env.REACT_APP_CHAIN_ID as string)]: getNetWorkRpcUrl(),
   },
+  chainId: Number(process.env.REACT_APP_CHAIN_ID),
   qrcode: true,
   supportedChainIds: [Number(process.env.REACT_APP_CHAIN_ID)],
 });

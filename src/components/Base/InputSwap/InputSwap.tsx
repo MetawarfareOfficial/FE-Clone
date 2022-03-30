@@ -15,7 +15,7 @@ interface Props {
   selected: number | any;
   tokens: Array<any>;
   onMax?: () => void;
-  onChange: (event: { value: string; name: string }) => void;
+  onChange: (event: { value: string; name: string; isOnblur?: boolean }) => void;
   onChangeToken: (name: string) => void;
   disabled: boolean;
 }
@@ -163,6 +163,7 @@ const InputSwap: React.FC<Props> = ({
           onChange({
             value: String(Number(event.target.value)),
             name: event.target.name,
+            isOnblur: true,
           });
         }
       }}
