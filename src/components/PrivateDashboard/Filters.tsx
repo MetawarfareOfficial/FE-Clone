@@ -6,6 +6,10 @@ interface Props {
   title?: string;
 }
 
+interface TabsCustomProps extends TabsProps {
+  total: number;
+}
+
 const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   background: '#FFFFFF',
   boxShadow: '0px 20px 45px #F0EDF7',
@@ -36,7 +40,7 @@ const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const TabsCustom = styled(Tabs)<TabsProps>(({ theme }) => ({
+const TabsCustom = styled(Tabs)<TabsCustomProps>(({ theme, total }) => ({
   '.MuiTab-root': {
     padding: '9px 0px',
     minWidth: 'auto',
@@ -67,7 +71,7 @@ const TabsCustom = styled(Tabs)<TabsProps>(({ theme }) => ({
   },
 
   '.Mui-selected': {
-    color: '#232859',
+    color: '#232859 !important',
 
     '&::before': {
       background: '#0052FF',
@@ -84,6 +88,22 @@ const TabsCustom = styled(Tabs)<TabsProps>(({ theme }) => ({
     borderRadius: '10px',
     marginBottom: '29px',
     padding: '19px 30px',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '12px 20px',
+
+    '.MuiTab-root': {
+      marginRight: '0',
+      width: `calc(100% / ${total})`,
+    },
+  },
+
+  '@media(max-width: 375px)': {
+    '.MuiTab-root': {
+      fontSize: '14px',
+      padding: '6px 0',
+    },
   },
 }));
 
@@ -117,7 +137,7 @@ const Filters: React.FC<Props> = () => {
   return (
     <BoxContent width={'calc(100% - 291px - 345px - 60px)'} sx={{ margin: '0 30px' }}>
       <Box sx={{ marginRight: 'auto' }}>
-        <TabsCustom value={filter.contract} onChange={handleChangeContract} aria-label="basic tabs example">
+        <TabsCustom total={4} value={filter.contract} onChange={handleChangeContract} aria-label="basic tabs example">
           <Tab label="Square" {...a11yProps(0)} />
           <Tab label="Cube" {...a11yProps(1)} />
           <Tab label="Tesseract" {...a11yProps(2)} />
@@ -126,7 +146,7 @@ const Filters: React.FC<Props> = () => {
       </Box>
 
       <Box sx={{ marginLeft: 'auto' }}>
-        <TabsCustom value={filter.time} onChange={handleChangeTime} aria-label="basic tabs example">
+        <TabsCustom total={5} value={filter.time} onChange={handleChangeTime} aria-label="basic tabs example">
           <Tab label="D" {...a11yProps(0)} />
           <Tab label="W" {...a11yProps(1)} />
           <Tab label="M" {...a11yProps(2)} />
