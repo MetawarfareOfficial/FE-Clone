@@ -37,7 +37,7 @@ interface Props {
   open: boolean;
   onClose: () => void;
   setSlippage: (value: string) => void;
-  // setDeadline: (value: string) => void;
+  setDeadline: (value: string) => void;
 }
 
 interface DialogTitleCustomProps {
@@ -303,7 +303,7 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
   borderRight: '1px solid rgba(56, 100, 255, 0.2)',
 }));
 
-const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
+const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDeadline }) => {
   const [width] = useWindowSize();
   const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
   const [interactWithSlippageInput, setInteractWithSlippageInput] = useState(false);
@@ -408,7 +408,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
               deadline: invalidDeadline ? defaultSettingData.deadline : settings.deadline,
             };
             localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
-            // setDeadline(newSetting.deadline);
+            setDeadline(newSetting.deadline);
             setSlippage(newSetting.slippage);
             onClose();
           }}

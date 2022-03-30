@@ -6,6 +6,7 @@ import { contractType } from 'consts/typeReward';
 import { getNetWorkRpcUrl } from 'connectors';
 import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
 import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
+import { usdcAbi } from 'abis/usdcAbi';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
@@ -53,9 +54,10 @@ export const useInteractiveContract = () => {
       ? new ethers.Contract(contractAddress, zeroXBlockAbi, library.getSigner(account))
       : contractWithoutSigner;
 
-  const approveToken = async (address?: string, amount?: string): Promise<void> => {
+  const approveToken = async (tokenApproveAddress: string, spender: string) => {
+    const contract = new ethers.Contract(tokenApproveAddress, usdcAbi, library.getSigner(account));
     try {
-      return contractWithSigner.functions.approve(address, amount);
+      return await contract.functions.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
     } catch (err: any) {
       if (err.code === 4001) throw err;
       throw new Error('Oop! Something went wrong');
@@ -278,22 +280,20 @@ export const useInteractiveContract = () => {
     }
   };
 
-  const swap0xbToTokens = async (token: string, amount: number, tokenDecimal: string, isExactOut: boolean) => {
-    try {
-      if (isExactOut) {
-        return contractWithSigner.functions.swap0xBForExactToken(
-          token,
-          new BN(amount).multipliedBy(Number(`1e${tokenDecimal}`)).toString(),
-        );
-      } else {
-        return contractWithSigner.functions.swapExact0xBForToken(
-          token,
-          new BN(amount).multipliedBy(Number(`1e${process.env.REACT_APP_CONTRACT_DECIMAL}`)).toString(),
-        );
-      }
-    } catch (e) {
-      throw new Error('Oop! Something went wrong');
-    }
+  const swap0xbToExactToken = async (token: string, amount: string, slippage: string, deadline: string) => {
+    return contractWithSigner.functions.swap0xBForExactToken(token, amount, slippage, deadline);
+  };
+
+  const swapExact0xbToToken = async (token: string, amount: string, slippage: string, deadline: string) => {
+    return contractWithSigner.functions.swapExact0xBForToken(token, amount, slippage, deadline);
+  };
+
+  const swapExactTokenTo0xb = async (token: string, amount: string, slippage: string, deadline: string) => {
+    return contractWithSigner.swapExactTokenFor0xB(token, amount, slippage, deadline);
+  };
+
+  const swapTokenToExact0xb = async (token: string, amount: string, slippage: string, deadline: string) => {
+    return contractWithSigner.swapTokenForExact0xB(token, amount, slippage, deadline);
   };
 
   const multipleCall = async (params: MultiCallList[]) => {
@@ -346,8 +346,11 @@ export const useInteractiveContract = () => {
     getTokenDistribution,
     getPairAddress,
     multipleCall,
-    swap0xbToTokens,
+    swap0xbToExactToken,
+    swapExact0xbToToken,
     getPairsInfo,
+    swapExactTokenTo0xb,
+    swapTokenToExact0xb,
     contractWithSigner,
     provider,
   };

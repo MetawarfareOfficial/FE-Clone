@@ -1,4 +1,4 @@
-export const intervalTime = 20000;
+export const intervalTime = 5000;
 export const localStorageSwapSettingKey = 'sw-st';
 export const defaultSettingData = {
   slippage: '0.5',

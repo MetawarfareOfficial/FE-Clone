@@ -31,6 +31,8 @@ import { ReactComponent as SwapConvertDarkIcon } from 'assets/images/ic_round-sw
 import AvaxImg from 'assets/images/avax-token.png';
 import OxImg from 'assets/images/0x-token.png';
 import { TokenItem } from 'pages/Swap';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
 
 interface Props {
   open: boolean;
@@ -49,6 +51,7 @@ interface Props {
   isMinReceive: Boolean;
   tradingFee: string;
   priceImpact: string;
+  priceImpactStatus: string;
 }
 
 interface TooltipCustomProps extends TooltipProps {
@@ -299,6 +302,7 @@ const SwapConfirmModal: React.FC<Props> = ({
   tradingFee,
   isMinReceive,
   priceImpact,
+  priceImpactStatus,
 }) => {
   const theme = useTheme();
   const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
@@ -414,7 +418,26 @@ const SwapConfirmModal: React.FC<Props> = ({
                 )}
               </TooltipCustom>
             </h4>
-            <p>{priceImpact}%</p>
+            <p
+              style={{
+                color:
+                  priceImpactStatus === 'light-red'
+                    ? 'red'
+                    : priceImpactStatus === 'black'
+                    ? theme.palette.mode === 'light'
+                      ? 'rgba(41, 50, 71, 0.8)'
+                      : '#fff'
+                    : priceImpactStatus,
+              }}
+            >
+              {formatForNumberLessThanCondition({
+                value: priceImpact,
+                minValueCondition: 0.01,
+                callback: formatPercent,
+                callBackParams: [2],
+              })}
+              %
+            </p>
           </BillingLine>
         </BillingBox>
 
