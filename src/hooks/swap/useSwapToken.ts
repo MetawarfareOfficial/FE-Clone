@@ -3,7 +3,6 @@ import { usdcAbi } from 'abis/usdcAbi';
 import BigNumber from 'bignumber.js';
 import { intervalTime } from 'consts/swap';
 import { bigNumber2Number } from 'helpers/formatNumber';
-import { formatPrice } from 'helpers/formatPrice';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import get from 'lodash/get';
 import { Exchange, TokenItem } from 'pages/Swap';
@@ -84,7 +83,7 @@ export const useSwapToken = () => {
         if (item.isNative) {
           return {
             ...item,
-            balance: formatPrice(nativeTokenBalance, 4),
+            balance: nativeTokenBalance,
           };
         } else {
           const rawBalance = get(results, `[${item.id}].callsReturnContext[0].returnValues[0]`, 0) as any;

@@ -114,7 +114,7 @@ export const useLoadSwapData = () => {
           return {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
-              6,
+              10,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: new BigNumber(trade.minimumAmountOut(currentSlippageTolerance).raw.toString())
@@ -150,7 +150,7 @@ export const useLoadSwapData = () => {
           return {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
-              6,
+              10,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: new BigNumber(tradeWavaxToTokenOut.minimumAmountOut(currentSlippageTolerance).raw.toString())
@@ -179,7 +179,7 @@ export const useLoadSwapData = () => {
           return {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
-              6,
+              10,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: null,
@@ -212,7 +212,7 @@ export const useLoadSwapData = () => {
           return {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
-              6,
+              10,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: null,

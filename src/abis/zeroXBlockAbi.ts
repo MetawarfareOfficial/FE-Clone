@@ -562,6 +562,8 @@ export const zeroXBlockAbi = [
     inputs: [
       { internalType: 'address', name: 'tokenAddr', type: 'address' },
       { internalType: 'uint256', name: 'amountOut', type: 'uint256' },
+      { internalType: 'uint256', name: 'slippageTolerance', type: 'uint256' },
+      { internalType: 'uint256', name: 'deadline', type: 'uint256' },
     ],
     name: 'swap0xBForExactToken',
     outputs: [],
@@ -572,8 +574,34 @@ export const zeroXBlockAbi = [
     inputs: [
       { internalType: 'address', name: 'tokenAddr', type: 'address' },
       { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
+      { internalType: 'uint256', name: 'slippageTolerance', type: 'uint256' },
+      { internalType: 'uint256', name: 'deadline', type: 'uint256' },
     ],
     name: 'swapExact0xBForToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'tokenAddr', type: 'address' },
+      { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
+      { internalType: 'uint256', name: 'slippageTolerance', type: 'uint256' },
+      { internalType: 'uint256', name: 'deadline', type: 'uint256' },
+    ],
+    name: 'swapExactTokenFor0xB',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'tokenAddr', type: 'address' },
+      { internalType: 'uint256', name: 'amountOut', type: 'uint256' },
+      { internalType: 'uint256', name: 'slippageTolerance', type: 'uint256' },
+      { internalType: 'uint256', name: 'deadline', type: 'uint256' },
+    ],
+    name: 'swapTokenForExact0xB',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
