@@ -293,6 +293,7 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
   const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
+  const [isFirstTimeOpen, setIsFirstTimeOpen] = useState(true);
   const { validateSlippageInput, validateDeadlineInput } = useSwapHelpers();
   const [errors, setErrors] = useState({
     slippageError: '',
@@ -333,10 +334,14 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
     if (slippageError !== '' || errors.slippageError !== '') {
       isSlippageError = true;
     }
-    setErrors({
-      deadlineError: isDeadlineError ? deadLineError : errors.deadlineError,
-      slippageError: isSlippageError ? slippageError : errors.slippageError,
-    });
+    if (!isFirstTimeOpen) {
+      setErrors({
+        deadlineError: isDeadlineError ? deadLineError : errors.deadlineError,
+        slippageError: isSlippageError ? slippageError : errors.slippageError,
+      });
+    } else {
+      setIsFirstTimeOpen(false);
+    }
     localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(settings));
   }, [settings]);
 
@@ -415,6 +420,25 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
             placeholder="0.00"
             type="text"
             fullWidth
+            onBlur={() => {
+              const regex = /^[0-9]+\.$/;
+              if (regex.test(settings.slippage)) {
+                const newSetting = {
+                  slippage: settings.slippage.replace('.', ''),
+                  deadline: settings.deadline,
+                };
+                setSetting(newSetting);
+              } else if (
+                errors.slippageError === errorMessage.SWAP_SLIPPAGE_INVALID.message ||
+                errors.slippageError === errorMessage.SWAP_SLIPPAGE_TOO_HIGH.message
+              ) {
+                const newSetting = {
+                  slippage: defaultSettingData.slippage,
+                  deadline: settings.deadline,
+                };
+                setSetting(newSetting);
+              }
+            }}
             value={settings.slippage}
             onChange={(event) => handleSlippageChange(event.target.value)}
             InputProps={{
