@@ -39,7 +39,6 @@ import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import React, { useEffect, useState } from 'react';
 import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { TokensList } from './data';
 
 interface Props {
   title?: string;
@@ -447,7 +446,7 @@ const SwapPage: React.FC<Props> = () => {
     setPriceImpact(priceImpact);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { value, name } = event.target;
     if (name === 'from') {
       setExchangeFrom({
@@ -688,6 +687,42 @@ const SwapPage: React.FC<Props> = () => {
     setSlippage(response.slippage);
     // setDeadline(response.deadline);
   }, []);
+
+  const handleSetSlippage = (value: string) => {
+    if (selectedName === 'from') {
+      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+        isExactInput: true,
+        tokenIn: exchangeFrom.id,
+        tokenOut: exchangeTo.id,
+        amount: exchangeFrom.value || '0',
+      });
+      handleChangeSwapData({
+        estimatedAmountToken,
+        selectedName: 'from',
+        maxSold,
+        minReceive,
+        tradingFee,
+        priceImpact,
+      });
+    } else {
+      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+        isExactInput: false,
+        tokenIn: exchangeFrom.id,
+        tokenOut: exchangeTo.id,
+        amount: exchangeTo.value || '0',
+      });
+      handleChangeSwapData({
+        estimatedAmountToken,
+        selectedName: 'to',
+        maxSold,
+        minReceive,
+        tradingFee,
+        priceImpact,
+      });
+    }
+    setSlippage(value);
+  };
+
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
 
@@ -743,7 +778,7 @@ const SwapPage: React.FC<Props> = () => {
 
                 <InputSwap
                   disabled={!pairInfoLoaded}
-                  tokens={TokensList}
+                  tokens={tokenList}
                   value={exchangeFrom.value}
                   selected={exchangeFrom.id}
                   onChange={handleChange}
@@ -924,7 +959,7 @@ const SwapPage: React.FC<Props> = () => {
         <SwapSettingModal
           open={openSetting}
           // setDeadline={setDeadline}
-          setSlippage={setSlippage}
+          setSlippage={handleSetSlippage}
           onClose={handleToggleSetting}
         />
       )}
@@ -957,6 +992,7 @@ const SwapPage: React.FC<Props> = () => {
         open={openConfirm}
         onClose={handleToggleConfirm}
         onConfirm={handleConfirm}
+        priceImpact={priceImpact}
       />
       {openStatus && swapStatus != null && (
         <SwapStatusModal status={swapStatus} open={openStatus} onClose={handleToggleStatus} />

@@ -77,7 +77,7 @@ export const useLoadSwapData = () => {
       dispatch(setIsInsufficientLiquidityError(false));
       dispatch(setIsLoadEstimateToken(true));
       if (!pairInfoLoaded) {
-        throw Error('Pair is not loaded');
+        throw Error('Pairs are not loaded');
       }
       if (Number(amount) === 0) {
         throw Error('Invalid token amount');
@@ -229,7 +229,7 @@ export const useLoadSwapData = () => {
         dispatch(setIsInsufficientLiquidityError(true));
       }
       return {
-        estimatedAmountToken: '0',
+        estimatedAmountToken: '',
         slippageTolerance: settingData!.slippage,
         minReceive: null,
         maxSold: '0',
