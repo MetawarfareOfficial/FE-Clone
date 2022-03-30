@@ -15,7 +15,7 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
 import React, { useEffect, useState } from 'react';
-import { setAccount, setLogin, unSetAccount, unSetLogin } from 'services/account';
+import { setAccount, setIsOpenSelectWalletModal, setLogin, unSetAccount, unSetLogin } from 'services/account';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { ConnectWalletModal } from '../ConnectWalletModal';
@@ -103,13 +103,13 @@ const ConnectWallet: React.FC<Props> = () => {
   const location = useLocation();
   const [width] = useWindowSize();
   const { active, account, activate, deactivate, error, chainId, connector } = useWeb3React<Web3Provider>();
-  const [open, setOpen] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectingTo, setConnectingTo] = useState<WalletId>();
   const [connectError, setConnectError] = useState(false);
 
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
 
+  const isOpenSelectWalletNodal = useAppSelector((state) => state.user.isOpenSelectWalletNodal);
   const isLogin = useAppSelector((state) => state.user.isLogin);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const { createToast } = useToast();
@@ -141,9 +141,9 @@ const ConnectWallet: React.FC<Props> = () => {
         await activate(injected);
         if (!getToken()) dispatch(setLogin());
         authenticateUser(Math.random().toString(36).substr(2, 10));
-        setOpen(false);
+        dispatch(setIsOpenSelectWalletModal(false));
       } else if (id === 'walletConnect') {
-        setOpen(false);
+        dispatch(setIsOpenSelectWalletModal(false));
         handleResetConnector(walletConnect);
         await activate(walletConnect, undefined, true);
         if (!getToken()) dispatch(setLogin());
@@ -156,7 +156,7 @@ const ConnectWallet: React.FC<Props> = () => {
       });
       handleResetModal();
     } catch (ex: any) {
-      setOpen(true);
+      dispatch(setIsOpenSelectWalletModal(true));
       setConnectError(true);
       if (ex.name === 'UnsupportedChainIdError' || ex.name === 't') {
         createToast({
@@ -174,7 +174,7 @@ const ConnectWallet: React.FC<Props> = () => {
   };
 
   const handleLoginBtnClicked = async (): Promise<void> => {
-    setOpen(true);
+    dispatch(setIsOpenSelectWalletModal(true));
   };
 
   const logout = async (): Promise<void> => {
@@ -217,8 +217,8 @@ const ConnectWallet: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    if (account && open) {
-      setOpen(false);
+    if (account && isOpenSelectWalletNodal) {
+      dispatch(setIsOpenSelectWalletModal(false));
       handleResetModal();
     }
   }, [account]);
@@ -319,10 +319,10 @@ const ConnectWallet: React.FC<Props> = () => {
           },
         ]}
         onClose={() => {
-          setOpen(false);
+          dispatch(setIsOpenSelectWalletModal(false));
           handleResetModal();
         }}
-        open={open}
+        open={isOpenSelectWalletNodal}
         isConnecting={isConnecting}
         onClickBackBtn={() => {
           setIsConnecting(false);

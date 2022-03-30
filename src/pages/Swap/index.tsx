@@ -14,6 +14,8 @@ import {
   TypographyProps,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/bx_help-circle-dark.svg';
 import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
 import { ReactComponent as ReloadIcon } from 'assets/images/carbon_recently-viewed.svg';
@@ -30,13 +32,18 @@ import {
   SwapStatusModal,
   SwapTokensModal,
 } from 'components/Swap';
+import { injected } from 'connectors';
 import { intervalTime } from 'consts/swap';
+import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
+import { useToast } from 'hooks/useToast';
+import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
+import { setIsOpenSelectWalletModal } from 'services/account';
 import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 
@@ -375,6 +382,7 @@ interface SetExchangeParams {
 
 const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
+  const { error, connector, activate } = useWeb3React();
   const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken } = useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
 
@@ -385,11 +393,13 @@ const SwapPage: React.FC<Props> = () => {
   const selectedName = useAppSelector((state) => state.swap.selectedName) as any;
   const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
   const dispatch = useAppDispatch();
-  const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
+  const { createToast } = useToast();
   const [slippage, setSlippage] = useState('0.5');
   // const [_deadline, setDeadline] = useState('10');
+
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
     'black',
   );
@@ -453,6 +463,29 @@ const SwapPage: React.FC<Props> = () => {
     }
     setTradingFee(tradingFee);
     setPriceImpact(priceImpact);
+  };
+  const handleConnectWallet = async () => {
+    if (error instanceof UnsupportedChainIdError) {
+      try {
+        if (connector instanceof WalletConnectConnector) {
+          createToast({
+            message: errorMessage.META_MASK_WRONG_NETWORK.message,
+            type: 'error',
+            toastId: 1,
+          });
+        } else {
+          await addEthereumChain();
+          await activate(injected);
+        }
+      } catch (ex: any) {
+        createToast({
+          message: ex.message,
+          type: 'error',
+        });
+      }
+    } else {
+      dispatch(setIsOpenSelectWalletModal(true));
+    }
   };
 
   const handleChange = (event: { value: string; name: string }) => {
@@ -998,34 +1031,43 @@ const SwapPage: React.FC<Props> = () => {
               ) : (
                 ''
               )}
-              {!isFirstTime && (
-                <SwapSubmit
-                  fullWidth
-                  unEnable={
-                    isInvalidInput || isInsufficientError || isInsufficientLiquidityError || priceImpactStatus === 'red'
-                  }
-                  onClick={() => {
-                    if (
+              {!account ? (
+                <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
+                  {'Connect Wallet'}
+                </SwapSubmit>
+              ) : (
+                !isFirstTime && (
+                  <SwapSubmit
+                    fullWidth
+                    unEnable={
                       isInvalidInput ||
                       isInsufficientError ||
                       isInsufficientLiquidityError ||
                       priceImpactStatus === 'red'
-                    ) {
-                      return;
                     }
-                    handleToggleConfirm();
-                  }}
-                >
-                  {isInsufficientLiquidityError
-                    ? 'Insufficient liquidity for this trade'
-                    : isInvalidInput
-                    ? 'Please enter a valid amount'
-                    : isInsufficientError
-                    ? `Insufficient ${exchangeFrom.id.toLocaleUpperCase()} balance`
-                    : priceImpactStatus === 'red'
-                    ? 'Price impact too high'
-                    : 'Swap'}
-                </SwapSubmit>
+                    onClick={() => {
+                      if (
+                        isInvalidInput ||
+                        isInsufficientError ||
+                        isInsufficientLiquidityError ||
+                        priceImpactStatus === 'red'
+                      ) {
+                        return;
+                      }
+                      handleToggleConfirm();
+                    }}
+                  >
+                    {isInsufficientLiquidityError
+                      ? 'Insufficient liquidity for this trade'
+                      : isInvalidInput
+                      ? 'Please enter a valid amount'
+                      : isInsufficientError
+                      ? `Insufficient ${exchangeFrom.id.toLocaleUpperCase()} balance`
+                      : priceImpactStatus === 'red'
+                      ? 'Price impact too high'
+                      : 'Swap'}
+                  </SwapSubmit>
+                )
               )}
             </SwapBox>
           </Grid>
