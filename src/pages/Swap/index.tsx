@@ -32,7 +32,7 @@ import {
 } from 'components/Swap';
 import { intervalTime } from 'consts/swap';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
-import { formatPrice } from 'helpers/formatPrice';
+import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
@@ -389,6 +389,10 @@ const SwapPage: React.FC<Props> = () => {
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const [slippage, setSlippage] = useState('0.5');
   // const [_deadline, setDeadline] = useState('10');
+  const [isFirstTime, setIsFirstTime] = useState(true);
+  const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
+    'black',
+  );
 
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
@@ -494,6 +498,7 @@ const SwapPage: React.FC<Props> = () => {
         priceImpact,
       });
     }
+    setIsFirstTime(false);
   };
 
   const handleChangeToken = (name: string) => {
@@ -552,10 +557,29 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   const handleFromMax = () => {
-    // setExchange({
-    //   ...exchange,
-    //   fromValue: exchange.fromBalance,
-    // });
+    const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
+    if (currentToken[0]) {
+      setExchangeFrom({
+        id: exchangeFrom.id,
+        value: String(currentToken[0].balance),
+      });
+      dispatch(setSelectedName('from'));
+      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+        isExactInput: true,
+        tokenIn: exchangeFrom.id,
+        tokenOut: exchangeTo.id,
+        amount: String(currentToken[0].balance),
+      });
+      handleChangeSwapData({
+        estimatedAmountToken,
+        selectedName: 'from',
+        maxSold,
+        minReceive,
+        tradingFee,
+        priceImpact,
+      });
+    }
+    setIsFirstTime(false);
   };
 
   const handleToggleSetting = () => {
@@ -674,6 +698,21 @@ const SwapPage: React.FC<Props> = () => {
     dispatch(handleSetTokenBalances(newTokens));
   };
 
+  const handleSetPriceImpactWarningColor = (_priceImpact: string) => {
+    const clonedPriceImpact = Number(_priceImpact);
+    if (Number(clonedPriceImpact) < 0.01) {
+      setPriceImpactStatus('green');
+    } else if (clonedPriceImpact >= 0.01 && clonedPriceImpact < 1) {
+      setPriceImpactStatus('black');
+    } else if (clonedPriceImpact >= 1 && clonedPriceImpact < 3) {
+      setPriceImpactStatus('orange');
+    } else if (clonedPriceImpact >= 3 && clonedPriceImpact < 15) {
+      setPriceImpactStatus('light-red');
+    } else {
+      setPriceImpactStatus('red');
+    }
+  };
+
   useEffect(() => {
     const getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
     handleGetTokenBalances();
@@ -689,6 +728,10 @@ const SwapPage: React.FC<Props> = () => {
     setSlippage(response.slippage);
     // setDeadline(response.deadline);
   }, []);
+
+  useEffect(() => {
+    handleSetPriceImpactWarningColor(priceImpact);
+  }, [priceImpact]);
 
   const handleSetSlippage = (value: string) => {
     if (selectedName === 'from') {
@@ -928,31 +971,55 @@ const SwapPage: React.FC<Props> = () => {
                           )}
                         </TooltipCustom>
                       </h4>
-                      <p>{priceImpact}%</p>
+                      <p
+                        style={{
+                          color: priceImpactStatus === 'light-red' ? 'red' : priceImpactStatus,
+                        }}
+                      >
+                        {formatForNumberLessThanCondition({
+                          minValueCondition: 0.01,
+                          value: Number(priceImpact),
+                          callback: formatPercent,
+                          callBackParams: [2],
+                          addLessThanSymbol: true,
+                        })}
+                        %
+                      </p>
                     </BillingLine>
                   </BillingBox>
                 </>
               ) : (
                 ''
               )}
-              <SwapSubmit
-                fullWidth
-                unEnable={isInvalidInput || isInsufficientError || isInsufficientLiquidityError}
-                onClick={() => {
-                  if (isInvalidInput || isInsufficientError || isInsufficientLiquidityError) {
-                    return;
+              {!isFirstTime && (
+                <SwapSubmit
+                  fullWidth
+                  unEnable={
+                    isInvalidInput || isInsufficientError || isInsufficientLiquidityError || priceImpactStatus === 'red'
                   }
-                  handleToggleConfirm();
-                }}
-              >
-                {isInsufficientLiquidityError
-                  ? 'Insufficient liquidity for this trade'
-                  : isInvalidInput
-                  ? 'Please enter a valid amount'
-                  : isInsufficientError
-                  ? `Insufficient ${exchangeFrom.id.toLocaleUpperCase()} balance`
-                  : 'Swap'}
-              </SwapSubmit>
+                  onClick={() => {
+                    if (
+                      isInvalidInput ||
+                      isInsufficientError ||
+                      isInsufficientLiquidityError ||
+                      priceImpactStatus === 'red'
+                    ) {
+                      return;
+                    }
+                    handleToggleConfirm();
+                  }}
+                >
+                  {isInsufficientLiquidityError
+                    ? 'Insufficient liquidity for this trade'
+                    : isInvalidInput
+                    ? 'Please enter a valid amount'
+                    : isInsufficientError
+                    ? `Insufficient ${exchangeFrom.id.toLocaleUpperCase()} balance`
+                    : priceImpactStatus === 'red'
+                    ? 'Price impact too high'
+                    : 'Swap'}
+                </SwapSubmit>
+              )}
             </SwapBox>
           </Grid>
         </Grid>

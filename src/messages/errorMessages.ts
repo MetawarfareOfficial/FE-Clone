@@ -73,6 +73,6 @@ export const errorMessage = {
   },
   SWAP_SLIPPAGE_TOO_HIGH: {
     title: 'Swap',
-    message: 'Enter a valid slippage percentage`',
+    message: 'Enter a valid slippage percentage',
   },
 };
