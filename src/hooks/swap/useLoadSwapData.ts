@@ -56,7 +56,7 @@ export const useLoadSwapData = () => {
     pause: !account,
     context: useMemo(
       () => ({
-        url: process.env.REACT_APP_GRAPH_RECENT_TRANSACTION_API_URL,
+        url: process.env.REACT_APP_SWAP_HISTORIES_API_URL,
       }),
       [],
     ),

@@ -1013,7 +1013,14 @@ const SwapPage: React.FC<Props> = () => {
                       </h4>
                       <p
                         style={{
-                          color: priceImpactStatus === 'light-red' ? 'red' : priceImpactStatus,
+                          color:
+                            priceImpactStatus === 'light-red'
+                              ? 'red'
+                              : priceImpactStatus === 'black'
+                              ? theme.palette.mode === 'light'
+                                ? 'rgba(41, 50, 71, 0.8)'
+                                : '#fff'
+                              : priceImpactStatus,
                         }}
                       >
                         {formatForNumberLessThanCondition({
@@ -1031,12 +1038,12 @@ const SwapPage: React.FC<Props> = () => {
               ) : (
                 ''
               )}
-              {!account ? (
-                <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
-                  {'Connect Wallet'}
-                </SwapSubmit>
-              ) : (
-                !isFirstTime && (
+              {!isFirstTime ? (
+                !account ? (
+                  <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
+                    {'Connect Wallet'}
+                  </SwapSubmit>
+                ) : (
                   <SwapSubmit
                     fullWidth
                     unEnable={
@@ -1068,6 +1075,8 @@ const SwapPage: React.FC<Props> = () => {
                       : 'Swap'}
                   </SwapSubmit>
                 )
+              ) : (
+                <></>
               )}
             </SwapBox>
           </Grid>
