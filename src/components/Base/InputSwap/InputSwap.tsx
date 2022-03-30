@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { TextField, TextFieldProps, InputAdornment, Button, ButtonProps, Link, LinkProps } from '@mui/material';
 
@@ -15,7 +15,7 @@ interface Props {
   selected: number | any;
   tokens: Array<any>;
   onMax?: () => void;
-  onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (event: { value: string; name: string }) => void;
   onChangeToken: (name: string) => void;
   disabled: boolean;
 }
@@ -158,9 +158,20 @@ const InputSwap: React.FC<Props> = ({
       fullWidth
       value={value}
       disabled={disabled}
+      onBlur={(event) => {
+        if (swapInputRegex.test(event.target.value)) {
+          onChange({
+            value: String(Number(event.target.value)),
+            name: event.target.name,
+          });
+        }
+      }}
       onChange={(event) => {
         if (swapInputRegex.test(event.target.value)) {
-          onChange(event);
+          onChange({
+            value: event.target.value,
+            name: event.target.name,
+          });
         }
       }}
       InputProps={{

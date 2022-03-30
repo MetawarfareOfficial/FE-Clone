@@ -393,7 +393,7 @@ const SwapPage: React.FC<Props> = () => {
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
     'black',
   );
-
+  const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
   const [isSelectedFrom, setIsSelectedFrom] = useState(false);
@@ -455,8 +455,8 @@ const SwapPage: React.FC<Props> = () => {
     setPriceImpact(priceImpact);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { value, name } = event.target;
+  const handleChange = (event: { value: string; name: string }) => {
+    const { value, name } = event;
     if (name === 'from') {
       setExchangeFrom({
         id: exchangeFrom.id,
@@ -498,6 +498,7 @@ const SwapPage: React.FC<Props> = () => {
         priceImpact,
       });
     }
+    setIsSwapMaxFromToken(false);
     setIsFirstTime(false);
   };
 
@@ -554,32 +555,36 @@ const SwapPage: React.FC<Props> = () => {
         value: exchangeTo.value,
       });
     }
+    setIsSwapMaxFromToken(false);
   };
 
   const handleFromMax = () => {
-    const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-    if (currentToken[0]) {
-      setExchangeFrom({
-        id: exchangeFrom.id,
-        value: String(currentToken[0].balance),
-      });
-      dispatch(setSelectedName('from'));
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: String(currentToken[0].balance),
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'from',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
+    if (account) {
+      const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
+      if (currentToken[0]) {
+        setExchangeFrom({
+          id: exchangeFrom.id,
+          value: formatPercent(currentToken[0].balance, 10),
+        });
+        dispatch(setSelectedName('from'));
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: true,
+          tokenIn: exchangeFrom.id,
+          tokenOut: exchangeTo.id,
+          amount: String(currentToken[0].balance),
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'from',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+        });
+        setIsSwapMaxFromToken(true);
+      }
+      setIsFirstTime(false);
     }
-    setIsFirstTime(false);
   };
 
   const handleToggleSetting = () => {
@@ -630,6 +635,7 @@ const SwapPage: React.FC<Props> = () => {
         priceImpact,
       });
     }
+    setIsSwapMaxFromToken(false);
   };
 
   const handleToggleRecent = () => {
@@ -649,10 +655,11 @@ const SwapPage: React.FC<Props> = () => {
     handleToggleStatus();
     try {
       setSwapStatus('pending');
+      const fromToken = tokenList.filter((item) => item.id === exchangeFrom.id);
       const transaction = await handleSwapToken(
         {
           fromId: exchangeFrom.id,
-          fromValue: Number(exchangeFrom.value),
+          fromValue: isSwapMaxFromTokens && fromToken[0] ? fromToken[0].balance : Number(exchangeFrom.value),
           toId: exchangeTo.id,
           toValue: Number(exchangeTo.value),
         },
