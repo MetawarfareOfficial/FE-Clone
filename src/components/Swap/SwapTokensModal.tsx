@@ -265,7 +265,7 @@ const SwapTokensModal: React.FC<Props> = ({ open, tokens, onSelect, onClose }) =
                   value: item.balance,
                   minValueCondition: 0.000001,
                   callback: formatPrice,
-                  callBackParams: [6],
+                  callBackParams: [6, 1],
                   addLessThanSymbol: true,
                 })}
               </BalanceValue>

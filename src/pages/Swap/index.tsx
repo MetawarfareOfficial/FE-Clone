@@ -557,29 +557,31 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   const handleFromMax = () => {
-    const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-    if (currentToken[0]) {
-      setExchangeFrom({
-        id: exchangeFrom.id,
-        value: String(currentToken[0].balance),
-      });
-      dispatch(setSelectedName('from'));
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: String(currentToken[0].balance),
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'from',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
+    if (account) {
+      const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
+      if (currentToken[0]) {
+        setExchangeFrom({
+          id: exchangeFrom.id,
+          value: String(currentToken[0].balance),
+        });
+        dispatch(setSelectedName('from'));
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: true,
+          tokenIn: exchangeFrom.id,
+          tokenOut: exchangeTo.id,
+          amount: String(currentToken[0].balance),
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'from',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+        });
+      }
+      setIsFirstTime(false);
     }
-    setIsFirstTime(false);
   };
 
   const handleToggleSetting = () => {

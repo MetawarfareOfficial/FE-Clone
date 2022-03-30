@@ -30,7 +30,7 @@ export const useSwapHelpers = () => {
     return '';
   };
   const validateDeadlineInput = (value: string) => {
-    if (!value || (value && value.trim() === '') || Number(value) > 9999999999) {
+    if (!value || (value && value.trim() === '') || Number(value) > 9999999999 || Number(value) <= 0) {
       return errorMessage.SWAP_SLIPPAGE_INVALID.message;
     }
     return '';
