@@ -293,7 +293,9 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
   const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
-  const [isFirstTimeOpen, setIsFirstTimeOpen] = useState(true);
+  const [interactWithSlippageInput, setInteractWithSlippageInput] = useState(false);
+  const [interactWithDeadlineInput, setInteractWithDeadlineInput] = useState(false);
+
   const { validateSlippageInput, validateDeadlineInput } = useSwapHelpers();
   const [errors, setErrors] = useState({
     slippageError: '',
@@ -309,6 +311,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
       };
       setSetting(newSettings);
     }
+    setInteractWithSlippageInput(true);
   };
 
   const handleDeadlineChange = (value: string) => {
@@ -319,6 +322,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
       };
       setSetting(newSettings);
     }
+    setInteractWithDeadlineInput(true);
   };
 
   useEffect(() => {
@@ -334,14 +338,23 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
     if (slippageError !== '' || errors.slippageError !== '') {
       isSlippageError = true;
     }
-    if (!isFirstTimeOpen) {
-      setErrors({
-        deadlineError: isDeadlineError ? deadLineError : errors.deadlineError,
+    let newError = {
+      slippageError: errors.slippageError,
+      deadlineError: errors.deadlineError,
+    };
+    if (interactWithSlippageInput) {
+      newError = {
+        ...newError,
         slippageError: isSlippageError ? slippageError : errors.slippageError,
-      });
-    } else {
-      setIsFirstTimeOpen(false);
+      };
     }
+    if (interactWithDeadlineInput) {
+      newError = {
+        ...newError,
+        deadlineError: isDeadlineError ? deadLineError : errors.deadlineError,
+      };
+    }
+    setErrors(newError);
     localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(settings));
   }, [settings]);
 
@@ -495,6 +508,15 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage }) => {
             type="text"
             fullWidth
             value={settings.deadline}
+            onBlur={() => {
+              if (errors.deadlineError === errorMessage.SWAP_SLIPPAGE_INVALID.message) {
+                const newSetting = {
+                  slippage: settings.slippage,
+                  deadline: defaultSettingData.deadline,
+                };
+                setSetting(newSetting);
+              }
+            }}
             onChange={(event) => handleDeadlineChange(event.target.value)}
             error={errors.deadlineError !== ''}
             helperText={errors.deadlineError}
