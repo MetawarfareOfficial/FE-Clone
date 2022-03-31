@@ -102,39 +102,37 @@ export const useSwapToken = () => {
   const getSwapTokenBalances = async (_tokensList: TokenItem[]) => {
     if (account) {
       const nativeTokenBalance = await handleGetNativeToken(account);
-      const multiCallParams = tokenList.map((item) => {
-        return {
-          reference: item.id,
-          contractAddress: tokenAddresses[item.id],
-          abi: usdcAbi,
-          calls: [
-            {
-              reference: 'balance',
-              methodName: 'balanceOf',
-              methodParameters: [account],
-            },
-            {
-              reference: 'allowance',
-              methodName: 'allowance',
-              methodParameters: [account, process.env.REACT_APP_CONTRACT_ADDRESS],
-            },
-          ],
-        };
-      });
+      const multiCallParams = tokenList
+        .filter((item) => !item.isNative)
+        .map((item) => {
+          return {
+            reference: item.id,
+            contractAddress: tokenAddresses[item.id],
+            abi: usdcAbi,
+            calls: [
+              {
+                reference: 'balance',
+                methodName: 'balanceOf',
+                methodParameters: [account],
+              },
+              {
+                reference: 'allowance',
+                methodName: 'allowance',
+                methodParameters: [account, process.env.REACT_APP_CONTRACT_ADDRESS],
+              },
+            ],
+          };
+        });
       const results = await multipleCall(multiCallParams);
       const newTokenList = _tokensList.map((item) => {
-        const rawBalance = get(results, `[${item.id}].callsReturnContext[0].returnValues[0]`, 0) as any;
-        const allowance = get(results, `[${item.id}].callsReturnContext[1].returnValues[0]`, 0) as any;
         if (item.isNative) {
           return {
             ...item,
             balance: nativeTokenBalance,
-            allowanceBalance:
-              item.id === SwapTokenId.OXB
-                ? item.allowanceBalance
-                : new BigNumber(allowance.hex || '0').div(Number(`1e${item.decimal}`)).toString(),
           };
         } else {
+          const rawBalance = get(results, `[${item.id}].callsReturnContext[0].returnValues[0]`, 0) as any;
+          const allowance = get(results, `[${item.id}].callsReturnContext[1].returnValues[0]`, 0) as any;
           return {
             ...item,
             balance: new BigNumber(rawBalance.hex).div(Number(`1e${item.decimal}`)).toString(),

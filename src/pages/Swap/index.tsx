@@ -41,6 +41,7 @@ import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { SwapTokenId, useSwapToken, useTooltip } from 'hooks/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { useToast } from 'hooks/useToast';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
 import { setIsOpenSelectWalletModal } from 'services/account';
@@ -389,6 +390,7 @@ interface SetExchangeParams {
 
 const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
+  const [windowSize] = useWindowSize();
   const { error, connector, activate } = useWeb3React();
   const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken, approveToken } =
     useSwapToken();
@@ -423,9 +425,7 @@ const SwapPage: React.FC<Props> = () => {
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [currentAction, setCurrentAction] = useState('swap');
-  const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
-    'black',
-  );
+  const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'pink' | 'red'>('black');
   const [currentTransactionId, setCurrenTransactionId] = useState('');
   const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
@@ -853,11 +853,13 @@ const SwapPage: React.FC<Props> = () => {
     if (Number(clonedPriceImpact) < 0.01) {
       setPriceImpactStatus('green');
     } else if (clonedPriceImpact >= 0.01 && clonedPriceImpact < 1) {
-      setPriceImpactStatus('black');
+      setPriceImpactStatus('green');
     } else if (clonedPriceImpact >= 1 && clonedPriceImpact < 3) {
+      setPriceImpactStatus('black');
+    } else if (clonedPriceImpact >= 3 && clonedPriceImpact < 5) {
       setPriceImpactStatus('orange');
-    } else if (clonedPriceImpact >= 3 && clonedPriceImpact < 15) {
-      setPriceImpactStatus('light-red');
+    } else if (clonedPriceImpact >= 5 && clonedPriceImpact < 15) {
+      setPriceImpactStatus('pink');
     } else {
       setPriceImpactStatus('red');
     }
@@ -1104,7 +1106,7 @@ const SwapPage: React.FC<Props> = () => {
                           title={`Your transaction will revert if there is a large, unfavorable 
                           price movement before it is confirmed`}
                           arrow
-                          placement="right"
+                          placement={windowSize > 600 ? 'right' : 'top'}
                           size="218px"
                         >
                           {theme.palette.mode === 'light' ? (
@@ -1128,7 +1130,7 @@ const SwapPage: React.FC<Props> = () => {
                           onMouseLeave={closeTradingFeeTooltip}
                           title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
                           arrow
-                          placement="right"
+                          placement={windowSize > 600 ? 'right' : 'top'}
                           size="230px"
                         >
                           {theme.palette.mode === 'light' ? (
@@ -1153,7 +1155,7 @@ const SwapPage: React.FC<Props> = () => {
                           onMouseLeave={closePriceImpactTooltip}
                           title={`The difference between the market price and estimated price due to trade size`}
                           arrow
-                          placement="right"
+                          placement={windowSize > 600 ? 'right' : 'top'}
                           size="218px"
                         >
                           {theme.palette.mode === 'light' ? (
@@ -1166,12 +1168,12 @@ const SwapPage: React.FC<Props> = () => {
                       <p
                         style={{
                           color:
-                            priceImpactStatus === 'light-red'
-                              ? 'red'
-                              : priceImpactStatus === 'black'
+                            priceImpactStatus === 'black'
                               ? theme.palette.mode === 'light'
                                 ? 'rgba(41, 50, 71, 0.8)'
                                 : '#fff'
+                              : priceImpactStatus === 'pink'
+                              ? 'rgb(226 120 253)'
                               : priceImpactStatus,
                         }}
                       >
