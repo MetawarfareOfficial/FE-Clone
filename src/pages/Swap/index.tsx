@@ -535,48 +535,60 @@ const SwapPage: React.FC<Props> = () => {
     if (value === '0' && isOnblur) {
       return;
     }
-    if (name === 'from') {
-      setExchangeFrom({
-        id: exchangeFrom.id,
-        value,
-      });
-      !isOnblur && dispatch(setSelectedName('from'));
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: value,
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'from',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
-    } else if (name === 'to') {
-      !isOnblur && dispatch(setSelectedName('to'));
-      setExchangeTo({
-        id: exchangeTo.id,
-        value,
-      });
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: false,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: value,
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'to',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
-    }
-    if (!isOnblur) {
+    if (isOnblur) {
+      if (name === 'from') {
+        setExchangeFrom({
+          id: exchangeFrom.id,
+          value,
+        });
+      } else if (name === 'to') {
+        setExchangeTo({
+          id: exchangeTo.id,
+          value,
+        });
+      }
+    } else {
+      if (name === 'from') {
+        setExchangeFrom({
+          id: exchangeFrom.id,
+          value,
+        });
+        dispatch(setSelectedName('from'));
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: true,
+          tokenIn: exchangeFrom.id,
+          tokenOut: exchangeTo.id,
+          amount: value,
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'from',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+        });
+      } else if (name === 'to') {
+        !isOnblur && dispatch(setSelectedName('to'));
+        setExchangeTo({
+          id: exchangeTo.id,
+          value,
+        });
+        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+          isExactInput: false,
+          tokenIn: exchangeFrom.id,
+          tokenOut: exchangeTo.id,
+          amount: value,
+        });
+        handleChangeSwapData({
+          estimatedAmountToken,
+          selectedName: 'to',
+          maxSold,
+          minReceive,
+          tradingFee,
+          priceImpact,
+        });
+      }
       setIsSwapMaxFromToken(false);
       setIsFirstTime(false);
     }
