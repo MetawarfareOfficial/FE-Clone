@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { recentTransactionQuery } from 'consts/query';
 import { intervalTime } from 'consts/swap';
 import { getSwapSettingData } from 'helpers';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
@@ -117,9 +118,14 @@ export const useLoadSwapData = () => {
               10,
             ),
             slippageTolerance: settingData!.slippage,
-            minReceive: new BigNumber(trade.minimumAmountOut(currentSlippageTolerance).raw.toString())
-              .div(`1e${swap[tokenOut].decimals}`)
-              .toFixed(6),
+            minReceive: formatForNumberLessThanCondition({
+              value: new BigNumber(trade.minimumAmountOut(currentSlippageTolerance).raw.toString())
+                .div(`1e${swap[tokenOut].decimals}`)
+                .toNumber(),
+              minValueCondition: 0.000001,
+              callback: formatPercent,
+              callBackParams: [6, 0],
+            }),
             maxSold: null,
             tradingFee: calculateTradingFee(
               new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
@@ -153,9 +159,14 @@ export const useLoadSwapData = () => {
               10,
             ),
             slippageTolerance: settingData!.slippage,
-            minReceive: new BigNumber(tradeWavaxToTokenOut.minimumAmountOut(currentSlippageTolerance).raw.toString())
-              .div(`1e${swap[tokenOut].decimals}`)
-              .toFixed(6),
+            minReceive: formatForNumberLessThanCondition({
+              value: new BigNumber(tradeWavaxToTokenOut.minimumAmountOut(currentSlippageTolerance).raw.toString())
+                .div(`1e${swap[tokenOut].decimals}`)
+                .toNumber(),
+              minValueCondition: 0.000001,
+              callback: formatPercent,
+              callBackParams: [6, 0],
+            }),
             maxSold: null,
             tradingFee: calculateTradingFee(
               new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
@@ -183,9 +194,14 @@ export const useLoadSwapData = () => {
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: null,
-            maxSold: new BigNumber(trade.maximumAmountIn(currentSlippageTolerance).raw.toString())
-              .div(`1e${swap[tokenIn].decimals}`)
-              .toFixed(6),
+            maxSold: formatForNumberLessThanCondition({
+              value: new BigNumber(trade.maximumAmountIn(currentSlippageTolerance).raw.toString())
+                .div(`1e${swap[tokenIn].decimals}`)
+                .toNumber(),
+              minValueCondition: 0.000001,
+              callback: formatPercent,
+              callBackParams: [6, 0],
+            }),
             tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
             priceImpact: String(Number(trade.priceImpact.toSignificant(6)) - 0.3),
           };
@@ -216,9 +232,14 @@ export const useLoadSwapData = () => {
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: null,
-            maxSold: new BigNumber(tradeWavaxToTokenIn.maximumAmountIn(currentSlippageTolerance).raw.toString())
-              .div(`1e${swap[tokenIn].decimals}`)
-              .toFixed(6),
+            maxSold: formatForNumberLessThanCondition({
+              value: new BigNumber(tradeWavaxToTokenIn.maximumAmountIn(currentSlippageTolerance).raw.toString())
+                .div(`1e${swap[tokenIn].decimals}`)
+                .toNumber(),
+              minValueCondition: 0.000001,
+              callback: formatPercent,
+              callBackParams: [6, 0],
+            }),
             tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
             priceImpact: String(Number(priceImpact1 + priceImpact2)),
           };

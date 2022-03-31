@@ -97,6 +97,7 @@ export const useSwapHelpers = () => {
     const result = formatPercent(
       new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(25).div(10000).toNumber(),
       6,
+      0,
     );
     return Number(result) > 0.000001 ? result : '<0.000001';
   };
