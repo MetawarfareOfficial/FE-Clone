@@ -410,6 +410,7 @@ const SwapPage: React.FC<Props> = () => {
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
     'black',
   );
+  const [currentTransactionId, setCurrenTransactionId] = useState('');
   const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
@@ -694,6 +695,7 @@ const SwapPage: React.FC<Props> = () => {
       const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
       if (response.hash) {
         await response.wait();
+        setCurrenTransactionId(response.hash);
         setSwapStatus('success');
       }
       handleGetTokenBalances();
@@ -809,6 +811,7 @@ const SwapPage: React.FC<Props> = () => {
       );
       if (transaction.hash) {
         await transaction.wait();
+        setCurrenTransactionId(transaction.hash);
         setSwapStatus('success');
       }
     } catch (error: any) {
@@ -1236,7 +1239,12 @@ const SwapPage: React.FC<Props> = () => {
         priceImpact={priceImpact}
       />
       {openStatus && swapStatus != null && (
-        <SwapStatusModal status={swapStatus} open={openStatus} onClose={handleToggleStatus} />
+        <SwapStatusModal
+          status={swapStatus}
+          open={openStatus}
+          transactionId={currentTransactionId}
+          onClose={handleToggleStatus}
+        />
       )}
     </Wrapper>
   );

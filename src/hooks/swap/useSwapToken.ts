@@ -61,9 +61,7 @@ export const useSwapToken = () => {
       throw new Error('Cannot find tokens');
     }
     const slippage = new BigNumber(setting.slippage).multipliedBy(1e6).toString();
-    const deadline = new BigNumber(moment().unix())
-      .plus(new BigNumber(setting.deadline).multipliedBy(60000))
-      .toString();
+    const deadline = new BigNumber(moment().unix()).plus(new BigNumber(setting.deadline).multipliedBy(60)).toString();
     if (_exchange.fromId === SwapTokenId.OXB) {
       if (isExactOut) {
         return await swap0xbToExactToken(

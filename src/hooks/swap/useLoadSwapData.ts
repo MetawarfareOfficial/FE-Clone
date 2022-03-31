@@ -131,7 +131,10 @@ export const useLoadSwapData = () => {
               new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
               swap[tokenIn],
             ),
-            priceImpact: String(Number(trade.priceImpact.toSignificant(6)) - 0.3),
+            priceImpact:
+              Number(trade.priceImpact.toSignificant(6)) > 0.3
+                ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
+                : '0.0001',
           };
         } else {
           const tradeTokenInToWavax = new Trade(
@@ -172,7 +175,8 @@ export const useLoadSwapData = () => {
               new BigNumber(amount).multipliedBy(`1e${swap[tokenIn].decimals}`).toNumber(),
               swap[tokenIn],
             ),
-            priceImpact: String(Number(priceImpact1 + priceImpact2)),
+            priceImpact:
+              Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
           };
         }
       } else {
@@ -203,7 +207,10 @@ export const useLoadSwapData = () => {
               callBackParams: [6, 0],
             }),
             tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
-            priceImpact: String(Number(trade.priceImpact.toSignificant(6)) - 0.3),
+            priceImpact:
+              Number(trade.priceImpact.toSignificant(6)) > 0.3
+                ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
+                : '0.0001',
           };
         } else {
           const tradeTokenOutToWavax = new Trade(
@@ -241,7 +248,8 @@ export const useLoadSwapData = () => {
               callBackParams: [6, 0],
             }),
             tradingFee: calculateTradingFee(new BigNumber(estimatedAmountToken).toNumber(), swap[tokenIn]),
-            priceImpact: String(Number(priceImpact1 + priceImpact2)),
+            priceImpact:
+              Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
           };
         }
       }

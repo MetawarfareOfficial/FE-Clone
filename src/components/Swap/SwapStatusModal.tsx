@@ -31,6 +31,7 @@ interface Props {
   open: boolean;
   status: String | null;
   onClose: () => void;
+  transactionId: string;
 }
 
 interface DialogTitleCustomProps {
@@ -181,9 +182,10 @@ const ViewTokenLink = styled(Link)<LinkProps>(() => ({
   textTransform: 'capitalize',
   color: '#0052FF',
   margin: '0',
+  cursor: 'pointer',
 }));
 
-const SwapStatusModal: React.FC<Props> = ({ open, onClose, status }) => {
+const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId }) => {
   const theme = useTheme();
 
   return (
@@ -220,7 +222,14 @@ const SwapStatusModal: React.FC<Props> = ({ open, onClose, status }) => {
             <h3>{status === 'success' ? 'Transaction Completed' : 'Transaction Rejected'}</h3>
 
             {status === 'success' ? (
-              <ViewTokenLink underline="none">View on AVASCAN</ViewTokenLink>
+              <ViewTokenLink
+                onClick={() => {
+                  window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${transactionId}`, '_blank');
+                }}
+                underline="none"
+              >
+                View on AVASCAN
+              </ViewTokenLink>
             ) : (
               <SwapSubmit fullWidth onClick={onClose}>
                 Dismiss
