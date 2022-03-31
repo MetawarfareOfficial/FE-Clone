@@ -1079,7 +1079,9 @@ const SwapPage: React.FC<Props> = () => {
                           )}
                         </TooltipCustom>
                       </h4>
-                      <p>{`${minReceive} ${exchangeFrom.id.toUpperCase()}`}</p>
+                      <p>{`${minReceive} ${
+                        selectedName === 'from' ? exchangeTo.id.toUpperCase() : exchangeFrom.id.toUpperCase()
+                      }`}</p>
                     </BillingLine>
 
                     <BillingLine>
