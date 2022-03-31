@@ -407,6 +407,7 @@ const SwapPage: React.FC<Props> = () => {
   const [deadline, setDeadline] = useState('10');
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
+  const [currentAction, setCurrentAction] = useState('swap');
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'light-red' | 'red'>(
     'black',
   );
@@ -702,6 +703,7 @@ const SwapPage: React.FC<Props> = () => {
       if (!tokenIn[0]) {
         throw new Error('Some thing wrong');
       }
+      setCurrentAction('approve');
       handleToggleStatus();
       setSwapStatus('pending');
       const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
@@ -804,6 +806,7 @@ const SwapPage: React.FC<Props> = () => {
 
   const handleConfirm = async () => {
     handleToggleConfirm();
+    setCurrentAction('swap');
     handleToggleStatus();
     try {
       setSwapStatus('pending');
@@ -1255,6 +1258,7 @@ const SwapPage: React.FC<Props> = () => {
           status={swapStatus}
           open={openStatus}
           transactionId={currentTransactionId}
+          action={currentAction === 'swap' ? 'swap' : 'approve'}
           onClose={handleToggleStatus}
         />
       )}

@@ -32,6 +32,7 @@ interface Props {
   status: String | null;
   onClose: () => void;
   transactionId: string;
+  action?: 'swap' | 'approve';
 }
 
 interface DialogTitleCustomProps {
@@ -185,7 +186,7 @@ const ViewTokenLink = styled(Link)<LinkProps>(() => ({
   cursor: 'pointer',
 }));
 
-const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId }) => {
+const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId, action = 'swap' }) => {
   const theme = useTheme();
 
   return (
@@ -197,7 +198,7 @@ const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId
       aria-describedby="alert-dialog-slide-description"
     >
       <Header>
-        <HeaderText>Swap Information</HeaderText>
+        <HeaderText> {action === 'swap' ? 'Swap' : 'Approve'} Information</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
