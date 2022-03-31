@@ -1189,10 +1189,13 @@ const SwapPage: React.FC<Props> = () => {
                     fullWidth
                     unEnable={priceImpactStatus === 'red'}
                     onClick={() => {
+                      if (priceImpactStatus === 'red') {
+                        return;
+                      }
                       handleToggleConfirm();
                     }}
                   >
-                    Swap
+                    {priceImpactStatus === 'red' ? 'Price impact too high' : 'Swap'}
                   </SwapSubmit>
                 ) : (
                   <SwapSubmit
