@@ -1,5 +1,5 @@
 version: 0.2
-  
+
 phases:
   install:
     runtime-versions:
@@ -9,19 +9,19 @@ phases:
 
   pre_build:
     commands:
-        - echo Prebuild command
-        - node -v
-        - npm -v
-        - npm install --global yarn
-        - yarn
-        - echo Installed!
-        - printenv
+      - echo Prebuild command
+      - node -v
+      - npm -v
+      - npm install --global yarn
+      - yarn
+      - echo Installed!
+      - printenv
 
   build:
     commands:
-        - echo Start build ...
-        - yarn build
-        - echo Build done!
+      - echo Start build ...
+      - yarn build
+      - echo Build done!
 
   post_build:
     commands:
@@ -37,7 +37,7 @@ phases:
 
     finally:
       - echo Post build finally
-     
+
 artifacts:
   files:
     - build/**/*
