@@ -906,8 +906,8 @@ const SwapPage: React.FC<Props> = () => {
     if (selectedToken[0]) {
       if (
         selectedToken[0].balance === 0 ||
-        formatPercent(Number(removeCharacterInString(String(selectedToken[0].balance), ',')), 10) <
-          (selectedTokenValue || 0)
+        Number(formatPercent(Number(removeCharacterInString(String(selectedToken[0].balance), ',')), 10)) <
+          Number(selectedTokenValue || 0)
       ) {
         dispatch(setIsInsufficientError(true));
       } else {
@@ -1086,8 +1086,7 @@ const SwapPage: React.FC<Props> = () => {
                       <h4>
                         Trading fee{' '}
                         <TooltipCustom
-                          title={`A portion of each trade which
-                      80% will go to liquidity providers (LPs) and 20% will go to platfrom`}
+                          title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
                           arrow
                           placement="right"
                           size="230px"
