@@ -34,6 +34,7 @@ import { TokenItem } from 'pages/Swap';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import { useTooltip } from 'hooks/swap';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 interface Props {
   open: boolean;
@@ -306,6 +307,7 @@ const SwapConfirmModal: React.FC<Props> = ({
   priceImpactStatus,
 }) => {
   const theme = useTheme();
+  const [size] = useWindowSize();
   const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
   const toTokenInfo = tokenList.filter((item) => item.id === exchange.to);
   const {
@@ -389,7 +391,7 @@ const SwapConfirmModal: React.FC<Props> = ({
                 title={`Your transaction will revert if there is a large, unfavorable 
                           price movement before it is confirmed`}
                 arrow
-                placement="right"
+                placement={size > 600 ? 'right' : 'top'}
                 size="218px"
               >
                 {theme.palette.mode === 'light' ? (
@@ -411,7 +413,7 @@ const SwapConfirmModal: React.FC<Props> = ({
                 onMouseLeave={closeTradingFeeTooltip}
                 title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
                 arrow
-                placement="right"
+                placement={size > 600 ? 'right' : 'top'}
                 size="230px"
               >
                 {theme.palette.mode === 'light' ? (
@@ -433,7 +435,7 @@ const SwapConfirmModal: React.FC<Props> = ({
                 onMouseLeave={closePriceImpactTooltip}
                 title={`The difference between the market price and estimated price due to trade size`}
                 arrow
-                placement="right"
+                placement={size > 600 ? 'right' : 'top'}
                 size="218px"
               >
                 {theme.palette.mode === 'light' ? (
@@ -446,12 +448,12 @@ const SwapConfirmModal: React.FC<Props> = ({
             <p
               style={{
                 color:
-                  priceImpactStatus === 'light-red'
-                    ? 'red'
-                    : priceImpactStatus === 'black'
+                  priceImpactStatus === 'black'
                     ? theme.palette.mode === 'light'
                       ? 'rgba(41, 50, 71, 0.8)'
                       : '#fff'
+                    : priceImpactStatus === 'pink'
+                    ? 'rgb(226 120 253)'
                     : priceImpactStatus,
               }}
             >
