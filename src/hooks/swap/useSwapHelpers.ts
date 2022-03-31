@@ -48,15 +48,15 @@ export const useSwapHelpers = () => {
 
       const amountIn = formatForNumberLessThanCondition({
         value: new BigNumber(item.amountIn).div(`1e${tokenIn[0].decimal}`).toString(),
-        minValueCondition: 0.000001,
+        minValueCondition: 0.001,
         callback: formatPrice,
-        callBackParams: [6, 0],
+        callBackParams: [3, 0],
       });
       const amountOut = formatForNumberLessThanCondition({
         value: new BigNumber(item.amountOut).div(`1e${tokenOut[0].decimal}`).toString(),
-        minValueCondition: 0.000001,
+        minValueCondition: 0.001,
         callback: formatPrice,
-        callBackParams: [6, 0],
+        callBackParams: [3, 0],
       });
       return {
         id: item.id,
