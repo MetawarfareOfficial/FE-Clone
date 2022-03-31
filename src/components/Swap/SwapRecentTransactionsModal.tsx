@@ -20,8 +20,7 @@ import {
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { ReactComponent as SwitchIcon } from 'assets/images/switch.svg';
 import { ReactComponent as SwitchDarkIcon } from 'assets/images/exchange-dark.svg';
-import arrowWhiteIcon from 'assets/images/ic_round-swap-vert.svg';
-import arrowDarkIcon from 'assets/images/ic_round-swap-vert-dark.svg';
+import externalLinkIc from 'assets/images/external-link-ic.svg';
 
 interface Props {
   open: boolean;
@@ -116,7 +115,7 @@ const Content = styled(DialogContent)<DialogContentCustomProps>(({}) => ({
 const ListView = styled(Box)<BoxProps>(() => ({
   width: '100%',
   overflowY: 'scroll',
-  maxHeight: '370px',
+  maxHeight: '385px',
   '&::-webkit-scrollbar': {
     width: '4px',
     height: '4px',
@@ -196,14 +195,20 @@ const ListHeader = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const ImageContainer = styled(IconButton)<IconButtonProps>(() => ({
-  width: '40px',
-  height: '25px',
+const ImageContainer = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const Icon = styled(Box)<BoxProps>(({ theme }) => ({
+  display: 'inline-block',
+  width: '16px',
+  height: '14px',
   marginLeft: '10px',
   border: 'none',
-  img: {
-    width: '100%',
-  },
+  backgroundColor: theme.palette.mode === 'light' ? '#333333' : '#fff',
+  mask: `url(${externalLinkIc}) no-repeat center`,
+  cursor: 'pointer',
 }));
 
 const SwapRecentTransactionsModal: React.FC<Props> = ({ open, data, onClose }) => {
@@ -241,17 +246,22 @@ const SwapRecentTransactionsModal: React.FC<Props> = ({ open, data, onClose }) =
                 <Avatar sx={{ width: '31px', height: '31px' }} src={item.to} />
                 <BoxDetail>
                   <h3>{item.title}</h3>
-                  <p>
-                    {item.date} <span>{item.time}</span>{' '}
+                  <div
+                    style={{
+                      display: 'flex',
+                    }}
+                  >
+                    <p>
+                      {item.date} <span>{item.time}</span>{' '}
+                    </p>
                     <ImageContainer
                       onClick={() => {
                         window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${item.id}`, '_blank');
                       }}
                     >
-                      {' '}
-                      <img src={theme.palette.mode === 'light' ? arrowWhiteIcon : arrowDarkIcon} />{' '}
+                      <Icon />
                     </ImageContainer>
-                  </p>
+                  </div>
                 </BoxDetail>
               </ListItem>
             ))}

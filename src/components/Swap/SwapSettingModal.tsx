@@ -228,12 +228,12 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
     borderRadius: '16px',
 
     '& fieldset': {
-      borderColor: 'rgba(56, 100, 255, 0.26)',
+      borderColor: 'rgba(56, 100, 255, 0.26) !important',
       borderRadius: '16px',
       padding: 0,
     },
     '&:hover fieldset': {
-      borderColor: 'rgba(56, 100, 255, 0.26)',
+      borderColor: 'rgba(56, 100, 255, 0.26) !important',
     },
     '&.Mui-focused fieldset': {
       borderColor: 'rgba(56, 100, 255, 0.26)',
