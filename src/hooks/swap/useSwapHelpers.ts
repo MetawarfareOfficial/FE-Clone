@@ -63,7 +63,7 @@ export const useSwapHelpers = () => {
         from: tokenIn.length > 0 ? tokenIn[0].logo : null,
         to: tokenOut.length > 0 ? tokenOut[0].logo : null,
         title: `Swap ${amountIn} ${tokenIn[0].id.toUpperCase()} for ${amountOut} ${tokenOut[0].id.toUpperCase()}`,
-        date: moment.unix(Number(item.date)).format('MM/DD/YYYY'),
+        date: moment.unix(Number(item.date)).format('DD/MM/YYYY'),
         time: moment.unix(Number(item.date)).format('hh:mm'),
       };
     });
