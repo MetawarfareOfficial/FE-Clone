@@ -1195,7 +1195,7 @@ const SwapPage: React.FC<Props> = () => {
                       handleToggleConfirm();
                     }}
                   >
-                    Swap
+                    {priceImpactStatus === 'red' ? 'Price impact too high' : 'Swap'}
                   </SwapSubmit>
                 ) : (
                   <SwapSubmit
