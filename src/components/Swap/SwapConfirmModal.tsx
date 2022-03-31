@@ -33,6 +33,7 @@ import OxImg from 'assets/images/0x-token.png';
 import { TokenItem } from 'pages/Swap';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
+import { useTooltip } from 'hooks/swap';
 
 interface Props {
   open: boolean;
@@ -307,6 +308,22 @@ const SwapConfirmModal: React.FC<Props> = ({
   const theme = useTheme();
   const fromTokenInfo = tokenList.filter((item) => item.id === exchange.from);
   const toTokenInfo = tokenList.filter((item) => item.id === exchange.to);
+  const {
+    open: minReceiveTooltipOpen,
+    handleCloseTooltip: closeMinReceiveTooltip,
+    handleOpenTooltip: openMinReceiveTooltip,
+  } = useTooltip();
+  const {
+    open: tradingFeeTooltipOpen,
+    handleCloseTooltip: closeTradingFeeTooltip,
+    handleOpenTooltip: openTradingFeeTooltip,
+  } = useTooltip();
+  const {
+    open: priceImpactTooltipOpen,
+    handleCloseTooltip: closePriceImpactTooltip,
+    handleOpenTooltip: openPriceImpactTooltip,
+  } = useTooltip();
+
   return (
     <Wrapper
       className="swapDialog"
@@ -366,6 +383,9 @@ const SwapConfirmModal: React.FC<Props> = ({
             <h4>
               {isMinReceive ? 'Min Receive' : 'Max Sold'}
               <TooltipCustom
+                open={minReceiveTooltipOpen}
+                onMouseEnter={openMinReceiveTooltip}
+                onMouseLeave={closeMinReceiveTooltip}
                 title={`Your transaction will revert if there is a large, unfavorable 
                           price movement before it is confirmed`}
                 arrow
@@ -386,6 +406,9 @@ const SwapConfirmModal: React.FC<Props> = ({
             <h4>
               Trading fee{' '}
               <TooltipCustom
+                open={tradingFeeTooltipOpen}
+                onMouseEnter={openTradingFeeTooltip}
+                onMouseLeave={closeTradingFeeTooltip}
                 title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
                 arrow
                 placement="right"
@@ -405,6 +428,9 @@ const SwapConfirmModal: React.FC<Props> = ({
             <h4>
               Price impact{' '}
               <TooltipCustom
+                open={priceImpactTooltipOpen}
+                onMouseEnter={openPriceImpactTooltip}
+                onMouseLeave={closePriceImpactTooltip}
                 title={`The difference between the market price and estimated price due to trade size`}
                 arrow
                 placement="right"

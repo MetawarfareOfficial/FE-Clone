@@ -38,7 +38,7 @@ import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
-import { SwapTokenId, useSwapToken } from 'hooks/swap';
+import { SwapTokenId, useSwapToken, useTooltip } from 'hooks/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { useToast } from 'hooks/useToast';
 import { errorMessage } from 'messages/errorMessages';
@@ -393,6 +393,21 @@ const SwapPage: React.FC<Props> = () => {
   const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken, approveToken } =
     useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
+  const {
+    open: minReceiveTooltipOpen,
+    handleCloseTooltip: closeMinReceiveTooltip,
+    handleOpenTooltip: openMinReceiveTooltip,
+  } = useTooltip();
+  const {
+    open: tradingFeeTooltipOpen,
+    handleCloseTooltip: closeTradingFeeTooltip,
+    handleOpenTooltip: openTradingFeeTooltip,
+  } = useTooltip();
+  const {
+    open: priceImpactTooltipOpen,
+    handleCloseTooltip: closePriceImpactTooltip,
+    handleOpenTooltip: openPriceImpactTooltip,
+  } = useTooltip();
 
   const tokenList = useAppSelector((state) => state.swap.tokenList);
   const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
@@ -431,7 +446,6 @@ const SwapPage: React.FC<Props> = () => {
   const [minReceive, setMinReceive] = useState<null | string>('0');
   const [tradingFee, setTradingFee] = useState('0');
   const [priceImpact, setPriceImpact] = useState('0');
-
   const handleCheckIsApproved = () => {
     const tokenFrom = tokenList.filter((item) => item.id === exchangeFrom.id);
     if (tokenFrom[0]) {
@@ -1084,6 +1098,9 @@ const SwapPage: React.FC<Props> = () => {
                       <h4>
                         {selectedName === 'from' ? 'Min Receive' : 'Max Sold'}
                         <TooltipCustom
+                          open={minReceiveTooltipOpen}
+                          onMouseEnter={openMinReceiveTooltip}
+                          onMouseLeave={closeMinReceiveTooltip}
                           title={`Your transaction will revert if there is a large, unfavorable 
                           price movement before it is confirmed`}
                           arrow
@@ -1106,6 +1123,9 @@ const SwapPage: React.FC<Props> = () => {
                       <h4>
                         Trading fee{' '}
                         <TooltipCustom
+                          open={tradingFeeTooltipOpen}
+                          onMouseEnter={openTradingFeeTooltip}
+                          onMouseLeave={closeTradingFeeTooltip}
                           title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
                           arrow
                           placement="right"
@@ -1128,6 +1148,9 @@ const SwapPage: React.FC<Props> = () => {
                       <h4>
                         Price impact{' '}
                         <TooltipCustom
+                          open={priceImpactTooltipOpen}
+                          onMouseEnter={openPriceImpactTooltip}
+                          onMouseLeave={closePriceImpactTooltip}
                           title={`The difference between the market price and estimated price due to trade size`}
                           arrow
                           placement="right"
