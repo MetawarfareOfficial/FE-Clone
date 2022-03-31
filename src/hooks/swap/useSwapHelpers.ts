@@ -6,7 +6,8 @@ import moment from 'moment';
 import { TokenItem } from 'pages/Swap';
 import get from 'lodash/get';
 import { Token } from '@traderjoe-xyz/sdk';
-import { formatPercent } from 'helpers/formatPrice';
+import { formatPercent, formatPrice } from 'helpers/formatPrice';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 interface RecentTransaction {
   id: string;
   amountIn: string;
@@ -44,11 +45,24 @@ export const useSwapHelpers = () => {
       const tokenOut = tokens.filter(
         (tokenItem) => tokenItem.id === (get(item, 'tokenOut.symbol') || 'null').toLocaleLowerCase(),
       );
+
+      const amountIn = formatForNumberLessThanCondition({
+        value: new BigNumber(item.amountIn).div(`1e${tokenIn[0].decimal}`).toString(),
+        minValueCondition: 0.000001,
+        callback: formatPrice,
+        callBackParams: [6, 0],
+      });
+      const amountOut = formatForNumberLessThanCondition({
+        value: new BigNumber(item.amountOut).div(`1e${tokenOut[0].decimal}`).toString(),
+        minValueCondition: 0.000001,
+        callback: formatPrice,
+        callBackParams: [6, 0],
+      });
       return {
         id: item.id,
         from: tokenIn.length > 0 ? tokenIn[0].logo : null,
         to: tokenOut.length > 0 ? tokenOut[0].logo : null,
-        title: `Swap ${item.amountIn} 0xB for ${item.amountOut} AVAX`,
+        title: `Swap ${amountIn} ${tokenIn[0].id.toUpperCase()} for ${amountOut} ${tokenOut[0].id.toUpperCase()}`,
         date: moment.unix(Number(item.date)).format('MM/DD/YYYY'),
         time: moment.unix(Number(item.date)).format('hh:mm'),
       };

@@ -386,8 +386,7 @@ const SwapConfirmModal: React.FC<Props> = ({
             <h4>
               Trading fee{' '}
               <TooltipCustom
-                title={`A portion of each trade which
-                      80% will go to liquidity providers (LPs) and 20% will go to platfrom`}
+                title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
                 arrow
                 placement="right"
                 size="230px"
