@@ -466,7 +466,17 @@ const SwapPage: React.FC<Props> = () => {
       setIsApproved(false);
     }
   };
-
+  const handleReset = () => {
+    setExchangeFrom({
+      id: exchangeFrom.id,
+      value: '',
+    });
+    setExchangeTo({
+      id: exchangeTo.id,
+      value: '',
+    });
+    setIsFirstTime(true);
+  };
   const handleChangeSwapData = ({
     selectedName,
     estimatedAmountToken,
@@ -842,6 +852,7 @@ const SwapPage: React.FC<Props> = () => {
         await transaction.wait();
         setCurrenTransactionId(transaction.hash);
         setSwapStatus('success');
+        handleReset();
       }
     } catch (error: any) {
       setSwapStatus('error');

@@ -116,6 +116,7 @@ export const useLoadSwapData = () => {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
               10,
+              0,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: formatForNumberLessThanCondition({
@@ -160,6 +161,7 @@ export const useLoadSwapData = () => {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
               10,
+              0,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: formatForNumberLessThanCondition({
@@ -195,6 +197,7 @@ export const useLoadSwapData = () => {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
               10,
+              0,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: null,
@@ -236,6 +239,7 @@ export const useLoadSwapData = () => {
             estimatedAmountToken: formatPercent(
               new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
               10,
+              0,
             ),
             slippageTolerance: settingData!.slippage,
             minReceive: null,

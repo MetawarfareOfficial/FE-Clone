@@ -34,5 +34,5 @@ export const formatPercent = (percent: number, maximumFractionDigits = 2, minimu
       minimumFractionDigits:
         maximumFractionDigits < minimumFractionDigits ? maximumFractionDigits : minimumFractionDigits,
     }),
-  ).replace(',', '');
+  ).replaceAll(',', '');
 };

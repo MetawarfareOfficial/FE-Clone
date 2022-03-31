@@ -80,13 +80,14 @@ export const useSwapToken = () => {
         );
       }
     } else if (_exchange.fromId === SwapTokenId.AVAX && _exchange.toId === SwapTokenId.OXB) {
+      const fromValue = Number(_exchange.fromValue);
+      const amountIn = new BigNumber(fromValue)
+        .multipliedBy(new BigNumber(100 + setting.slippage))
+        .multipliedBy(100)
+        .toString();
       if (isExactOut) {
         return await swapAVAXForExact0xB(
-          String(
-            new BigNumber(Number(_exchange.fromValue))
-              .plus(new BigNumber(Number(_exchange.fromValue)).multipliedBy(setting.slippage).div(100))
-              .toString(),
-          ),
+          amountIn,
           new BigNumber(Number(_exchange.toValue)).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
           slippage,
           deadline,
