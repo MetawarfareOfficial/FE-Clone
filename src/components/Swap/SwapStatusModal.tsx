@@ -22,10 +22,10 @@ import Loading from 'components/Base/Loading';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 
-import SuccessGif from 'assets/images/success-white.gif';
-// import SuccessDarkGif from 'assets/images/success.gif';
-import ErrorGif from 'assets/images/error-white.gif';
-// import ErrorDarkGif from 'assets/images/error.gif';
+import SuccessGif from 'assets/images/swap-success-white.gif';
+import SuccessDarkGif from 'assets/images/swap-success-dark.gif';
+import ErrorGif from 'assets/images/swap-failed-white.gif';
+import ErrorDarkGif from 'assets/images/swap-failed-dark.gif';
 
 interface Props {
   open: boolean;
@@ -214,9 +214,9 @@ const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId
           <StatusBox>
             <ViewImage>
               {status === 'success' ? (
-                <img alt="" src={theme.palette.mode === 'light' ? SuccessGif : SuccessGif} />
+                <img alt="" src={theme.palette.mode === 'light' ? SuccessGif : SuccessDarkGif} />
               ) : (
-                <img alt="" src={theme.palette.mode === 'light' ? ErrorGif : ErrorGif} />
+                <img alt="" src={theme.palette.mode === 'light' ? ErrorGif : ErrorDarkGif} />
               )}
             </ViewImage>
 
