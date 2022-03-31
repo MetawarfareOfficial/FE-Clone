@@ -105,6 +105,12 @@ const TabsCustom = styled(Tabs)<TabsCustomProps>(({ theme, total }) => ({
       padding: '6px 0',
     },
   },
+  '@media(max-width: 320px)': {
+    '.MuiTab-root': {
+      width: total === 4 ? 'auto' : `calc(100% / ${total})`,
+      marginRight: total === 4 ? '14px' : '0px',
+    },
+  },
 }));
 
 const Filters: React.FC<Props> = () => {

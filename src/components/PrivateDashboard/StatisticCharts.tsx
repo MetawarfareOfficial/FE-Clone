@@ -37,7 +37,7 @@ const CardItem = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const CardHeader = styled(Box)<CardHeaderProps>(({ color }) => ({
+const CardHeader = styled(Box)<CardHeaderProps>(({ color, theme }) => ({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -73,6 +73,10 @@ const CardHeader = styled(Box)<CardHeaderProps>(({ color }) => ({
       borderRadius: '50%',
       background: color,
       marginRight: '6px',
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
     },
   },
 }));

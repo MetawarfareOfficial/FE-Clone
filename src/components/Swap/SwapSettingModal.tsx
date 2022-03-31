@@ -75,6 +75,10 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
       borderRadius: '14px',
       padding: '27px 28px 27px',
     },
+
+    '@media(max-width: 320px)': {
+      padding: '20px 15px',
+    },
   },
 }));
 
@@ -218,6 +222,10 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
       '-webkit-appearance': 'none',
       margin: 0,
     },
+
+    '@media(max-width: 375px)': {
+      padding: '14px 12px',
+    },
   },
   '& label.Mui-focused': {
     color: 'rgba(56, 100, 255, 0.26)',
@@ -285,6 +293,14 @@ const ButtonPerCent = styled(Button)<ButtonPercentProps>(({ active, theme }) => 
       ? '#E9EDFF'
       : '#171717',
     opacity: 0.7,
+  },
+
+  '@media(max-width: 375px)': {
+    minWidth: '40px',
+    marginLeft: '10px',
+    fontSize: '12px',
+    lineHeight: '20px',
+    height: '26px',
   },
 }));
 

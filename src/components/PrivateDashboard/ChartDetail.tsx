@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -68,6 +69,7 @@ const CustomTooltip: React.FC<TooltipProps> = ({ active, payload, label }) => {
 
 const ChartDetail: React.FC<Props> = ({ id, data, color }) => {
   const theme = useTheme();
+  const [width] = useWindowSize();
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -76,12 +78,12 @@ const ChartDetail: React.FC<Props> = ({ id, data, color }) => {
         // height={200}
         data={data}
         className={`lineReward ${theme.palette.mode}ModeChart`}
-        margin={{ top: 30, right: 0, left: 15, bottom: -12 }}
+        margin={{ top: width > 425 ? 30 : 4, right: 0, left: 15, bottom: width > 425 ? -12 : 0 }}
       >
         <defs>
           <filter id={`shadow${id}`}>
-            <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur" />
-            <feOffset in="blur" dx="0" dy="8" result="offsetBlur" />
+            <feGaussianBlur in="SourceAlpha" stdDeviation={width > 425 ? '8' : '5'} result="blur" />
+            <feOffset in="blur" dx="0" dy={width > 425 ? '8' : '2'} result="offsetBlur" />
             <feFlood floodColor={color} floodOpacity="1" result="offsetColor" />
             <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetBlur" />
             <feMerge>

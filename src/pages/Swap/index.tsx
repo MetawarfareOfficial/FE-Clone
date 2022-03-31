@@ -296,13 +296,13 @@ const ExchangeIcon = styled(Box)<BoxProps>(() => ({
   margin: '36px 0 21px',
   textAlign: 'center',
 
-  '&:hover': {
-    opacity: 0.7,
-  },
-
   svg: {
     width: '38px',
     height: '38px',
+
+    '&:hover': {
+      opacity: 0.7,
+    },
   },
 }));
 
