@@ -9,7 +9,6 @@ import { Exchange, TokenItem } from 'pages/Swap';
 import { useEffect } from 'react';
 import { useAppSelector } from 'stores/hooks';
 import { useLoadSwapData } from './useLoadSwapData';
-import moment from 'moment';
 
 export enum SwapTokenId {
   AVAX = 'avax',
@@ -36,6 +35,8 @@ export const useSwapToken = () => {
     swapExactTokenTo0xb,
     swapTokenToExact0xb,
     approveToken,
+    swapExactAVAXFor0xB,
+    swapAVAXForExact0xB,
   } = useInteractiveContract();
   const tokenList = useAppSelector((state) => state.swap.tokenList);
 
@@ -61,7 +62,7 @@ export const useSwapToken = () => {
       throw new Error('Cannot find tokens');
     }
     const slippage = new BigNumber(setting.slippage).multipliedBy(1e6).toString();
-    const deadline = new BigNumber(moment().unix()).plus(new BigNumber(setting.deadline).multipliedBy(60)).toString();
+    const deadline = new BigNumber(setting.deadline).multipliedBy(60).toString();
     if (_exchange.fromId === SwapTokenId.OXB) {
       if (isExactOut) {
         return await swap0xbToExactToken(
@@ -77,6 +78,21 @@ export const useSwapToken = () => {
           slippage,
           deadline,
         );
+      }
+    } else if (_exchange.fromId === SwapTokenId.AVAX && _exchange.toId === SwapTokenId.OXB) {
+      if (isExactOut) {
+        return await swapAVAXForExact0xB(
+          String(
+            new BigNumber(Number(_exchange.fromValue))
+              .plus(new BigNumber(Number(_exchange.fromValue)).multipliedBy(setting.slippage).div(100))
+              .toString(),
+          ),
+          new BigNumber(Number(_exchange.toValue)).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
+          slippage,
+          deadline,
+        );
+      } else {
+        return await swapExactAVAXFor0xB(String(Number(_exchange.fromValue)), slippage, deadline);
       }
     } else if (_exchange.toId === SwapTokenId.OXB) {
       if (isExactOut) {

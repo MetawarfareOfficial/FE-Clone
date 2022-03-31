@@ -296,6 +296,22 @@ export const useInteractiveContract = () => {
     return contractWithSigner.swapTokenForExact0xB(token, amount, slippage, deadline);
   };
 
+  const swapAVAXForExact0xB = async (
+    payableAvaxAmount: string,
+    amountOut: string,
+    slippage: string,
+    deadline: string,
+  ) => {
+    return contractWithSigner.swapAVAXForExact0xB(amountOut, slippage, deadline, {
+      value: ethers.utils.parseEther(payableAvaxAmount).toString(),
+    });
+  };
+  const swapExactAVAXFor0xB = async (payableAvaxAmount: string, slippage: string, deadline: string) => {
+    return contractWithSigner.swapExactAVAXFor0xB(slippage, deadline, {
+      value: ethers.utils.parseEther(payableAvaxAmount),
+    });
+  };
+
   const multipleCall = async (params: MultiCallList[]) => {
     const multiCall = new Multicall({ ethersProvider: provider, tryAggregate: true });
     const contractCallContext: ContractCallContext<{ extraContext: string; foo4: boolean }>[] = params.map(
@@ -351,6 +367,8 @@ export const useInteractiveContract = () => {
     getPairsInfo,
     swapExactTokenTo0xb,
     swapTokenToExact0xb,
+    swapExactAVAXFor0xB,
+    swapAVAXForExact0xB,
     contractWithSigner,
     provider,
   };
