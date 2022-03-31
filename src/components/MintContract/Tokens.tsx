@@ -144,7 +144,7 @@ const Tokens: React.FC<Props> = () => {
             <BoxSale>
               <Sale>{`${tokenDistribution.developmentFee}%`}</Sale>
               <Text>
-                <span>Token</span> in Development/ Marketing Wallet as 100% USDC
+                <span>Tokens</span> in Development/Marketing Wallet as 100% USDC
               </Text>
             </BoxSale>
           </Grid>
@@ -152,7 +152,7 @@ const Tokens: React.FC<Props> = () => {
             <BoxSale>
               <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>
               <Text>
-                <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
+                <span>Tokens</span> in Liquidity Wallet
               </Text>
             </BoxSale>
           </Grid>
@@ -160,7 +160,7 @@ const Tokens: React.FC<Props> = () => {
             <BoxSale>
               <Sale>{`${tokenDistribution.treasuryFee}%`}</Sale>
               <Text>
-                <span>Token</span> in Treasury Wallet as 100% USDC
+                <span>Tokens</span> in Treasury Wallet as 100% USDC
               </Text>
             </BoxSale>
           </Grid>
@@ -168,7 +168,7 @@ const Tokens: React.FC<Props> = () => {
             <BoxSale>
               <Sale>{`${tokenDistribution.rewardsFee}%`}</Sale>
               <Text>
-                <span>Token</span> in Rewards Wallet as 100% 0xB
+                <span>Tokens</span> in Rewards Wallet as 100% 0xB
               </Text>
             </BoxSale>
           </Grid>
