@@ -682,12 +682,18 @@ const SwapPage: React.FC<Props> = () => {
     if (account) {
       const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
       if (currentToken[0]) {
+        let valueIn = '0';
+        if (currentToken[0].id === SwapTokenId.AVAX) {
+          valueIn =
+            Number(currentToken[0].balance) <= 0.01
+              ? '0'
+              : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
+        } else {
+          valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+        }
         setExchangeFrom({
           id: exchangeFrom.id,
-          value:
-            currentToken[0].id === SwapTokenId.AVAX
-              ? formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10)
-              : formatPercent(new BigNumber(currentToken[0].balance).toString(), 10),
+          value: valueIn,
         });
         dispatch(setSelectedName('from'));
         const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
