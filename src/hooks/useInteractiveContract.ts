@@ -303,7 +303,7 @@ export const useInteractiveContract = () => {
     deadline: string,
   ) => {
     return contractWithSigner.swapAVAXForExact0xB(amountOut, slippage, deadline, {
-      value: ethers.utils.parseEther(payableAvaxAmount).toString(),
+      value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };
   const swapExactAVAXFor0xB = async (payableAvaxAmount: string, slippage: string, deadline: string) => {
