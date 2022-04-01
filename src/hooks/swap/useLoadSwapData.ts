@@ -2,7 +2,7 @@ import { InsufficientReservesError, Percent, Route, TokenAmount, Trade, TradeTyp
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { recentTransactionQuery } from 'consts/query';
-import { intervalTime } from 'consts/swap';
+import { getPairsInfoIntervalTime } from 'consts/swap';
 import { getSwapSettingData } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
@@ -298,7 +298,7 @@ export const useLoadSwapData = () => {
     handleLoadPairInfo();
     const interval = setInterval(() => {
       handleLoadPairInfo();
-    }, intervalTime);
+    }, getPairsInfoIntervalTime);
 
     return () => {
       if (interval) {

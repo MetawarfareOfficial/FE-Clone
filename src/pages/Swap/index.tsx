@@ -33,7 +33,7 @@ import {
   SwapTokensModal,
 } from 'components/Swap';
 import { injected } from 'connectors';
-import { intervalTime } from 'consts/swap';
+import { getBalanceIntervalTime } from 'consts/swap';
 import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
@@ -238,7 +238,7 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
     lineHeight: '26px',
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.4)' : '#fff',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.4)' : 'rgba(255, 255, 255, 0.4)',
     margin: 0,
   },
 
@@ -249,7 +249,7 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
     lineHeight: '26px',
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : '#fff',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
     margin: '0 0 0 auto',
   },
 }));
@@ -852,6 +852,7 @@ const SwapPage: React.FC<Props> = () => {
         await transaction.wait();
         setCurrenTransactionId(transaction.hash);
         setSwapStatus('success');
+        handleGetTokenBalances();
         handleReset();
       }
     } catch (error: any) {
@@ -911,8 +912,11 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    const getTokenBalancesInterval = setInterval(handleGetTokenBalances, intervalTime);
     handleGetTokenBalances();
+    let getTokenBalancesInterval: NodeJS.Timer;
+    if (account) {
+      getTokenBalancesInterval = setInterval(handleGetTokenBalances, getBalanceIntervalTime);
+    }
     return () => {
       if (getTokenBalancesInterval) {
         clearInterval(getTokenBalancesInterval);
@@ -1231,7 +1235,11 @@ const SwapPage: React.FC<Props> = () => {
                       handleToggleConfirm();
                     }}
                   >
-                    {priceImpactStatus === 'red' ? 'Price impact too high' : 'Swap'}
+                    {priceImpactStatus === 'red'
+                      ? 'Price impact too high'
+                      : priceImpactStatus === 'pink'
+                      ? 'Swap any way'
+                      : 'Swap'}
                   </SwapSubmit>
                 ) : (
                   <SwapSubmit
