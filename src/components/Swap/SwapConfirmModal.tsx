@@ -10,7 +10,6 @@ import {
   DialogContent,
   IconButton,
   IconButtonProps,
-  Avatar,
   Box,
   BoxProps,
   Tooltip,
@@ -25,16 +24,13 @@ import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 
 import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/bx_help-circle-dark.svg';
-import { ReactComponent as SwapConvertIcon } from 'assets/images/ic_round-swap-vert.svg';
-import { ReactComponent as SwapConvertDarkIcon } from 'assets/images/ic_round-swap-vert-dark.svg';
-
-import AvaxImg from 'assets/images/avax-token.png';
-import OxImg from 'assets/images/0x-token.png';
 import { TokenItem } from 'pages/Swap';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import { useTooltip } from 'hooks/swap';
 import { useWindowSize } from 'hooks/useWindowSize';
+import { DesktopExchangeBox } from './DesktopExchangeBox';
+import { MobileExchangeBox } from './MobileExchangeBox';
 
 interface Props {
   open: boolean;
@@ -92,15 +88,6 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     },
   },
 }));
-
-// const Transition = React.forwardRef(function Transition(
-//   props: TransitionProps & {
-//     children: React.ReactElement<any, any>;
-//   },
-//   ref: React.Ref<unknown>,
-// ) {
-//   return <Slide direction="up" ref={ref} {...props} />;
-// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -178,51 +165,6 @@ const BillingLine = styled(Box)<BoxProps>(({ theme }) => ({
     textTransform: 'capitalize',
     color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
     margin: '0 0 0 auto',
-  },
-}));
-
-const ExchangeBox = styled(Box)<BoxProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '33px 0',
-}));
-
-const ViewConvertIcon = styled(Box)<BoxProps>(() => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '0 63px',
-  width: '37px',
-}));
-
-const TokenBox = styled(Box)<BoxProps>(({ theme }) => ({
-  textAlign: 'center',
-
-  h3: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: '20px',
-    lineHeight: '37px',
-    textAlign: 'center',
-    letterSpacing: '0.04em',
-    textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-    margin: '0 0',
-  },
-
-  p: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: '20px',
-    lineHeight: '37px',
-    textAlign: 'center',
-    letterSpacing: '0.04em',
-    textTransform: 'capitalize',
-    color: '#0052FF',
-    margin: 0,
   },
 }));
 
@@ -343,32 +285,11 @@ const SwapConfirmModal: React.FC<Props> = ({
       </Header>
 
       <Content>
-        <ExchangeBox>
-          <TokenBox>
-            <Avatar
-              sx={{ width: '53px', height: '53px', margin: 0, display: 'inline-flex' }}
-              src={fromTokenInfo[0] ? fromTokenInfo[0].logo : AvaxImg}
-            />
-
-            <h3>{fromTokenInfo[0] ? fromTokenInfo[0].name : ''}</h3>
-            <p>{exchange.fromValue}</p>
-          </TokenBox>
-
-          <ViewConvertIcon>
-            {theme.palette.mode === 'light' ? <SwapConvertIcon /> : <SwapConvertDarkIcon />}
-          </ViewConvertIcon>
-
-          <TokenBox>
-            <Avatar
-              sx={{ width: '53px', height: '53px', margin: 0, display: 'inline-flex' }}
-              src={toTokenInfo[0] ? toTokenInfo[0].logo : OxImg}
-            />
-
-            <h3>{toTokenInfo[0] ? toTokenInfo[0].name : ''}</h3>
-            <p>{exchange.toValue}</p>
-          </TokenBox>
-        </ExchangeBox>
-
+        {size > 600 ? (
+          <DesktopExchangeBox exchange={exchange} fromTokenInfo={fromTokenInfo[0]} toTokenInfo={toTokenInfo[0]} />
+        ) : (
+          <MobileExchangeBox exchange={exchange} fromTokenInfo={fromTokenInfo[0]} toTokenInfo={toTokenInfo[0]} />
+        )}
         <BillingBox>
           <BillingLine>
             <h4>Rate</h4>
