@@ -24,6 +24,7 @@ import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.sv
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/swap-icon.svg';
+import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
 import {
   SwapConfirmModal,
@@ -681,14 +682,19 @@ const SwapPage: React.FC<Props> = () => {
       if (currentToken[0]) {
         setExchangeFrom({
           id: exchangeFrom.id,
-          value: formatPercent(currentToken[0].balance, 10),
+          value:  currentToken[0].id === SwapTokenId.AVAX
+          ? formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toNumber(),10)
+          : formatPercent(new BigNumber(currentToken[0].balance).toNumber(),10)
         });
         dispatch(setSelectedName('from'));
         const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
           isExactInput: true,
           tokenIn: exchangeFrom.id,
           tokenOut: exchangeTo.id,
-          amount: String(currentToken[0].balance),
+          amount:
+            currentToken[0].id === SwapTokenId.AVAX
+              ? new BigNumber(currentToken[0].balance).minus(0.01).toString()
+              : new BigNumber(currentToken[0].balance).toString(),
         });
         handleChangeSwapData({
           estimatedAmountToken,
@@ -835,10 +841,20 @@ const SwapPage: React.FC<Props> = () => {
     try {
       setSwapStatus('pending');
       const fromToken = tokenList.filter((item) => item.id === exchangeFrom.id);
+      let fromValue = 0;
+      if (isSwapMaxFromTokens && fromToken[0]) {
+        if (fromToken[0].id === SwapTokenId.AVAX) {
+          fromValue = new BigNumber(fromToken[0].balance).minus(0.01).toNumber();
+        } else {
+          fromValue = new BigNumber(fromToken[0].balance).toNumber();
+        }
+      } else {
+        fromValue = new BigNumber(exchangeFrom.value || 0).toNumber();
+      }
       const transaction = await handleSwapToken(
         {
           fromId: exchangeFrom.id,
-          fromValue: isSwapMaxFromTokens && fromToken[0] ? fromToken[0].balance : Number(exchangeFrom.value),
+          fromValue: fromValue,
           toId: exchangeTo.id,
           toValue: Number(exchangeTo.value),
         },

@@ -67,28 +67,28 @@ export const useSwapToken = () => {
       if (isExactOut) {
         return await swap0xbToExactToken(
           tokenOut[0].address,
-          new BigNumber(Number(_exchange.toValue)).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
+          new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
           slippage,
           deadline,
         );
       } else {
         return await swapExact0xbToToken(
           tokenOut[0].address,
-          new BigNumber(Number(_exchange.fromValue)).multipliedBy(`1e${tokenIn[0].decimal}`).toString(),
+          new BigNumber(_exchange.fromValue || 0).multipliedBy(`1e${tokenIn[0].decimal}`).toString(),
           slippage,
           deadline,
         );
       }
     } else if (_exchange.fromId === SwapTokenId.AVAX && _exchange.toId === SwapTokenId.OXB) {
-      const fromValue = Number(_exchange.fromValue);
+      const fromValue = _exchange.fromValue || 0;
       const amountIn = new BigNumber(fromValue)
-        .multipliedBy(new BigNumber(100 + setting.slippage))
-        .multipliedBy(100)
+        .plus(new BigNumber(fromValue).multipliedBy(setting.slippage).div(100))
+        .plus(new BigNumber(fromValue).multipliedBy(0.25).div(100))
         .toString();
       if (isExactOut) {
         return await swapAVAXForExact0xB(
           amountIn,
-          new BigNumber(Number(_exchange.toValue)).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
+          new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
           slippage,
           deadline,
         );
@@ -99,14 +99,14 @@ export const useSwapToken = () => {
       if (isExactOut) {
         return await swapTokenToExact0xb(
           tokenIn[0].address,
-          new BigNumber(Number(_exchange.toValue)).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
+          new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
           slippage,
           deadline,
         );
       } else {
         return await swapExactTokenTo0xb(
           tokenIn[0].address,
-          new BigNumber(Number(_exchange.fromValue)).multipliedBy(`1e${tokenIn[0].decimal}`).toString(),
+          new BigNumber(_exchange.fromValue || 0).multipliedBy(`1e${tokenIn[0].decimal}`).toString(),
           slippage,
           deadline,
         );

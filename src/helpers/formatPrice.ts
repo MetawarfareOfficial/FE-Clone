@@ -29,7 +29,7 @@ export const truncateNumber = (number: number, decimals: number): string => {
 
 export const formatPercent = (percent: number, maximumFractionDigits = 2, minimumFractionDigits = 0) => {
   return String(
-    Number(percent).toLocaleString('en-US', {
+    new BigNumber(percent).toNumber().toLocaleString('en-US', {
       maximumFractionDigits,
       minimumFractionDigits:
         maximumFractionDigits < minimumFractionDigits ? maximumFractionDigits : minimumFractionDigits,
