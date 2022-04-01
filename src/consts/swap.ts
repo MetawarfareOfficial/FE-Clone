@@ -1,4 +1,7 @@
 export const intervalTime = 5000;
+export const getBalanceIntervalTime = 10000;
+export const getPairsInfoIntervalTime = 10000;
+
 export const localStorageSwapSettingKey = 'sw-st';
 export const defaultSettingData = {
   slippage: '0.5',
