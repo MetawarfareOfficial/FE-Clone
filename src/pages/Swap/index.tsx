@@ -56,12 +56,14 @@ interface Props {
 interface TooltipCustomProps extends TooltipProps {
   size?: string;
 }
-
+BigNumber.config({
+  EXPONENTIAL_AT: 100,
+});
 export interface TokenItem {
   id: SwapTokenId;
   logo: string;
   name: string;
-  balance: number | string;
+  balance: string;
   disabled: boolean;
   isNative?: boolean;
   decimal: string;
@@ -71,9 +73,9 @@ export interface TokenItem {
 
 export interface Exchange {
   fromId: SwapTokenId;
-  fromValue: number | null;
+  fromValue: string | null;
   toId: SwapTokenId;
-  toValue: number | null;
+  toValue: string | null;
 }
 export interface ExchangeItem {
   id: SwapTokenId;
@@ -682,9 +684,10 @@ const SwapPage: React.FC<Props> = () => {
       if (currentToken[0]) {
         setExchangeFrom({
           id: exchangeFrom.id,
-          value:  currentToken[0].id === SwapTokenId.AVAX
-          ? formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toNumber(),10)
-          : formatPercent(new BigNumber(currentToken[0].balance).toNumber(),10)
+          value:
+            currentToken[0].id === SwapTokenId.AVAX
+              ? formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10)
+              : formatPercent(new BigNumber(currentToken[0].balance).toString(), 10),
         });
         dispatch(setSelectedName('from'));
         const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
@@ -841,22 +844,22 @@ const SwapPage: React.FC<Props> = () => {
     try {
       setSwapStatus('pending');
       const fromToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-      let fromValue = 0;
+      let fromValue = '0';
       if (isSwapMaxFromTokens && fromToken[0]) {
         if (fromToken[0].id === SwapTokenId.AVAX) {
-          fromValue = new BigNumber(fromToken[0].balance).minus(0.01).toNumber();
+          fromValue = new BigNumber(fromToken[0].balance).minus(0.01).toString();
         } else {
-          fromValue = new BigNumber(fromToken[0].balance).toNumber();
+          fromValue = new BigNumber(fromToken[0].balance).toString();
         }
       } else {
-        fromValue = new BigNumber(exchangeFrom.value || 0).toNumber();
+        fromValue = new BigNumber(exchangeFrom.value || 0).toString();
       }
       const transaction = await handleSwapToken(
         {
           fromId: exchangeFrom.id,
           fromValue: fromValue,
           toId: exchangeTo.id,
-          toValue: Number(exchangeTo.value),
+          toValue: exchangeTo.value,
         },
         selectedName === 'to',
         {
@@ -970,8 +973,8 @@ const SwapPage: React.FC<Props> = () => {
     const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
     if (selectedToken[0]) {
       if (
-        selectedToken[0].balance === 0 ||
-        Number(formatPercent(Number(removeCharacterInString(String(selectedToken[0].balance), ',')), 10)) <
+        selectedToken[0].balance === '0' ||
+        Number(formatPercent(removeCharacterInString(String(selectedToken[0].balance), ','), 10)) <
           Number(selectedTokenValue || 0)
       ) {
         dispatch(setIsInsufficientError(true));

@@ -165,7 +165,7 @@ export const useSwapToken = () => {
       return _tokensList.map((item) => {
         return {
           ...item,
-          balance: 0,
+          balance: '0',
           allowanceBalance: item.id === SwapTokenId.OXB || item.id === SwapTokenId.AVAX ? item.allowanceBalance : '0',
         };
       });

@@ -90,12 +90,12 @@ export const useSwapHelpers = () => {
     }
   };
   const calculateSwapTokenRate = (tokenInAmount: number, tokenOutAmount: number) => {
-    return formatPercent(new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toNumber(), 8);
+    return formatPercent(new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toString(), 8);
   };
 
   const calculateTradingFee = (amount: number, token: Token) => {
     const result = formatPercent(
-      new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(25).div(10000).toNumber(),
+      new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(25).div(10000).toString(),
       6,
       0,
     );
