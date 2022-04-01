@@ -466,7 +466,14 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
             fullWidth
             onBlur={() => {
               const regex = /^[0-9]+\.$/;
-              if (regex.test(settings.slippage)) {
+              const zeroRegex = /^0+\.0+$/;
+              if (zeroRegex.test(settings.slippage)) {
+                const newSetting = {
+                  slippage: '0',
+                  deadline: settings.deadline,
+                };
+                setSetting(newSetting);
+              } else if (regex.test(settings.slippage)) {
                 const newSetting = {
                   slippage: String(Number(settings.slippage.replace('.', ''))),
                   deadline: settings.deadline,
@@ -478,6 +485,12 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
               ) {
                 const newSetting = {
                   slippage: defaultSettingData.slippage,
+                  deadline: settings.deadline,
+                };
+                setSetting(newSetting);
+              } else {
+                const newSetting = {
+                  slippage: String(Number(settings.slippage)),
                   deadline: settings.deadline,
                 };
                 setSetting(newSetting);
