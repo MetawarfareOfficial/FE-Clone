@@ -994,7 +994,7 @@ const SwapPage: React.FC<Props> = () => {
         dispatch(setIsInsufficientError(false));
       }
     }
-  }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName]);
+  }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName, slippage]);
 
   useEffect(() => {
     if (currentTransactionId !== '' && currentTransactionId === tokenSwapCompleted) {
