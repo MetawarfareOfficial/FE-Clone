@@ -979,7 +979,11 @@ const SwapPage: React.FC<Props> = () => {
     const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
     if (selectedToken[0]) {
       const inputValue = new BigNumber(selectedTokenValue || 0);
-      const slippageValue = inputValue.plus(inputValue.multipliedBy(new BigNumber(slippage)).div(100)).toNumber();
+      const slippageValue = inputValue
+        .multipliedBy(new BigNumber(100).plus(slippage))
+        .div(100)
+        .plus(inputValue.multipliedBy(0.3).div(100))
+        .toNumber();
       if (
         selectedToken[0].balance === '0' ||
         Number(formatPercent(removeCharacterInString(String(selectedToken[0].balance), ','), 10)) <
