@@ -82,8 +82,9 @@ export const useSwapToken = () => {
     } else if (_exchange.fromId === SwapTokenId.AVAX && _exchange.toId === SwapTokenId.OXB) {
       const fromValue = _exchange.fromValue || 0;
       const amountIn = new BigNumber(fromValue)
-        .plus(new BigNumber(fromValue).multipliedBy(setting.slippage).div(100))
-        .plus(new BigNumber(fromValue).multipliedBy(0.25).div(100))
+        .multipliedBy(new BigNumber(100).plus(new BigNumber(setting.slippage)))
+        .div(100)
+        .plus(new BigNumber(fromValue).multipliedBy(0.3).div(100))
         .toString();
       if (isExactOut) {
         return await swapAVAXForExact0xB(
