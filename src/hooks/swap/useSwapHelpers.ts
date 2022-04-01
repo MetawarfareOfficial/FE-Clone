@@ -95,7 +95,7 @@ export const useSwapHelpers = () => {
 
   const calculateTradingFee = (amount: number, token: Token) => {
     const result = formatPercent(
-      new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(25).div(10000).toString(),
+      new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(0.3).div(100).toString(),
       6,
       0,
     );
