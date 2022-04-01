@@ -27,7 +27,7 @@ export const truncateNumber = (number: number, decimals: number): string => {
   return new BigNumber(number * factor).div(factor).toFixed(decimals, BigNumber.ROUND_DOWN);
 };
 
-export const formatPercent = (percent: number, maximumFractionDigits = 2, minimumFractionDigits = 0) => {
+export const formatPercent = (percent: string, maximumFractionDigits = 2, minimumFractionDigits = 0) => {
   return String(
     new BigNumber(percent).toNumber().toLocaleString('en-US', {
       maximumFractionDigits,

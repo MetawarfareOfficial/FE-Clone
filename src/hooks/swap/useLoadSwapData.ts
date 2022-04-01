@@ -114,7 +114,7 @@ export const useLoadSwapData = () => {
           const estimatedAmountToken = trade.minimumAmountOut(zeroSlippageTolerance).raw.toString();
           return {
             estimatedAmountToken: formatPercent(
-              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toString(),
               10,
               0,
             ),
@@ -159,7 +159,7 @@ export const useLoadSwapData = () => {
           const priceImpact2 = Number(tradeWavaxToTokenOut.priceImpact.toSignificant(6)) - 0.3;
           return {
             estimatedAmountToken: formatPercent(
-              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toNumber(),
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenOut].decimals}`).toString(),
               10,
               0,
             ),
@@ -195,7 +195,7 @@ export const useLoadSwapData = () => {
           const estimatedAmountToken = trade.maximumAmountIn(zeroSlippageTolerance).raw.toString();
           return {
             estimatedAmountToken: formatPercent(
-              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toString(),
               10,
               0,
             ),
@@ -237,7 +237,7 @@ export const useLoadSwapData = () => {
           const priceImpact2 = Number(tradeWavaxToTokenIn.priceImpact.toSignificant(6)) - 0.3;
           return {
             estimatedAmountToken: formatPercent(
-              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toNumber(),
+              new BigNumber(estimatedAmountToken).div(`1e${swap[tokenIn].decimals}`).toString(),
               10,
               0,
             ),
