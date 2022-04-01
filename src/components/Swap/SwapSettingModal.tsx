@@ -468,7 +468,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
               const regex = /^[0-9]+\.$/;
               if (regex.test(settings.slippage)) {
                 const newSetting = {
-                  slippage: settings.slippage.replace('.', ''),
+                  slippage: String(Number(settings.slippage.replace('.', ''))),
                   deadline: settings.deadline,
                 };
                 setSetting(newSetting);
