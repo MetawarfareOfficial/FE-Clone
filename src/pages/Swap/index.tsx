@@ -430,6 +430,7 @@ const SwapPage: React.FC<Props> = () => {
   const [currentAction, setCurrentAction] = useState('swap');
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'pink' | 'red'>('black');
   const [currentTransactionId, setCurrenTransactionId] = useState('');
+  const [tokenSwapCompleted, setTokenSwapCompleted] = useState('');
   const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
@@ -747,9 +748,9 @@ const SwapPage: React.FC<Props> = () => {
       setSwapStatus('pending');
       const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
       if (response.hash) {
-        await response.wait();
         setCurrenTransactionId(response.hash);
-        setSwapStatus('success');
+        await response.wait();
+        setTokenSwapCompleted(response.hash);
       }
       handleGetTokenBalances();
     } catch (error: any) {
@@ -874,11 +875,10 @@ const SwapPage: React.FC<Props> = () => {
         },
       );
       if (transaction.hash) {
-        await transaction.wait();
         setCurrenTransactionId(transaction.hash);
-        setSwapStatus('success');
+        await transaction.wait();
+        setTokenSwapCompleted(transaction.hash);
         handleGetTokenBalances();
-        handleReset();
       }
     } catch (error: any) {
       setSwapStatus('error');
@@ -989,6 +989,15 @@ const SwapPage: React.FC<Props> = () => {
       }
     }
   }, [exchangeFrom.id, exchangeTo.value, tokenList]);
+
+  useEffect(() => {
+    if (currentTransactionId !== '' && currentTransactionId === tokenSwapCompleted) {
+      setSwapStatus('success');
+      setOpenStatus(true);
+      setTokenSwapCompleted('');
+      handleReset();
+    }
+  }, [currentTransactionId, tokenSwapCompleted]);
 
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
@@ -1263,7 +1272,7 @@ const SwapPage: React.FC<Props> = () => {
                     {priceImpactStatus === 'red'
                       ? 'Price impact too high'
                       : priceImpactStatus === 'pink'
-                      ? 'Swap any way'
+                      ? 'Swap anyway'
                       : 'Swap'}
                   </SwapSubmit>
                 ) : (
@@ -1331,7 +1340,10 @@ const SwapPage: React.FC<Props> = () => {
           open={openStatus}
           transactionId={currentTransactionId}
           action={currentAction === 'swap' ? 'swap' : 'approve'}
-          onClose={handleToggleStatus}
+          onClose={() => {
+            handleToggleStatus();
+            setCurrenTransactionId('');
+          }}
         />
       )}
     </Wrapper>
