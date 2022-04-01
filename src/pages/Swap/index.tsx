@@ -978,17 +978,19 @@ const SwapPage: React.FC<Props> = () => {
     const selectedTokenValue = exchangeFrom.value;
     const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
     if (selectedToken[0]) {
+      const inputValue = new BigNumber(selectedTokenValue || 0);
+      const slippageValue = inputValue.plus(inputValue.multipliedBy(new BigNumber(slippage)).div(100)).toNumber();
       if (
         selectedToken[0].balance === '0' ||
         Number(formatPercent(removeCharacterInString(String(selectedToken[0].balance), ','), 10)) <
-          Number(selectedTokenValue || 0)
+          (selectedName === 'to' ? slippageValue : inputValue)
       ) {
         dispatch(setIsInsufficientError(true));
       } else {
         dispatch(setIsInsufficientError(false));
       }
     }
-  }, [exchangeFrom.id, exchangeTo.value, tokenList]);
+  }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName]);
 
   useEffect(() => {
     if (currentTransactionId !== '' && currentTransactionId === tokenSwapCompleted) {
