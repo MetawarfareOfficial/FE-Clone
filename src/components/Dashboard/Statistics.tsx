@@ -162,7 +162,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
       {
         title: 'My Rewards',
         value: formatForNumberLessThanCondition({
-          value: myReward,
+          value: String(myReward),
           minValueCondition: 0.01,
           callback: formatAndTruncateNumber,
           callBackParams: [2], // params for callback function, 2 is number of digits after decimal
