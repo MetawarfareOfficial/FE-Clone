@@ -195,7 +195,11 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
+const TextFieldSwap = styled(TextField)<
+  TextFieldProps & {
+    windowSize: number;
+  }
+>(({ theme, windowSize }) => ({
   borderRadius: '16px',
 
   input: {
@@ -208,8 +212,7 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
     color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-    padding: '17px 23px',
-
+    boxSize: windowSize < 600 ? 'unset' : 'box-sizing',
     '&:placeholder': {
       color: '#BEBFCF',
     },
@@ -461,6 +464,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
           </Description>
 
           <TextFieldSwap
+            windowSize={width}
             placeholder="0.00"
             type="text"
             fullWidth
@@ -550,6 +554,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
           </Description>
 
           <TextFieldSwap
+            windowSize={width}
             placeholder="0"
             type="text"
             fullWidth
