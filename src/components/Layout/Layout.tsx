@@ -559,7 +559,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       <Box sx={{ display: 'flex', overflow: 'hidden' }}>
         {ethereumOk && (
           <>
-            <Header onChangeMode={handleChangeMode} />
+            {width < 900 && <Header onChangeMode={handleChangeMode} />}
 
             {open !== null && (
               <>

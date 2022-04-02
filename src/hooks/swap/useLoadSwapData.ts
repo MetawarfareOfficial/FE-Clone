@@ -122,7 +122,7 @@ export const useLoadSwapData = () => {
             minReceive: formatForNumberLessThanCondition({
               value: new BigNumber(trade.minimumAmountOut(currentSlippageTolerance).raw.toString())
                 .div(`1e${swap[tokenOut].decimals}`)
-                .toNumber(),
+                .toString(),
               minValueCondition: 0.000001,
               callback: formatPercent,
               callBackParams: [6, 0],
@@ -167,7 +167,7 @@ export const useLoadSwapData = () => {
             minReceive: formatForNumberLessThanCondition({
               value: new BigNumber(tradeWavaxToTokenOut.minimumAmountOut(currentSlippageTolerance).raw.toString())
                 .div(`1e${swap[tokenOut].decimals}`)
-                .toNumber(),
+                .toString(),
               minValueCondition: 0.000001,
               callback: formatPercent,
               callBackParams: [6, 0],
@@ -204,7 +204,7 @@ export const useLoadSwapData = () => {
             maxSold: formatForNumberLessThanCondition({
               value: new BigNumber(trade.maximumAmountIn(currentSlippageTolerance).raw.toString())
                 .div(`1e${swap[tokenIn].decimals}`)
-                .toNumber(),
+                .toString(),
               minValueCondition: 0.000001,
               callback: formatPercent,
               callBackParams: [6, 0],
@@ -246,7 +246,7 @@ export const useLoadSwapData = () => {
             maxSold: formatForNumberLessThanCondition({
               value: new BigNumber(tradeWavaxToTokenIn.maximumAmountIn(currentSlippageTolerance).raw.toString())
                 .div(`1e${swap[tokenIn].decimals}`)
-                .toNumber(),
+                .toString(),
               minValueCondition: 0.000001,
               callback: formatPercent,
               callBackParams: [6, 0],

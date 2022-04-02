@@ -751,6 +751,7 @@ const SwapPage: React.FC<Props> = () => {
         setCurrenTransactionId(response.hash);
         await response.wait();
         setTokenSwapCompleted(response.hash);
+        handleGetTokenBalances();
       }
     } catch (error: any) {
       setSwapStatus('error');
@@ -877,6 +878,7 @@ const SwapPage: React.FC<Props> = () => {
         setCurrenTransactionId(transaction.hash);
         await transaction.wait();
         setTokenSwapCompleted(transaction.hash);
+        handleGetTokenBalances();
       }
     } catch (error: any) {
       setSwapStatus('error');
@@ -1001,10 +1003,23 @@ const SwapPage: React.FC<Props> = () => {
       setTokenSwapCompleted('');
       handleReset();
     }
-    if (account) {
+  }, [currentTransactionId, tokenSwapCompleted]);
+
+  useEffect(() => {
+    const nativeToken = tokenList.filter((item) => item.id === SwapTokenId.AVAX);
+    const OxbToken = tokenList.filter((item) => item.id === SwapTokenId.OXB);
+    const usdcToken = tokenList.filter((item) => item.id === SwapTokenId.USDC);
+    const usdtToken = tokenList.filter((item) => item.id === SwapTokenId.USDT);
+    if (
+      !account &&
+      (Number(nativeToken[0].balance) > 0 ||
+        Number(OxbToken[0].balance) > 0 ||
+        Number(usdcToken[0].balance) > 0 ||
+        Number(usdtToken[0].balance) > 0)
+    ) {
       handleGetTokenBalances();
     }
-  }, [currentTransactionId, tokenSwapCompleted, account]);
+  }, [tokenList, account]);
 
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
@@ -1235,7 +1250,7 @@ const SwapPage: React.FC<Props> = () => {
                       >
                         {formatForNumberLessThanCondition({
                           minValueCondition: 0.01,
-                          value: Number(priceImpact),
+                          value: priceImpact,
                           callback: formatPercent,
                           callBackParams: [2],
                           addLessThanSymbol: true,
