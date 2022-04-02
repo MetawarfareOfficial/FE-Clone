@@ -196,6 +196,7 @@ export const useSwapToken = () => {
   };
 
   useEffect(() => {
+    loadRecentTransaction();
     const interval = setInterval(() => {
       loadRecentTransaction();
     }, intervalTime);
