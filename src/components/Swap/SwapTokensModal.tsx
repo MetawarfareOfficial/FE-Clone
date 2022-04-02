@@ -261,13 +261,15 @@ const SwapTokensModal: React.FC<Props> = ({ open, tokens, onSelect, onClose }) =
               </ListItemAvatar>
               <ListItemText secondary={item.name} />
               <BalanceValue>
-                {formatForNumberLessThanCondition({
-                  value: item.balance,
-                  minValueCondition: 0.000001,
-                  callback: formatPrice,
-                  callBackParams: [6, 1],
-                  addLessThanSymbol: true,
-                })}
+                {item.balance === '0'
+                  ? '0.0'
+                  : formatForNumberLessThanCondition({
+                      value: item.balance,
+                      minValueCondition: 0.000001,
+                      callback: formatPrice,
+                      callBackParams: [6, 0],
+                      addLessThanSymbol: true,
+                    })}
               </BalanceValue>
             </ListItemButton>
           ))}

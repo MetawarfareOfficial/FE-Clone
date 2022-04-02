@@ -1068,7 +1068,7 @@ const SwapPage: React.FC<Props> = () => {
                             value: fromTokens[0].balance,
                             minValueCondition: 0.000001,
                             callback: formatPrice,
-                            callBackParams: [6],
+                            callBackParams: [6, 0],
                             addLessThanSymbol: true,
                           })
                         : '0.0'
@@ -1126,7 +1126,7 @@ const SwapPage: React.FC<Props> = () => {
                             value: toTokens[0].balance,
                             minValueCondition: 0.000001,
                             callback: formatPrice,
-                            callBackParams: [6],
+                            callBackParams: [6, 0],
                             addLessThanSymbol: true,
                           })
                         : '0.0'
