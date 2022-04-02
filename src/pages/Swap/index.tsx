@@ -441,11 +441,11 @@ const SwapPage: React.FC<Props> = () => {
   const [openStatus, setOpenStatus] = useState(false);
   const [exchangeFrom, setExchangeFrom] = useState<ExchangeItem>({
     id: SwapTokenId.AVAX,
-    value: null,
+    value: '',
   });
   const [exchangeTo, setExchangeTo] = useState<ExchangeItem>({
     id: SwapTokenId.OXB,
-    value: null,
+    value: '',
   });
   const [minReceive, setMinReceive] = useState<null | string>('0');
   const [tradingFee, setTradingFee] = useState('0');
@@ -752,7 +752,6 @@ const SwapPage: React.FC<Props> = () => {
         await response.wait();
         setTokenSwapCompleted(response.hash);
       }
-      handleGetTokenBalances();
     } catch (error: any) {
       setSwapStatus('error');
     }
@@ -878,7 +877,6 @@ const SwapPage: React.FC<Props> = () => {
         setCurrenTransactionId(transaction.hash);
         await transaction.wait();
         setTokenSwapCompleted(transaction.hash);
-        handleGetTokenBalances();
       }
     } catch (error: any) {
       setSwapStatus('error');
@@ -1003,7 +1001,10 @@ const SwapPage: React.FC<Props> = () => {
       setTokenSwapCompleted('');
       handleReset();
     }
-  }, [currentTransactionId, tokenSwapCompleted]);
+    if (account) {
+      handleGetTokenBalances();
+    }
+  }, [currentTransactionId, tokenSwapCompleted, account]);
 
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
@@ -1183,7 +1184,7 @@ const SwapPage: React.FC<Props> = () => {
                           open={tradingFeeTooltipOpen}
                           onMouseEnter={openTradingFeeTooltip}
                           onMouseLeave={closeTradingFeeTooltip}
-                          title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
+                          title={`A portion of each trade (0.3%) goes to liquidity providers as a protocol incentive`}
                           arrow
                           placement={windowSize > 600 ? 'right' : 'top'}
                           size="230px"

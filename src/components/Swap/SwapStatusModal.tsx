@@ -229,7 +229,7 @@ const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId
                 }}
                 underline="none"
               >
-                View on AVASCAN
+                View On SnowTrace
               </ViewTokenLink>
             ) : (
               <SwapSubmit fullWidth onClick={onClose}>

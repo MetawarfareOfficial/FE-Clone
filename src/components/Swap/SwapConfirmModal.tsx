@@ -332,7 +332,7 @@ const SwapConfirmModal: React.FC<Props> = ({
                 open={tradingFeeTooltipOpen}
                 onMouseEnter={openTradingFeeTooltip}
                 onMouseLeave={closeTradingFeeTooltip}
-                title={`A portion of each trade (0.25%) goes to liquidity providers as a protocol incentive`}
+                title={`A portion of each trade (0.3%) goes to liquidity providers as a protocol incentive`}
                 arrow
                 placement={size > 600 ? 'right' : 'top'}
                 size="230px"
