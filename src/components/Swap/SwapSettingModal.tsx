@@ -203,6 +203,7 @@ const TextFieldSwap = styled(TextField)<
   borderRadius: '16px',
 
   input: {
+    minWidth: '45px',
     fontFamily: 'Poppins',
     fontStyle: 'normal',
     fontWeight: '400',
@@ -212,7 +213,7 @@ const TextFieldSwap = styled(TextField)<
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
     color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-    boxSize: windowSize < 600 ? 'unset' : 'box-sizing',
+    boxSizing: windowSize < 600 ? 'unset' : 'box-sizing',
     '&:placeholder': {
       color: '#BEBFCF',
     },
