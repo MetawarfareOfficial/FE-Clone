@@ -5,7 +5,6 @@ import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { TokenItem } from 'pages/Swap';
 import get from 'lodash/get';
-import { Token } from '@traderjoe-xyz/sdk';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 interface RecentTransaction {
@@ -93,29 +92,11 @@ export const useSwapHelpers = () => {
     return formatPercent(new BigNumber(tokenInAmount).div(new BigNumber(tokenOutAmount)).toString(), 8);
   };
 
-  const calculateTradingFee = (amount: number, token: Token) => {
-    const result = formatPercent(
-      new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(0.3).div(100).toString(),
-      6,
-      0,
-    );
-    return Number(result) > 0.000001 ? result : '<0.000001';
-  };
-  const calculatePriceImpact = (currentRate: number, afterSwapRate: number) => {
-    return currentRate === Infinity || !Boolean(currentRate)
-      ? new BigNumber(1).div(1e10).toString()
-      : new BigNumber(100)
-          .minus(new BigNumber(currentRate).div(new BigNumber(afterSwapRate)).multipliedBy(100))
-          .abs()
-          .toFixed(2);
-  };
   return {
     validateSlippageInput,
     validateDeadlineInput,
     handleConvertRecentTransactionData,
     checkSwapSetting,
     calculateSwapTokenRate,
-    calculateTradingFee,
-    calculatePriceImpact,
   };
 };

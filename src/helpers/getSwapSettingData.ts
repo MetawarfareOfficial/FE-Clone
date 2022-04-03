@@ -1,11 +1,11 @@
-import { localStorageSwapSettingKey } from 'consts/swap';
+import { defaultSettingData, localStorageSwapSettingKey } from 'consts/swap';
 
 interface SwapSettingData {
   slippage: string;
   deadline: string;
 }
 
-export const getSwapSettingData = (): SwapSettingData | null => {
+export const getSwapSettingData = (): SwapSettingData => {
   const rawData = localStorage.getItem(localStorageSwapSettingKey);
-  return rawData ? JSON.parse(rawData) : null;
+  return rawData ? JSON.parse(rawData) : defaultSettingData;
 };
