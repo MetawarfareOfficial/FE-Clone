@@ -125,7 +125,7 @@ const Investments: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Title>Investments</Title>
+      <Title>Assets</Title>
 
       <PaperContent>
         {width < 600 ? <ListInvestments data={dataTableInvest} /> : <TableInvestments data={dataTableInvest} />}
