@@ -38,7 +38,6 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '24px',
   lineHeight: '28px',
   color: theme.palette.mode === 'light' ? '#293247' : '#828282',
-  // marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '20px',
@@ -68,6 +67,8 @@ const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
   position: 'relative',
   padding: '1px',
   boxSizing: 'border-box',
+  cursor: 'pointer',
+  margin: '15px 15px 15px 0',
 
   [theme.breakpoints.down('sm')]: {
     minHeight: '140px',
@@ -195,12 +196,12 @@ const Holdings: React.FC<Props> = () => {
     <Wrapper>
       <Title>Holdings</Title>
 
-      <Box sx={{ display: { xs: 'none', sm: 'block' }, padding: '0 30px' }}>
+      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
         <Box>
           <Slider {...settings}>
             {dataHoldingsResources.map((item, i) => (
               <Box key={i}>
-                <BoxItem sx={{ cursor: 'pointer', margin: '15px' }}>
+                <BoxItem>
                   <BoxDetail>
                     <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
                       {item.title}
