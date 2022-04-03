@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ChainId, Token } from '@traderjoe-xyz/sdk';
 import OxImg from 'assets/images/0x-token.png';
 import AvaxImg from 'assets/images/avax-token.png';
 import USDCImg from 'assets/images/coin-usd.svg';
 import USDTImg from 'assets/images/coin-usdt.svg';
 import { SwapTokenId } from 'hooks/swap';
+import { PairsData } from 'interfaces';
 import { TokenItem } from 'pages/Swap';
 
 const initialState = {
@@ -15,11 +15,11 @@ const initialState = {
     ['usdt' as SwapTokenId.USDT]: process.env.REACT_APP_USDT_TOKEN_ADDRESS!,
   },
   pairsData: {
-    ['0xb' as SwapTokenId]: null,
-    ['avax' as SwapTokenId]: null,
-    ['usdc' as SwapTokenId]: null,
-    ['usdt' as SwapTokenId]: null,
-  },
+    ['0xb']: null,
+    ['avax']: null,
+    ['usdc']: null,
+    ['usdt']: null,
+  } as PairsData,
   recentTransactions: [],
   tokenList: [
     {
@@ -71,31 +71,6 @@ const initialState = {
   isInsufficientError: false,
   isLoadEstimateToken: false,
   isInsufficientLiquidityError: false,
-
-  ['0xb' as SwapTokenId.OXB]: new Token(
-    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
-    String(process.env.REACT_APP_CONTRACT_ADDRESS),
-    Number(process.env.REACT_APP_CONTRACT_DECIMAL),
-    String(process.env.REACT_APP_CONTRACT_SYMBOL),
-  ),
-  ['avax' as SwapTokenId.AVAX]: new Token(
-    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
-    String(process.env.REACT_APP_NATIVE_TOKEN_ADDRESS),
-    Number(process.env.REACT_APP_NATIVE_CURRENCY_DECIMALS),
-    String(process.env.REACT_APP_NATIVE_CURRENCY_SYMBOL),
-  ),
-  ['usdc' as SwapTokenId.USDC]: new Token(
-    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
-    String(process.env.REACT_APP_USDC_TOKEN_ADDRESS),
-    Number(process.env.REACT_APP_USDC_DECIMALS),
-    String(process.env.REACT_APP_USDC_SYMBOL),
-  ),
-  ['usdt' as SwapTokenId.USDT]: new Token(
-    Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
-    String(process.env.REACT_APP_USDT_TOKEN_ADDRESS),
-    Number(process.env.REACT_APP_USDT_DECIMALS),
-    String(process.env.REACT_APP_USDT_SYMBOL),
-  ),
   pairInfoLoaded: false,
 };
 
