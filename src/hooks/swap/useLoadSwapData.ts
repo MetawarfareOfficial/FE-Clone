@@ -100,7 +100,8 @@ export const useLoadSwapData = () => {
               new BigNumber(amount)
                 .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
                 .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
-                .toString(),
+                .toString()
+                .split('.')[0],
             ),
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
@@ -128,7 +129,8 @@ export const useLoadSwapData = () => {
               new BigNumber(amount)
                 .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
                 .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
-                .toString(),
+                .toString()
+                .split('.')[0],
             ),
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
