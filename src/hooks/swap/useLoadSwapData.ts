@@ -5,6 +5,7 @@ import { recentTransactionQuery } from 'consts/query';
 import { getPairsInfoIntervalTime } from 'consts/swap';
 import { getSwapSettingData } from 'helpers';
 import { convertTraderJoeRouterData, getTraderJoeRouter } from 'helpers/swaps';
+import { handleAddTradingFeeToSlippage } from 'helpers/swaps/handleAddTradingFeeToSlippage';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
 import get from 'lodash/get';
@@ -83,8 +84,7 @@ export const useLoadSwapData = () => {
       const isNativeTokenIn = tokenIn === SwapTokenId.AVAX;
       const isNativeTokenOut = tokenOut === SwapTokenId.AVAX;
       const zeroSlippageTolerance = new Percent('0', '10000');
-      const currentSlippageTolerance = new Percent(String(Number(settingData!.slippage) * 100), '10000');
-
+      const currentSlippageTolerance = new Percent(String(Number(settingData.slippage) * 1000), '100000');
       const { tokenInRouter, tokenOutRouter, tokenData } = getTraderJoeRouter({
         tokenIn,
         tokenOut,
@@ -103,7 +103,9 @@ export const useLoadSwapData = () => {
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
-          const estimatedAmountToken = trade.minimumAmountOut(zeroSlippageTolerance).raw.toString();
+          const estimatedAmountToken = trade
+            .minimumAmountOut(handleAddTradingFeeToSlippage(zeroSlippageTolerance))
+            .raw.toString();
           return convertTraderJoeRouterData({
             estimateTokenAmount: estimatedAmountToken,
             slippageTolerance: settingData.slippage,
@@ -112,7 +114,7 @@ export const useLoadSwapData = () => {
               Number(trade.priceImpact.toSignificant(6)) > 0.3
                 ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
                 : '0.0001',
-            minReceive: trade.minimumAmountOut(currentSlippageTolerance).raw.toString(),
+            minReceive: trade.minimumAmountOut(handleAddTradingFeeToSlippage(currentSlippageTolerance)).raw.toString(),
             tokenData,
             tokenIn,
             tokenOut,
@@ -136,7 +138,9 @@ export const useLoadSwapData = () => {
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
-          const estimatedAmountToken = tradeWavaxToTokenOut.minimumAmountOut(zeroSlippageTolerance).raw.toString();
+          const estimatedAmountToken = tradeWavaxToTokenOut
+            .minimumAmountOut(handleAddTradingFeeToSlippage(zeroSlippageTolerance))
+            .raw.toString();
           const priceImpact2 = Number(tradeWavaxToTokenOut.priceImpact.toSignificant(6)) - 0.3;
           return convertTraderJoeRouterData({
             estimateTokenAmount: estimatedAmountToken,
@@ -144,7 +148,9 @@ export const useLoadSwapData = () => {
             tradingFee: amount,
             priceImpact:
               Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
-            minReceive: tradeWavaxToTokenOut.minimumAmountOut(currentSlippageTolerance).raw.toString(),
+            minReceive: tradeWavaxToTokenOut
+              .minimumAmountOut(handleAddTradingFeeToSlippage(currentSlippageTolerance))
+              .raw.toString(),
             tokenData,
             tokenIn,
             tokenOut,
@@ -162,7 +168,9 @@ export const useLoadSwapData = () => {
             TradeType.EXACT_OUTPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
-          const estimatedAmountToken = trade.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          const estimatedAmountToken = trade
+            .maximumAmountIn(handleAddTradingFeeToSlippage(zeroSlippageTolerance))
+            .raw.toString();
           return convertTraderJoeRouterData({
             estimateTokenAmount: estimatedAmountToken,
             slippageTolerance: settingData.slippage,
@@ -171,7 +179,7 @@ export const useLoadSwapData = () => {
               Number(trade.priceImpact.toSignificant(6)) > 0.3
                 ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
                 : '0.0001',
-            maxSold: trade.maximumAmountIn(currentSlippageTolerance).raw.toString(),
+            maxSold: trade.maximumAmountIn(handleAddTradingFeeToSlippage(currentSlippageTolerance)).raw.toString(),
             tokenData,
             tokenIn,
             tokenOut,
@@ -195,7 +203,9 @@ export const useLoadSwapData = () => {
             TradeType.EXACT_OUTPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
-          const estimatedAmountToken = tradeWavaxToTokenIn.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          const estimatedAmountToken = tradeWavaxToTokenIn
+            .maximumAmountIn(handleAddTradingFeeToSlippage(zeroSlippageTolerance))
+            .raw.toString();
           const priceImpact2 = Number(tradeWavaxToTokenIn.priceImpact.toSignificant(6)) - 0.3;
           return convertTraderJoeRouterData({
             estimateTokenAmount: estimatedAmountToken,
@@ -203,7 +213,9 @@ export const useLoadSwapData = () => {
             tradingFee: estimatedAmountToken,
             priceImpact:
               Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
-            maxSold: tradeWavaxToTokenIn.maximumAmountIn(currentSlippageTolerance).raw.toString(),
+            maxSold: tradeWavaxToTokenIn
+              .maximumAmountIn(handleAddTradingFeeToSlippage(currentSlippageTolerance))
+              .raw.toString(),
             tokenData,
             tokenIn,
             tokenOut,
