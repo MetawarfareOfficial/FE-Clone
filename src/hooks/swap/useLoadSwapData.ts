@@ -178,7 +178,9 @@ export const useLoadSwapData = () => {
               Number(trade.priceImpact.toSignificant(6)) > 0.3
                 ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
                 : '0.0001',
-            maxSold: trade.maximumAmountIn(currentSlippageTolerance).raw.toString(),
+            maxSold: trade
+              .maximumAmountIn(currentSlippageTolerance.add(new Percent(String(0.1 * 1000), '100000')))
+              .raw.toString(),
             tokenData,
             tokenIn,
             tokenOut,
@@ -212,7 +214,9 @@ export const useLoadSwapData = () => {
             tradingFee: estimatedAmountToken,
             priceImpact:
               Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
-            maxSold: tradeWavaxToTokenIn.maximumAmountIn(currentSlippageTolerance).raw.toString(),
+            maxSold: tradeWavaxToTokenIn
+              .maximumAmountIn(currentSlippageTolerance.add(new Percent(String(0.1 * 1000), '100000')))
+              .raw.toString(),
             tokenData,
             tokenIn,
             tokenOut,
