@@ -75,4 +75,8 @@ export const errorMessage = {
     title: 'Swap',
     message: 'Enter a valid slippage percentage',
   },
+  NO_NETWORK_ERROR: {
+    title: 'No NetWork',
+    message: 'Unable to connect to the Internet',
+  },
 };

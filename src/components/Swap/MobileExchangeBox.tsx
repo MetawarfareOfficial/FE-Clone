@@ -126,8 +126,8 @@ export const MobileExchangeBox = ({ exchange, fromTokenInfo, toTokenInfo }: Prop
     handleOpenTooltip: openToValueTooltip,
   } = useTooltip();
 
-  const fromValue = limitedStringNumbers(exchange.fromValue, 10);
-  const toValue = limitedStringNumbers(exchange.toValue, 10);
+  const fromValue = limitedStringNumbers(exchange.fromValue, 10, true);
+  const toValue = limitedStringNumbers(exchange.toValue, 10, true);
 
   const isEnableFromTooltip = fromValue && fromValue.includes('...');
   const isEnableToTooltip = toValue && toValue.includes('...');

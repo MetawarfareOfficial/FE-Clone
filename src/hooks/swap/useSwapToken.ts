@@ -3,6 +3,8 @@ import { usdcAbi } from 'abis/usdcAbi';
 import BigNumber from 'bignumber.js';
 import { intervalTime } from 'consts/swap';
 import { bigNumber2Number } from 'helpers/formatNumber';
+import { calculateAmountOutMin } from 'helpers/swaps';
+import { calculateAmountInMax } from 'helpers/swaps/calculateAmountInMax';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import get from 'lodash/get';
 import { Exchange, TokenItem } from 'pages/Swap';
@@ -61,54 +63,53 @@ export const useSwapToken = () => {
     if (!tokenIn[0] || !tokenOut[0]) {
       throw new Error('Cannot find tokens');
     }
-    const slippage = new BigNumber(setting.slippage).multipliedBy(1e6).toString();
     const deadline = new BigNumber(setting.deadline).multipliedBy(60).toString();
+    const tokenInValue = new BigNumber(_exchange.fromValue || 0).multipliedBy(`1e${tokenIn[0].decimal}`).toString();
+    const tokenOutValue = new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString();
     if (_exchange.fromId === SwapTokenId.OXB) {
       if (isExactOut) {
         return await swap0xbToExactToken(
           tokenOut[0].address,
-          new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
-          slippage,
+          tokenOutValue,
+          calculateAmountInMax(tokenInValue, setting.slippage),
           deadline,
         );
       } else {
         return await swapExact0xbToToken(
           tokenOut[0].address,
-          new BigNumber(_exchange.fromValue || 0).multipliedBy(`1e${tokenIn[0].decimal}`).toString(),
-          slippage,
+          tokenInValue,
+          calculateAmountOutMin(tokenOutValue, setting.slippage),
           deadline,
         );
       }
     } else if (_exchange.fromId === SwapTokenId.AVAX && _exchange.toId === SwapTokenId.OXB) {
-      const fromValue = _exchange.fromValue || 0;
-      const amountIn = new BigNumber(fromValue)
-        .multipliedBy(new BigNumber(100).plus(new BigNumber(setting.slippage)))
-        .div(100)
-        .plus(new BigNumber(fromValue).multipliedBy(0.3).div(100))
+      const amountInMax = calculateAmountInMax(tokenInValue, setting.slippage);
+      const amountOut = new BigNumber(amountInMax)
+        .div(`1e${tokenIn[0].decimal}`)
+        .plus(new BigNumber(_exchange.fromValue || '0').multipliedBy(0.3).div(100))
         .toString();
       if (isExactOut) {
-        return await swapAVAXForExact0xB(
-          amountIn,
-          new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
-          slippage,
+        return await swapAVAXForExact0xB(amountOut, tokenOutValue, amountInMax, deadline);
+      } else {
+        return await swapExactAVAXFor0xB(
+          String(Number(_exchange.fromValue)),
+          calculateAmountOutMin(tokenOutValue, setting.slippage),
           deadline,
         );
-      } else {
-        return await swapExactAVAXFor0xB(String(Number(_exchange.fromValue)), slippage, deadline);
       }
     } else if (_exchange.toId === SwapTokenId.OXB) {
       if (isExactOut) {
         return await swapTokenToExact0xb(
           tokenIn[0].address,
-          new BigNumber(_exchange.toValue || 0).multipliedBy(`1e${tokenOut[0].decimal}`).toString(),
-          slippage,
+          tokenOutValue,
+          calculateAmountInMax(tokenInValue, setting.slippage),
           deadline,
         );
       } else {
         return await swapExactTokenTo0xb(
           tokenIn[0].address,
-          new BigNumber(_exchange.fromValue || 0).multipliedBy(`1e${tokenIn[0].decimal}`).toString(),
-          slippage,
+          tokenInValue,
+          calculateAmountOutMin(tokenOutValue, setting.slippage),
           deadline,
         );
       }
