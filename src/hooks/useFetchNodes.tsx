@@ -12,7 +12,10 @@ export function useFetchNodes(crtNodeOk?: boolean) {
     try {
       if (address) {
         const response = await getNameOfNodes();
-        const nodes = response[0].split('#');
+        let nodes = response[0].split('#');
+        if (nodes.length === 1 && nodes[0] === '') {
+          nodes = [];
+        }
         dispatch(setNodes(nodes.length));
       }
     } catch (err: any) {
@@ -24,7 +27,10 @@ export function useFetchNodes(crtNodeOk?: boolean) {
     try {
       if (address) {
         const response = await contractWithSigner.functions.getContsNames.call({});
-        const nodes = response[0].split('#');
+        let nodes = response[0].split('#');
+        if (nodes.length === 1 && nodes[0] === '') {
+          nodes = [];
+        }
         dispatch(setNodes(nodes.length));
       }
     } catch (err: any) {
