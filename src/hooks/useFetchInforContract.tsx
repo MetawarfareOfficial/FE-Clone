@@ -23,7 +23,6 @@ const useFetchInforContract = () => {
     try {
       const response = await getRewardAPRAllNode();
       const data = _.flatten(response);
-
       dispatch(
         setApy({
           square: formatAprV3(data[0]),
@@ -57,7 +56,6 @@ const useFetchInforContract = () => {
     try {
       const response = await getTotalNodeByType();
       const data = _.flatten(response);
-
       dispatch(
         setTotal({
           square: bigNumber2NumberV2(data[0], 1),

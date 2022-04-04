@@ -429,8 +429,14 @@ const SwapPage: React.FC<Props> = () => {
   const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [currentAction, setCurrentAction] = useState('swap');
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'pink' | 'red'>('black');
-  const [currentTransactionId, setCurrenTransactionId] = useState('');
-  const [tokenSwapCompleted, setTokenSwapCompleted] = useState('');
+  const [currentTransactionId, setCurrenTransactionId] = useState({
+    type: '',
+    id: '',
+  });
+  const [tokenSwapCompleted, setTokenSwapCompleted] = useState({
+    type: '',
+    id: '',
+  });
   const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
@@ -748,9 +754,15 @@ const SwapPage: React.FC<Props> = () => {
       setSwapStatus('pending');
       const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
       if (response.hash) {
-        setCurrenTransactionId(response.hash);
+        setCurrenTransactionId({
+          id: response.hash,
+          type: 'approve',
+        });
         await response.wait();
-        setTokenSwapCompleted(response.hash);
+        setTokenSwapCompleted({
+          type: 'approve',
+          id: response.hash,
+        });
         handleGetTokenBalances();
       }
     } catch (error: any) {
@@ -875,9 +887,15 @@ const SwapPage: React.FC<Props> = () => {
         },
       );
       if (transaction.hash) {
-        setCurrenTransactionId(transaction.hash);
+        setCurrenTransactionId({
+          id: transaction.hash,
+          type: 'swap',
+        });
         await transaction.wait();
-        setTokenSwapCompleted(transaction.hash);
+        setTokenSwapCompleted({
+          id: transaction.hash,
+          type: 'swap',
+        });
         handleGetTokenBalances();
       }
     } catch (error: any) {
@@ -997,11 +1015,16 @@ const SwapPage: React.FC<Props> = () => {
   }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName, slippage]);
 
   useEffect(() => {
-    if (currentTransactionId !== '' && currentTransactionId === tokenSwapCompleted) {
+    if (currentTransactionId.id !== '' && currentTransactionId.id === tokenSwapCompleted.id) {
       setSwapStatus('success');
       setOpenStatus(true);
-      setTokenSwapCompleted('');
-      handleReset();
+      if (tokenSwapCompleted.type !== 'approve') {
+        handleReset();
+      }
+      setTokenSwapCompleted({
+        id: '',
+        type: '',
+      });
     }
   }, [currentTransactionId, tokenSwapCompleted]);
 
@@ -1360,11 +1383,14 @@ const SwapPage: React.FC<Props> = () => {
         <SwapStatusModal
           status={swapStatus}
           open={openStatus}
-          transactionId={currentTransactionId}
+          transactionId={currentTransactionId.id}
           action={currentAction === 'swap' ? 'swap' : 'approve'}
           onClose={() => {
             handleToggleStatus();
-            setCurrenTransactionId('');
+            setCurrenTransactionId({
+              type: '',
+              id: '',
+            });
           }}
         />
       )}

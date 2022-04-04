@@ -50,7 +50,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
             .toNumber(),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
-
       setDataChart(data);
     }
   }, [tokenData]);

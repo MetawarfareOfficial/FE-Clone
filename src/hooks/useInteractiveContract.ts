@@ -153,9 +153,9 @@ export const useInteractiveContract = () => {
 
   const getTotalNodeByType = async (): Promise<any[]> => {
     try {
-      const squareTotal = contractWithoutSigner.functions.getTotalContsPerContType(contractType.square);
-      const cubeTotal = contractWithoutSigner.functions.getTotalContsPerContType(contractType.cube);
-      const tesseractTotal = contractWithoutSigner.functions.getTotalContsPerContType(contractType.tesseract);
+      const squareTotal = rewardManagerContractWithoutSigner.functions.totalContsPerContType(contractType.square);
+      const cubeTotal = rewardManagerContractWithoutSigner.functions.totalContsPerContType(contractType.cube);
+      const tesseractTotal = rewardManagerContractWithoutSigner.functions.totalContsPerContType(contractType.tesseract);
 
       return await Promise.all([squareTotal, cubeTotal, tesseractTotal]);
     } catch (e) {
