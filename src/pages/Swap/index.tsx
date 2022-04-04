@@ -1018,13 +1018,13 @@ const SwapPage: React.FC<Props> = () => {
     if (currentTransactionId.id !== '' && currentTransactionId.id === tokenSwapCompleted.id) {
       setSwapStatus('success');
       setOpenStatus(true);
+      if (tokenSwapCompleted.type !== 'approve') {
+        handleReset();
+      }
       setTokenSwapCompleted({
         id: '',
         type: '',
       });
-      if (tokenSwapCompleted.type !== 'approve') {
-        handleReset();
-      }
     }
   }, [currentTransactionId, tokenSwapCompleted]);
 
