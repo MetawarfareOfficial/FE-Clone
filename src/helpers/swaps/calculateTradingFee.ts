@@ -4,7 +4,7 @@ import { formatPercent } from 'helpers/formatPrice';
 
 export const calculateTradingFee = (amount: number, token: Token) => {
   const result = formatPercent(
-    new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(0.3).div(100).toString(),
+    new BigNumber(amount).div(`1e${token.decimals}`).multipliedBy(0.4).div(100).toString(),
     6,
     0,
   );
