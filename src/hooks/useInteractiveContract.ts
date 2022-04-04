@@ -7,10 +7,14 @@ import { getNetWorkRpcUrl } from 'connectors';
 import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
 import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
 import { usdcAbi } from 'abis/usdcAbi';
+import { contsRewardManagerAbi } from 'abis/contsRewardManagerAbi';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
+const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
+const rewardManagerContractWithoutSigner = new ethers.Contract(rewardManagerAddress, contsRewardManagerAbi, provider);
+
 const OxbToken = new Token(
   Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
   String(process.env.REACT_APP_CONTRACT_ADDRESS),
@@ -123,9 +127,11 @@ export const useInteractiveContract = () => {
 
   const getRewardAPRAllNode = async (): Promise<any[]> => {
     try {
-      const squareApy = contractWithoutSigner.functions.getRewardAPRPerCont(contractType.square);
-      const cubeApy = contractWithoutSigner.functions.getRewardAPRPerCont(contractType.cube);
-      const tesseractApy = contractWithoutSigner.functions.getRewardAPRPerCont(contractType.tesseract);
+      const squareApy = rewardManagerContractWithoutSigner.functions.currentRewardAPRPerNewCont(contractType.square);
+      const cubeApy = rewardManagerContractWithoutSigner.functions.currentRewardAPRPerNewCont(contractType.cube);
+      const tesseractApy = rewardManagerContractWithoutSigner.functions.currentRewardAPRPerNewCont(
+        contractType.tesseract,
+      );
 
       return await Promise.all([squareApy, cubeApy, tesseractApy]);
     } catch (e) {
@@ -135,9 +141,9 @@ export const useInteractiveContract = () => {
 
   const getPriceAllNode = async (): Promise<any[]> => {
     try {
-      const squarePrice = contractWithoutSigner.functions.getContPrice(contractType.square);
-      const cubePrice = contractWithoutSigner.functions.getContPrice(contractType.cube);
-      const tesseractPrice = contractWithoutSigner.functions.getContPrice(contractType.tesseract);
+      const squarePrice = rewardManagerContractWithoutSigner.functions.contPrice(contractType.square);
+      const cubePrice = rewardManagerContractWithoutSigner.functions.contPrice(contractType.cube);
+      const tesseractPrice = rewardManagerContractWithoutSigner.functions.contPrice(contractType.tesseract);
 
       return await Promise.all([squarePrice, cubePrice, tesseractPrice]);
     } catch (e) {
@@ -280,34 +286,34 @@ export const useInteractiveContract = () => {
     }
   };
 
-  const swap0xbToExactToken = async (token: string, amount: string, slippage: string, deadline: string) => {
-    return contractWithSigner.functions.swap0xBForExactToken(token, amount, slippage, deadline);
+  const swap0xbToExactToken = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
+    return contractWithSigner.functions.swap0xBForExactToken(token, amountOut, amountInMax, deadline);
   };
 
-  const swapExact0xbToToken = async (token: string, amount: string, slippage: string, deadline: string) => {
-    return contractWithSigner.functions.swapExact0xBForToken(token, amount, slippage, deadline);
+  const swapExact0xbToToken = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
+    return contractWithSigner.functions.swapExact0xBForToken(token, amountIn, amountOutMin, deadline);
   };
 
-  const swapExactTokenTo0xb = async (token: string, amount: string, slippage: string, deadline: string) => {
-    return contractWithSigner.swapExactTokenFor0xB(token, amount, slippage, deadline);
+  const swapExactTokenTo0xb = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
+    return contractWithSigner.swapExactTokenFor0xB(token, amountIn, amountOutMin, deadline);
   };
 
-  const swapTokenToExact0xb = async (token: string, amount: string, slippage: string, deadline: string) => {
-    return contractWithSigner.swapTokenForExact0xB(token, amount, slippage, deadline);
+  const swapTokenToExact0xb = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
+    return contractWithSigner.swapTokenForExact0xB(token, amountOut, amountInMax, deadline);
   };
 
   const swapAVAXForExact0xB = async (
     payableAvaxAmount: string,
     amountOut: string,
-    slippage: string,
+    amountInMax: string,
     deadline: string,
   ) => {
-    return contractWithSigner.swapAVAXForExact0xB(amountOut, slippage, deadline, {
+    return contractWithSigner.swapAVAXForExact0xB(amountOut, amountInMax, deadline, {
       value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };
-  const swapExactAVAXFor0xB = async (payableAvaxAmount: string, slippage: string, deadline: string) => {
-    return contractWithSigner.swapExactAVAXFor0xB(slippage, deadline, {
+  const swapExactAVAXFor0xB = async (payableAvaxAmount: string, amountOutMin: string, deadline: string) => {
+    return contractWithSigner.swapExactAVAXFor0xB(amountOutMin, deadline, {
       value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };

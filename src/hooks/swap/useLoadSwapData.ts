@@ -9,6 +9,7 @@ import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
+import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { useEffect, useMemo } from 'react';
 import {
@@ -240,6 +241,12 @@ export const useLoadSwapData = () => {
       );
       dispatch(setPairInfoLoaded(true));
     } catch (error: any) {
+      if (error.code === 'NETWORK_ERROR') {
+        createToast({
+          message: errorMessage.NO_NETWORK_ERROR.message,
+          type: 'error',
+        });
+      }
       createToast({
         message: error.message,
         type: 'error',
