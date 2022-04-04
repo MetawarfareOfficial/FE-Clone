@@ -1000,7 +1000,7 @@ const SwapPage: React.FC<Props> = () => {
       const slippageValue = inputValue
         .multipliedBy(new BigNumber(100).plus(slippage))
         .div(100)
-        .plus(inputValue.multipliedBy(0.3).div(100))
+        .plus(inputValue.multipliedBy(0.4).div(100))
         .toNumber();
       if (
         selectedToken[0].balance === '0' ||
@@ -1222,7 +1222,8 @@ const SwapPage: React.FC<Props> = () => {
                           open={tradingFeeTooltipOpen}
                           onMouseEnter={openTradingFeeTooltip}
                           onMouseLeave={closeTradingFeeTooltip}
-                          title={`A portion of each trade (0.3%) goes to liquidity providers as a protocol incentive`}
+                          title={`A portion of each trade (0.4%) goes to traderjoe 
+                          as trading fee and 0.1% goes to marketing wallet`}
                           arrow
                           placement={windowSize > 600 ? 'right' : 'top'}
                           size="230px"

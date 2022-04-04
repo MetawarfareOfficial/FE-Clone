@@ -86,7 +86,7 @@ export const useSwapToken = () => {
       const amountInMax = calculateAmountInMax(tokenInValue, setting.slippage);
       const amountOut = new BigNumber(amountInMax)
         .div(`1e${tokenIn[0].decimal}`)
-        .plus(new BigNumber(_exchange.fromValue || '0').multipliedBy(0.3).div(100))
+        .plus(new BigNumber(_exchange.fromValue || '0').multipliedBy(0.4).div(100))
         .toString();
       if (isExactOut) {
         return await swapAVAXForExact0xB(amountOut, tokenOutValue, amountInMax, deadline);
