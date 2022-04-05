@@ -31,8 +31,8 @@ export const convertTraderJoeRouterData = ({
 }: Params) => {
   const token = isExactInput ? tokenOut : tokenIn;
   const _tradingFee = isExactInput
-    ? new BigNumber(tradingFee).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toNumber()
-    : new BigNumber(tradingFee).toNumber();
+    ? new BigNumber(tradingFee).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString()
+    : new BigNumber(tradingFee).toString();
 
   return {
     estimatedAmountToken: formatPercent(
