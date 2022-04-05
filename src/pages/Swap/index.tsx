@@ -39,6 +39,7 @@ import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
+import { getMinAmountTokenToSwap } from 'helpers/swaps';
 import { SwapTokenId, useSwapToken, useTooltip } from 'hooks/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { useToast } from 'hooks/useToast';
@@ -996,12 +997,8 @@ const SwapPage: React.FC<Props> = () => {
     const selectedTokenValue = exchangeFrom.value;
     const selectedToken = tokenList.filter((item) => item.id === selectedTokenId);
     if (selectedToken[0]) {
-      const inputValue = new BigNumber(selectedTokenValue || 0);
-      const slippageValue = inputValue
-        .multipliedBy(new BigNumber(100).plus(slippage))
-        .div(100)
-        .plus(inputValue.multipliedBy(0.4).div(100))
-        .toNumber();
+      const inputValue = new BigNumber(selectedTokenValue || 0).toNumber();
+      const slippageValue = getMinAmountTokenToSwap(selectedTokenValue, slippage);
       if (
         selectedToken[0].balance === '0' ||
         Number(formatPercent(removeCharacterInString(String(selectedToken[0].balance), ','), 10)) <
