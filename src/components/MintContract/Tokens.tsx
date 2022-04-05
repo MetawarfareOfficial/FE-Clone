@@ -140,7 +140,7 @@ const Tokens: React.FC<Props> = () => {
 
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={3} lg={3}>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
             <BoxSale>
               <Sale>{`${tokenDistribution.developmentFee}%`}</Sale>
               <Text>
@@ -148,15 +148,15 @@ const Tokens: React.FC<Props> = () => {
               </Text>
             </BoxSale>
           </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={3}>
-            <BoxSale>
-              <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>
-              <Text>
-                <span>Tokens</span> in Liquidity Wallet
-              </Text>
-            </BoxSale>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={3}>
+          {/*<Grid item xs={12} sm={6} md={3} lg={3}>*/}
+          {/*  <BoxSale>*/}
+          {/*    <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>*/}
+          {/*    <Text>*/}
+          {/*      <span>Tokens</span> in Liquidity Wallet*/}
+          {/*    </Text>*/}
+          {/*  </BoxSale>*/}
+          {/*</Grid>*/}
+          <Grid item xs={12} sm={6} md={4} lg={4}>
             <BoxSale>
               <Sale>{`${tokenDistribution.treasuryFee}%`}</Sale>
               <Text>
@@ -164,7 +164,7 @@ const Tokens: React.FC<Props> = () => {
               </Text>
             </BoxSale>
           </Grid>
-          <Grid item xs={12} sm={6} md={3} lg={3}>
+          <Grid item xs={12} sm={6} md={4} lg={4}>
             <BoxSale>
               <Sale>{`${tokenDistribution.rewardsFee}%`}</Sale>
               <Text>
@@ -191,16 +191,16 @@ const Tokens: React.FC<Props> = () => {
               </SliderItem>
             </div>
 
-            <div className="scroll-area__column item2">
-              <SliderItem>
-                <BoxSale>
-                  <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>
-                  <Text>
-                    <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX
-                  </Text>
-                </BoxSale>
-              </SliderItem>
-            </div>
+            {/*<div className="scroll-area__column item2">*/}
+            {/*  <SliderItem>*/}
+            {/*    <BoxSale>*/}
+            {/*      <Sale>{`${tokenDistribution.liquidityPoolFee}%`}</Sale>*/}
+            {/*      <Text>*/}
+            {/*        <span>Token</span> in Liquidity Pool as 50% 0xB and 50% AVAX*/}
+            {/*      </Text>*/}
+            {/*    </BoxSale>*/}
+            {/*  </SliderItem>*/}
+            {/*</div>*/}
 
             <div className="scroll-area__column item3">
               <SliderItem>
