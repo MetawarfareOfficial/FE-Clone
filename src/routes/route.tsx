@@ -5,7 +5,6 @@ import MintContract from 'pages/MintContract';
 import MyContract from 'pages/MyContract';
 import Treasury from 'pages/Treasury';
 import SwapPage from 'pages/Swap';
-import PrivateDashboard from 'pages/PrivateDashboard';
 
 const routers = {
   dashboard: {
@@ -36,12 +35,6 @@ const routers = {
     exact: true,
     path: routesConst.SWAP,
     component: SwapPage,
-    route: PrivateRoute,
-  },
-  privateDashboard: {
-    exact: true,
-    path: routesConst.PRIVATE_DASHBOARD,
-    component: PrivateDashboard,
     route: PrivateRoute,
   },
 };
