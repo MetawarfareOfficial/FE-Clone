@@ -57,7 +57,7 @@ export const convertTraderJoeRouterData = ({
           callBackParams: [6, 0],
         })
       : null,
-    tradingFee: calculateTradingFee(_tradingFee, tokenData[tokenIn]),
+    tradingFee: calculateTradingFee(_tradingFee, tokenData[tokenIn], isExactInput),
     priceImpact,
   };
 };
