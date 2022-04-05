@@ -84,10 +84,7 @@ export const useSwapToken = () => {
       }
     } else if (_exchange.fromId === SwapTokenId.AVAX && _exchange.toId === SwapTokenId.OXB) {
       const amountInMax = calculateAmountInMax(tokenInValue, setting.slippage);
-      const amountOut = new BigNumber(amountInMax)
-        .div(`1e${tokenIn[0].decimal}`)
-        .plus(new BigNumber(_exchange.fromValue || '0').multipliedBy(0.4).div(100))
-        .toString();
+      const amountOut = new BigNumber(amountInMax).div(`1e${tokenIn[0].decimal}`).toString();
       if (isExactOut) {
         return await swapAVAXForExact0xB(amountOut, tokenOutValue, amountInMax, deadline);
       } else {
