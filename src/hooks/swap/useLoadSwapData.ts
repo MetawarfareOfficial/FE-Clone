@@ -176,7 +176,7 @@ export const useLoadSwapData = () => {
           return convertTraderJoeRouterData({
             estimateTokenAmount: amountTokenAfterAddFee.toString(),
             slippageTolerance: settingData.slippage,
-            tradingFee: amountTokenAfterAddFee.toString(),
+            tradingFee: estimatedAmountToken,
             priceImpact:
               Number(trade.priceImpact.toSignificant(6)) > 0.3
                 ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
@@ -216,7 +216,7 @@ export const useLoadSwapData = () => {
           return convertTraderJoeRouterData({
             estimateTokenAmount: amountTokenAfterAddFee.toString(),
             slippageTolerance: settingData.slippage,
-            tradingFee: amountTokenAfterAddFee.toString(),
+            tradingFee: estimatedAmountToken,
             priceImpact:
               Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
             maxSold: amountTokenAfterAddFee
