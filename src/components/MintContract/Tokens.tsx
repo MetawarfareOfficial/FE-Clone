@@ -73,7 +73,7 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontWeight: '500',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
-  maxWidth: '186px',
+  // maxWidth: '186px',
 
   span: {
     fontWeight: 'bold',
