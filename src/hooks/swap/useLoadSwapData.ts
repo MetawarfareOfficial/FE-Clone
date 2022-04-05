@@ -170,19 +170,20 @@ export const useLoadSwapData = () => {
             Number(process.env.REACT_APP_CHAIN_ID),
           );
           const estimatedAmountToken = trade.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          const amountTokenAfterMinusFee = new BigNumber(estimatedAmountToken).plus(
+            new BigNumber(estimatedAmountToken).multipliedBy(0.1).div(100),
+          );
           return convertTraderJoeRouterData({
-            estimateTokenAmount: new BigNumber(estimatedAmountToken)
-              .plus(new BigNumber(estimatedAmountToken).multipliedBy(0.1).div(100))
-              .toString(),
+            estimateTokenAmount: amountTokenAfterMinusFee.toString(),
             slippageTolerance: settingData.slippage,
             tradingFee: estimatedAmountToken,
             priceImpact:
               Number(trade.priceImpact.toSignificant(6)) > 0.3
                 ? String(Number(trade.priceImpact.toSignificant(6)) - 0.3)
                 : '0.0001',
-            maxSold: trade
-              .maximumAmountIn(currentSlippageTolerance.add(new Percent(String(0.1 * 1000), '100000')))
-              .raw.toString(),
+            maxSold: amountTokenAfterMinusFee
+              .plus(amountTokenAfterMinusFee.multipliedBy(settingData.slippage).div(100))
+              .toString(),
             tokenData,
             tokenIn,
             tokenOut,
@@ -207,18 +208,20 @@ export const useLoadSwapData = () => {
             Number(process.env.REACT_APP_CHAIN_ID),
           );
           const estimatedAmountToken = tradeWavaxToTokenIn.maximumAmountIn(zeroSlippageTolerance).raw.toString();
+          const amountTokenAfterMinusFee = new BigNumber(estimatedAmountToken).plus(
+            new BigNumber(estimatedAmountToken).multipliedBy(0.1).div(100),
+          );
+
           const priceImpact2 = Number(tradeWavaxToTokenIn.priceImpact.toSignificant(6)) - 0.3;
           return convertTraderJoeRouterData({
-            estimateTokenAmount: new BigNumber(estimatedAmountToken)
-              .plus(new BigNumber(estimatedAmountToken).multipliedBy(0.1).div(100))
-              .toString(),
+            estimateTokenAmount: amountTokenAfterMinusFee.toString(),
             slippageTolerance: settingData.slippage,
             tradingFee: estimatedAmountToken,
             priceImpact:
               Number(priceImpact1 + priceImpact2) !== 0 ? String(Number(priceImpact1 + priceImpact2)) : '0.0001',
-            maxSold: tradeWavaxToTokenIn
-              .maximumAmountIn(currentSlippageTolerance.add(new Percent(String(0.1 * 1000), '100000')))
-              .raw.toString(),
+            maxSold: amountTokenAfterMinusFee
+              .plus(amountTokenAfterMinusFee.multipliedBy(settingData.slippage).div(100))
+              .toString(),
             tokenData,
             tokenIn,
             tokenOut,
