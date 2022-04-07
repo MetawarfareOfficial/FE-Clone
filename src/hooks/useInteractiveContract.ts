@@ -57,6 +57,10 @@ export const useInteractiveContract = () => {
     library && account
       ? new ethers.Contract(contractAddress, zeroXBlockAbi, library.getSigner(account))
       : contractWithoutSigner;
+  const rewardManagerContractWithSigner =
+    library && account
+      ? new ethers.Contract(rewardManagerAddress, contsRewardManagerAbi, library.getSigner(account))
+      : rewardManagerContractWithoutSigner;
 
   const approveToken = async (tokenApproveAddress: string, spender: string) => {
     const contract = new ethers.Contract(tokenApproveAddress, usdcAbi, library.getSigner(account));
@@ -173,7 +177,7 @@ export const useInteractiveContract = () => {
 
   const getTimeCreatedOfNodes = async (): Promise<[string]> => {
     try {
-      return contractWithSigner.functions.getContsCreationTime.call({});
+      return rewardManagerContractWithSigner.functions._getContsCreationTime(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -181,7 +185,7 @@ export const useInteractiveContract = () => {
 
   const getNameOfNodes = async (): Promise<[string]> => {
     try {
-      return contractWithSigner.functions.getContsNames.call({});
+      return rewardManagerContractWithSigner.functions._getContsNames(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -189,7 +193,7 @@ export const useInteractiveContract = () => {
 
   const getRewardOfNodes = async (): Promise<[string]> => {
     try {
-      return contractWithSigner.functions.getContsRewards.call({});
+      return rewardManagerContractWithSigner.functions._getContsRewardAvailable(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -197,7 +201,7 @@ export const useInteractiveContract = () => {
 
   const getTypeOfNodes = async (): Promise<[string]> => {
     try {
-      return contractWithSigner.functions.getContsTypes.call({});
+      return rewardManagerContractWithSigner.functions._getContsTypes(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -205,7 +209,7 @@ export const useInteractiveContract = () => {
 
   const getRewardAmount = async (): Promise<[BigNumber]> => {
     try {
-      return contractWithSigner.functions.getRewardAmount.call({});
+      return rewardManagerContractWithSigner.functions._getRewardAmountOf(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -213,7 +217,7 @@ export const useInteractiveContract = () => {
 
   const getInitAPROfNodes = async (): Promise<[string]> => {
     try {
-      return contractWithSigner.functions.getContsInitialAPR.call({});
+      return rewardManagerContractWithSigner.functions._getContsInitialAPR(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -221,7 +225,7 @@ export const useInteractiveContract = () => {
 
   const getNodesCurrentAPR = async (): Promise<[string]> => {
     try {
-      return contractWithSigner.functions.getContsCurrentAPR.call({});
+      return rewardManagerContractWithSigner.functions._getContsCurrentAPR(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }

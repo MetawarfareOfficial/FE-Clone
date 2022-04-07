@@ -1059,9 +1059,9 @@ const SwapPage: React.FC<Props> = () => {
             <TitleBlack>Swap</TitleBlack>
             <TitleWhite>Tokens</TitleWhite>
             <Text>
-              {`Select the crypto you want to convert from and enter the amount of tokens you want to swap. Once the
-              transaction is confirmed, the tokens on your account will be swapped. You'll see a receipt with all
-              details.*`}
+              {`Select the coin you want to convert and enter the amount. 
+              The swap will complete once the transaction is confirmed, 
+              and you will receive a receipt with the details.*`}
             </Text>
           </Grid>
           <Grid item xs={12} md={6}>

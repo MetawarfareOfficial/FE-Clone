@@ -121,16 +121,6 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      { internalType: 'address', name: 'account', type: 'address' },
-      { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
-    ],
-    name: '_getRewardAmountOf',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_isContOwner',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
