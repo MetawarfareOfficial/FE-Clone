@@ -160,7 +160,7 @@ const Tokens: React.FC<Props> = () => {
             <BoxSale>
               <Sale>{`${tokenDistribution.treasuryFee}%`}</Sale>
               <Text>
-                <span>Tokens</span> in Treasury Wallet as 100% USDC
+                <span>Tokens</span> in Treasury Wallet as 100% 0xB
               </Text>
             </BoxSale>
           </Grid>
