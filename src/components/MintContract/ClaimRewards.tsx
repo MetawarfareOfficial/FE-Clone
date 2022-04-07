@@ -82,7 +82,7 @@ const ClaimRewards: React.FC<Props> = () => {
     <Wrapper>
       <Title>Claim Rewards Tax</Title>
       <Pool>
-        {`Every time a user claims rewards, a ${cashOutFee}% tax will be applied applied and redirected 
+        {`Every time a user claims rewards, a ${cashOutFee}% tax will be applied and redirected 
         to the 0xBlock Rewards Wallet`}
       </Pool>
     </Wrapper>
