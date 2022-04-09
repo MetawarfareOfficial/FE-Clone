@@ -1,15 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axiosInstance from 'utils/AxiosInstance';
-import { get, slice } from 'lodash';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   tokenData: [],
-  bars: [],
 };
-
-export const getBars = createAsyncThunk('get/bars', async () => {
-  return await axiosInstance.get(`${process.env.REACT_APP_GIST_URL}${process.env.REACT_APP_BARS_TOKEN_ID}`);
-});
 
 const traderJoeSlide = createSlice({
   name: 'traderJoe',
@@ -21,16 +14,6 @@ const traderJoeSlide = createSlice({
         return;
       }
       state.tokenData = [];
-    },
-  },
-  extraReducers: {
-    [getBars.fulfilled.toString()]: (state, action) => {
-      const payload = get(action, `payload.data.files['${process.env.REACT_APP_BARS_FILE_NAME}'].content`, []);
-      const parseData = JSON.parse(payload.toString().replace(/'/g, '"'));
-      state.bars = slice(parseData.bars.reverse(), 0, 30);
-    },
-    [getBars.rejected.toString()]: (state) => {
-      state.bars = [];
     },
   },
 });

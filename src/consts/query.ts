@@ -4,8 +4,10 @@ export const TokenQuery = `
       symbol
       dayData(first: $first, orderBy: date, orderDirection: desc) {
         date
+        volumeUSD
+        priceUSD,
+        liquidityUSD,
         liquidity
-        priceUSD
       }
     }
   }

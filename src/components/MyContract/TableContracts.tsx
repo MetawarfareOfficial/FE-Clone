@@ -431,35 +431,37 @@ const TableContracts: React.FC<Props> = ({ data }) => {
           </TableHead>
           <CustomTableBody>
             {data.length > 0 ? (
-              data.map((item, i) => (
-                <TableRowCustom key={i}>
-                  <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
-                  <TableCellContent align="left">{item.name}</TableCellContent>
-                  <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
-                  <TableCellContent align="center">{item.initial}</TableCellContent>
-                  <TableCellContent align="center">{item.current}</TableCellContent>
-                  <TableCellContent align="center">
-                    {formatForNumberLessThanCondition({
-                      value: bigNumber2NumberV3(item.rewards, 1e18),
-                      minValueCondition: 0.001,
-                      callback: formatAndTruncateNumber,
-                    })}
-                  </TableCellContent>
-                  <TableCellContent align="right">
-                    <ButtonClaim
-                      size="small"
-                      variant="outlined"
-                      color="primary"
-                      onClick={() => {
-                        handleClickClaimNodeByNode(data.length - i - 1, item.type);
-                      }}
-                      disabled={isClaimingReward}
-                    >
-                      Claim
-                    </ButtonClaim>
-                  </TableCellContent>
-                </TableRowCustom>
-              ))
+              data
+                .filter((r) => r.mintDate !== '')
+                .map((item, i) => (
+                  <TableRowCustom key={i}>
+                    <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
+                    <TableCellContent align="left">{item.name}</TableCellContent>
+                    <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
+                    <TableCellContent align="center">{item.initial}</TableCellContent>
+                    <TableCellContent align="center">{item.current}</TableCellContent>
+                    <TableCellContent align="center">
+                      {formatForNumberLessThanCondition({
+                        value: bigNumber2NumberV3(item.rewards, 1e18),
+                        minValueCondition: 0.001,
+                        callback: formatAndTruncateNumber,
+                      })}
+                    </TableCellContent>
+                    <TableCellContent align="right">
+                      <ButtonClaim
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => {
+                          handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                        }}
+                        disabled={isClaimingReward}
+                      >
+                        Claim
+                      </ButtonClaim>
+                    </TableCellContent>
+                  </TableRowCustom>
+                ))
             ) : (
               <TableRowNoData>
                 <TableCellContent colSpan={7}>

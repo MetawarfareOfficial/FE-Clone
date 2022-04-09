@@ -1,29 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import 'styles/menus.css';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
+import { Box, BoxProps, IconButton, Typography, TypographyProps } from '@mui/material';
 import { dataHoldings } from './data';
 import TableTokens from 'components/Base/TableTokens';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { getHoldingWalletTokenData } from 'services/coingeko';
-
-import { bigNumber2Number } from 'helpers/formatNumber';
-
-import OxBCoin from 'assets/images/coin-0xb.svg';
-import USDCoin from 'assets/images/coin-usd.svg';
-import AVAXCoin from 'assets/images/avalanche-avax-logo.svg';
-import { holdingWalletTokenID } from 'consts/holdings';
-import { usdcAbi } from 'abis/usdcAbi';
-import { formatReward, getTokenBalanceFromWalletAddress } from 'helpers';
+import { useAppSelector } from 'stores/hooks';
 import { useFetchHoldingsWalletAddress } from 'helpers/useFetchHoldingsWalletAddress';
-import { useInteractiveContract } from 'hooks/useInteractiveContract';
-
-interface HoldingWallet {
-  icon: string;
-  name: string;
-  amount: string;
-  value: string;
-}
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Slider from 'react-slick';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface Props {
   title?: string;
@@ -51,7 +38,6 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '24px',
   lineHeight: '28px',
   color: theme.palette.mode === 'light' ? '#293247' : '#828282',
-  marginBottom: '30px',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '20px',
@@ -76,11 +62,13 @@ const BoxItem = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '20px',
   overflow: 'hidden',
   height: '100%',
-  minHeight: '288px',
-  boxShadow: '0px 28px 37px -17px rgba(25, 21, 48, 0.05)',
+  // minHeight: '288px',
+  boxShadow: '0px 15px 37px -17px rgba(25, 21, 48, 0.05)',
   position: 'relative',
   padding: '1px',
   boxSizing: 'border-box',
+  cursor: 'pointer',
+  margin: '15px 15px 15px 0',
 
   [theme.breakpoints.down('sm')]: {
     minHeight: '140px',
@@ -135,145 +123,73 @@ const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#fff' : '#252525',
 }));
 
+const ToggleButton = styled(IconButton)(({ theme }) => ({
+  width: '18px',
+  height: '18px',
+  background:
+    theme.palette.mode === 'light'
+      ? theme.palette.primary.light
+      : `linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)`,
+  borderRadius: '50%',
+  zIndex: 200,
+  position: 'absolute',
+  color: '#fff',
+  fontSize: '10px',
+  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+
+  svg: {
+    width: '16px',
+  },
+
+  '&:hover': {
+    backgroundColor: `${theme.palette.primary.light}`,
+    color: '#fff',
+  },
+}));
+
+function ButtonArrowLeft(props: any) {
+  const { className, onClick } = props;
+  return (
+    <div className={className} onClick={onClick}>
+      <ToggleButton>
+        <ChevronLeftIcon />
+      </ToggleButton>
+    </div>
+  );
+}
+
+function ButtonArrowRight(props: any) {
+  const { className, onClick } = props;
+  return (
+    <div className={className} onClick={onClick}>
+      <ToggleButton>
+        <ChevronRightIcon />
+      </ToggleButton>
+    </div>
+  );
+}
+
 const Holdings: React.FC<Props> = () => {
   const theme = useTheme();
-  const dispatch = useAppDispatch();
-  const holdingWalletTokenPrice = useAppSelector((state) => state.coingeko.holdingWalletTokenPrice);
-  const holdingTokenLoadCompleted = useAppSelector((state) => state.coingeko.holdingTokenLoadCompleted);
-  const { getBalanceTokenOf, getBalanceNativeTokenOf } = useInteractiveContract();
-  const { holdingsWalletAddresses, usdcTokenAddress } = useFetchHoldingsWalletAddress();
-  const [treasury, setTreasury] = useState<HoldingWallet[]>([
-    {
-      name: 'USDC',
-      icon: USDCoin,
-      value: '0',
-      amount: '0',
-    },
-  ]);
-  const [liquidity, setLiquidity] = useState<HoldingWallet[]>([
-    {
-      name: '0XB',
-      icon: OxBCoin,
-      value: '0',
-      amount: '0',
-    },
-    {
-      name: 'AVAX',
-      icon: AVAXCoin,
-      value: '0',
-      amount: '0',
-    },
-  ]);
-  const [rewards, setRewards] = useState<HoldingWallet[]>([
-    {
-      name: '0XB',
-      icon: OxBCoin,
-      value: '0',
-      amount: '0',
-    },
-  ]);
-  const [dev_marketing, setDev_marketing] = useState<HoldingWallet[]>([
-    {
-      name: 'USDC',
-      icon: USDCoin,
-      value: '0',
-      amount: '0',
-    },
-  ]);
 
-  const getTokenData = (params: object) => dispatch(getHoldingWalletTokenData(params));
+  const { holdingsData } = useAppSelector((state) => state.holdings);
 
-  const handleGetDevAndMarketingOrTreasuryWalletData = async (key: string) => {
-    if (holdingsWalletAddresses) {
-      const isTreasury = key === 'treasury';
-      const usdToken = await getTokenBalanceFromWalletAddress(
-        usdcTokenAddress,
-        usdcAbi,
-        isTreasury ? holdingsWalletAddresses.treasury : holdingsWalletAddresses.dev_marketing,
-      );
-      if (key === 'treasury') {
-        setTreasury([
-          {
-            ...treasury[0],
-            amount: formatReward(String(usdToken)),
-            value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
-          },
-        ]);
-      } else {
-        setDev_marketing([
-          {
-            ...dev_marketing[0],
-            amount: formatReward(String(usdToken)),
-            value: `${formatReward(String(Number(usdToken) * holdingWalletTokenPrice[holdingWalletTokenID.usdc].usd))}`,
-          },
-        ]);
-      }
-    }
-  };
+  const [dataHoldingsResources, setDataHoldingsResources] = useState<any[]>([]);
 
-  const handleGetLiquidityWalletData = async () => {
-    if (holdingsWalletAddresses) {
-      const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.liquidity);
-      const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
-      const avaxToken = await getBalanceNativeTokenOf(holdingsWalletAddresses.liquidity);
-      const avaxAmount = bigNumber2Number(avaxToken);
-      if (holdingWalletTokenID.zeroToken) {
-        setLiquidity([
-          {
-            ...liquidity[0],
-            amount: formatReward(String(zeroTokenAmount)),
-            value: `${formatReward(
-              String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
-            )}`,
-          },
-          {
-            ...liquidity[1],
-            amount: formatReward(String(avaxAmount)),
-            value: `${formatReward(
-              String(Number(avaxAmount) * holdingWalletTokenPrice[holdingWalletTokenID.avax].usd),
-            )}`,
-          },
-        ]);
-      }
-    }
-  };
-
-  const handleGetRewardsWalletData = async () => {
-    if (holdingsWalletAddresses) {
-      const zeroToken = await getBalanceTokenOf(holdingsWalletAddresses.rewards);
-      const zeroTokenAmount = bigNumber2Number(zeroToken[0]);
-      if (holdingWalletTokenID.zeroToken) {
-        setRewards([
-          {
-            ...rewards[0],
-            amount: formatReward(String(zeroTokenAmount)),
-            value: `${formatReward(
-              String(Number(zeroTokenAmount) * holdingWalletTokenPrice[holdingWalletTokenID.zeroToken].usd),
-            )}`,
-          },
-        ]);
-      }
-    }
-  };
+  useFetchHoldingsWalletAddress();
 
   useEffect(() => {
-    getTokenData({
-      ids: `${holdingWalletTokenID.zeroToken},${holdingWalletTokenID.usdc},${holdingWalletTokenID.avax}`,
-      vs_currencies: 'usd',
-    });
-    if (holdingTokenLoadCompleted && holdingsWalletAddresses && usdcTokenAddress) {
-      handleGetRewardsWalletData();
-      handleGetLiquidityWalletData();
-      handleGetDevAndMarketingOrTreasuryWalletData('treasury');
-      handleGetDevAndMarketingOrTreasuryWalletData('dev_marketing');
-    }
-  }, [holdingTokenLoadCompleted, holdingsWalletAddresses, usdcTokenAddress]);
+    const _data = dataHoldings.map((item) => ({ ...item, resources: holdingsData[item.key] }));
+    setDataHoldingsResources(_data);
+  }, [holdingsData]);
 
-  const renderData = (k: string) => {
-    if (k === 'treasury') return treasury;
-    if (k === 'liquidity') return liquidity;
-    if (k === 'rewards') return rewards;
-    return dev_marketing;
+  const settings = {
+    infinite: false,
+    slidesToShow: 3,
+    swipeToSlide: true,
+    arrows: true,
+    nextArrow: <ButtonArrowRight />,
+    prevArrow: <ButtonArrowLeft />,
   };
 
   return (
@@ -281,29 +197,31 @@ const Holdings: React.FC<Props> = () => {
       <Title>Holdings</Title>
 
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-        <Grid container spacing={{ xs: '24px', lg: '32px' }}>
-          {dataHoldings.map((item, i) => (
-            <Grid item xs={6} sm={6} lg={3} key={i}>
-              <BoxItem>
-                <BoxDetail>
-                  <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
-                    {item.title}
-                  </BoxHeader>
+        <Box>
+          <Slider {...settings}>
+            {dataHoldingsResources.map((item, i) => (
+              <Box key={i}>
+                <BoxItem>
+                  <BoxDetail>
+                    <BoxHeader color={theme.palette.mode === 'light' ? item.color : item.colorDark}>
+                      {item.title}
+                    </BoxHeader>
 
-                  <BoxContent>
-                    <TableTokens fontSize="12px" data={renderData(item.key)} />
-                  </BoxContent>
-                </BoxDetail>
-              </BoxItem>
-            </Grid>
-          ))}
-        </Grid>
+                    <BoxContent>
+                      <TableTokens fontSize="12px" data={item.resources} />
+                    </BoxContent>
+                  </BoxDetail>
+                </BoxItem>
+              </Box>
+            ))}
+          </Slider>
+        </Box>
       </Box>
 
       <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
         <div className="scroll-area scroll-area--horizontal">
           <div className="scroll-area__body">
-            {dataHoldings.map((item, i) => (
+            {dataHoldingsResources.map((item, i) => (
               <div key={i} className={`scroll-area__column item${i + 1}`}>
                 <BoxItem>
                   <BoxDetail>
@@ -312,7 +230,7 @@ const Holdings: React.FC<Props> = () => {
                     </BoxHeader>
 
                     <BoxContent>
-                      <TableTokens fontSize="12px" data={renderData(item.key)} />
+                      <TableTokens fontSize="12px" data={item.resources} />
                     </BoxContent>
                   </BoxDetail>
                 </BoxItem>

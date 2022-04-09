@@ -345,6 +345,14 @@ export const useInteractiveContract = () => {
     return Promise.all([WAVAX_OXB, WAVAX_USDC, WAVAX_USDT]);
   };
 
+  const getTotalSupply = async (): Promise<[BigNumber]> => {
+    try {
+      return contractWithoutSigner.functions.totalSupply();
+    } catch (e) {
+      throw new Error('Oop! Something went wrong');
+    }
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -379,6 +387,7 @@ export const useInteractiveContract = () => {
     swapTokenToExact0xb,
     swapExactAVAXFor0xB,
     swapAVAXForExact0xB,
+    getTotalSupply,
     contractWithSigner,
     provider,
   };

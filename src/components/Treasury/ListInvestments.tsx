@@ -144,7 +144,7 @@ const ListSkeleton: React.FC = () => {
           </Grid>
 
           <Grid item xs={5}>
-            <Title>Token Price</Title>
+            <Title>Current Token Price</Title>
             <Skeleton animation="wave" height={26} />
           </Grid>
           <Grid item xs={7}>
@@ -237,7 +237,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                   </Grid>
 
                   <Grid item xs={5}>
-                    <Title>Token Price</Title>
+                    <Title>Current Token Price</Title>
                     {renderContent(item.token_price, item.status)}
                   </Grid>
                   <Grid item xs={7}>

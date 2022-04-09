@@ -253,7 +253,7 @@
 
 .darkMode #button-10 .checkbox:checked~.layer {
   background-color: #1E1E1E;
-} 
+}
 
 .darkMode #button-10 .checkbox:checked+.knobs:before {
   background: #282A34;
@@ -317,4 +317,9 @@
   .MuiTooltip-popper[data-popper-placement*="bottom"] .MuiTooltip-arrow {
     top: 0px !important;
   }
+}
+
+.slick-prev:before,
+.slick-next:before {
+  display: none;
 }

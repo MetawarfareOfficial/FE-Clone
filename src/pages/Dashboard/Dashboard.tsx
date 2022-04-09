@@ -7,52 +7,55 @@ import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import useFetchTokenData from 'hooks/useFetchTokenData';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/dashboard';
 import BigNumber from 'bignumber.js';
-import { getBars } from 'services/traderJoe';
+import { bigNumber2Number } from 'helpers/formatNumber';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 interface DashboardProps {
   name?: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = () => {
-  const dispatch = useAppDispatch();
-
   const tokenData = useAppSelector((state) => state.traderJoe.tokenData);
-  const bars = useAppSelector((state) => state.traderJoe.bars);
-
+  const { getTotalSupply } = useInteractiveContract();
   const [heightTotal, setHeightTotal] = useState<any>(null);
   const [dataChart, setDataChart] = useState<TokenDataChart[]>([]);
+  const [totalSupply, setTotalSupply] = useState<string>('0');
   const { refresh } = useFetchTokenData();
 
   const handleChangeHeightTotal = (height: number) => {
     setHeightTotal(height);
   };
 
+  const fetchTotalSupply = async () => {
+    const response = await getTotalSupply();
+
+    setTotalSupply(bigNumber2Number(response[0]));
+  };
+
   useFetchInforContract();
 
   useEffect(() => {
     toast.clearWaitingQueue();
-    dispatch(getBars());
+    fetchTotalSupply();
   }, []);
 
   useEffect(() => {
-    if (tokenData.length > 0 && bars.length > 0) {
+    if (tokenData.length > 0) {
       const data: TokenDataChart[] = tokenData
-        .map((item: TokenDataTraderJoe, index: number) => ({
+        .map((item: TokenDataTraderJoe) => ({
           date: Number(item.date),
-          price: index !== 0 && bars[index] ? Number(bars[index]['highUsd']) : Number(item.priceUSD),
-          marketCap: new BigNumber(item.liquidity)
-            .times(index !== 0 && bars[index] ? Number(bars[index]['highUsd']) : Number(item.priceUSD))
-            .toNumber(),
+          price: Number(item.priceUSD),
+          marketCap: new BigNumber(totalSupply).multipliedBy(item.priceUSD).toNumber(),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
       setDataChart(data);
     }
-  }, [tokenData]);
+  }, [tokenData, totalSupply]);
 
   useInterval(() => {
     refresh();

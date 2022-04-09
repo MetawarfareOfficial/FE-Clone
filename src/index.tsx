@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { HashRouter } from 'react-router-dom';
 import App from 'App';
 import reportWebVitals from 'reportWebVitals';
 import store from 'stores/store';
@@ -14,6 +13,7 @@ import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 import { createClient } from 'urql';
 import { Provider as ProviderURQL } from 'urql';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 function getLibrary(provider: any) {
   const library = new Web3Provider(provider);
@@ -37,14 +37,14 @@ ReactDOM.render(
   <Provider store={store}>
     <Web3ReactProvider getLibrary={getLibrary}>
       <Web3ReactNetWokProvider getLibrary={getLibrary}>
-        <HashRouter>
+        <Router>
           <React.StrictMode>
             <ProviderURQL value={client}>
               <App />
             </ProviderURQL>
             <ToastContainer pauseOnHover={false} newestOnTop={true} autoClose={3000} limit={1} />
           </React.StrictMode>
-        </HashRouter>
+        </Router>
       </Web3ReactNetWokProvider>
     </Web3ReactProvider>
   </Provider>,

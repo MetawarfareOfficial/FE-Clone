@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 const useFetchTokenData = () => {
   const dispatch = useAppDispatch();
-  const tokenId = String(process.env.REACT_APP_CONTRACT_ADDRESS_IN_TRADER_JOE).toLocaleLowerCase() || '';
+  const tokenId = String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase() || '';
 
   const [result, reExecuteQuery] = useQuery({
     query: TokenQuery,

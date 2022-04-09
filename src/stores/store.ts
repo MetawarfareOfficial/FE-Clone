@@ -5,6 +5,7 @@ import dataContractReducer from 'services/contract';
 import investmentsReducer from 'services/investments';
 import traderJoeReducer from 'services/traderJoe';
 import swapReducer from 'services/swap';
+import holdingsReducer from 'services/holdings';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     investments: investmentsReducer,
     traderJoe: traderJoeReducer,
     swap: swapReducer,
+    holdings: holdingsReducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false,
