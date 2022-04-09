@@ -489,6 +489,13 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'bool', name: '_enable', type: 'bool' }],
+    name: 'setEnableAntiBot',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'bool', name: '_enableCashout', type: 'bool' }],
     name: 'setEnableCashout',
     outputs: [],
