@@ -694,15 +694,11 @@ const Layout: React.FC<Props> = ({ children }) => {
                           ))}
                       </div>
                     </div>
-                    {/* </SliderScroll> */}
                   </MenusMobile>
 
-                  {
-                    // location.pathname !== '/treasury' &&
-                    width > 899 && (
-                      <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
-                    )
-                  }
+                  {width > 899 && (
+                    <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
+                  )}
 
                   {children}
                 </MainLayout>
