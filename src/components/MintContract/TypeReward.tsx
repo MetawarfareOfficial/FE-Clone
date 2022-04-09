@@ -10,7 +10,6 @@ import MintStatusModal from 'components/Base/MintStatusModal';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BigNumber from 'bignumber.js';
 import { contractType, LIMIT_MAX_MINT, LIMIT_ONE_TIME_MINT } from 'consts/typeReward';
-import { createMultipleNodesWithTokens, getMintPermit } from 'helpers/interractiveContract';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import {
   setInsuffBalance,
@@ -32,7 +31,7 @@ import { getToken } from 'services/auth';
 import { infoMessage } from 'messages/infoMessages';
 import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
 import { formatNumberWithComas } from 'helpers/formatPrice';
-import { contractWithSigner } from 'utils/contractWithSigner';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 interface Props {
   id: any;
@@ -312,6 +311,7 @@ const TypeReward: React.FC<Props> = ({
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const { getMintPermit, createMultipleNodesWithTokens, contractWithSigner } = useInteractiveContract();
 
   const [open, setOpen] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
@@ -506,7 +506,7 @@ const TypeReward: React.FC<Props> = ({
     }
   }, [claimingTransactionHash, transactionHashCompleted]);
   useEffect(() => {
-    const provider = contractWithSigner();
+    const provider = contractWithSigner;
     const mintContractListener = (address: string) => {
       if (address === currentUserAddress) {
         setCreateNodeOk(!crtNodeOk);

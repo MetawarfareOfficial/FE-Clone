@@ -553,233 +553,165 @@ const Layout: React.FC<Props> = ({ children }) => {
   useFetchInforContract();
   useWindowClose();
 
-  return (
-    <Box sx={{ display: 'flex', overflow: 'hidden' }}>
-      {ethereumOk && (
-        <>
-          <Header onChangeMode={handleChangeMode} />
+  if (location.pathname === '/private-dashboard') {
+    return <Box sx={{ overflow: 'hidden' }}>{children}</Box>;
+  } else {
+    return (
+      <Box sx={{ display: 'flex', overflow: 'hidden' }}>
+        {ethereumOk && (
+          <>
+            {width < 900 && <Header onChangeMode={handleChangeMode} />}
 
-          {open !== null && (
-            <>
-              <Drawer
-                variant="permanent"
-                open={open}
-                sx={{
-                  display: {
-                    md: 'block',
-                    xs: 'none',
-                  },
-                }}
-              >
-                <DrawerHeader open={open}>
-                  <Logo open={open} to="/">
-                    {
-                      // open ? (
-                      theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />
-                      // ) : (
-                      //   <img alt="" src={LogoIcon} />
-                      // )
-                    }
-                  </Logo>
-                  <ToggleButton onClick={handleToggle}>
-                    {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                  </ToggleButton>
-                </DrawerHeader>
+            {open !== null && (
+              <>
+                <Drawer
+                  variant="permanent"
+                  open={open}
+                  sx={{
+                    display: {
+                      md: 'block',
+                      xs: 'none',
+                    },
+                  }}
+                >
+                  <DrawerHeader open={open}>
+                    <Logo open={open} to="/">
+                      {theme.palette.mode === 'light' ? <img alt="" src={LogoImg} /> : <img alt="" src={LogoDarkImg} />}
+                    </Logo>
+                    <ToggleButton onClick={handleToggle}>
+                      {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                    </ToggleButton>
+                  </DrawerHeader>
 
-                <SideMenus open={open}>
-                  {menus &&
-                    menus.map((item, i) => (
-                      <MenuCustom
-                        key={i}
-                        open={open}
-                        active={location.pathname === item.path}
-                        onClick={() => openMenu(item.path)}
-                      >
-                        <MenuIconCustom open={open}>
-                          {!open ? (
-                            <TooltipCustom title={item.name} arrow placement="right">
-                              {location.pathname === item.path ? (
-                                <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                              ) : (
-                                <img alt="" src={item.icon} />
-                              )}
-                            </TooltipCustom>
-                          ) : (
-                            <>
-                              {location.pathname === item.path ? (
-                                <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
-                              ) : (
-                                <img alt="" src={item.icon} />
-                              )}
-                            </>
-                          )}
-                        </MenuIconCustom>
-                        <ListItemTextCustom
-                          primary={item.name}
+                  <SideMenus open={open}>
+                    {menus &&
+                      menus.map((item, i) => (
+                        <MenuCustom
+                          key={i}
                           open={open}
-                          // sx={{  }}
-                        />
-                        {/* {open && <ListItemText primary={item.name} />} */}
-                      </MenuCustom>
-                    ))}
-                </SideMenus>
+                          active={location.pathname === item.path}
+                          onClick={() => openMenu(item.path)}
+                        >
+                          <MenuIconCustom open={open}>
+                            {!open ? (
+                              <TooltipCustom title={item.name} arrow placement="right">
+                                {location.pathname === item.path ? (
+                                  <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                                ) : (
+                                  <img alt="" src={item.icon} />
+                                )}
+                              </TooltipCustom>
+                            ) : (
+                              <>
+                                {location.pathname === item.path ? (
+                                  <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                                ) : (
+                                  <img alt="" src={item.icon} />
+                                )}
+                              </>
+                            )}
+                          </MenuIconCustom>
+                          <ListItemTextCustom primary={item.name} open={open} />
+                        </MenuCustom>
+                      ))}
+                  </SideMenus>
 
-                <SideAction>
-                  {/*<Box>*/}
-                  {/*  {open ? (*/}
-                  {/*    <ButtonBuy*/}
-                  {/*      onClick={() =>*/}
-                  {/*        window.open(*/}
-                  {/*          'https://dexscreener.com/avalanche/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',*/}
-                  {/*          '_blank',*/}
-                  {/*        )*/}
-                  {/*      }*/}
-                  {/*      variant="contained"*/}
-                  {/*      color="primary"*/}
-                  {/*    >*/}
-                  {/*      Dexscreener*/}
-                  {/*    </ButtonBuy>*/}
-                  {/*  ) : (*/}
-                  {/*    <TooltipCustom title="Dexscreener" arrow placement="right">*/}
-                  {/*      <ButtonIconAdd*/}
-                  {/*        onClick={() =>*/}
-                  {/*          window.open(*/}
-                  {/*            'https://dexscreener.com/avalanche/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',*/}
-                  {/*            '_blank',*/}
-                  {/*          )*/}
-                  {/*        }*/}
-                  {/*        variant="outlined"*/}
-                  {/*        color="primary"*/}
-                  {/*      >*/}
-                  {/*        /!*<img className="addImg" alt="import token icon" src={LinkIcon} />*!/*/}
-                  {/*        <OpenInNewIcon color={'primary'} className="addImg" />*/}
-                  {/*      </ButtonIconAdd>*/}
-                  {/*    </TooltipCustom>*/}
-                  {/*  )}*/}
-                  {/*</Box>*/}
-
-                  <Box>
-                    {open ? (
-                      <ButtonBuy
-                        onClick={() =>
-                          window.open(
-                            'https://traderjoexyz.com/trade/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
-                            '_blank',
-                          )
-                        }
-                        variant="contained"
-                        color="primary"
-                      >
-                        Buy 0XB
-                      </ButtonBuy>
-                    ) : (
-                      <TooltipCustom title="Buy 0xB" arrow placement="right">
-                        <ButtonIconAdd
-                          onClick={() =>
-                            window.open(
-                              'https://traderjoexyz.com/trade/0xD2ad73Ce020911A4C04c284bfd2d451b4A777BDB',
-                              '_blank',
-                            )
-                          }
-                          variant="outlined"
+                  <SideAction>
+                    <Box>
+                      {open ? (
+                        <ButtonBuy
+                          onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                          variant="contained"
                           color="primary"
                         >
-                          <img className="addImg" alt="import token icon" src={BuyLightIcon} />
-                        </ButtonIconAdd>
-                      </TooltipCustom>
-                    )}
-                  </Box>
+                          Buy 0XB
+                        </ButtonBuy>
+                      ) : (
+                        <TooltipCustom title="Buy 0xB" arrow placement="right">
+                          <ButtonIconAdd
+                            onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
+                            variant="outlined"
+                            color="primary"
+                          >
+                            <img className="addImg" alt="import token icon" src={BuyLightIcon} />
+                          </ButtonIconAdd>
+                        </TooltipCustom>
+                      )}
+                    </Box>
 
-                  <Box>
-                    {open ? (
-                      <ButtonRefresh
-                        onClick={addAssets}
-                        variant="outlined"
-                        color="primary"
-                        disabled={!currentUserAddress}
-                      >
-                        Add 0XB
-                      </ButtonRefresh>
-                    ) : (
-                      <TooltipCustom title="Add 0xB" arrow placement="right">
-                        <ButtonIconAdd
+                    <Box>
+                      {open ? (
+                        <ButtonRefresh
                           onClick={addAssets}
                           variant="outlined"
                           color="primary"
                           disabled={!currentUserAddress}
                         >
-                          <img
-                            alt="import token icon"
-                            src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon}
-                          />
-                        </ButtonIconAdd>
+                          Add 0XB
+                        </ButtonRefresh>
+                      ) : (
+                        <TooltipCustom title="Add 0xB" arrow placement="right">
+                          <ButtonIconAdd
+                            onClick={addAssets}
+                            variant="outlined"
+                            color="primary"
+                            disabled={!currentUserAddress}
+                          >
+                            <img
+                              alt="import token icon"
+                              src={currentUserAddress ? ImportTokenIcon : ImportTokenDarkIcon}
+                            />
+                          </ButtonIconAdd>
+                        </TooltipCustom>
+                      )}
+                    </Box>
+
+                    <OtherActions open={open}>
+                      <TooltipCustom title="Refresh" arrow placement="right">
+                        <ButtonIconRefresh open={open} onClick={handleRefresh} variant="outlined" color="primary">
+                          <img alt="" src={open ? RefreshLightIcon : RefreshWhiteIcon} />
+                        </ButtonIconRefresh>
                       </TooltipCustom>
-                    )}
-                  </Box>
 
-                  {/* <Box>
-                {open ? (
-                  <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                    Refresh
-                  </ButtonRefresh>
-                ) : (
-                  <TooltipCustom title="Refresh" arrow placement="right">
-                    <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                      <img alt="" src={RefreshIcon} />
-                    </ButtonIconRefresh>
-                  </TooltipCustom>
-                )}
-              </Box> */}
+                      <BoxSwitch>
+                        <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
+                      </BoxSwitch>
+                    </OtherActions>
+                  </SideAction>
+                </Drawer>
 
-                  <OtherActions open={open}>
-                    <TooltipCustom title="Refresh" arrow placement="right">
-                      <ButtonIconRefresh open={open} onClick={handleRefresh} variant="outlined" color="primary">
-                        <img alt="" src={open ? RefreshLightIcon : RefreshWhiteIcon} />
-                      </ButtonIconRefresh>
-                    </TooltipCustom>
-
-                    <BoxSwitch>
-                      {/* {open && <label>Light</label>} */}
-                      {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
-                      <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
-                      {/* {open && <label>Dark</label>} */}
-                    </BoxSwitch>
-                  </OtherActions>
-                </SideAction>
-              </Drawer>
-
-              <MainLayout component="main" open={open}>
-                <MenusMobile>
-                  <div className="scroll-area scroll-area--horizontal">
-                    <div className="scroll-area__body">
-                      {menus &&
-                        menus.map((item, i) => (
-                          <div key={i} className={`scroll-area__column item${i + 1}`}>
-                            <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
-                              <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
-                            </LinkCustom>
-                          </div>
-                        ))}
+                <MainLayout component="main" open={open}>
+                  <MenusMobile>
+                    <div className="scroll-area scroll-area--horizontal">
+                      <div className="scroll-area__body">
+                        {menus &&
+                          menus.map((item, i) => (
+                            <div key={i} className={`scroll-area__column item${i + 1}`}>
+                              <LinkCustom active={location.pathname === item.path} to={item.path} key={i}>
+                                <MenuItem active={location.pathname === item.path}>{item.name}</MenuItem>
+                              </LinkCustom>
+                            </div>
+                          ))}
+                      </div>
                     </div>
-                  </div>
-                  {/* </SliderScroll> */}
-                </MenusMobile>
+                  </MenusMobile>
 
-                {
-                  // location.pathname !== '/treasury' &&
-                  width > 899 && (
-                    <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
-                  )
-                }
+                  {
+                    // location.pathname !== '/treasury' &&
+                    width > 899 && (
+                      <Banner isBg={location.pathname === '/' || location.pathname === '/treasury' ? false : true} />
+                    )
+                  }
 
-                {children}
-              </MainLayout>
-            </>
-          )}
-        </>
-      )}
-    </Box>
-  );
+                  {children}
+                </MainLayout>
+              </>
+            )}
+          </>
+        )}
+      </Box>
+    );
+  }
 };
 
 export default Layout;

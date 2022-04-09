@@ -28,3 +28,7 @@ body::-webkit-scrollbar-thumb {
 .lineReward .recharts-layer {
   stroke-linejoin: bevel;
 }
+
+iframe {
+  display: none;
+}

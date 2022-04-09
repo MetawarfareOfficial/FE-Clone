@@ -9,6 +9,7 @@ const initialState = {
   isLogin: false,
   nativeBalance: '',
   zeroXBlockBalance: '',
+  isOpenSelectWalletNodal: false,
 };
 
 export const accountSlice = createSlice({
@@ -39,6 +40,9 @@ export const accountSlice = createSlice({
     unSetZeroXBlockBalance: (state) => {
       state.zeroXBlockBalance = '';
     },
+    setIsOpenSelectWalletModal: (state, action) => {
+      state.isOpenSelectWalletNodal = action.payload;
+    },
   },
 });
 
@@ -51,6 +55,7 @@ export const {
   setZeroXBlockBalance,
   unSetNativeBalance,
   unSetZeroXBlockBalance,
+  setIsOpenSelectWalletModal,
 } = accountSlice.actions;
 
 const { reducer: accountReducer } = accountSlice;

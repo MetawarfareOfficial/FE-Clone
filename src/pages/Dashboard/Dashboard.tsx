@@ -11,9 +11,9 @@ import { useAppSelector } from 'stores/hooks';
 import { TokenDataChart, TokenDataTraderJoe } from 'interfaces/TokenPrice';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME } from 'consts/dashboard';
-import { getTotalSupply } from 'helpers/interractiveContract';
-import { bigNumber2Number } from 'helpers/formatNumber';
 import BigNumber from 'bignumber.js';
+import { bigNumber2Number } from 'helpers/formatNumber';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 interface DashboardProps {
   name?: string;
@@ -21,7 +21,7 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = () => {
   const tokenData = useAppSelector((state) => state.traderJoe.tokenData);
-
+  const { getTotalSupply } = useInteractiveContract();
   const [heightTotal, setHeightTotal] = useState<any>(null);
   const [dataChart, setDataChart] = useState<TokenDataChart[]>([]);
   const [totalSupply, setTotalSupply] = useState<string>('0');
@@ -53,7 +53,6 @@ const Dashboard: React.FC<DashboardProps> = () => {
           marketCap: new BigNumber(totalSupply).multipliedBy(item.priceUSD).toNumber(),
         }))
         .sort((el1: TokenDataChart, el2: TokenDataChart) => (el1.date > el2.date ? 1 : -1));
-
       setDataChart(data);
     }
   }, [tokenData, totalSupply]);
