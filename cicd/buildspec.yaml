@@ -13,8 +13,8 @@ phases:
       - node -v
       - npm -v
       - npm install --global yarn
+      - echo Yarn installed!
       - yarn
-      - echo Installed!
       - printenv
 
   build:

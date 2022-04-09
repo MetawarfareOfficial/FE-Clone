@@ -8,6 +8,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { useEagerConnect, useInactiveListener } from 'hooks';
 import Layout from 'components/Layout/Layout';
 import { ColorModeContext, themeConfig } from './theme';
+import { useWindowClose } from 'hooks/useWindowClose';
 
 const App: React.FC<any> = () => {
   const { connector } = useWeb3React<Web3Provider>();
@@ -24,6 +25,7 @@ const App: React.FC<any> = () => {
   }, [activatingConnector, connector]);
 
   useInactiveListener(!triedEager || !!activatingConnector);
+  useWindowClose();
 
   const colorMode = React.useMemo(
     () => ({

@@ -16,11 +16,11 @@ import {
 } from 'assets/images';
 
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
-import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
 import { formatCType } from 'helpers/formatCType';
 import { errorMessage } from 'messages/errorMessages';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useToast } from 'hooks/useToast';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
@@ -94,7 +94,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
-
+  const { getClaimPermit, claimNodeByNode, claimAllNodes } = useInteractiveContract();
   const { createToast } = useToast();
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);

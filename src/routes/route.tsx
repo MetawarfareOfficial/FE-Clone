@@ -4,6 +4,7 @@ import Dashboard from 'pages/Dashboard/Dashboard';
 import MintContract from 'pages/MintContract';
 import MyContract from 'pages/MyContract';
 import Treasury from 'pages/Treasury';
+import SwapPage from 'pages/Swap';
 
 const routers = {
   dashboard: {
@@ -28,6 +29,12 @@ const routers = {
     exact: true,
     path: routesConst.TREASURY,
     component: Treasury,
+    route: PrivateRoute,
+  },
+  swap: {
+    exact: true,
+    path: routesConst.SWAP,
+    component: SwapPage,
     route: PrivateRoute,
   },
 };

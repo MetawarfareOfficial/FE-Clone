@@ -20,6 +20,6 @@ export const contractUsdcE = () => {
 
 export const contractUsdc = () => {
   const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RPC_URLS);
-  const contractAddress = process.env.REACT_APP_USDC_CONTRACT_ADDRESS || '';
+  const contractAddress = process.env.REACT_APP_USDC_TOKEN_ADDRESS || '';
   return new ethers.Contract(contractAddress, usdcAbi, provider);
 };
