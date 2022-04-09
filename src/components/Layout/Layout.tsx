@@ -49,7 +49,8 @@ import BuyLightIcon from 'assets/images/buy.svg';
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
 import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
-import { useWindowClose } from '../../hooks/useWindowClose';
+import { useWindowClose } from 'hooks/useWindowClose';
+// import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 interface Props {
   name?: string;
@@ -665,20 +666,6 @@ const Layout: React.FC<Props> = ({ children }) => {
                       )}
                     </Box>
 
-                    {/* <Box>
-                {open ? (
-                  <ButtonRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                    Refresh
-                  </ButtonRefresh>
-                ) : (
-                  <TooltipCustom title="Refresh" arrow placement="right">
-                    <ButtonIconRefresh onClick={handleRefresh} variant="outlined" color="primary">
-                      <img alt="" src={RefreshIcon} />
-                    </ButtonIconRefresh>
-                  </TooltipCustom>
-                )}
-              </Box> */}
-
                     <OtherActions open={open}>
                       <TooltipCustom title="Refresh" arrow placement="right">
                         <ButtonIconRefresh open={open} onClick={handleRefresh} variant="outlined" color="primary">
@@ -687,10 +674,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                       </TooltipCustom>
 
                       <BoxSwitch>
-                        {/* {open && <label>Light</label>} */}
-                        {/* <MySwitch checked={lightMode} onChange={handleChangeMode} /> */}
                         <SwitchMode mode={theme.palette.mode} onChange={handleChangeMode} />
-                        {/* {open && <label>Dark</label>} */}
                       </BoxSwitch>
                     </OtherActions>
                   </SideAction>

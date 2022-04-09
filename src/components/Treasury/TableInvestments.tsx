@@ -306,7 +306,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
             <TableHead>
               <TableRowHead>
                 <TableCellHead>Token Name</TableCellHead>
-                <TableCellHead align="center">Token Price</TableCellHead>
+                <TableCellHead align="center">Current Token Price</TableCellHead>
                 <TableCellHead align="center">Our Holdings</TableCellHead>
                 <TableCellHead align="center">Our Investment (USD)</TableCellHead>
                 <TableCellHead align="center">Average Buying Price (USD)</TableCellHead>
@@ -331,7 +331,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
           <TableHead>
             <TableRowHead>
               <TableCellHead>Token Name</TableCellHead>
-              <TableCellHead align="center">Token Price</TableCellHead>
+              <TableCellHead align="center">Current Token Price</TableCellHead>
               <TableCellHead align="center">Our Holdings</TableCellHead>
               <TableCellHead align="center">Our Investment (USD)</TableCellHead>
               <TableCellHead align="center">Average Buying Price (USD)</TableCellHead>
@@ -370,7 +370,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
 
             {data.length === 0 && (
               <TableRowContent className="noData">
-                <TableCellContent colSpan={5}>
+                <TableCellContent colSpan={6}>
                   <TextNoData>No investments yet!</TextNoData>
                 </TableCellContent>
               </TableRowContent>

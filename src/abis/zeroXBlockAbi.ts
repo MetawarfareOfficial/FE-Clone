@@ -2,6 +2,15 @@ export const zeroXBlockAbi = [
   {
     anonymous: false,
     inputs: [
+      { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'tokens', type: 'uint256' },
+    ],
+    name: 'AddLiquidity',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
       { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
       { indexed: true, internalType: 'address', name: 'spender', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'value', type: 'uint256' },
@@ -114,6 +123,13 @@ export const zeroXBlockAbi = [
     ],
     name: 'allowance',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'antiBotEnabled',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -325,6 +341,20 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [],
+    name: 'launchBuyLimit',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'launchBuyTimeout',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'liquidityPool',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
@@ -411,6 +441,16 @@ export const zeroXBlockAbi = [
   },
   { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
+    inputs: [
+      { internalType: 'address', name: 'userAddr', type: 'address' },
+      { internalType: 'uint256', name: 'tokens', type: 'uint256' },
+    ],
+    name: 'rescueMissentToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'rewardsFee',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -437,6 +477,13 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'address', name: 'crm', type: 'address' }],
     name: 'setContManagement',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bool', name: '_enable', type: 'bool' }],
+    name: 'setEnableAntiBot',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

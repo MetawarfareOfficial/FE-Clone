@@ -20,8 +20,8 @@ import { formatCType } from 'helpers/formatCType';
 import { errorMessage } from 'messages/errorMessages';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import { useToast } from 'hooks/useToast';
-import { infoMessage } from '../../messages/infoMessages';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
+import { infoMessage } from 'messages/infoMessages';
 
 interface Props {
   data: Array<any>;
@@ -274,19 +274,21 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
       <Box>
         {data && data.length > 0 ? (
-          data.map((item, i) => (
-            <ContractDetail
-              key={i}
-              mintDate={item.mintDate}
-              type={item.type}
-              initial={item.initial}
-              name={item.name}
-              rewards={item.rewards}
-              current={item.current}
-              nodeIndex={data.length - i - 1}
-              onClaimClick={handleClickClaimNodeByNode}
-            />
-          ))
+          data
+            .filter((r) => r.mintDate !== '')
+            .map((item, i) => (
+              <ContractDetail
+                key={i}
+                mintDate={item.mintDate}
+                type={item.type}
+                initial={item.initial}
+                name={item.name}
+                rewards={item.rewards}
+                current={item.current}
+                nodeIndex={data.length - i - 1}
+                onClaimClick={handleClickClaimNodeByNode}
+              />
+            ))
         ) : (
           <EmptyContracts>{currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}</EmptyContracts>
         )}

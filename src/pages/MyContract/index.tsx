@@ -65,6 +65,7 @@ const MyContract: React.FC<Props> = () => {
       if (!currentUserAddress) {
         throw new Error('user address is undefined');
       }
+
       const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentAPRs] = await Promise.all([
         getTimeCreatedOfNodes(),
         getNameOfNodes(),
@@ -75,6 +76,11 @@ const MyContract: React.FC<Props> = () => {
         getPriceAllNode(),
         getNodesCurrentAPR(),
       ]);
+
+      if (!mintDates[0].includes('#') && mintDates[0] === '') {
+        return;
+      }
+
       const dataPrices = _.flatten(prices);
       const _prices = {
         square: bigNumber2NumberV2(dataPrices[0]),
@@ -82,7 +88,7 @@ const MyContract: React.FC<Props> = () => {
         tesseract: bigNumber2NumberV2(dataPrices[2]),
       };
 
-      let dataCt = zipDataMyContract({
+      const dataCt = zipDataMyContract({
         mintDates: parseDataMyContract(mintDates[0]),
         names: parseDataMyContract(names[0]),
         types: parseDataMyContract(types[0]),
@@ -90,9 +96,7 @@ const MyContract: React.FC<Props> = () => {
         currentZeroXBlockPerDays: parseDataCurrentApr(types[0], parseDataMyContract(currentAPRs[0]), _prices),
         rewards: parseDataMyContract(rewards[0]),
       } as ContractResponse);
-      if (dataCt.length === 1 && dataCt[0].name === '') {
-        dataCt = [];
-      }
+
       dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
       const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e18);
       dispatch(setDataMyContracts(dataCt));

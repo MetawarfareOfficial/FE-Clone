@@ -25,6 +25,12 @@ export const dataHoldings = [
     color: '#DBECFD',
     colorDark: 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
   },
+  {
+    key: 'reserve_rewards',
+    title: 'Reserve Rewards Wallet',
+    color: '#E5E5FE',
+    colorDark: '#327DD2',
+  },
 ];
 
 export const investmentsData = [
