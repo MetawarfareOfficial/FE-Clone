@@ -33,6 +33,7 @@ import {
   SwapStatusModal,
   SwapTokensModal,
 } from 'components/Swap';
+import { SwapRoute } from 'components/Swap/SWapRoute';
 import { injected } from 'connectors';
 import { getBalanceIntervalTime } from 'consts/swap';
 import { addEthereumChain } from 'helpers';
@@ -413,6 +414,12 @@ const SwapPage: React.FC<Props> = () => {
     open: priceImpactTooltipOpen,
     handleCloseTooltip: closePriceImpactTooltip,
     handleOpenTooltip: openPriceImpactTooltip,
+  } = useTooltip();
+
+  const {
+    open: routeTooltipOpen,
+    handleCloseTooltip: closeRouteTooltip,
+    handleOpenTooltip: openRouteTooltip,
   } = useTooltip();
 
   const tokenList = useAppSelector((state) => state.swap.tokenList);
@@ -1278,6 +1285,34 @@ const SwapPage: React.FC<Props> = () => {
                         })}
                         %
                       </p>
+                    </BillingLine>
+
+                    <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
+
+                    <BillingLine
+                      sx={{
+                        display: 'block',
+                      }}
+                    >
+                      <h4>
+                        Route{' '}
+                        <TooltipCustom
+                          open={routeTooltipOpen}
+                          onMouseEnter={openRouteTooltip}
+                          onMouseLeave={closeRouteTooltip}
+                          title={`The difference between the market price and estimated price due to trade size`}
+                          arrow
+                          placement={windowSize > 600 ? 'right' : 'top'}
+                          size="218px"
+                        >
+                          {theme.palette.mode === 'light' ? (
+                            <HelpCircleIcon style={{ marginLeft: '6px' }} />
+                          ) : (
+                            <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
+                          )}
+                        </TooltipCustom>
+                      </h4>
+                      <SwapRoute fromId={exchangeFrom.id} toId={exchangeTo.id} />
                     </BillingLine>
                   </BillingBox>
                 </>
