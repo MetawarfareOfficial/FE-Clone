@@ -7,6 +7,7 @@ interface Props {
 }
 
 const PrivateRoute: FC<Props> = ({ component: Component, auth = true, ...rest }) => (
+  // @ts-ignore
   <Route {...rest} render={(props: RouteComponentProps) => (auth ? <Component {...props} /> : <Redirect to={'/'} />)} />
 );
 
