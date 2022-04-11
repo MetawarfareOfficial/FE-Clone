@@ -276,10 +276,10 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>
-                    <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} sx={{ width: '100%' }}>
+                    <Box display={'flex'} justifyContent={'start'} alignItems={'center'} sx={{ width: '100%' }}>
                       <Box>{renderContent(item.current_investment, item.status)}</Box>
 
-                      <Box>
+                      <Box sx={{ margin: '0 10px' }}>
                         <TextCenter>
                           <ImgPrice
                             src={
