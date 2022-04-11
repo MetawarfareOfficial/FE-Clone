@@ -4,6 +4,7 @@ const MY_CONTRACT = '/my-contracts';
 const TREASURY = '/treasury';
 const SWAP = '/swap';
 const PRIVATE_DASHBOARD = '/private-dashboard';
+const ZAP = '/zap';
 
 export default {
   DASHBOARD,
@@ -12,4 +13,5 @@ export default {
   TREASURY,
   SWAP,
   PRIVATE_DASHBOARD,
+  ZAP,
 };
