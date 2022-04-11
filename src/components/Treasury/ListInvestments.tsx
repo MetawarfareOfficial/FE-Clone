@@ -138,6 +138,13 @@ const TextProfitPercent = styled('span')<any>(({ color }) => ({
   color: color,
 }));
 
+const ImgPrice = styled('img')<any>(({}) => ({
+  width: '11px',
+  height: '11px',
+  objectFit: 'contain',
+  marginRight: '5px',
+}));
+
 const ListSkeleton: React.FC = () => {
   return (
     <InvestmentItem>
@@ -274,7 +281,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
 
                       <Box>
                         <TextCenter>
-                          <img
+                          <ImgPrice
                             src={
                               computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
                                 ? PriceUp

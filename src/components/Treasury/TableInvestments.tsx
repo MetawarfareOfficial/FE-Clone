@@ -163,13 +163,6 @@ const TableRowContent = styled(TableRow)<TableRowProps>(({ theme }) => ({
 const TextCenter = styled(Box)<BoxProps>(() => ({
   display: 'inline-flex',
   alignItems: 'center',
-
-  img: {
-    width: '11px',
-    height: '11px',
-    objectFit: 'contain',
-    marginRight: '5px',
-  },
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -252,6 +245,13 @@ const TextProfitPercent = styled('span')<any>(({ color }) => ({
   fontSize: '10px',
   lineHeight: '12px',
   color: color,
+}));
+
+const ImgPrice = styled('img')<any>(({}) => ({
+  width: '11px',
+  height: '11px',
+  objectFit: 'contain',
+  marginRight: '5px',
 }));
 
 const TableSkeleton: React.FC = () => {
@@ -386,7 +386,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                     </Box>
                     <Box sx={{ width: '50%', float: 'right' }}>
                       <TextCenter>
-                        <img
+                        <ImgPrice
                           src={
                             computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
                               ? PriceUp
