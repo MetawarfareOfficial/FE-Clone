@@ -24,8 +24,11 @@ import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
 import { useAppSelector } from 'stores/hooks';
 import Skeleton from '@mui/material/Skeleton';
 import { range } from 'lodash';
-import { formatPrice } from 'helpers/formatPrice';
+import { formatNumberWithComas, formatPrice, truncateNumber } from 'helpers/formatPrice';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import PriceUp from 'assets/images/price-up.svg';
+import PriceDown from 'assets/images/price-down.svg';
+import { computeProfitAndLoss } from '../../helpers/computeProfitAndLoss';
 
 interface Props {
   data: Array<any>;
@@ -160,6 +163,13 @@ const TableRowContent = styled(TableRow)<TableRowProps>(({ theme }) => ({
 const TextCenter = styled(Box)<BoxProps>(() => ({
   display: 'inline-flex',
   alignItems: 'center',
+
+  img: {
+    width: '11px',
+    height: '11px',
+    objectFit: 'contain',
+    marginRight: '5px',
+  },
 }));
 
 const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
@@ -233,6 +243,15 @@ const TextNoData = styled(Typography)<TypographyProps>(({ theme }) => ({
     boxShadow: '0px 0px 48px rgba(0, 0, 0, 0.06)',
     borderRadius: '22px',
   },
+}));
+
+const TextProfitPercent = styled('span')<any>(({ color }) => ({
+  fontFamily: 'Roboto',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '10px',
+  lineHeight: '12px',
+  color: color,
 }));
 
 const TableSkeleton: React.FC = () => {
@@ -362,7 +381,37 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   <TableCellContent align="center">{renderContent(item.initial, item.status)}</TableCellContent>
                   <TableCellContent align="center">{renderContent(item.avg_buy_price, item.status)}</TableCellContent>
                   <TableCellContent align="center">
-                    {renderContent(item.current_investment, item.status)}
+                    <Box sx={{ width: '50%', float: 'left' }}>
+                      {renderContent(item.current_investment, item.status)}
+                    </Box>
+                    <Box sx={{ width: '50%', float: 'right' }}>
+                      <TextCenter>
+                        <img
+                          src={
+                            computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
+                              ? PriceUp
+                              : PriceDown
+                          }
+                          alt=""
+                        />
+                        <TextProfitPercent
+                          color={
+                            computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
+                              ? '#0CCD17'
+                              : '#FF0000'
+                          }
+                        >
+                          {formatNumberWithComas(
+                            Number(
+                              truncateNumber(
+                                computeProfitAndLoss(Number(item.initial), Number(item.current_investment)),
+                                2,
+                              ),
+                            ),
+                          )}
+                        </TextProfitPercent>
+                      </TextCenter>
+                    </Box>
                   </TableCellContent>
                 </TableRowContent>
               ),

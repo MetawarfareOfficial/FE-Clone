@@ -2,12 +2,15 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Grid } from '@mui/material';
 import { formatCapitalizeLetters } from 'helpers/formatCapitalizeLetters';
-import { formatPrice } from 'helpers/formatPrice';
+import { formatNumberWithComas, formatPrice, truncateNumber } from 'helpers/formatPrice';
 import PaginationCustom from 'components/Base/Pagination';
 import Skeleton from '@mui/material/Skeleton';
 import { useAppSelector } from 'stores/hooks';
 import { range } from 'lodash';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { computeProfitAndLoss } from '../../helpers/computeProfitAndLoss';
+import PriceUp from '../../assets/images/price-up.svg';
+import PriceDown from '../../assets/images/price-down.svg';
 
 interface Props {
   data: Array<any>;
@@ -124,6 +127,15 @@ const ViewPagination = styled(Box)<BoxProps>(() => ({
   'nav > ul': {
     display: 'inline-flex',
   },
+}));
+
+const TextProfitPercent = styled('span')<any>(({ color }) => ({
+  fontFamily: 'Roboto',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '10px',
+  lineHeight: '12px',
+  color: color,
 }));
 
 const ListSkeleton: React.FC = () => {
@@ -257,7 +269,38 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                   </Grid>
                   <Grid item xs={7}>
                     <Title>Current investment value (USD)</Title>
-                    {renderContent(item.current_investment, item.status)}
+                    <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} sx={{ width: '100%' }}>
+                      <Box>{renderContent(item.current_investment, item.status)}</Box>
+
+                      <Box>
+                        <TextCenter>
+                          <img
+                            src={
+                              computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
+                                ? PriceUp
+                                : PriceDown
+                            }
+                            alt=""
+                          />
+                          <TextProfitPercent
+                            color={
+                              computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
+                                ? '#0CCD17'
+                                : '#FF0000'
+                            }
+                          >
+                            {formatNumberWithComas(
+                              Number(
+                                truncateNumber(
+                                  computeProfitAndLoss(Number(item.initial), Number(item.current_investment)),
+                                  2,
+                                ),
+                              ),
+                            )}
+                          </TextProfitPercent>
+                        </TextCenter>
+                      </Box>
+                    </Box>
                   </Grid>
                 </Grid>
               </BoxContent>
