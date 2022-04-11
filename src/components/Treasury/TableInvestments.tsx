@@ -409,6 +409,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                               ),
                             ),
                           )}
+                          %
                         </TextProfitPercent>
                       </TextCenter>
                     </Box>

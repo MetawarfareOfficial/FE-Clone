@@ -304,6 +304,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                                 ),
                               ),
                             )}
+                            %
                           </TextProfitPercent>
                         </TextCenter>
                       </Box>
