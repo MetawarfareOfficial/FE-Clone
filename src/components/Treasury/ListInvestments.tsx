@@ -299,7 +299,7 @@ const ListInvestments: React.FC<Props> = ({ data }) => {
                             {`${formatNumberWithComas(
                               Number(
                                 truncateNumber(
-                                  computeProfitAndLoss(Number(item.initial), Number(item.current_investment)),
+                                  Math.abs(computeProfitAndLoss(Number(item.initial), Number(item.current_investment))),
                                   2,
                                 ),
                               ),

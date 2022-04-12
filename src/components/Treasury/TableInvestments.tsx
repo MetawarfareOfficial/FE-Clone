@@ -146,7 +146,7 @@ const TableRowContent = styled(TableRow)<TableRowProps>(({ theme }) => ({
     borderRadius: '11px 0 0 11px',
   },
   'td:last-child': {
-    paddingRight: '45px',
+    // paddingRight: '45px',
     borderRadius: '0 11px 11px 0',
   },
 
@@ -404,7 +404,7 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                           {`${formatNumberWithComas(
                             Number(
                               truncateNumber(
-                                computeProfitAndLoss(Number(item.initial), Number(item.current_investment)),
+                                Math.abs(computeProfitAndLoss(Number(item.initial), Number(item.current_investment))),
                                 2,
                               ),
                             ),
