@@ -1287,33 +1287,36 @@ const SwapPage: React.FC<Props> = () => {
                       </p>
                     </BillingLine>
 
-                    <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
-
-                    <BillingLine
-                      sx={{
-                        display: 'block',
-                      }}
-                    >
-                      <h4>
-                        Route{' '}
-                        <TooltipCustom
-                          open={routeTooltipOpen}
-                          onMouseEnter={openRouteTooltip}
-                          onMouseLeave={closeRouteTooltip}
-                          title={`The difference between the market price and estimated price due to trade size`}
-                          arrow
-                          placement={windowSize > 600 ? 'right' : 'top'}
-                          size="218px"
+                    {![SwapTokenId.AVAX].includes(exchangeFrom.id) && ![SwapTokenId.AVAX].includes(exchangeTo.id) && (
+                      <>
+                        <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
+                        <BillingLine
+                          sx={{
+                            display: 'block',
+                          }}
                         >
-                          {theme.palette.mode === 'light' ? (
-                            <HelpCircleIcon style={{ marginLeft: '6px' }} />
-                          ) : (
-                            <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-                          )}
-                        </TooltipCustom>
-                      </h4>
-                      <SwapRoute fromId={exchangeFrom.id} toId={exchangeTo.id} />
-                    </BillingLine>
+                          <h4>
+                            Route{' '}
+                            <TooltipCustom
+                              open={routeTooltipOpen}
+                              onMouseEnter={openRouteTooltip}
+                              onMouseLeave={closeRouteTooltip}
+                              title={`The difference between the market price and estimated price due to trade size`}
+                              arrow
+                              placement={windowSize > 600 ? 'right' : 'top'}
+                              size="218px"
+                            >
+                              {theme.palette.mode === 'light' ? (
+                                <HelpCircleIcon style={{ marginLeft: '6px' }} />
+                              ) : (
+                                <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
+                              )}
+                            </TooltipCustom>
+                          </h4>
+                          <SwapRoute fromId={exchangeFrom.id} toId={exchangeTo.id} />
+                        </BillingLine>
+                      </>
+                    )}
                   </BillingBox>
                 </>
               ) : (
