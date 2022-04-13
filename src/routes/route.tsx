@@ -40,8 +40,8 @@ const routers = {
   },
   // zap: {
   //   exact: true,
-  //   path: routesConst.ZAP,
-  //   component: ZapPage,           // hide zap
+  //   path: routesConst.ZAP,  // hide zap page
+  //   component: ZapPage,
   //   route: PrivateRoute,
   // },
 };
