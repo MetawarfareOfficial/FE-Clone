@@ -4,6 +4,8 @@ import Dashboard from 'pages/Dashboard/Dashboard';
 import MintContract from 'pages/MintContract';
 import MyContract from 'pages/MyContract';
 import Treasury from 'pages/Treasury';
+import SwapPage from 'pages/Swap';
+// import ZapPage from 'pages/Zap';
 
 const routers = {
   dashboard: {
@@ -30,6 +32,18 @@ const routers = {
     component: Treasury,
     route: PrivateRoute,
   },
+  swap: {
+    exact: true,
+    path: routesConst.SWAP,
+    component: SwapPage,
+    route: PrivateRoute,
+  },
+  // zap: {
+  //   exact: true,
+  //   path: routesConst.ZAP,
+  //   component: ZapPage,
+  //   route: PrivateRoute,
+  // },
 };
 
 export default routers;

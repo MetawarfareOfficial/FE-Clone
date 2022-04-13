@@ -59,4 +59,24 @@ export const errorMessage = {
     title: 'Mint contract',
     message: 'Please connect wallet to perform this action',
   },
+  SWAP_SLIPPAGE_INVALID: {
+    title: 'Swap',
+    message: 'Please enter a valid amount',
+  },
+  SWAP_SLIPPAGE_TOO_SMALL: {
+    title: 'Swap',
+    message: 'Your transaction may fail',
+  },
+  SWAP_SLIPPAGE_HIGH: {
+    title: 'Swap',
+    message: 'Your transaction may be frontrun',
+  },
+  SWAP_SLIPPAGE_TOO_HIGH: {
+    title: 'Swap',
+    message: 'Enter a valid slippage percentage',
+  },
+  NO_NETWORK_ERROR: {
+    title: 'No NetWork',
+    message: 'Unable to connect to the Internet',
+  },
 };

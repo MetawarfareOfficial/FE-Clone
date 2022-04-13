@@ -12,3 +12,31 @@ export const TokenQuery = `
     }
   }
 `;
+
+export const recentTransactionQuery = `
+  query ($address: ID!, $date: Int!) {
+    swaps (
+      where: {
+        sender: $address,
+        date_gt: $date
+      },
+      orderBy: date,
+      orderDirection: desc
+    )
+    {
+      id
+      sender
+      date
+      amountIn
+      amountOut
+      tokenIn {
+        id
+        symbol
+      }
+      tokenOut {
+        id
+        symbol
+      }
+    }
+  }
+`;

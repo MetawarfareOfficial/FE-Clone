@@ -176,8 +176,6 @@ const Tokens: React.FC<Props> = () => {
       </Box>
 
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        {/* <SliderScroll elRef={holdingRef} settings={settings}> */}
-
         <div className="scroll-area scroll-area--horizontal">
           <div className="scroll-area__body">
             <div className="scroll-area__column item1">
@@ -225,7 +223,6 @@ const Tokens: React.FC<Props> = () => {
             </div>
           </div>
         </div>
-        {/* </SliderScroll> */}
       </Box>
     </Wrapper>
   );

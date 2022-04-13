@@ -20,7 +20,6 @@ import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
-import { claimAllNodes, claimNodeByNode, getClaimPermit } from 'helpers/interractiveContract';
 import MintStatusModal from 'components/Base/MintStatusModal';
 import {
   SquareIcon,
@@ -36,6 +35,7 @@ import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { infoMessage } from 'messages/infoMessages';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 interface Props {
   title?: string;
@@ -249,7 +249,7 @@ enum ClaimingType {
 const TableContracts: React.FC<Props> = ({ data }) => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
-
+  const { claimAllNodes, getClaimPermit, claimNodeByNode } = useInteractiveContract();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
 

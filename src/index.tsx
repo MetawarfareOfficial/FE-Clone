@@ -7,7 +7,7 @@ import store from 'stores/store';
 import { ToastContainer } from 'react-toastify';
 import 'assets/fonts/stylesheet.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { Web3ReactProvider } from '@web3-react/core';
+import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
@@ -17,9 +17,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 function getLibrary(provider: any) {
   const library = new Web3Provider(provider);
-  library.pollingInterval = 3000;
+  library.pollingInterval = 12000;
   return library;
 }
+
+const Web3ReactNetWokProvider = createWeb3ReactRoot('NETWORK');
 
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_URL,
@@ -34,14 +36,16 @@ const client = createClient({
 ReactDOM.render(
   <Provider store={store}>
     <Web3ReactProvider getLibrary={getLibrary}>
-      <Router>
-        <React.StrictMode>
-          <ProviderURQL value={client}>
-            <App />
-          </ProviderURQL>
-          <ToastContainer pauseOnHover={false} newestOnTop={true} autoClose={3000} limit={1} />
-        </React.StrictMode>
-      </Router>
+      <Web3ReactNetWokProvider getLibrary={getLibrary}>
+        <Router>
+          <React.StrictMode>
+            <ProviderURQL value={client}>
+              <App />
+            </ProviderURQL>
+            <ToastContainer pauseOnHover={false} newestOnTop={true} autoClose={3000} limit={1} />
+          </React.StrictMode>
+        </Router>
+      </Web3ReactNetWokProvider>
     </Web3ReactProvider>
   </Provider>,
   document.getElementById('root'),
