@@ -38,9 +38,10 @@ const routers = {
     component: SwapPage,
     route: PrivateRoute,
   },
+  // Hide Zap page
   // zap: {
   //   exact: true,
-  //   path: routesConst.ZAP,  // hide zap page
+  //   path: routesConst.ZAP,
   //   component: ZapPage,
   //   route: PrivateRoute,
   // },
