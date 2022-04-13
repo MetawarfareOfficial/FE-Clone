@@ -3,61 +3,55 @@ import {
   BoxProps,
   Button,
   ButtonProps,
-  Divider,
   Grid,
   IconButton,
   IconButtonProps,
-  Tooltip,
-  tooltipClasses,
-  TooltipProps,
   Typography,
   TypographyProps,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
-import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/bx_help-circle-dark.svg';
-import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
-import { ReactComponent as ReloadIcon } from 'assets/images/carbon_recently-viewed.svg';
-import { ReactComponent as ReloadDarkIcon } from 'assets/images/reload-dark.svg';
 import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
-import { ReactComponent as SwapIcon } from 'assets/images/swap-icon.svg';
+import { ReactComponent as SwapIcon } from 'assets/images/zap-convert.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
-import {
-  SwapConfirmModal,
-  SwapRecentTransactionsModal,
-  SwapSettingModal,
-  SwapStatusModal,
-  SwapTokensModal,
-} from 'components/Swap';
-import { SwapRoute } from 'components/Swap/SwapRoute';
-import { injected } from 'connectors';
+import InputLP from 'components/Zap/InputLP';
+import { SwapSettingModal, SwapStatusModal, SwapTokensModal } from 'components/Zap';
+import { SwapConfirmModal } from 'components/Swap';
 import { getBalanceIntervalTime } from 'consts/swap';
-import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
-import { SwapTokenId, useSwapToken, useTooltip } from 'hooks/swap';
+import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
-import { useToast } from 'hooks/useToast';
-import { useWindowSize } from 'hooks/useWindowSize';
-import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
-import { setIsOpenSelectWalletModal } from 'services/account';
 import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
+
+import Lottie from 'react-lottie';
+
+import animationData from 'lotties/loading-button.json';
+import ErrorIcon from 'assets/images/clarity_error-line.svg';
+
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: animationData,
+  rendererSettings: {
+    preserveAspectRatio: 'xMidYMid slice',
+  },
+};
 
 interface Props {
   title?: string;
 }
 
-interface TooltipCustomProps extends TooltipProps {
-  size?: string;
+interface TextStatusProps extends TypographyProps {
+  status: 'error' | 'success' | null;
 }
+
 BigNumber.config({
   EXPONENTIAL_AT: 100,
 });
@@ -217,7 +211,7 @@ const IconButtonCustom = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   padding: '0',
   width: '20px',
   height: '20px',
-  marginLeft: '25px',
+  marginLeft: 'auto',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 
   [theme.breakpoints.down('sm')]: {
@@ -314,6 +308,7 @@ const ExchangeIcon = styled(Box)<BoxProps>(() => ({
 const SwapSubmit = styled(Button)<
   ButtonProps & {
     unEnable: boolean;
+    loading: boolean;
   }
 >(({ theme, unEnable }) => ({
   background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
@@ -344,44 +339,6 @@ const SwapSubmit = styled(Button)<
   },
 }));
 
-const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme, size }) => ({
-  zIndex: '2000',
-  filter: 'drop-shadow(0px 0px 5px rgba(56, 100, 255, 0.19))',
-
-  [`& .${tooltipClasses.tooltip}`]: {
-    background: theme.palette.mode === 'light' ? '#fff' : '#171717',
-    color: theme.palette.mode === 'light' ? 'rgba(49, 72, 98, 0.69)' : 'rgba(255, 255, 255, 0.69)',
-    padding: '11px 16px',
-    fontFamily: 'Poppins',
-    fontSize: '13px',
-    lineHeight: '18px',
-    fontWeight: '500',
-    boxShadow: '1px 5px 29px rgba(50, 71, 117, 0.2)',
-    borderRadius: '10px',
-    left: '15px',
-    top: '15px',
-    maxWidth: size || '246px',
-    minWidth: '206px',
-    boxSizing: 'border-box',
-  },
-  [`& .${tooltipClasses.arrow}`]: {
-    color: theme.palette.mode === 'light' ? '#fff' : '#171717',
-    top: '-15px !important',
-  },
-
-  [theme.breakpoints.down('lg')]: {
-    [`& .${tooltipClasses.tooltip}`]: {
-      padding: '8px 20px',
-      fontSize: '12px',
-      lineHeight: '22px',
-      borderRadius: '10px',
-      left: '10px',
-    },
-  },
-}));
-
 interface SetExchangeParams {
   selectedName: string;
   estimatedAmountToken: string | null;
@@ -393,47 +350,33 @@ interface SetExchangeParams {
   exchangeId?: SwapTokenId;
 }
 
-const SwapPage: React.FC<Props> = () => {
-  const theme = useTheme();
-  const [windowSize] = useWindowSize();
-  const { error, connector, activate } = useWeb3React();
-  const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken, approveToken } =
-    useSwapToken();
-  const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
-  const {
-    open: minReceiveTooltipOpen,
-    handleCloseTooltip: closeMinReceiveTooltip,
-    handleOpenTooltip: openMinReceiveTooltip,
-  } = useTooltip();
-  const {
-    open: tradingFeeTooltipOpen,
-    handleCloseTooltip: closeTradingFeeTooltip,
-    handleOpenTooltip: openTradingFeeTooltip,
-  } = useTooltip();
-  const {
-    open: priceImpactTooltipOpen,
-    handleCloseTooltip: closePriceImpactTooltip,
-    handleOpenTooltip: openPriceImpactTooltip,
-  } = useTooltip();
+const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '14px',
+  lineHeight: '26px',
+  display: 'flex',
+  alignItems: 'center',
+  letterSpacing: '0.04em',
+  textTransform: 'capitalize',
+  justifyContent: 'center',
+  color: status === 'error' ? '#FF0E0E' : '#0ADB12',
+}));
 
-  const {
-    open: routeTooltipOpen,
-    handleCloseTooltip: closeRouteTooltip,
-    handleOpenTooltip: openRouteTooltip,
-  } = useTooltip();
+const ZapPage: React.FC<Props> = () => {
+  const theme = useTheme();
+  const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken } = useSwapToken();
+  const { checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
 
   const tokenList = useAppSelector((state) => state.swap.tokenList);
-  const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
   const isInsufficientError = useAppSelector((state) => state.swap.isInsufficientError);
-  const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);
   const selectedName = useAppSelector((state) => state.swap.selectedName) as any;
   const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
   const dispatch = useAppDispatch();
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
-  const { createToast } = useToast();
   const [slippage, setSlippage] = useState('0.5');
   const [deadline, setDeadline] = useState('10');
-  const [isFirstTime, setIsFirstTime] = useState(true);
   const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [currentAction, setCurrentAction] = useState('swap');
   const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'pink' | 'red'>('black');
@@ -445,12 +388,10 @@ const SwapPage: React.FC<Props> = () => {
     type: '',
     id: '',
   });
-  const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
   const [isOpenSelectTokenFromModal, setIsOpenSelectTokenFromModal] = useState(false);
-  const [openRecent, setOpenRecent] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
   const [exchangeFrom, setExchangeFrom] = useState<ExchangeItem>({
@@ -464,37 +405,9 @@ const SwapPage: React.FC<Props> = () => {
   const [minReceive, setMinReceive] = useState<null | string>('0');
   const [tradingFee, setTradingFee] = useState('0');
   const [priceImpact, setPriceImpact] = useState('0');
-  const handleCheckIsApproved = () => {
-    const tokenFrom = tokenList.filter((item) => item.id === exchangeFrom.id);
-    if (tokenFrom[0]) {
-      if (isSwapMaxFromTokens) {
-        if (Number(tokenFrom[0].allowanceBalance) >= Number(tokenFrom[0].balance)) {
-          setIsApproved(true);
-        } else {
-          setIsApproved(false);
-        }
-      } else {
-        if (Number(tokenFrom[0].allowanceBalance) >= Number(exchangeFrom.value)) {
-          setIsApproved(true);
-        } else {
-          setIsApproved(false);
-        }
-      }
-    } else {
-      setIsApproved(false);
-    }
-  };
-  const handleReset = () => {
-    setExchangeFrom({
-      id: exchangeFrom.id,
-      value: '',
-    });
-    setExchangeTo({
-      id: exchangeTo.id,
-      value: '',
-    });
-    setIsFirstTime(true);
-  };
+  const [submitting, setSubmitting] = useState(false);
+  const [statusZap, setStatusZap] = useState<any>(null);
+
   const handleChangeSwapData = ({
     selectedName,
     estimatedAmountToken,
@@ -548,29 +461,6 @@ const SwapPage: React.FC<Props> = () => {
     }
     setTradingFee(tradingFee);
     setPriceImpact(priceImpact);
-  };
-  const handleConnectWallet = async () => {
-    if (error instanceof UnsupportedChainIdError) {
-      try {
-        if (connector instanceof WalletConnectConnector) {
-          createToast({
-            message: errorMessage.META_MASK_WRONG_NETWORK.message,
-            type: 'error',
-            toastId: 1,
-          });
-        } else {
-          await addEthereumChain();
-          await activate(injected);
-        }
-      } catch (ex: any) {
-        createToast({
-          message: ex.message,
-          type: 'error',
-        });
-      }
-    } else {
-      dispatch(setIsOpenSelectWalletModal(true));
-    }
   };
 
   const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
@@ -633,7 +523,6 @@ const SwapPage: React.FC<Props> = () => {
         });
       }
       setIsSwapMaxFromToken(false);
-      setIsFirstTime(false);
     }
   };
 
@@ -730,7 +619,6 @@ const SwapPage: React.FC<Props> = () => {
         });
         setIsSwapMaxFromToken(true);
       }
-      setIsFirstTime(false);
     }
   };
 
@@ -751,32 +639,6 @@ const SwapPage: React.FC<Props> = () => {
     dispatch(handleSetTokenBalances(newTokens));
   };
 
-  const handleApproveToken = async (id: SwapTokenId) => {
-    const tokenIn = tokenList.filter((item) => item.id === id);
-    try {
-      if (!tokenIn[0]) {
-        throw new Error('Some thing wrong');
-      }
-      setCurrentAction('approve');
-      handleToggleStatus();
-      setSwapStatus('pending');
-      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
-      if (response.hash) {
-        setCurrenTransactionId({
-          id: response.hash,
-          type: 'approve',
-        });
-        await response.wait();
-        setTokenSwapCompleted({
-          type: 'approve',
-          id: response.hash,
-        });
-        handleGetTokenBalances();
-      }
-    } catch (error: any) {
-      setSwapStatus('error');
-    }
-  };
   const handelSelectToken = (tokenId: SwapTokenId) => {
     if (isOpenSelectTokenFromModal) {
       setExchangeFrom({
@@ -854,10 +716,6 @@ const SwapPage: React.FC<Props> = () => {
       }
     }
     setIsSwapMaxFromToken(false);
-  };
-
-  const handleToggleRecent = () => {
-    setOpenRecent(!openRecent);
   };
 
   const handleToggleConfirm = () => {
@@ -986,10 +844,6 @@ const SwapPage: React.FC<Props> = () => {
   }, [priceImpact]);
 
   useEffect(() => {
-    handleCheckIsApproved();
-  }, [exchangeFrom, tokenList]);
-
-  useEffect(() => {
     if (openSelect && isOpenSelectTokenFromModal) {
       const selectableTokens = getSwappaleTokens(exchangeTo.id, exchangeFrom.id);
       dispatch(handleDisableToken(selectableTokens));
@@ -1022,9 +876,7 @@ const SwapPage: React.FC<Props> = () => {
     if (currentTransactionId.id !== '' && currentTransactionId.id === tokenSwapCompleted.id) {
       setSwapStatus('success');
       setOpenStatus(true);
-      if (tokenSwapCompleted.type !== 'approve') {
-        handleReset();
-      }
+
       setTokenSwapCompleted({
         id: '',
         type: '',
@@ -1051,34 +903,32 @@ const SwapPage: React.FC<Props> = () => {
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
 
-  const isInvalidInput =
-    selectedName === 'from'
-      ? exchangeFrom.value === null || Number(exchangeFrom.value) === 0
-      : exchangeTo.value === null || Number(exchangeTo.value) === 0;
-
-  const isInvalidSwap = isInvalidInput || isInsufficientError || isInsufficientLiquidityError;
+  const handleApprove = () => {
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      setStatusZap('error');
+    }, 1000);
+  };
 
   return (
     <Wrapper>
       <Box sx={{ width: '100%' }}>
         <Grid container spacing={{ xs: 0, lg: '88px' }}>
           <Grid item xs={12} md={6}>
-            <TitleBlack>Swap</TitleBlack>
+            <TitleBlack>Zap</TitleBlack>
             <TitleWhite>Tokens</TitleWhite>
             <Text>
-              {`Select the coin you want to convert and enter the amount. 
-              The swap will complete once the transaction is confirmed, 
-              and you will receive a receipt with the details.`}
+              {`Select the crypto you want to convert from and enter the amount of 
+              tokens you want to swap. Once the transaction is confirmed, the tokens on your account will be swapped. 
+              You'll see a receipt with all details.*`}
             </Text>
           </Grid>
           <Grid item xs={12} md={6}>
             <SwapBox>
               <SwapHeader>
-                <h4>Swap</h4>
+                <h4>Zap</h4>
 
-                <IconButtonCustom onClick={handleToggleRecent} sx={{ marginLeft: 'auto' }}>
-                  {theme.palette.mode === 'light' ? <ReloadIcon /> : <ReloadDarkIcon />}
-                </IconButtonCustom>
                 <IconButtonCustom onClick={handleToggleSetting}>
                   {theme.palette.mode === 'light' ? <SettingIcon /> : <SettingDarkIcon />}
                 </IconButtonCustom>
@@ -1086,7 +936,7 @@ const SwapPage: React.FC<Props> = () => {
 
               <ExchangeBox>
                 <ExchangeHeader>
-                  <h5>From{selectedName === 'to' ? '(estimated)' : ''}</h5>
+                  <h5>From Token{selectedName === 'to' ? '(estimated)' : ''}</h5>
                   <p>
                     Balance:{' '}
                     {fromTokens.length > 0
@@ -1144,7 +994,7 @@ const SwapPage: React.FC<Props> = () => {
 
               <ExchangeBox>
                 <ExchangeHeader>
-                  <h5>To{selectedName === 'from' ? '(estimated)' : ''}</h5>
+                  <h5>To{selectedName === 'from' ? 'LP' : ''}</h5>
                   <p>
                     Balance:{' '}
                     {toTokens.length > 0
@@ -1161,215 +1011,38 @@ const SwapPage: React.FC<Props> = () => {
                   </p>
                 </ExchangeHeader>
 
-                <InputSwap
-                  disabled={!pairInfoLoaded}
-                  tokens={tokenList}
-                  value={exchangeTo.value}
-                  selected={exchangeTo.id}
-                  onChange={handleChange}
-                  onChangeToken={handleChangeToken}
-                  onMax={handleFromMax}
-                  name="to"
-                />
+                <InputLP disabled={!pairInfoLoaded} value={exchangeTo.value} onChange={handleChange} name="to" />
               </ExchangeBox>
 
               {!isInsufficientError &&
-              exchangeFrom.value &&
-              Number(exchangeFrom.value) !== 0 &&
-              exchangeTo.value &&
-              Number(exchangeTo.value) !== 0 ? (
-                <>
-                  <BillingBox>
-                    <BillingLine>
-                      <h4>Rate</h4>
-                      <p>
-                        {`${calculateSwapTokenRate(Number(exchangeFrom.value), Number(exchangeTo.value))} 
-                        ${exchangeFrom.id.toUpperCase()} Per ${exchangeTo.id.toUpperCase()}`}
-                      </p>
-                    </BillingLine>
-                    <BillingLine>
-                      <h4>Slippage tolerance</h4>
-                      <p>{slippage}%</p>
-                    </BillingLine>
+                exchangeFrom.value &&
+                Number(exchangeFrom.value) !== 0 &&
+                exchangeTo.value &&
+                Number(exchangeTo.value) !== 0 && (
+                  <>
+                    <BillingBox>
+                      <BillingLine>
+                        <h4>Exchange Rate</h4>
+                        <p>1 0xB = Xxxx 0xB/AVAX</p>
+                      </BillingLine>
+                      <BillingLine>
+                        <h4>Minimum You Get</h4>
+                        <p>Xxxx 0xB/ AVAX</p>
+                      </BillingLine>
+                    </BillingBox>
+                  </>
+                )}
 
-                    <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
-
-                    <BillingLine>
-                      <h4>
-                        {selectedName === 'from' ? 'Min Receive' : 'Max Sold'}
-                        <TooltipCustom
-                          open={minReceiveTooltipOpen}
-                          onMouseEnter={openMinReceiveTooltip}
-                          onMouseLeave={closeMinReceiveTooltip}
-                          title={`Your transaction will revert if there is a large, unfavorable 
-                          price movement before it is confirmed`}
-                          arrow
-                          placement={windowSize > 600 ? 'right' : 'top'}
-                          size="218px"
-                        >
-                          {theme.palette.mode === 'light' ? (
-                            <HelpCircleIcon style={{ marginLeft: '6px' }} />
-                          ) : (
-                            <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-                          )}
-                        </TooltipCustom>
-                      </h4>
-                      <p>{`${minReceive} ${
-                        selectedName === 'from' ? exchangeTo.id.toUpperCase() : exchangeFrom.id.toUpperCase()
-                      }`}</p>
-                    </BillingLine>
-
-                    <BillingLine>
-                      <h4>
-                        Trading fee{' '}
-                        <TooltipCustom
-                          open={tradingFeeTooltipOpen}
-                          onMouseEnter={openTradingFeeTooltip}
-                          onMouseLeave={closeTradingFeeTooltip}
-                          title={`A portion of each trade (0.3%) goes to traderjoe 
-                          as trading fee and 0.1% goes to marketing wallet`}
-                          arrow
-                          placement={windowSize > 600 ? 'right' : 'top'}
-                          size="230px"
-                        >
-                          {theme.palette.mode === 'light' ? (
-                            <HelpCircleIcon style={{ marginLeft: '6px' }} />
-                          ) : (
-                            <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-                          )}
-                        </TooltipCustom>
-                      </h4>
-                      <p>
-                        {`${tradingFee} 
-                        ${exchangeFrom.id.toLocaleUpperCase()}`}
-                      </p>
-                    </BillingLine>
-
-                    <BillingLine>
-                      <h4>
-                        Price impact{' '}
-                        <TooltipCustom
-                          open={priceImpactTooltipOpen}
-                          onMouseEnter={openPriceImpactTooltip}
-                          onMouseLeave={closePriceImpactTooltip}
-                          title={`The difference between the market price and estimated price due to trade size`}
-                          arrow
-                          placement={windowSize > 600 ? 'right' : 'top'}
-                          size="218px"
-                        >
-                          {theme.palette.mode === 'light' ? (
-                            <HelpCircleIcon style={{ marginLeft: '6px' }} />
-                          ) : (
-                            <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-                          )}
-                        </TooltipCustom>
-                      </h4>
-                      <p
-                        style={{
-                          color:
-                            priceImpactStatus === 'black'
-                              ? theme.palette.mode === 'light'
-                                ? 'rgba(41, 50, 71, 0.8)'
-                                : '#fff'
-                              : priceImpactStatus === 'pink'
-                              ? 'rgb(226 120 253)'
-                              : priceImpactStatus,
-                        }}
-                      >
-                        {formatForNumberLessThanCondition({
-                          minValueCondition: 0.01,
-                          value: priceImpact,
-                          callback: formatPercent,
-                          callBackParams: [2],
-                          addLessThanSymbol: true,
-                        })}
-                        %
-                      </p>
-                    </BillingLine>
-
-                    {![SwapTokenId.AVAX].includes(exchangeFrom.id) && ![SwapTokenId.AVAX].includes(exchangeTo.id) && (
-                      <>
-                        <Divider sx={{ borderColor: 'rgba(84, 91, 108, 0.2)', margin: '12px 0' }} />
-                        <BillingLine
-                          sx={{
-                            display: 'block',
-                          }}
-                        >
-                          <h4>
-                            Route{' '}
-                            <TooltipCustom
-                              open={routeTooltipOpen}
-                              onMouseEnter={openRouteTooltip}
-                              onMouseLeave={closeRouteTooltip}
-                              title={`The difference between the market price and estimated price due to trade size`}
-                              arrow
-                              placement={windowSize > 600 ? 'right' : 'top'}
-                              size="218px"
-                            >
-                              {theme.palette.mode === 'light' ? (
-                                <HelpCircleIcon style={{ marginLeft: '6px' }} />
-                              ) : (
-                                <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
-                              )}
-                            </TooltipCustom>
-                          </h4>
-                          <SwapRoute fromId={exchangeFrom.id} toId={exchangeTo.id} />
-                        </BillingLine>
-                      </>
-                    )}
-                  </BillingBox>
-                </>
-              ) : (
-                ''
+              {statusZap && (
+                <TextStatus status={statusZap}>
+                  {statusZap === 'error' && <img alt="" src={ErrorIcon} />}{' '}
+                  {statusZap == 'error' ? 'insufficient AVAX Balance' : 'Approved'}
+                </TextStatus>
               )}
-              {!isFirstTime ? (
-                !account ? (
-                  <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
-                    Connect Wallet
-                  </SwapSubmit>
-                ) : isInvalidSwap ? (
-                  <SwapSubmit fullWidth unEnable={isInvalidSwap}>
-                    {isInsufficientLiquidityError
-                      ? 'Insufficient liquidity for this trade'
-                      : isInvalidInput
-                      ? 'Please enter a valid amount'
-                      : isInsufficientError
-                      ? `Insufficient ${exchangeFrom.id.toLocaleUpperCase()} balance`
-                      : priceImpactStatus === 'red'
-                      ? 'Price impact too high'
-                      : 'Swap'}
-                  </SwapSubmit>
-                ) : isApproved ? (
-                  <SwapSubmit
-                    fullWidth
-                    unEnable={priceImpactStatus === 'red'}
-                    onClick={() => {
-                      if (priceImpactStatus === 'red') {
-                        return;
-                      }
-                      handleToggleConfirm();
-                    }}
-                  >
-                    {priceImpactStatus === 'red'
-                      ? 'Price impact too high'
-                      : priceImpactStatus === 'pink'
-                      ? 'Swap anyway'
-                      : 'Swap'}
-                  </SwapSubmit>
-                ) : (
-                  <SwapSubmit
-                    fullWidth
-                    unEnable={false}
-                    onClick={() => {
-                      handleApproveToken(exchangeFrom.id);
-                    }}
-                  >
-                    Approve {exchangeFrom.id.toLocaleUpperCase()}
-                  </SwapSubmit>
-                )
-              ) : (
-                <></>
-              )}
+
+              <SwapSubmit fullWidth unEnable={false} loading={submitting} onClick={handleApprove}>
+                {submitting ? <Lottie options={defaultOptions} height={33} width={33} /> : 'Approve'}
+              </SwapSubmit>
             </SwapBox>
           </Grid>
         </Grid>
@@ -1389,11 +1062,6 @@ const SwapPage: React.FC<Props> = () => {
         tokens={tokenList}
         onSelect={handelSelectToken}
         active={selectedName === 'from' ? exchangeFrom.id : exchangeTo.id}
-      />
-      <SwapRecentTransactionsModal
-        open={openRecent}
-        onClose={handleToggleRecent}
-        data={handleConvertRecentTransactionData(recentTransactions, tokenList)}
       />
       <SwapConfirmModal
         priceImpactStatus={priceImpactStatus}
@@ -1434,4 +1102,4 @@ const SwapPage: React.FC<Props> = () => {
   );
 };
 
-export default SwapPage;
+export default ZapPage;

@@ -20,7 +20,11 @@ export const zeroXBlockAbi = [
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'address', name: 'sender', type: 'address' }],
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
+      { indexed: false, internalType: 'enum ContType', name: 'cType', type: 'uint8' },
+      { indexed: false, internalType: 'uint256', name: 'contsCount', type: 'uint256' },
+    ],
     name: 'ContsMinted',
     type: 'event',
   },
@@ -32,6 +36,17 @@ export const zeroXBlockAbi = [
       { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     name: 'ERC20PaymentReleased',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'string', name: 'walletName', type: 'string' },
+      { indexed: false, internalType: 'enum ContType', name: 'cType', type: 'uint8' },
+      { indexed: false, internalType: 'address', name: 'token', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+    ],
+    name: 'Funded',
     type: 'event',
   },
   {
@@ -72,7 +87,10 @@ export const zeroXBlockAbi = [
   },
   {
     anonymous: false,
-    inputs: [{ indexed: false, internalType: 'address', name: 'sender', type: 'address' }],
+    inputs: [
+      { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
+      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+    ],
     name: 'RewardCashoutAll',
     type: 'event',
   },
@@ -81,6 +99,7 @@ export const zeroXBlockAbi = [
     inputs: [
       { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'index', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     name: 'RewardCashoutOne',
     type: 'event',
@@ -721,6 +740,13 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
     name: 'updateCashoutFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
+    name: 'updateCashoutTaxPool',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
