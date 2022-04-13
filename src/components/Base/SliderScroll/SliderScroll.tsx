@@ -21,8 +21,9 @@ const SliderCustom = styled(Slider)`
 
 const SliderScroll: React.FC<Props> = ({ elRef, children, settings }) => {
   return (
+    // @ts-ignore
     <SliderCustom {...settings} ref={elRef}>
-      {children}
+      {children as any}
     </SliderCustom>
   );
 };
