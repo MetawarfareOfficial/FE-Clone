@@ -33,7 +33,7 @@ import {
   SwapStatusModal,
   SwapTokensModal,
 } from 'components/Swap';
-import { SwapRoute } from 'components/Swap/SWapRoute';
+import { SwapRoute } from 'components/Swap/SwapRoute';
 import { injected } from 'connectors';
 import { getBalanceIntervalTime } from 'consts/swap';
 import { addEthereumChain } from 'helpers';
