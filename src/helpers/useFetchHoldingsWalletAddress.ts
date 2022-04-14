@@ -41,6 +41,18 @@ export const useFetchHoldingsWalletAddress = () => {
     }
   };
 
+  const fetchAvaxPrices = async () => {
+    const uAvax = `${baseUrl}/${process.env.REACT_APP_AVAX_CONTRACT_ADDRESS}`;
+
+    try {
+      const priceAvax = await axiosInstance.get(uAvax);
+
+      return bigNumber2NumberV3(priceAvax.data);
+    } catch (e) {
+      return '0';
+    }
+  };
+
   const fetchBalanceAssetsWallet = async (address: string) => {
     const [_0xbBalance, _avaxBalance, _usdcBalance, _prices] = await Promise.all([
       getBalanceTokenOf(address),
@@ -94,4 +106,6 @@ export const useFetchHoldingsWalletAddress = () => {
       dispatch(setLoading(false));
     })();
   }, []);
+
+  return { fetchAvaxPrices };
 };
