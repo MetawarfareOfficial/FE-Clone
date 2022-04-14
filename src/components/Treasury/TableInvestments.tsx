@@ -123,7 +123,7 @@ const TableRowHead = styled(TableRow)<TableRowProps>(({ theme }) => ({
     paddingLeft: '28px',
   },
   'th:last-child': {
-    paddingRight: '0px',
+    paddingRight: '25px',
   },
 
   [theme.breakpoints.down('lg')]: {
@@ -245,6 +245,8 @@ const TextProfitPercent = styled('span')<any>(({ color }) => ({
   fontSize: '10px',
   lineHeight: '12px',
   color: color,
+  width: '33px',
+  textAlign: 'left',
 }));
 
 const ImgPrice = styled('img')<any>(({}) => ({
@@ -380,37 +382,37 @@ const TableInvestments: React.FC<Props> = ({ data }) => {
                   </TableCellContent>
                   <TableCellContent align="center">{renderContent(item.initial, item.status)}</TableCellContent>
                   <TableCellContent align="center">{renderContent(item.avg_buy_price, item.status)}</TableCellContent>
-                  <TableCellContent align="center">
-                    <Box sx={{ width: '50%', float: 'left' }}>
-                      {renderContent(item.current_investment, item.status)}
-                    </Box>
-                    <Box sx={{ width: '50%', float: 'right' }}>
-                      <TextCenter>
-                        <ImgPrice
-                          src={
-                            computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
-                              ? PriceUp
-                              : PriceDown
-                          }
-                          alt=""
-                        />
-                        <TextProfitPercent
-                          color={
-                            computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
-                              ? '#0CCD17'
-                              : '#FF0000'
-                          }
-                        >
-                          {`${formatNumberWithComas(
-                            Number(
-                              truncateNumber(
-                                Math.abs(computeProfitAndLoss(Number(item.initial), Number(item.current_investment))),
-                                2,
+                  <TableCellContent align="right">
+                    <Box display={'flex'} justifyContent={'flex-end'} alignItems={'center'}>
+                      <Box sx={{ marginRight: '25px' }}>{renderContent(item.current_investment, item.status)}</Box>
+                      <Box sx={{}}>
+                        <TextCenter>
+                          <ImgPrice
+                            src={
+                              computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
+                                ? PriceUp
+                                : PriceDown
+                            }
+                            alt=""
+                          />
+                          <TextProfitPercent
+                            color={
+                              computeProfitAndLoss(Number(item.initial), Number(item.current_investment)) > 0
+                                ? '#0CCD17'
+                                : '#FF0000'
+                            }
+                          >
+                            {`${formatNumberWithComas(
+                              Number(
+                                truncateNumber(
+                                  Math.abs(computeProfitAndLoss(Number(item.initial), Number(item.current_investment))),
+                                  2,
+                                ),
                               ),
-                            ),
-                          )}%`}
-                        </TextProfitPercent>
-                      </TextCenter>
+                            )}%`}
+                          </TextProfitPercent>
+                        </TextCenter>
+                      </Box>
                     </Box>
                   </TableCellContent>
                 </TableRowContent>
