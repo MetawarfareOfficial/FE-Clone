@@ -1,25 +1,33 @@
-import React, { useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
-import { injected } from 'connectors';
 import { Web3Provider } from '@ethersproject/providers';
-import { UnsupportedChainIdError } from '@web3-react/core';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { setAccount, setLogin, unSetAccount, unSetLogin } from 'services/account';
+import { Button, ButtonProps, Link, LinkProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { ButtonProps, Button, Link, LinkProps } from '@mui/material';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import metamaskImg from 'assets/images/metamask-icon.svg';
+import walletConnectImg from 'assets/images/walletConnect-icon.svg';
+import WalletButton from 'components/Base/WalletButton';
+import { injected, walletConnect } from 'connectors';
+import { addEthereumChain, isMetaMaskInstalled, onClickConnect } from 'helpers';
+import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
+import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
+import { useToast } from 'hooks/useToast';
+import { useWindowSize } from 'hooks/useWindowSize';
 import { errorMessage } from 'messages/errorMessages';
 import { successMessage } from 'messages/successMessages';
-import { isMetaMaskInstalled, onClickConnect, addEthereumChain } from 'helpers';
+import React, { useEffect, useState } from 'react';
+import { setAccount, setIsOpenSelectWalletModal, setLogin, unSetAccount, unSetLogin } from 'services/account';
 import { authenticateUser, getToken, unAuthenticateUser } from 'services/auth';
-import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
-import WalletButton from 'components/Base/WalletButton';
-import { useWindowSize } from 'hooks/useWindowSize';
-import { useToast } from 'hooks/useToast';
-import useMobileChangeAccountMetamask from 'hooks/useMobileChangeAccountMetamask';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { ConnectWalletModal } from '../ConnectWalletModal';
+
 interface Props {
   name?: string;
 }
 
+export enum WalletId {
+  Metamask = 'metamask',
+  WalletConnect = 'walletConnect',
+}
 const ButtonConnect = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   textDecoration: 'none',
@@ -88,37 +96,79 @@ const CustomToastWithLink = () => (
 const ConnectWallet: React.FC<Props> = () => {
   const dispatch = useAppDispatch();
   const [width] = useWindowSize();
-  const { active, account, activate, deactivate, error, chainId } = useWeb3React<Web3Provider>();
+  const { active, account, activate, deactivate, error, chainId, connector } = useWeb3React<Web3Provider>();
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectingTo, setConnectingTo] = useState<WalletId>();
+  const [connectError, setConnectError] = useState(false);
+
   const isUnsupportedChainIdError = error instanceof UnsupportedChainIdError;
 
+  const isOpenSelectWalletNodal = useAppSelector((state) => state.user.isOpenSelectWalletNodal);
   const isLogin = useAppSelector((state) => state.user.isLogin);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const { createToast } = useToast();
 
-  const login = async (): Promise<void> => {
+  const handleResetModal = () => {
+    setTimeout(() => {
+      setConnectingTo(undefined);
+      setConnectError(false);
+      setIsConnecting(false);
+    }, 500);
+  };
+  const handleResetConnector = (currentConnector: WalletConnectConnector) => {
+    currentConnector.walletConnectProvider = undefined;
+  };
+  const handleConnectWallet = async (id: WalletId) => {
     try {
-      if (!isMetaMaskInstalled()) {
-        createToast({
-          message: CustomToastWithLink,
-          type: 'error',
-        });
-        return;
+      setIsConnecting(true);
+      setConnectingTo(id);
+      if (id === 'metamask') {
+        if (!isMetaMaskInstalled()) {
+          setConnectError(true);
+          createToast({
+            message: CustomToastWithLink,
+            type: 'error',
+          });
+          return;
+        }
+        await onClickConnect();
+        await activate(injected);
+        if (!getToken()) dispatch(setLogin());
+        authenticateUser(Math.random().toString(36).substr(2, 10));
+        dispatch(setIsOpenSelectWalletModal(false));
+      } else if (id === 'walletConnect') {
+        dispatch(setIsOpenSelectWalletModal(false));
+        handleResetConnector(walletConnect);
+        await activate(walletConnect, undefined, true);
+        if (!getToken()) dispatch(setLogin());
+        authenticateUser(Math.random().toString(36).substr(2, 10));
       }
-      await onClickConnect();
-      await activate(injected);
-      if (!getToken()) dispatch(setLogin());
-      authenticateUser(Math.random().toString(36).substr(2, 10));
       createToast({
         message: successMessage.META_MASK_CONNECT_SUCCESSFULLY.message,
         type: 'success',
         toastId: 2,
       });
+      handleResetModal();
     } catch (ex: any) {
+      dispatch(setIsOpenSelectWalletModal(true));
+      setConnectError(true);
+      if (ex.name === 'UnsupportedChainIdError' || ex.name === 't') {
+        createToast({
+          message: errorMessage.META_MASK_WRONG_NETWORK.message,
+          type: 'error',
+          toastId: 1,
+        });
+        return;
+      }
       createToast({
         message: ex.message,
         type: 'error',
       });
     }
+  };
+
+  const handleLoginBtnClicked = async (): Promise<void> => {
+    dispatch(setIsOpenSelectWalletModal(true));
   };
 
   const logout = async (): Promise<void> => {
@@ -142,8 +192,16 @@ const ConnectWallet: React.FC<Props> = () => {
 
   const handleWrongNetWork = async (): Promise<void> => {
     try {
-      await addEthereumChain();
-      await activate(injected);
+      if (connector instanceof WalletConnectConnector) {
+        createToast({
+          message: errorMessage.META_MASK_WRONG_NETWORK.message,
+          type: 'error',
+          toastId: 1,
+        });
+      } else {
+        await addEthereumChain();
+        await activate(injected);
+      }
     } catch (ex: any) {
       createToast({
         message: ex.message,
@@ -151,6 +209,13 @@ const ConnectWallet: React.FC<Props> = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (account && isOpenSelectWalletNodal) {
+      dispatch(setIsOpenSelectWalletModal(false));
+      handleResetModal();
+    }
+  }, [account]);
 
   useEffect(() => {
     if (account && active && chainId && isLogin) {
@@ -182,51 +247,82 @@ const ConnectWallet: React.FC<Props> = () => {
   useFetchRewardAmount();
   useMobileChangeAccountMetamask();
 
-  if (width < 900) {
-    return (
-      <div>
-        {!(active && isLogin) && (
-          <div>
-            {isUnsupportedChainIdError && !chainId ? (
-              <WalletButton onChange={handleWrongNetWork} mode={'login'} />
-            ) : (
-              <WalletButton onChange={login} mode={'login'} />
-            )}
-          </div>
-        )}
-        {active && isLogin && (
-          <div>
-            <WalletButton onChange={logout} mode={'logout'} />
-          </div>
-        )}
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        {!(active && isLogin) && (
-          <div>
-            {(isUnsupportedChainIdError && !chainId) || Boolean(getToken()) ? (
-              <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
-                Wrong network
-              </ButtonConnect>
-            ) : (
-              <ButtonConnect variant="outlined" color="primary" onClick={login}>
-                Connect Wallet
-              </ButtonConnect>
-            )}
-          </div>
-        )}
-        {active && isLogin && (
-          <div>
-            <ButtonWallet variant="contained" color="primary" onClick={logout}>
-              Disconnect Wallet
-            </ButtonWallet>
-          </div>
-        )}
-      </div>
-    );
-  }
+  return (
+    <>
+      {width < 900 ? (
+        <div>
+          {!(active && isLogin) && (
+            <div>
+              {isUnsupportedChainIdError && !chainId ? (
+                <WalletButton onChange={handleWrongNetWork} mode={'login'} />
+              ) : (
+                <WalletButton onChange={handleLoginBtnClicked} mode={'login'} />
+              )}
+            </div>
+          )}
+          {active && isLogin && (
+            <div>
+              <WalletButton onChange={logout} mode={'logout'} />
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          {!(active && isLogin) && (
+            <div>
+              {isUnsupportedChainIdError && !chainId ? (
+                <ButtonConnect variant="outlined" color="primary" onClick={handleWrongNetWork}>
+                  Wrong network
+                </ButtonConnect>
+              ) : (
+                <ButtonConnect variant="outlined" color="primary" onClick={handleLoginBtnClicked}>
+                  Connect Wallet
+                </ButtonConnect>
+              )}
+            </div>
+          )}
+          {active && isLogin && (
+            <div>
+              <ButtonWallet variant="contained" color="primary" onClick={logout}>
+                Disconnect Wallet
+              </ButtonWallet>
+            </div>
+          )}
+        </div>
+      )}
+      <ConnectWalletModal
+        data={[
+          {
+            id: WalletId.Metamask,
+            name: 'MetaMask',
+            img: metamaskImg,
+            content: 'Connect to your MetaMask Wallet',
+            handleConnectWallet,
+          },
+          {
+            id: WalletId.WalletConnect,
+            name: 'WalletConnect',
+            img: walletConnectImg,
+            content: 'Scan with WalletConnect to connect',
+            handleConnectWallet,
+          },
+        ]}
+        onClose={() => {
+          dispatch(setIsOpenSelectWalletModal(false));
+          handleResetModal();
+        }}
+        open={isOpenSelectWalletNodal}
+        isConnecting={isConnecting}
+        onClickBackBtn={() => {
+          setIsConnecting(false);
+          setConnectError(false);
+          setConnectingTo(undefined);
+        }}
+        connectingTo={connectingTo}
+        isError={connectError}
+      />
+    </>
+  );
 };
 
 export default ConnectWallet;

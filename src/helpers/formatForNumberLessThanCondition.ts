@@ -1,5 +1,5 @@
 interface Params {
-  value: number | string;
+  value: string;
   minValueCondition: number | string;
   callback?: any;
   addLessThanSymbol?: boolean;

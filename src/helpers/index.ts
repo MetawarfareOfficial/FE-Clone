@@ -13,6 +13,7 @@ import { customToast } from './customToast';
 import { formatReward } from './formatReward';
 import { getTokenBalanceFromWalletAddress } from './getTokenBalanceFromWalletAddress';
 import { checkTransactionIsValid } from './checkTransactionIsValid';
+import { getSwapSettingData } from './getSwapSettingData';
 export {
   addEthereumChain,
   isMetaMaskInstalled,
@@ -29,4 +30,5 @@ export {
   formatReward,
   getTokenBalanceFromWalletAddress,
   checkTransactionIsValid,
+  getSwapSettingData,
 };

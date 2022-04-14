@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { getBalanceNativeTokenOf, getBalanceTokenOf, getHoldingsWalletAddress } from './interractiveContract';
 import { getBalanceTokenUsdcOf } from './interactiveUsdcContract';
 import { bigNumber2Number, bigNumber2NumberV3 } from './formatNumber';
 import { useAppDispatch } from 'stores/hooks';
@@ -10,15 +9,17 @@ import AVAXCoin from 'assets/images/avalanche-avax-logo.svg';
 import axiosInstance from 'utils/AxiosInstance';
 import BigNumber from 'bignumber.js';
 import { formatReward } from 'helpers/formatReward';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 
 export const useFetchHoldingsWalletAddress = () => {
   const dispatch = useAppDispatch();
   const baseUrl = process.env.REACT_APP_API_URL_PRICE_TOKEN_TO_USD;
+  const { getBalanceTokenOf, getBalanceNativeTokenOf, getHoldingsWalletAddress } = useInteractiveContract();
 
   const fetchTokenPrices = async () => {
     const uOxb = `${baseUrl}/${process.env.REACT_APP_CONTRACT_ADDRESS}`;
-    const uUsdc = `${baseUrl}/${process.env.REACT_APP_USDC_CONTRACT_ADDRESS}`;
-    const uAvax = `${baseUrl}/${process.env.REACT_APP_AVAX_CONTRACT_ADDRESS}`;
+    const uUsdc = `${baseUrl}/${process.env.REACT_APP_USDC_TOKEN_ADDRESS}`;
+    const uAvax = `${baseUrl}/${process.env.REACT_APP_NATIVE_TOKEN_ADDRESS}`;
 
     try {
       const [price0xb, priceAvax, priceUsdc] = await Promise.all([
