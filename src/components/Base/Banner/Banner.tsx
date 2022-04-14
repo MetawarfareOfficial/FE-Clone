@@ -3,7 +3,10 @@ import { styled } from '@mui/material/styles';
 import ConnectWallet from 'components/ConnectWallet';
 import { useAppSelector } from 'stores/hooks';
 import { formatUserAddress } from 'helpers';
-import { Box, BoxProps, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
+import { Box, BoxProps, Link, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
+import Tw from 'assets/images/tw.svg';
+import Discord from 'assets/images/discord.svg';
+import Medium from 'assets/images/medium.svg';
 
 interface Props {
   text?: string;
@@ -66,6 +69,13 @@ const Wallet = styled(Box)<BoxProps>(() => ({
   },
 }));
 
+const ImgSocial = styled('img')<any>(() => ({
+  width: '29px',
+  height: '24px',
+  objectFit: 'contain',
+  margin: '0 16px',
+}));
+
 const Banner: React.FC<Props> = () => {
   // const isMintContractLocation = useLocation().pathname === '/mint-contracts';
 
@@ -79,6 +89,17 @@ const Banner: React.FC<Props> = () => {
       {/* {isMintContractLocation && (
         <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
       )} */}
+      <Box>
+        <Link href={'https://twitter.com/0xblockfi'} target={'_blank'}>
+          <ImgSocial src={Tw} alt="tw icon" />
+        </Link>
+        <Link href={'https://discord.com/invite/0xblock'} target={'_blank'}>
+          <ImgSocial src={Discord} alt="Discord icon" />
+        </Link>
+        <Link href={'https://medium.com/@0xblockfi'} target={'_blank'}>
+          <ImgSocial src={Medium} alt="Medium icon" />
+        </Link>
+      </Box>
 
       <BoxRight>
         {currentUserAddress && isLogin && (
