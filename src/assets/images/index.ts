@@ -12,3 +12,12 @@ export { default as TessDarkDefaultIcon } from 'assets/images/tess-dark.gif';
 
 export { default as AllContract } from 'assets/images/all-contract.gif';
 export { default as AllDarkContract } from 'assets/images/all-contract-dark.gif';
+
+export { default as Tw } from 'assets/images/tw.svg';
+export { default as TwActive } from 'assets/images/tw-active.svg';
+
+export { default as Discord } from 'assets/images/discord.svg';
+export { default as DiscordActive } from 'assets/images/discord-active.svg';
+
+export { default as Medium } from 'assets/images/medium.svg';
+export { default as MediumActive } from 'assets/images/medium-active.svg';
