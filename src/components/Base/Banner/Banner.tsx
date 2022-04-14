@@ -7,6 +7,7 @@ import { Box, BoxProps, Link, Paper, PaperProps, Typography, TypographyProps } f
 import Tw from 'assets/images/tw.svg';
 import Discord from 'assets/images/discord.svg';
 import Medium from 'assets/images/medium.svg';
+import Tooltip from '@mui/material/Tooltip';
 
 interface Props {
   text?: string;
@@ -50,7 +51,7 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
 }));
 
 const BoxRight = styled(Box)<BoxProps>(() => ({
-  width: 'calc(100% - 479px)',
+  width: 'calc(50%)',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
@@ -77,28 +78,31 @@ const ImgSocial = styled('img')<any>(() => ({
 }));
 
 const Banner: React.FC<Props> = () => {
-  // const isMintContractLocation = useLocation().pathname === '/mint-contracts';
-
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isLogin = useAppSelector((state) => state.user.isLogin);
-  // const nativeBalance = useAppSelector((state) => state.user.nativeBalance);
-  // const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
 
   return (
     <BannerWrapper isBg={false}>
-      {/* {isMintContractLocation && (
-        <Text>Mint 0xBlock Reward Contracts (0xRC) and get steady stream of Rewards in 0xBlock (0xB) tokens</Text>
-      )} */}
-      <Box>
-        <Link href={'https://twitter.com/0xblockfi'} target={'_blank'}>
-          <ImgSocial src={Tw} alt="tw icon" />
-        </Link>
-        <Link href={'https://discord.com/invite/0xblock'} target={'_blank'}>
-          <ImgSocial src={Discord} alt="Discord icon" />
-        </Link>
-        <Link href={'https://medium.com/@0xblockfi'} target={'_blank'}>
-          <ImgSocial src={Medium} alt="Medium icon" />
-        </Link>
+      <Box sx={{ alignSelf: 'center' }}>
+        <Box>
+          <Tooltip title="twitter" arrow placement="top">
+            <Link href={'https://twitter.com/0xblockfi'} target={'_blank'}>
+              <ImgSocial src={Tw} alt="tw icon" />
+            </Link>
+          </Tooltip>
+
+          <Tooltip title="discord" arrow placement="top">
+            <Link href={'https://discord.com/invite/0xblock'} target={'_blank'}>
+              <ImgSocial src={Discord} alt="Discord icon" />
+            </Link>
+          </Tooltip>
+
+          <Tooltip title="medium" arrow placement="top">
+            <Link href={'https://medium.com/@0xblockfi'} target={'_blank'}>
+              <ImgSocial src={Medium} alt="Medium icon" />
+            </Link>
+          </Tooltip>
+        </Box>
       </Box>
 
       <BoxRight>
