@@ -16,7 +16,8 @@ import { BaseInvest, Invest } from 'interfaces/Invest';
 import BigNumber from 'bignumber.js';
 import useInterval from 'hooks/useInterval';
 import { DELAY_TIME, PARAMS } from 'consts/investments';
-import { uniqBy } from 'lodash';
+import { uniqBy, sumBy } from 'lodash';
+import { formatNumberWithComas, truncateNumber } from '../../helpers/formatPrice';
 
 interface Props {
   title?: string;
@@ -49,6 +50,10 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
     lineHeight: '36px',
     color: theme.palette.mode === 'light' ? '#293247' : '#828282',
   },
+
+  span: {
+    color: '#3864FF',
+  },
 }));
 
 const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
@@ -65,6 +70,16 @@ const PaperContent = styled(Paper)<PaperProps>(({ theme }) => ({
     padding: '0',
     background: 'none',
     boxShadow: 'unset',
+  },
+}));
+
+const TextIntroWrapper = styled(Box)<BoxProps>(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
   },
 }));
 
@@ -125,7 +140,26 @@ const Investments: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Title>Assets</Title>
+      <TextIntroWrapper>
+        <Title>Assets</Title>
+        {width < 600 ? (
+          <Title>
+            Total Asset Value <br /> <span>$121,543,000</span>
+          </Title>
+        ) : (
+          <Title>
+            Total Asset Value ={' '}
+            <span>{`$${formatNumberWithComas(
+              Number(
+                truncateNumber(
+                  sumBy(dataTableInvest, (item) => Number(item.current_investment)),
+                  2,
+                ),
+              ),
+            )}`}</span>
+          </Title>
+        )}
+      </TextIntroWrapper>
 
       <PaperContent>
         {width < 600 ? <ListInvestments data={dataTableInvest} /> : <TableInvestments data={dataTableInvest} />}

@@ -9,4 +9,5 @@ export interface Invest extends BaseInvest {
   icon: string;
   token_price: number;
   avg_buy_price: number;
+  current_investment: number;
 }
