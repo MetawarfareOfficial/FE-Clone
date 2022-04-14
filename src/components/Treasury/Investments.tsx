@@ -32,7 +32,8 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: theme.palette.mode === 'light' ? 'Roboto' : 'Poppins',
+  // fontFamily: theme.palette.mode === 'light' ? 'Roboto' : 'Poppins',
+  fontFamily: 'Roboto',
   fontWeight: 'bold',
   fontSize: '24px',
   lineHeight: '28px',
@@ -144,19 +145,31 @@ const Investments: React.FC<Props> = () => {
         <Title>Assets</Title>
         {width < 600 ? (
           <Title>
-            Total Asset Value <br /> <span>$121,543,000</span>
+            Total Asset Value <br />{' '}
+            <span>
+              {`$${formatNumberWithComas(
+                Number(
+                  truncateNumber(
+                    sumBy(dataTableInvest, (item) => Number(item.current_investment)),
+                    2,
+                  ),
+                ),
+              )}`}
+            </span>
           </Title>
         ) : (
           <Title>
             Total Asset Value ={' '}
-            <span>{`$${formatNumberWithComas(
-              Number(
-                truncateNumber(
-                  sumBy(dataTableInvest, (item) => Number(item.current_investment)),
-                  2,
+            <span>
+              {`$${formatNumberWithComas(
+                Number(
+                  truncateNumber(
+                    sumBy(dataTableInvest, (item) => Number(item.current_investment)),
+                    2,
+                  ),
                 ),
-              ),
-            )}`}</span>
+              )}`}
+            </span>
           </Title>
         )}
       </TextIntroWrapper>
