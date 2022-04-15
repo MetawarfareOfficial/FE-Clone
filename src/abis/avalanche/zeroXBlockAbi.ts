@@ -1,31 +1,4 @@
-export const contsRewardManagerAbi = [
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'enum ContType', name: '_cType', type: 'uint8' },
-      { indexed: false, internalType: 'uint256', name: 'delta', type: 'uint256' },
-    ],
-    name: 'BreakevenChanged',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'enum ContType', name: '_cType', type: 'uint8' },
-      { indexed: false, internalType: 'uint256', name: 'delta', type: 'uint256' },
-    ],
-    name: 'ClaimedRewardAmountChanged',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'enum ContType', name: '_cType', type: 'uint8' },
-      { indexed: false, internalType: 'uint256', name: 'delta', type: 'uint256' },
-    ],
-    name: 'TotalTokensReceivedChanged',
-    type: 'event',
-  },
+export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_cashoutAllContsReward',
@@ -152,7 +125,7 @@ export const contsRewardManagerAbi = [
       { internalType: 'address', name: 'account', type: 'address' },
       { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
     ],
-    name: '_getRewardAmountOfIndex',
+    name: '_getRewardAmountOf',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -181,7 +154,6 @@ export const contsRewardManagerAbi = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-  { inputs: [], name: '_updateAdminDashboard', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
     inputs: [],
     name: 'admin0XB',
@@ -204,22 +176,8 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
-    name: 'breakevenContsPerType',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'cashoutTimeout',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
-    name: 'claimedRewardsPerType',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -290,13 +248,6 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
-    name: 'tokensReceivedPerType',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'totalContsCreated',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -305,7 +256,7 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
-    name: 'totalContsPerType',
+    name: 'totalContsPerContType',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',

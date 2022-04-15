@@ -5,17 +5,20 @@ import { styled } from '@mui/material/styles';
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
 import { TokenDataChart } from 'interfaces/TokenPrice';
 import { useAppSelector } from 'stores/hooks';
-import { formatPrice } from 'helpers/formatPrice';
+import { formatNumberWithComas, formatPrice, truncateNumber } from 'helpers/formatPrice';
 import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
 import TokenBg from 'assets/images/bg-token.png';
 import { useFetchNodes } from 'hooks/useFetchNodes';
 import useInterval from 'hooks/useInterval';
-import { DELAY_TIME } from 'consts/typeReward';
+import { DELAY_TIME, DELAY_TIME_FETCH_PAIR_DATA } from 'consts/typeReward';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
+import useFetchPairData from '../../hooks/useFetchPairData';
+import { useFetchHoldingsWalletAddress } from '../../helpers/useFetchHoldingsWalletAddress';
+import BigNumber from 'bignumber.js';
 
 interface Props {
   title?: string;
@@ -131,6 +134,14 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   },
 }));
 
+const TotalValueBox = styled(Box)<BoxProps>(({}) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+  height: '100%',
+}));
+
 const SliderItem = styled(Box)<BoxProps>(() => ({}));
 
 const Statistics: React.FC<Props> = ({ data }) => {
@@ -140,10 +151,16 @@ const Statistics: React.FC<Props> = ({ data }) => {
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
   const nodes = useAppSelector((state) => state.contract.nodes);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
+  const { reserve0 } = useAppSelector((state) => state.traderJoe.pairData);
+  const { treasury } = useAppSelector((state) => state.holdings.holdingsData);
 
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
+  const [totalAvaxLocked, setTotalAvaxLocked] = useState<string>('0');
+
   const { fetchNodesOfUser } = useFetchNodes();
   const { fetchRewardAmount } = useFetchRewardAmount();
+  const { refresh } = useFetchPairData();
+  const { fetchAvaxPrices } = useFetchHoldingsWalletAddress();
 
   useEffect(() => {
     setStatistic([
@@ -173,6 +190,19 @@ const Statistics: React.FC<Props> = ({ data }) => {
     ]);
   }, [myContracts, myReward, data?.price, nodes]);
 
+  useEffect(() => {
+    (async () => {
+      const pAvax = await fetchAvaxPrices();
+      if (Number(reserve0) > 0 && Number(treasury[1].amount) > 0) {
+        const totalAvaxLocked = new BigNumber(treasury[1].amount).plus(reserve0).toNumber();
+        const totalUsdAvaxLocked = formatNumberWithComas(
+          Number(truncateNumber(new BigNumber(pAvax).multipliedBy(totalAvaxLocked).toNumber(), 2)),
+        );
+        setTotalAvaxLocked(totalUsdAvaxLocked);
+      }
+    })();
+  }, [reserve0, treasury]);
+
   useInterval(async () => {
     if (currentUserAddress) {
       await fetchNodesOfUser(currentUserAddress);
@@ -180,12 +210,16 @@ const Statistics: React.FC<Props> = ({ data }) => {
     }
   }, DELAY_TIME);
 
+  useInterval(() => {
+    refresh();
+  }, DELAY_TIME_FETCH_PAIR_DATA);
+
   return (
     <Wrapper>
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
         <Grid container spacing={{ sm: '24px', md: '30px' }}>
           {statistic.map((item, i) => (
-            <Grid item xs={12} sm={4} key={i}>
+            <Grid item xs={12} sm={3} key={i}>
               <CardBox>
                 <Text variant="h5">{item.title}</Text>
                 <Title variant="h2">{item.value}</Title>
@@ -205,6 +239,15 @@ const Statistics: React.FC<Props> = ({ data }) => {
               </CardBox>
             </Grid>
           ))}
+
+          <Grid item xs={12} sm={3}>
+            <CardBox sx={{ height: '100%' }}>
+              <TotalValueBox>
+                <Text variant="h5">Total Value lock</Text>
+                <Title variant="h2">{`$${totalAvaxLocked}`}</Title>
+              </TotalValueBox>
+            </CardBox>
+          </Grid>
         </Grid>
       </Box>
 
@@ -234,6 +277,16 @@ const Statistics: React.FC<Props> = ({ data }) => {
                 </SliderItem>
               </div>
             ))}
+            <div key={4} className={`scroll-area__column item${5}`}>
+              <SliderItem key={4}>
+                <CardBox style={{ height: '156px' }}>
+                  <TotalValueBox>
+                    <Text variant="h5">Total Value lock</Text>
+                    <Title variant="h2">{`$${totalAvaxLocked}`}</Title>
+                  </TotalValueBox>
+                </CardBox>
+              </SliderItem>
+            </div>
           </div>
         </div>
       </Box>

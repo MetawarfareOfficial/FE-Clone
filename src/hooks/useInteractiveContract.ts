@@ -1,19 +1,31 @@
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber, ethers } from 'ethers';
 import { BigNumber as BN } from 'bignumber.js';
-import { zeroXBlockAbi } from 'abis/zeroXBlockAbi';
 import { contractType } from 'consts/typeReward';
 import { getNetWorkRpcUrl } from 'connectors';
 import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-multicall';
 import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
-import { usdcAbi } from 'abis/usdcAbi';
-import { contsRewardManagerAbi } from 'abis/contsRewardManagerAbi';
+import {
+  contsRewardManagerAbi as rewardRinkebyAbi,
+  usdcAbi as usdcRinkebyAbi,
+  zeroXBlockAbi as oxbRinkebyAbi,
+} from 'abis/rinkeby';
+import {
+  contsRewardManagerAbi as rewardAvaxAbi,
+  usdcAbi as usdcAvaxAbi,
+  zeroXBlockAbi as oxbAvaxAbi,
+} from 'abis/avalanche';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
+
+const OxbAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? oxbRinkebyAbi : oxbAvaxAbi;
+const UsdcAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? usdcRinkebyAbi : usdcAvaxAbi;
+const rewardManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? rewardRinkebyAbi : rewardAvaxAbi;
+
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
-const contractWithoutSigner = new ethers.Contract(contractAddress, zeroXBlockAbi, provider);
-const rewardManagerContractWithoutSigner = new ethers.Contract(rewardManagerAddress, contsRewardManagerAbi, provider);
+const contractWithoutSigner = new ethers.Contract(contractAddress, OxbAbi, provider);
+const rewardManagerContractWithoutSigner = new ethers.Contract(rewardManagerAddress, rewardManagerAbi, provider);
 
 const OxbToken = new Token(
   Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
@@ -55,15 +67,15 @@ export const useInteractiveContract = () => {
 
   const contractWithSigner =
     library && account
-      ? new ethers.Contract(contractAddress, zeroXBlockAbi, library.getSigner(account))
+      ? new ethers.Contract(contractAddress, OxbAbi, library.getSigner(account))
       : contractWithoutSigner;
   const rewardManagerContractWithSigner =
     library && account
-      ? new ethers.Contract(rewardManagerAddress, contsRewardManagerAbi, library.getSigner(account))
+      ? new ethers.Contract(rewardManagerAddress, rewardManagerAbi, library.getSigner(account))
       : rewardManagerContractWithoutSigner;
 
   const approveToken = async (tokenApproveAddress: string, spender: string) => {
-    const contract = new ethers.Contract(tokenApproveAddress, usdcAbi, library.getSigner(account));
+    const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, library.getSigner(account));
     try {
       return await contract.functions.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
     } catch (err: any) {
@@ -157,9 +169,9 @@ export const useInteractiveContract = () => {
 
   const getTotalNodeByType = async (): Promise<any[]> => {
     try {
-      const squareTotal = rewardManagerContractWithoutSigner.functions.totalContsPerType(contractType.square);
-      const cubeTotal = rewardManagerContractWithoutSigner.functions.totalContsPerType(contractType.cube);
-      const tesseractTotal = rewardManagerContractWithoutSigner.functions.totalContsPerType(contractType.tesseract);
+      const squareTotal = rewardManagerContractWithoutSigner.functions.totalContsPerContType(contractType.square);
+      const cubeTotal = rewardManagerContractWithoutSigner.functions.totalContsPerContType(contractType.cube);
+      const tesseractTotal = rewardManagerContractWithoutSigner.functions.totalContsPerContType(contractType.tesseract);
 
       return await Promise.all([squareTotal, cubeTotal, tesseractTotal]);
     } catch (e) {
