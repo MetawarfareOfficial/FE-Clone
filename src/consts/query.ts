@@ -40,3 +40,11 @@ export const recentTransactionQuery = `
     }
   }
 `;
+
+export const PairQuery = `
+  query ($pairId: ID!) {
+    pair(id: $pairId) {
+      reserve0
+    }
+  }
+`;

@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ConnectWallet from 'components/ConnectWallet';
 import { useAppSelector } from 'stores/hooks';
 import { formatUserAddress } from 'helpers';
 import { Box, BoxProps, Link, Paper, PaperProps, Typography, TypographyProps } from '@mui/material';
-import Tw from 'assets/images/tw.svg';
-import Discord from 'assets/images/discord.svg';
-import Medium from 'assets/images/medium.svg';
+import { Tw, TwActive, Discord, DiscordActive, Medium, MediumActive } from 'assets/images';
 import Tooltip from '@mui/material/Tooltip';
 
 interface Props {
@@ -81,25 +79,64 @@ const Banner: React.FC<Props> = () => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isLogin = useAppSelector((state) => state.user.isLogin);
 
+  const [srcImg, setSrcImg] = useState({
+    tw: Tw,
+    discord: Discord,
+    medium: Medium,
+  });
+
+  const handleHoverIcon = (key: string, action: string) => {
+    if (key === 'tw') setSrcImg({ tw: action === 'over' ? TwActive : Tw, discord: Discord, medium: Medium });
+    if (key === 'discord') setSrcImg({ tw: Tw, discord: action === 'over' ? DiscordActive : Discord, medium: Medium });
+    if (key === 'medium') setSrcImg({ tw: Tw, discord: Discord, medium: action === 'over' ? MediumActive : Medium });
+  };
+
   return (
     <BannerWrapper isBg={false}>
       <Box sx={{ alignSelf: 'center' }}>
         <Box>
           <Tooltip title="twitter" arrow placement="top">
-            <Link href={'https://twitter.com/0xblockfi'} target={'_blank'}>
-              <ImgSocial src={Tw} alt="tw icon" />
+            <Link
+              href={'https://twitter.com/0xblockfi'}
+              target={'_blank'}
+              onMouseOver={() => {
+                handleHoverIcon('tw', 'over');
+              }}
+              onMouseLeave={() => {
+                handleHoverIcon('tw', 'leave');
+              }}
+            >
+              <ImgSocial src={srcImg.tw} alt="tw icon" on />
             </Link>
           </Tooltip>
 
           <Tooltip title="discord" arrow placement="top">
-            <Link href={'https://discord.com/invite/0xblock'} target={'_blank'}>
-              <ImgSocial src={Discord} alt="Discord icon" />
+            <Link
+              href={'https://discord.com/invite/0xblock'}
+              target={'_blank'}
+              onMouseOver={() => {
+                handleHoverIcon('discord', 'over');
+              }}
+              onMouseLeave={() => {
+                handleHoverIcon('discord', 'leave');
+              }}
+            >
+              <ImgSocial src={srcImg.discord} alt="Discord icon" />
             </Link>
           </Tooltip>
 
           <Tooltip title="medium" arrow placement="top">
-            <Link href={'https://medium.com/@0xblockfi'} target={'_blank'}>
-              <ImgSocial src={Medium} alt="Medium icon" />
+            <Link
+              href={'https://medium.com/@0xblockfi'}
+              target={'_blank'}
+              onMouseOver={() => {
+                handleHoverIcon('medium', 'over');
+              }}
+              onMouseLeave={() => {
+                handleHoverIcon('medium', 'leave');
+              }}
+            >
+              <ImgSocial src={srcImg.medium} alt="Medium icon" />
             </Link>
           </Tooltip>
         </Box>
