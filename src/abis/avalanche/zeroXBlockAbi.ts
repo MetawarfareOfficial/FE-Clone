@@ -1,4 +1,4 @@
-export const contsRewardManagerAbi = [
+export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_cashoutAllContsReward',
@@ -115,6 +115,16 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: '_getRewardAmountOf',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
+    ],
     name: '_getRewardAmountOf',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
