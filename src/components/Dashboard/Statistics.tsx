@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import { Box, Grid, Typography, Button, ButtonProps, BoxProps, TypographyProps } from '@mui/material';
 import { TokenDataChart } from 'interfaces/TokenPrice';
 import { useAppSelector } from 'stores/hooks';
-import { formatNumberWithComas, formatPrice, truncateNumber } from 'helpers/formatPrice';
+import { formatPrice } from 'helpers/formatPrice';
 import { StatisticDashboard } from 'interfaces/StatisticDashboard';
 import { useHistory } from 'react-router-dom';
 
@@ -16,9 +16,8 @@ import { DELAY_TIME, DELAY_TIME_FETCH_PAIR_DATA } from 'consts/typeReward';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 import useFetchRewardAmount from 'hooks/useFetchRewardAmount';
-import useFetchPairData from '../../hooks/useFetchPairData';
-import { useFetchHoldingsWalletAddress } from '../../helpers/useFetchHoldingsWalletAddress';
-import BigNumber from 'bignumber.js';
+import useFetchPairData from 'hooks/useFetchPairData';
+import { useFetchHoldingsWalletAddress } from 'helpers/useFetchHoldingsWalletAddress';
 
 interface Props {
   title?: string;
@@ -151,16 +150,13 @@ const Statistics: React.FC<Props> = ({ data }) => {
   const myReward = useAppSelector((state) => state.contract.dataRewardAmount);
   const nodes = useAppSelector((state) => state.contract.nodes);
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const { reserve0 } = useAppSelector((state) => state.traderJoe.pairData);
-  const { treasury } = useAppSelector((state) => state.holdings.holdingsData);
 
   const [statistic, setStatistic] = useState<StatisticDashboard[]>([]);
-  const [totalAvaxLocked, setTotalAvaxLocked] = useState<string>('0');
 
   const { fetchNodesOfUser } = useFetchNodes();
   const { fetchRewardAmount } = useFetchRewardAmount();
   const { refresh } = useFetchPairData();
-  const { fetchAvaxPrices } = useFetchHoldingsWalletAddress();
+  const { totalUsdLocked } = useFetchHoldingsWalletAddress();
 
   useEffect(() => {
     setStatistic([
@@ -189,19 +185,6 @@ const Statistics: React.FC<Props> = ({ data }) => {
       },
     ]);
   }, [myContracts, myReward, data?.price, nodes]);
-
-  useEffect(() => {
-    (async () => {
-      const pAvax = await fetchAvaxPrices();
-      if (Number(reserve0) > 0 && Number(treasury[1].amount) > 0) {
-        const totalAvaxLocked = new BigNumber(treasury[1].amount).plus(reserve0).toNumber();
-        const totalUsdAvaxLocked = formatNumberWithComas(
-          Number(truncateNumber(new BigNumber(pAvax).multipliedBy(totalAvaxLocked).toNumber(), 2)),
-        );
-        setTotalAvaxLocked(totalUsdAvaxLocked);
-      }
-    })();
-  }, [reserve0, treasury]);
 
   useInterval(async () => {
     if (currentUserAddress) {
@@ -244,7 +227,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
             <CardBox sx={{ height: '100%' }}>
               <TotalValueBox>
                 <Text variant="h5">Total Value lock</Text>
-                <Title variant="h2">{`$${totalAvaxLocked}`}</Title>
+                <Title variant="h2">{`$${totalUsdLocked}`}</Title>
               </TotalValueBox>
             </CardBox>
           </Grid>
@@ -282,7 +265,7 @@ const Statistics: React.FC<Props> = ({ data }) => {
                 <CardBox style={{ height: '156px' }}>
                   <TotalValueBox>
                     <Text variant="h5">Total Value lock</Text>
-                    <Title variant="h2">{`$${totalAvaxLocked}`}</Title>
+                    <Title variant="h2">{`$${totalUsdLocked}`}</Title>
                   </TotalValueBox>
                 </CardBox>
               </SliderItem>
