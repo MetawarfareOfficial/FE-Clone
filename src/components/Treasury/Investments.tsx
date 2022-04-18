@@ -145,7 +145,7 @@ const Investments: React.FC<Props> = () => {
         <Title>Assets</Title>
         {width < 600 ? (
           <Title>
-            Total Asset Value <br />{' '}
+            Total Assets Value <br />{' '}
             <span>
               {`$${formatNumberWithComas(
                 Number(
@@ -159,7 +159,7 @@ const Investments: React.FC<Props> = () => {
           </Title>
         ) : (
           <Title>
-            Total Asset Value ={' '}
+            Total Assets Value ={' '}
             <span>
               {`$${formatNumberWithComas(
                 Number(
