@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import OxImg from 'assets/images/0x-token.png';
-import AvaxImg from 'assets/images/avax-token.png';
+import OxImg from 'assets/images/coin-0xb.svg';
+import AvaxImg from 'assets/images/avalanche-avax-logo.svg';
 import USDCImg from 'assets/images/coin-usd.svg';
 import USDTImg from 'assets/images/coin-usdt.svg';
 import { SwapTokenId } from 'hooks/swap';
