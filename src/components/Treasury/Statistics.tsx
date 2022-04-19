@@ -201,9 +201,6 @@ const Statistics: React.FC<Props> = () => {
   const theme = useTheme();
   const [screenSize, setScreenSize] = useState(width);
 
-  // const { circulatingSupply, circulatingSupplyHistory, totalSupply, marketCap, marketCapHistory } =
-  //   useFetchMarketCapData();
-
   useEffect(() => {
     setScreenSize(width);
   }, [width]);
