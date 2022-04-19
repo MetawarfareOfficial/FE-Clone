@@ -1,8 +1,22 @@
 export const contsRewardManagerAbi = [
   {
+    anonymous: false,
+    inputs: [
+      { indexed: false, internalType: 'enum ContType', name: '_cType', type: 'uint8' },
+      { indexed: false, internalType: 'uint256', name: 'delta', type: 'uint256' },
+    ],
+    name: 'BreakevenChanged',
+    type: 'event',
+  },
+  {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_cashoutAllContsReward',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    outputs: [
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -12,7 +26,10 @@ export const contsRewardManagerAbi = [
       { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
     ],
     name: '_cashoutContReward',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    outputs: [
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'enum ContType', name: '', type: 'uint8' },
+    ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
@@ -125,7 +142,7 @@ export const contsRewardManagerAbi = [
       { internalType: 'address', name: 'account', type: 'address' },
       { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
     ],
-    name: '_getRewardAmountOf',
+    name: '_getRewardAmountOfIndex',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -154,6 +171,7 @@ export const contsRewardManagerAbi = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  { inputs: [], name: '_updateAdminDashboard', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
     inputs: [],
     name: 'admin0XB',
@@ -171,6 +189,13 @@ export const contsRewardManagerAbi = [
   {
     inputs: [],
     name: 'autoReduceAPRRate',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
+    name: 'breakevenContsPerType',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
