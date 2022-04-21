@@ -28,11 +28,11 @@ import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.s
 import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/help-dark.svg';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
-import { getSwapSettingData } from 'helpers';
 import { deadlineInputRegex, defaultSettingData, slippageInputRegex } from 'consts/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { errorMessage } from 'messages/errorMessages';
 import { localStorageZapSettingKey } from 'consts/zap';
+import { getZapSettingData } from 'helpers/zap/getZapSetting';
 
 interface Props {
   open: boolean;
@@ -326,7 +326,7 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
 
 const ZapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDeadline }) => {
   const [width] = useWindowSize();
-  const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
+  const [settings, setSetting] = useState(getZapSettingData() || defaultSettingData);
   const [interactWithSlippageInput, setInteractWithSlippageInput] = useState(false);
   const [interactWithDeadlineInput, setInteractWithDeadlineInput] = useState(false);
 

@@ -19,7 +19,7 @@ import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/zap-convert.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
-import { ZapSettingModal, SwapTokensModal } from 'components/Zap';
+import { ZapSettingModal, SwapTokensModal, Empty } from 'components/Zap';
 import InputLP from 'components/Zap/InputLP';
 import ZapConfirmModal from 'components/Zap/ZapConfirmModal';
 import { injected } from 'connectors';
@@ -645,161 +645,165 @@ const ZapPage: React.FC<Props> = () => {
   return (
     <Wrapper>
       <Box sx={{ width: '100%' }}>
-        <Grid container spacing={{ xs: 0, lg: '88px' }}>
-          <Grid item xs={12} md={6}>
-            <TitleBlack>Zap</TitleBlack>
-            <TitleWhite>Tokens</TitleWhite>
-            <Text>
-              {`Select the crypto you want to convert from and enter the amount of 
+        {account ? (
+          <Grid container spacing={{ xs: 0, lg: '88px' }}>
+            <Grid item xs={12} md={6}>
+              <TitleBlack>Zap</TitleBlack>
+              <TitleWhite>Tokens</TitleWhite>
+              <Text>
+                {`Select the crypto you want to convert from and enter the amount of 
               tokens you want to swap. Once the transaction is confirmed, the tokens on your account will be swapped. 
               You'll see a receipt with all details.*`}
-            </Text>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <SwapBox>
-              <SwapHeader>
-                <h4>Zap</h4>
+              </Text>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <SwapBox>
+                <SwapHeader>
+                  <h4>Zap</h4>
 
-                <IconButtonCustom onClick={handleToggleSetting}>
-                  {theme.palette.mode === 'light' ? <SettingIcon /> : <SettingDarkIcon />}
-                </IconButtonCustom>
-              </SwapHeader>
+                  <IconButtonCustom onClick={handleToggleSetting}>
+                    {theme.palette.mode === 'light' ? <SettingIcon /> : <SettingDarkIcon />}
+                  </IconButtonCustom>
+                </SwapHeader>
 
-              <ExchangeBox>
-                <ExchangeHeader>
-                  <h5>From Token{selectedName === 'to' ? '(estimated)' : ''}</h5>
-                  <p>
-                    Balance:{' '}
-                    {fromTokens.length > 0
-                      ? Number(fromTokens[0].balance) > 0
-                        ? formatForNumberLessThanCondition({
-                            value: fromTokens[0].balance,
-                            minValueCondition: 0.000001,
-                            callback: formatPrice,
-                            callBackParams: [6, 0],
-                            addLessThanSymbol: true,
-                          })
-                        : '0.0'
-                      : '0.0'}
-                  </p>
-                </ExchangeHeader>
+                <ExchangeBox>
+                  <ExchangeHeader>
+                    <h5>From Token{selectedName === 'to' ? '(estimated)' : ''}</h5>
+                    <p>
+                      Balance:{' '}
+                      {fromTokens.length > 0
+                        ? Number(fromTokens[0].balance) > 0
+                          ? formatForNumberLessThanCondition({
+                              value: fromTokens[0].balance,
+                              minValueCondition: 0.000001,
+                              callback: formatPrice,
+                              callBackParams: [6, 0],
+                              addLessThanSymbol: true,
+                            })
+                          : '0.0'
+                        : '0.0'}
+                    </p>
+                  </ExchangeHeader>
 
-                <InputSwap
-                  disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
-                  tokens={tokenList}
-                  value={exchangeFrom.value}
-                  selected={exchangeFrom.id}
-                  onChange={handleChange}
-                  onChangeToken={handleChangeToken}
-                  onMax={handleFromMax}
-                  isMax={true}
-                  name="from"
-                />
-              </ExchangeBox>
-
-              <ExchangeIcon>
-                {theme.palette.mode === 'light' ? (
-                  <SwapIcon
-                    style={{
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                      if (!isLoadEstimateToken) {
-                        // handleSwapIconClick();
-                      }
-                    }}
+                  <InputSwap
+                    disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
+                    tokens={tokenList}
+                    value={exchangeFrom.value}
+                    selected={exchangeFrom.id}
+                    onChange={handleChange}
+                    onChangeToken={handleChangeToken}
+                    onMax={handleFromMax}
+                    isMax={true}
+                    name="from"
                   />
-                ) : (
-                  <SwapDarkIcon
-                    style={{
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => {
-                      if (!isLoadEstimateToken) {
-                        // handleSwapIconClick();
-                      }
-                    }}
-                  />
-                )}
-              </ExchangeIcon>
+                </ExchangeBox>
 
-              <ExchangeBox>
-                <ExchangeHeader>
-                  <h5>To{selectedName === 'from' ? 'LP' : ''}</h5>
-                  <p>
-                    Balance:{' '}
-                    {toTokens.length > 0
-                      ? Number(toTokens[0].balance) > 0
-                        ? formatForNumberLessThanCondition({
-                            value: toTokens[0].balance,
-                            minValueCondition: 0.000001,
-                            callback: formatPrice,
-                            callBackParams: [6, 0],
-                            addLessThanSymbol: true,
-                          })
-                        : '0.0'
-                      : '0.0'}
-                  </p>
-                </ExchangeHeader>
-
-                <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
-              </ExchangeBox>
-
-              {!isFirstTime && account && isApproved && (
-                <TextStatus status={isInsufficientError || isInsufficientLiquidityError ? 'error' : 'success'}>
-                  {isInvalidInput ? (
-                    '  '
-                  ) : isInsufficientError ? (
-                    <>
-                      <img alt="" src={ErrorIcon} /> {`insufficient ${exchangeFrom.id.toUpperCase()} Balance`}
-                    </>
-                  ) : isInsufficientLiquidityError ? (
-                    <>
-                      <img alt="" src={ErrorIcon} /> {`Insufficient liquidity for this trade`}
-                    </>
+                <ExchangeIcon>
+                  {theme.palette.mode === 'light' ? (
+                    <SwapIcon
+                      style={{
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        if (!isLoadEstimateToken) {
+                          // handleSwapIconClick();
+                        }
+                      }}
+                    />
                   ) : (
-                    'Approved'
+                    <SwapDarkIcon
+                      style={{
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => {
+                        if (!isLoadEstimateToken) {
+                          // handleSwapIconClick();
+                        }
+                      }}
+                    />
                   )}
-                </TextStatus>
-              )}
+                </ExchangeIcon>
 
-              {/* <SwapSubmit fullWidth unEnable={false} loading={submitting} onClick={handleApprove}>
+                <ExchangeBox>
+                  <ExchangeHeader>
+                    <h5>To{selectedName === 'from' ? 'LP' : ''}</h5>
+                    <p>
+                      Balance:{' '}
+                      {toTokens.length > 0
+                        ? Number(toTokens[0].balance) > 0
+                          ? formatForNumberLessThanCondition({
+                              value: toTokens[0].balance,
+                              minValueCondition: 0.000001,
+                              callback: formatPrice,
+                              callBackParams: [6, 0],
+                              addLessThanSymbol: true,
+                            })
+                          : '0.0'
+                        : '0.0'}
+                    </p>
+                  </ExchangeHeader>
+
+                  <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
+                </ExchangeBox>
+
+                {!isFirstTime && account && isApproved && (
+                  <TextStatus status={isInsufficientError || isInsufficientLiquidityError ? 'error' : 'success'}>
+                    {isInvalidInput ? (
+                      '  '
+                    ) : isInsufficientError ? (
+                      <>
+                        <img alt="" src={ErrorIcon} /> {`insufficient ${exchangeFrom.id.toUpperCase()} Balance`}
+                      </>
+                    ) : isInsufficientLiquidityError ? (
+                      <>
+                        <img alt="" src={ErrorIcon} /> {`Insufficient liquidity for this trade`}
+                      </>
+                    ) : (
+                      'Approved'
+                    )}
+                  </TextStatus>
+                )}
+
+                {/* <SwapSubmit fullWidth unEnable={false} loading={submitting} onClick={handleApprove}>
                 {submitting ? <Lottie options={defaultOptions} height={33} width={33} /> : 'Approve'}
               </SwapSubmit> */}
-              {!isFirstTime ? (
-                !account ? (
-                  <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
-                    Connect Wallet
-                  </SwapSubmit>
-                ) : isApproved ? (
-                  !isInvalidInput && (
+                {!isFirstTime ? (
+                  !account ? (
+                    <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
+                      Connect Wallet
+                    </SwapSubmit>
+                  ) : isApproved ? (
+                    !isInvalidInput && (
+                      <SwapSubmit
+                        fullWidth
+                        unEnable={false}
+                        onClick={() => {
+                          handleToggleConfirm();
+                        }}
+                      >
+                        Zap
+                      </SwapSubmit>
+                    )
+                  ) : (
                     <SwapSubmit
                       fullWidth
                       unEnable={false}
                       onClick={() => {
-                        handleToggleConfirm();
+                        handleApproveToken(exchangeFrom.id);
                       }}
                     >
-                      Zap
+                      Approve {exchangeFrom.id.toLocaleUpperCase()}
                     </SwapSubmit>
                   )
                 ) : (
-                  <SwapSubmit
-                    fullWidth
-                    unEnable={false}
-                    onClick={() => {
-                      handleApproveToken(exchangeFrom.id);
-                    }}
-                  >
-                    Approve {exchangeFrom.id.toLocaleUpperCase()}
-                  </SwapSubmit>
-                )
-              ) : (
-                <></>
-              )}
-            </SwapBox>
+                  <></>
+                )}
+              </SwapBox>
+            </Grid>
           </Grid>
-        </Grid>
+        ) : (
+          <Empty />
+        )}
       </Box>
 
       {openSetting && (

@@ -2,7 +2,7 @@ import { defaultSettingData } from 'consts/swap';
 import { localStorageZapSettingKey } from 'consts/zap';
 import { errorMessage } from 'messages/errorMessages';
 
-const getSwapSettingData = () => {
+export const getZapSettingData = () => {
   const rawData = localStorage.getItem(localStorageZapSettingKey);
   return rawData ? JSON.parse(rawData) : defaultSettingData;
 };
@@ -27,7 +27,7 @@ const validateSlippageInput = (value: string): string => {
 };
 
 export const getZapSetting = () => {
-  const settings = getSwapSettingData();
+  const settings = getZapSettingData();
   if (settings) {
     const deadLineError = validateDeadlineInput(settings.deadline);
     const slippageError = validateSlippageInput(settings.slippage);
