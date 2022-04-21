@@ -1227,7 +1227,7 @@ const SwapPage: React.FC<Props> = () => {
                           onMouseEnter={openTradingFeeTooltip}
                           onMouseLeave={closeTradingFeeTooltip}
                           title={`A portion of each trade (0.3%) goes to traderjoe 
-                          as trading fee and 0.1% goes to marketing wallet`}
+                          as trading fee and 0.1% goes to 0xBlock`}
                           arrow
                           placement={windowSize > 600 ? 'right' : 'top'}
                           size="230px"
