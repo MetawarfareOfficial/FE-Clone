@@ -1301,7 +1301,7 @@ const SwapPage: React.FC<Props> = () => {
                               open={routeTooltipOpen}
                               onMouseEnter={openRouteTooltip}
                               onMouseLeave={closeRouteTooltip}
-                              title={`The difference between the market price and estimated price due to trade size`}
+                              title={`Routing through these tokens resulted in the best price for your trade.`}
                               arrow
                               placement={windowSize > 600 ? 'right' : 'top'}
                               size="218px"
