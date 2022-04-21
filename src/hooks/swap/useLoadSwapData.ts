@@ -2,21 +2,15 @@ import { InsufficientReservesError, Percent, TokenAmount, Trade, TradeType } fro
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { recentTransactionQuery } from 'consts/query';
-import { getPairsInfoIntervalTime } from 'consts/swap';
 import { getSwapSettingData } from 'helpers';
 import { convertTraderJoeRouterData, getTraderJoeRouter } from 'helpers/swaps';
-import { useInteractiveContract } from 'hooks/useInteractiveContract';
-import { useToast } from 'hooks/useToast';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { useEffect, useMemo } from 'react';
 import {
   setIsInsufficientLiquidityError,
   setIsLoadEstimateToken,
-  setPairData,
-  setPairInfoLoaded,
   setRecentTransactions,
 } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
@@ -37,13 +31,11 @@ interface loadEstimateTokenParams {
 }
 
 export const useLoadSwapData = () => {
-  const { getPairsInfo } = useInteractiveContract();
   const { account } = useWeb3React();
   const pairsData = useAppSelector((state) => state.swap.pairsData);
 
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const dispatch = useAppDispatch();
-  const { createToast } = useToast();
 
   const [recentTransactionResult, reExecuteLoadRecentTransactionQuery] = useQuery({
     query: recentTransactionQuery,
@@ -245,45 +237,6 @@ export const useLoadSwapData = () => {
       dispatch(setIsLoadEstimateToken(false));
     }
   };
-
-  const handleLoadPairInfo = async () => {
-    try {
-      const [WAVAX_OXB, WAVAX_USDC, WAVAX_USDT] = await getPairsInfo();
-      dispatch(
-        setPairData({
-          [SwapTokenId.OXB]: WAVAX_OXB,
-          [SwapTokenId.AVAX]: WAVAX_OXB,
-          [SwapTokenId.USDC]: WAVAX_USDC,
-          [SwapTokenId.USDT]: WAVAX_USDT,
-        }),
-      );
-      dispatch(setPairInfoLoaded(true));
-    } catch (error: any) {
-      if (error.code === 'NETWORK_ERROR') {
-        createToast({
-          message: errorMessage.NO_NETWORK_ERROR.message,
-          type: 'error',
-        });
-      }
-      createToast({
-        message: error.message,
-        type: 'error',
-      });
-    }
-  };
-
-  useEffect(() => {
-    handleLoadPairInfo();
-    const interval = setInterval(() => {
-      handleLoadPairInfo();
-    }, getPairsInfoIntervalTime);
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, []);
 
   return {
     loadRecentTransaction,

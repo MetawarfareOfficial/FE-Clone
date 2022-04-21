@@ -10,39 +10,45 @@ import {
   TypographyProps,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import ErrorIcon from 'assets/images/clarity_error-line.svg';
 import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/zap-convert.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
+import { SwapSettingModal, SwapTokensModal } from 'components/Zap';
 import InputLP from 'components/Zap/InputLP';
-import { SwapSettingModal, SwapStatusModal, SwapTokensModal } from 'components/Zap';
-import { SwapConfirmModal } from 'components/Swap';
-import { getBalanceIntervalTime } from 'consts/swap';
+import ZapConfirmModal from 'components/Zap/ZapConfirmModal';
+import { injected } from 'connectors';
+import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
+import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
+import { useToast } from 'hooks/useToast';
+import { useEstimateLPTokenAmount } from 'hooks/zap/useEstimateLPtokenAmount';
+import { useLoadTokensBalance } from 'hooks/zap/useLoadTokensBalance';
+import animationData from 'lotties/loading-button.json';
+import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
-import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
+import { setIsOpenSelectWalletModal } from 'services/account';
+import { setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 
-import Lottie from 'react-lottie';
-
-import animationData from 'lotties/loading-button.json';
-import ErrorIcon from 'assets/images/clarity_error-line.svg';
-
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: animationData,
-  rendererSettings: {
-    preserveAspectRatio: 'xMidYMid slice',
-  },
-};
+// const defaultOptions = {
+//   loop: true,
+//   autoplay: true,
+//   animationData: animationData,
+//   rendererSettings: {
+//     preserveAspectRatio: 'xMidYMid slice',
+//   },
+// };
 
 interface Props {
   title?: string;
@@ -308,7 +314,6 @@ const ExchangeIcon = styled(Box)<BoxProps>(() => ({
 const SwapSubmit = styled(Button)<
   ButtonProps & {
     unEnable: boolean;
-    loading: boolean;
   }
 >(({ theme, unEnable }) => ({
   background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
@@ -366,29 +371,28 @@ const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
 
 const ZapPage: React.FC<Props> = () => {
   const theme = useTheme();
-  const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken } = useSwapToken();
-  const { checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
+  const { error, connector, activate, account } = useWeb3React();
+  const { checkSwapSetting } = useSwapHelpers();
+  const { createToast } = useToast();
 
   const tokenList = useAppSelector((state) => state.swap.tokenList);
+  const liquidityPoolData = useAppSelector((state) => state.zap.liquidityPoolData);
+
+  const { handleGetTokenBalances } = useLoadTokensBalance(tokenList, account, true);
+  useLoadPairInfo();
+  const { handleEstimateZapInLpTokenAmount } = useEstimateLPTokenAmount();
+  const { approveToken } = useSwapToken();
+
+  const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
+  const isLiquidityPoolLoaded = useAppSelector((state) => state.zap.isLiquidityPoolLoaded);
+
   const isInsufficientError = useAppSelector((state) => state.swap.isInsufficientError);
   const selectedName = useAppSelector((state) => state.swap.selectedName) as any;
   const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
+  const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);
+
   const dispatch = useAppDispatch();
-  const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
-  const [slippage, setSlippage] = useState('0.5');
-  const [deadline, setDeadline] = useState('10');
-  const [swapStatus, setSwapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
-  const [currentAction, setCurrentAction] = useState('swap');
-  const [priceImpactStatus, setPriceImpactStatus] = useState<'green' | 'black' | 'orange' | 'pink' | 'red'>('black');
-  const [currentTransactionId, setCurrenTransactionId] = useState({
-    type: '',
-    id: '',
-  });
-  const [tokenSwapCompleted, setTokenSwapCompleted] = useState({
-    type: '',
-    id: '',
-  });
-  const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
+
   const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
   const [isOpenSelectTokenFromModal, setIsOpenSelectTokenFromModal] = useState(false);
@@ -399,68 +403,61 @@ const ZapPage: React.FC<Props> = () => {
     value: '',
   });
   const [exchangeTo, setExchangeTo] = useState<ExchangeItem>({
-    id: SwapTokenId.OXB,
+    id: SwapTokenId.JOELP,
     value: '',
   });
-  const [minReceive, setMinReceive] = useState<null | string>('0');
-  const [tradingFee, setTradingFee] = useState('0');
-  const [priceImpact, setPriceImpact] = useState('0');
-  const [submitting, setSubmitting] = useState(false);
-  const [statusZap, setStatusZap] = useState<any>(null);
 
-  const handleChangeSwapData = ({
-    selectedName,
-    estimatedAmountToken,
-    minReceive,
-    maxSold,
-    tradingFee,
-    priceImpact,
-    isSwap = false,
-    exchangeId,
-  }: SetExchangeParams) => {
-    if (selectedName === 'from') {
-      if (isSwap) {
-        setExchangeTo({
-          id: exchangeFrom.id,
-          value: estimatedAmountToken,
-        });
-      } else {
-        if (exchangeId) {
-          setExchangeTo({
-            id: exchangeId,
-            value: estimatedAmountToken,
-          });
-        } else {
-          setExchangeTo({
-            id: exchangeTo.id,
-            value: estimatedAmountToken,
-          });
-        }
-      }
-      setMinReceive(minReceive);
+  const [isFirstTime, setIsFirstTime] = useState(true);
+  const [isApproved, setIsApproved] = useState(false);
+  const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
+  const [currentAction, setCurrentAction] = useState('zap');
+  const [swapStatus, setZapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
+  const [slippage, setSlippage] = useState('0.5');
+  const [deadline, setDeadline] = useState('10');
+
+  const [currentTransactionId, setCurrenTransactionId] = useState({
+    type: '',
+    id: '',
+  });
+  const [zapCompleted, setZapCompleted] = useState({
+    type: '',
+    id: '',
+  });
+
+  const handleToggleSetting = () => {
+    setOpenSetting(!openSetting);
+  };
+
+  const handleToggleSelect = () => {
+    setOpenSelect(!openSelect);
+  };
+
+  const handleToggleStatus = () => {
+    setOpenStatus(!openStatus);
+  };
+
+  const handelSelectToken = (tokenId: SwapTokenId) => {
+    if (isOpenSelectTokenFromModal) {
+      setExchangeFrom({
+        id: tokenId,
+        value: exchangeFrom.value,
+      });
+      setExchangeTo({
+        id: exchangeTo.id,
+        value: String(handleEstimateZapInLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
+      });
     } else {
-      if (isSwap) {
-        setExchangeFrom({
-          id: exchangeTo.id,
-          value: estimatedAmountToken,
-        });
-      } else {
-        if (exchangeId) {
-          setExchangeFrom({
-            id: exchangeId,
-            value: estimatedAmountToken,
-          });
-        } else {
-          setExchangeFrom({
-            id: exchangeFrom.id,
-            value: estimatedAmountToken,
-          });
-        }
-      }
-      setMinReceive(maxSold);
     }
-    setTradingFee(tradingFee);
-    setPriceImpact(priceImpact);
+    setIsSwapMaxFromToken(false);
+  };
+
+  const handleChangeToken = (name: string) => {
+    if (name === 'from') {
+      setIsOpenSelectTokenFromModal(true);
+    } else {
+      setIsOpenSelectTokenFromModal(false);
+    }
+    setOpenSelect(true);
   };
 
   const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
@@ -481,105 +478,20 @@ const ZapPage: React.FC<Props> = () => {
         });
       }
     } else {
-      if (name === 'from') {
+      if (selectedName === 'from') {
         setExchangeFrom({
           id: exchangeFrom.id,
-          value,
+          value: value,
         });
-        dispatch(setSelectedName('from'));
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: true,
-          tokenIn: exchangeFrom.id,
-          tokenOut: exchangeTo.id,
-          amount: value,
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'from',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-        });
-      } else if (name === 'to') {
-        !isOnblur && dispatch(setSelectedName('to'));
         setExchangeTo({
           id: exchangeTo.id,
-          value,
+          value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, value, liquidityPoolData)),
         });
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: false,
-          tokenIn: exchangeFrom.id,
-          tokenOut: exchangeTo.id,
-          amount: value,
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'to',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-        });
+      } else {
       }
-      setIsSwapMaxFromToken(false);
-    }
-  };
-
-  const handleChangeToken = (name: string) => {
-    if (name === 'from') {
-      setIsOpenSelectTokenFromModal(true);
-    } else {
-      setIsOpenSelectTokenFromModal(false);
-    }
-    setOpenSelect(true);
-  };
-
-  const handleSwapIconClick = () => {
-    if (selectedName === 'from') {
-      dispatch(setSelectedName('to'));
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: false,
-        tokenIn: exchangeTo.id,
-        tokenOut: exchangeFrom.id,
-        amount: exchangeFrom.value || '0',
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'to',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-        isSwap: true,
-      });
-      setExchangeTo({
-        id: exchangeFrom.id,
-        value: exchangeFrom.value,
-      });
-    } else {
-      dispatch(setSelectedName('from'));
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: exchangeTo.id,
-        tokenOut: exchangeFrom.id,
-        amount: exchangeTo.value || '0',
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'from',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-        isSwap: true,
-      });
-      setExchangeFrom({
-        id: exchangeTo.id,
-        value: exchangeTo.value,
-      });
     }
     setIsSwapMaxFromToken(false);
+    setIsFirstTime(false);
   };
 
   const handleFromMax = () => {
@@ -595,263 +507,99 @@ const ZapPage: React.FC<Props> = () => {
         } else {
           valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
         }
+        dispatch(setSelectedName('from'));
         setExchangeFrom({
           id: exchangeFrom.id,
           value: valueIn,
         });
-        dispatch(setSelectedName('from'));
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: true,
-          tokenIn: exchangeFrom.id,
-          tokenOut: exchangeTo.id,
-          amount:
-            currentToken[0].id === SwapTokenId.AVAX
-              ? new BigNumber(currentToken[0].balance).minus(0.01).toString()
-              : new BigNumber(currentToken[0].balance).toString(),
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'from',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
+        setExchangeTo({
+          id: exchangeTo.id,
+          value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, valueIn, liquidityPoolData)),
         });
         setIsSwapMaxFromToken(true);
       }
+      setIsFirstTime(false);
     }
-  };
-
-  const handleToggleSetting = () => {
-    setOpenSetting(!openSetting);
-  };
-
-  const handleToggleSelect = () => {
-    setOpenSelect(!openSelect);
-  };
-
-  const handleToggleStatus = () => {
-    setOpenStatus(!openStatus);
-  };
-
-  const handleGetTokenBalances = async () => {
-    const newTokens = await getSwapTokenBalances(tokenList);
-    dispatch(handleSetTokenBalances(newTokens));
-  };
-
-  const handelSelectToken = (tokenId: SwapTokenId) => {
-    if (isOpenSelectTokenFromModal) {
-      setExchangeFrom({
-        id: tokenId,
-        value: exchangeFrom.value,
-      });
-      if (selectedName === 'from') {
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: true,
-          tokenIn: tokenId,
-          tokenOut: exchangeTo.id,
-          amount: exchangeFrom.value || '0',
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'from',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-        });
-      } else {
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: false,
-          tokenIn: tokenId,
-          tokenOut: exchangeTo.id,
-          amount: exchangeTo.value || '0',
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'to',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-          exchangeId: tokenId,
-        });
-      }
-    } else {
-      setExchangeTo({
-        id: tokenId,
-        value: exchangeTo.value,
-      });
-      if (selectedName === 'from') {
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: true,
-          tokenIn: exchangeFrom.id,
-          tokenOut: tokenId,
-          amount: exchangeFrom.value || '0',
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'from',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-          exchangeId: tokenId,
-        });
-      } else {
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: false,
-          tokenIn: exchangeFrom.id,
-          tokenOut: tokenId,
-          amount: exchangeTo.value || '0',
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'to',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-        });
-      }
-    }
-    setIsSwapMaxFromToken(false);
   };
 
   const handleToggleConfirm = () => {
     setOpenConfirm(!openConfirm);
   };
 
-  const handleConfirm = async () => {
-    handleToggleConfirm();
-    setCurrentAction('swap');
-    handleToggleStatus();
+  const handleApproveToken = async (id: SwapTokenId) => {
+    const tokenIn = tokenList.filter((item) => item.id === id);
     try {
-      setSwapStatus('pending');
-      const fromToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-      let fromValue = '0';
-      if (isSwapMaxFromTokens && fromToken[0]) {
-        if (fromToken[0].id === SwapTokenId.AVAX) {
-          fromValue = new BigNumber(fromToken[0].balance).minus(0.01).toString();
-        } else {
-          fromValue = new BigNumber(fromToken[0].balance).toString();
-        }
-      } else {
-        fromValue = new BigNumber(exchangeFrom.value || 0).toString();
+      if (!tokenIn[0]) {
+        throw new Error('Some thing wrong');
       }
-      const transaction = await handleSwapToken(
-        {
-          fromId: exchangeFrom.id,
-          fromValue: fromValue,
-          toId: exchangeTo.id,
-          toValue: exchangeTo.value,
-        },
-        selectedName === 'to',
-        {
-          slippage,
-          deadline,
-        },
-      );
-      if (transaction.hash) {
+      setCurrentAction('approve');
+      handleToggleStatus();
+      setZapStatus('pending');
+      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
+      if (response.hash) {
         setCurrenTransactionId({
-          id: transaction.hash,
-          type: 'swap',
+          id: response.hash,
+          type: 'approve',
         });
-        await transaction.wait();
-        setTokenSwapCompleted({
-          id: transaction.hash,
-          type: 'swap',
+        await response.wait();
+        setZapCompleted({
+          type: 'approve',
+          id: response.hash,
         });
         handleGetTokenBalances();
       }
     } catch (error: any) {
-      setSwapStatus('error');
+      setZapStatus('error');
     }
   };
 
-  const handleSetPriceImpactWarningColor = (_priceImpact: string) => {
-    const clonedPriceImpact = Number(_priceImpact);
-    if (Number(clonedPriceImpact) < 0.01) {
-      setPriceImpactStatus('green');
-    } else if (clonedPriceImpact >= 0.01 && clonedPriceImpact < 1) {
-      setPriceImpactStatus('green');
-    } else if (clonedPriceImpact >= 1 && clonedPriceImpact < 3) {
-      setPriceImpactStatus('black');
-    } else if (clonedPriceImpact >= 3 && clonedPriceImpact < 5) {
-      setPriceImpactStatus('orange');
-    } else if (clonedPriceImpact >= 5 && clonedPriceImpact < 15) {
-      setPriceImpactStatus('pink');
-    } else {
-      setPriceImpactStatus('red');
-    }
-  };
-  const handleSetSlippage = (value: string) => {
-    if (selectedName === 'from') {
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: true,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: exchangeFrom.value || '0',
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'from',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
-    } else {
-      const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-        isExactInput: false,
-        tokenIn: exchangeFrom.id,
-        tokenOut: exchangeTo.id,
-        amount: exchangeTo.value || '0',
-      });
-      handleChangeSwapData({
-        estimatedAmountToken,
-        selectedName: 'to',
-        maxSold,
-        minReceive,
-        tradingFee,
-        priceImpact,
-      });
-    }
-    setSlippage(value);
-  };
-
-  useEffect(() => {
-    handleGetTokenBalances();
-    let getTokenBalancesInterval: NodeJS.Timer;
-    if (account) {
-      getTokenBalancesInterval = setInterval(handleGetTokenBalances, getBalanceIntervalTime);
-    }
-    return () => {
-      if (getTokenBalancesInterval) {
-        clearInterval(getTokenBalancesInterval);
+  const handleConnectWallet = async () => {
+    if (error instanceof UnsupportedChainIdError) {
+      try {
+        if (connector instanceof WalletConnectConnector) {
+          createToast({
+            message: errorMessage.META_MASK_WRONG_NETWORK.message,
+            type: 'error',
+            toastId: 1,
+          });
+        } else {
+          await addEthereumChain();
+          await activate(injected);
+        }
+      } catch (ex: any) {
+        createToast({
+          message: ex.message,
+          type: 'error',
+        });
       }
-    };
-  }, [account]);
-
-  useEffect(() => {
-    const response = checkSwapSetting();
-    setSlippage(response.slippage);
-    setDeadline(response.deadline);
-  }, []);
-
-  useEffect(() => {
-    handleSetPriceImpactWarningColor(priceImpact);
-  }, [priceImpact]);
-
-  useEffect(() => {
-    if (openSelect && isOpenSelectTokenFromModal) {
-      const selectableTokens = getSwappaleTokens(exchangeTo.id, exchangeFrom.id);
-      dispatch(handleDisableToken(selectableTokens));
-    } else if (openSelect && !isOpenSelectTokenFromModal) {
-      const selectableTokens = getSwappaleTokens(exchangeFrom.id, exchangeTo.id);
-      dispatch(handleDisableToken(selectableTokens));
+    } else {
+      dispatch(setIsOpenSelectWalletModal(true));
     }
-  }, [openSelect, selectedName, exchangeTo.id, exchangeFrom.id, isOpenSelectTokenFromModal]);
+  };
+  const handleCheckIsApproved = () => {
+    const tokenFrom = tokenList.filter((item) => item.id === exchangeFrom.id);
+    if (tokenFrom[0]) {
+      if (isSwapMaxFromTokens) {
+        if (Number(tokenFrom[0].allowanceBalance) >= Number(tokenFrom[0].balance)) {
+          setIsApproved(true);
+        } else {
+          setIsApproved(false);
+        }
+      } else {
+        if (Number(tokenFrom[0].allowanceBalance) >= Number(exchangeFrom.value)) {
+          setIsApproved(true);
+        } else {
+          setIsApproved(false);
+        }
+      }
+    } else {
+      setIsApproved(false);
+    }
+  };
+
+  useEffect(() => {
+    handleCheckIsApproved();
+  }, [exchangeFrom, tokenList]);
 
   useEffect(() => {
     const selectedTokenId = exchangeFrom.id;
@@ -873,43 +621,24 @@ const ZapPage: React.FC<Props> = () => {
   }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName, slippage]);
 
   useEffect(() => {
-    if (currentTransactionId.id !== '' && currentTransactionId.id === tokenSwapCompleted.id) {
-      setSwapStatus('success');
-      setOpenStatus(true);
+    const response = checkSwapSetting();
+    setSlippage(response.slippage);
+    setDeadline(response.deadline);
+  }, []);
 
-      setTokenSwapCompleted({
-        id: '',
-        type: '',
-      });
-    }
-  }, [currentTransactionId, tokenSwapCompleted]);
-
-  useEffect(() => {
-    const nativeToken = tokenList.filter((item) => item.id === SwapTokenId.AVAX);
-    const OxbToken = tokenList.filter((item) => item.id === SwapTokenId.OXB);
-    const usdcToken = tokenList.filter((item) => item.id === SwapTokenId.USDC);
-    const usdtToken = tokenList.filter((item) => item.id === SwapTokenId.USDT);
-    if (
-      !account &&
-      (Number(nativeToken[0].balance) > 0 ||
-        Number(OxbToken[0].balance) > 0 ||
-        Number(usdcToken[0].balance) > 0 ||
-        Number(usdtToken[0].balance) > 0)
-    ) {
-      handleGetTokenBalances();
-    }
-  }, [tokenList, account]);
-
+  // const handleApprove = () => {
+  //   setSubmitting(true);
+  //   setTimeout(() => {
+  //     setSubmitting(false);
+  //     setStatusZap('error');
+  //   }, 1000);
+  // };
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
-  const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
 
-  const handleApprove = () => {
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      setStatusZap('error');
-    }, 1000);
-  };
+  const isInvalidInput =
+    selectedName === 'from'
+      ? exchangeFrom.value === null || Number(exchangeFrom.value) === 0
+      : exchangeTo.value === null || Number(exchangeTo.value) === 0;
 
   return (
     <Wrapper>
@@ -954,7 +683,7 @@ const ZapPage: React.FC<Props> = () => {
                 </ExchangeHeader>
 
                 <InputSwap
-                  disabled={!pairInfoLoaded}
+                  disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
                   tokens={tokenList}
                   value={exchangeFrom.value}
                   selected={exchangeFrom.id}
@@ -974,7 +703,7 @@ const ZapPage: React.FC<Props> = () => {
                     }}
                     onClick={() => {
                       if (!isLoadEstimateToken) {
-                        handleSwapIconClick();
+                        // handleSwapIconClick();
                       }
                     }}
                   />
@@ -985,7 +714,7 @@ const ZapPage: React.FC<Props> = () => {
                     }}
                     onClick={() => {
                       if (!isLoadEstimateToken) {
-                        handleSwapIconClick();
+                        // handleSwapIconClick();
                       }
                     }}
                   />
@@ -995,54 +724,64 @@ const ZapPage: React.FC<Props> = () => {
               <ExchangeBox>
                 <ExchangeHeader>
                   <h5>To{selectedName === 'from' ? 'LP' : ''}</h5>
-                  <p>
-                    Balance:{' '}
-                    {toTokens.length > 0
-                      ? Number(toTokens[0].balance) > 0
-                        ? formatForNumberLessThanCondition({
-                            value: toTokens[0].balance,
-                            minValueCondition: 0.000001,
-                            callback: formatPrice,
-                            callBackParams: [6, 0],
-                            addLessThanSymbol: true,
-                          })
-                        : '0.0'
-                      : '0.0'}
-                  </p>
+                  <p>Balance: {0}</p>
                 </ExchangeHeader>
 
-                <InputLP disabled={!pairInfoLoaded} value={exchangeTo.value} onChange={handleChange} name="to" />
+                <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
               </ExchangeBox>
 
-              {!isInsufficientError &&
-                exchangeFrom.value &&
-                Number(exchangeFrom.value) !== 0 &&
-                exchangeTo.value &&
-                Number(exchangeTo.value) !== 0 && (
-                  <>
-                    <BillingBox>
-                      <BillingLine>
-                        <h4>Exchange Rate</h4>
-                        <p>1 0xB = Xxxx 0xB/AVAX</p>
-                      </BillingLine>
-                      <BillingLine>
-                        <h4>Minimum You Get</h4>
-                        <p>Xxxx 0xB/ AVAX</p>
-                      </BillingLine>
-                    </BillingBox>
-                  </>
-                )}
-
-              {statusZap && (
-                <TextStatus status={statusZap}>
-                  {statusZap === 'error' && <img alt="" src={ErrorIcon} />}{' '}
-                  {statusZap == 'error' ? 'insufficient AVAX Balance' : 'Approved'}
+              {!isFirstTime && isApproved && (
+                <TextStatus status={isInsufficientError || isInsufficientLiquidityError ? 'error' : 'success'}>
+                  {isInvalidInput ? (
+                    '  '
+                  ) : isInsufficientError ? (
+                    <>
+                      <img alt="" src={ErrorIcon} /> {`insufficient ${exchangeFrom.id.toUpperCase()} Balance`}
+                    </>
+                  ) : isInsufficientLiquidityError ? (
+                    <>
+                      <img alt="" src={ErrorIcon} /> {`Insufficient liquidity for this trade`}
+                    </>
+                  ) : (
+                    'Approved'
+                  )}
                 </TextStatus>
               )}
 
-              <SwapSubmit fullWidth unEnable={false} loading={submitting} onClick={handleApprove}>
+              {/* <SwapSubmit fullWidth unEnable={false} loading={submitting} onClick={handleApprove}>
                 {submitting ? <Lottie options={defaultOptions} height={33} width={33} /> : 'Approve'}
-              </SwapSubmit>
+              </SwapSubmit> */}
+              {!isFirstTime ? (
+                !account ? (
+                  <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
+                    Connect Wallet
+                  </SwapSubmit>
+                ) : isApproved ? (
+                  !isInvalidInput && (
+                    <SwapSubmit
+                      fullWidth
+                      unEnable={false}
+                      onClick={() => {
+                        handleToggleConfirm();
+                      }}
+                    >
+                      Zap
+                    </SwapSubmit>
+                  )
+                ) : (
+                  <SwapSubmit
+                    fullWidth
+                    unEnable={false}
+                    onClick={() => {
+                      handleApproveToken(exchangeFrom.id);
+                    }}
+                  >
+                    Approve {exchangeFrom.id.toLocaleUpperCase()}
+                  </SwapSubmit>
+                )
+              ) : (
+                <></>
+              )}
             </SwapBox>
           </Grid>
         </Grid>
@@ -1052,23 +791,22 @@ const ZapPage: React.FC<Props> = () => {
         <SwapSettingModal
           open={openSetting}
           setDeadline={setDeadline}
-          setSlippage={handleSetSlippage}
+          setSlippage={setSlippage}
           onClose={handleToggleSetting}
         />
       )}
       <SwapTokensModal
         open={openSelect}
         onClose={handleToggleSelect}
-        tokens={tokenList}
+        tokens={tokenList.filter((item) => item.id !== SwapTokenId.OXB && item.id !== SwapTokenId.JOELP)}
         onSelect={handelSelectToken}
         active={selectedName === 'from' ? exchangeFrom.id : exchangeTo.id}
       />
-      <SwapConfirmModal
-        priceImpactStatus={priceImpactStatus}
-        tradingFee={`${tradingFee} ${exchangeFrom.id.toLocaleUpperCase()}`}
+      <ZapConfirmModal
+        priceImpactStatus={'0'}
+        tradingFee={`${0} ${exchangeFrom.id.toLocaleUpperCase()}`}
         tokenList={tokenList}
-        swapRate={`${calculateSwapTokenRate(Number(exchangeFrom.value), Number(exchangeTo.value))} 
-        ${exchangeFrom.id.toUpperCase()} Per ${exchangeTo.id.toUpperCase()}`}
+        swapRate={''}
         exchange={{
           from: exchangeFrom.id,
           fromValue: exchangeFrom.value,
@@ -1077,13 +815,13 @@ const ZapPage: React.FC<Props> = () => {
         }}
         slippage={slippage}
         isMinReceive={selectedName === 'from'}
-        minReceive={minReceive!}
+        minReceive={''}
         open={openConfirm}
         onClose={handleToggleConfirm}
-        onConfirm={handleConfirm}
-        priceImpact={priceImpact}
+        onConfirm={() => {}}
+        priceImpact={''}
       />
-      {openStatus && swapStatus != null && (
+      {/* {openStatus && swapStatus != null && (
         <SwapStatusModal
           status={swapStatus}
           open={openStatus}
@@ -1097,7 +835,7 @@ const ZapPage: React.FC<Props> = () => {
             });
           }}
         />
-      )}
+      )} */}
     </Wrapper>
   );
 };

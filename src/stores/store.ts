@@ -6,6 +6,7 @@ import investmentsReducer from 'services/investments';
 import traderJoeReducer from 'services/traderJoe';
 import swapReducer from 'services/swap';
 import holdingsReducer from 'services/holdings';
+import zapReducer from 'services/zap';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     traderJoe: traderJoeReducer,
     swap: swapReducer,
     holdings: holdingsReducer,
+    zap: zapReducer,
   },
   middleware: getDefaultMiddleware({
     serializableCheck: false,

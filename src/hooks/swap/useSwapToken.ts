@@ -17,6 +17,7 @@ export enum SwapTokenId {
   OXB = '0xb',
   USDC = 'usdc',
   USDT = 'usdt',
+  JOELP = 'joelp'
 }
 
 const SwappableToken = {
@@ -24,6 +25,7 @@ const SwappableToken = {
   [SwapTokenId.USDC]: [SwapTokenId.OXB],
   [SwapTokenId.AVAX]: [SwapTokenId.OXB],
   [SwapTokenId.USDT]: [SwapTokenId.OXB],
+  [SwapTokenId.JOELP]: [SwapTokenId.OXB],
 };
 
 export const useSwapToken = () => {
@@ -172,7 +174,7 @@ export const useSwapToken = () => {
   };
 
   const getSwappaleTokens = (tokenId: SwapTokenId, selectedToken: SwapTokenId) => {
-    const clonedTokenList = [...tokenList];
+    const clonedTokenList = [...tokenList.filter((item)=>item.id !== SwapTokenId.JOELP)];
     const swappableTokens = SwappableToken[tokenId];
     return clonedTokenList.map((item) => {
       if (item.id == selectedToken) {

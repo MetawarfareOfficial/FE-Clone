@@ -6,4 +6,5 @@ export interface PairsData {
   [SwapTokenId.AVAX]: Pair | null;
   [SwapTokenId.USDC]: Pair | null;
   [SwapTokenId.USDT]: Pair | null;
+  [SwapTokenId.JOELP]: Pair | null;
 }
