@@ -745,7 +745,7 @@ const ZapPage: React.FC<Props> = () => {
                 <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
               </ExchangeBox>
 
-              {!isFirstTime && isApproved && (
+              {!isFirstTime && account && isApproved && (
                 <TextStatus status={isInsufficientError || isInsufficientLiquidityError ? 'error' : 'success'}>
                   {isInvalidInput ? (
                     '  '
