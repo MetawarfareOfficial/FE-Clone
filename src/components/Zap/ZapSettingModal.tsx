@@ -29,9 +29,10 @@ import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/help-dark.sv
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { getSwapSettingData } from 'helpers';
-import { deadlineInputRegex, defaultSettingData, localStorageSwapSettingKey, slippageInputRegex } from 'consts/swap';
+import { deadlineInputRegex, defaultSettingData, slippageInputRegex } from 'consts/swap';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { errorMessage } from 'messages/errorMessages';
+import { localStorageZapSettingKey } from 'consts/zap';
 
 interface Props {
   open: boolean;
@@ -323,7 +324,7 @@ const PercentText = styled(Typography)<TypographyProps>(({ theme }) => ({
   borderRight: '1px solid rgba(56, 100, 255, 0.2)',
 }));
 
-const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDeadline }) => {
+const ZapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDeadline }) => {
   const [width] = useWindowSize();
   const [settings, setSetting] = useState(getSwapSettingData() || defaultSettingData);
   const [interactWithSlippageInput, setInteractWithSlippageInput] = useState(false);
@@ -388,7 +389,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
       };
     }
     setErrors(newError);
-    localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(settings));
+    localStorage.setItem(localStorageZapSettingKey, JSON.stringify(settings));
   }, [settings]);
 
   const [tooltip, setTooltip] = useState<any>({
@@ -427,7 +428,7 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
               slippage: inValidSlippage ? defaultSettingData.slippage : settings.slippage,
               deadline: invalidDeadline ? defaultSettingData.deadline : settings.deadline,
             };
-            localStorage.setItem(localStorageSwapSettingKey, JSON.stringify(newSetting));
+            localStorage.setItem(localStorageZapSettingKey, JSON.stringify(newSetting));
             setDeadline(newSetting.deadline);
             setSlippage(newSetting.slippage);
             onClose();
@@ -591,4 +592,4 @@ const SwapSettingModal: React.FC<Props> = ({ open, onClose, setSlippage, setDead
   );
 };
 
-export default SwapSettingModal;
+export default ZapSettingModal;

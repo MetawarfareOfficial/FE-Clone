@@ -36,9 +36,9 @@ const tokenData: TokenData = {
   ),
   ['joelp' as SwapTokenId.JOELP]: new Token(
     Number(process.env.REACT_APP_CHAIN_ID),
-    String(process.env.REACT_APP_USDT_TOKEN_ADDRESS),
-    Number(process.env.REACT_APP_USDT_DECIMALS),
-    String(process.env.REACT_APP_USDT_SYMBOL),
+    String(process.env.React_APP_JOE_LP_TOKEN_ADDRESS),
+    Number(process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL),
+    String(process.env.REACT_APP_JOE_LP_TOKEN_SYMBOL),
   ),
 };
 export const getTraderJoeRouter = ({ isNativeTokenIn, isNativeTokenOut, pairsData, tokenOut, tokenIn }: Params) => {

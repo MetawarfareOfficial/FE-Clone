@@ -13,7 +13,7 @@ const initialState = {
     ['avax' as SwapTokenId.AVAX]: process.env.REACT_APP_NATIVE_TOKEN_ADDRESS!,
     ['usdc' as SwapTokenId.USDC]: process.env.REACT_APP_USDC_TOKEN_ADDRESS!,
     ['usdt' as SwapTokenId.USDT]: process.env.REACT_APP_USDT_TOKEN_ADDRESS!,
-    ['joelp' as SwapTokenId.JOELP]: process.env.REACT_APP_USDT_TOKEN_ADDRESS!,
+    ['joelp' as SwapTokenId.JOELP]: process.env.React_APP_JOE_LP_TOKEN_ADDRESS!,
   },
   pairsData: {
     ['0xb']: null,

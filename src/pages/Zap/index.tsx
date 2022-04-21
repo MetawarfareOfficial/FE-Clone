@@ -19,7 +19,7 @@ import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/zap-convert.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
-import { SwapSettingModal, SwapTokensModal } from 'components/Zap';
+import { ZapSettingModal, SwapTokensModal } from 'components/Zap';
 import InputLP from 'components/Zap/InputLP';
 import ZapConfirmModal from 'components/Zap/ZapConfirmModal';
 import { injected } from 'connectors';
@@ -28,9 +28,11 @@ import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessTha
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
+import { getZapSetting } from 'helpers/zap/getZapSetting';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
 import { useEstimateLPTokenAmount } from 'hooks/zap/useEstimateLPtokenAmount';
 import { useLoadTokensBalance } from 'hooks/zap/useLoadTokensBalance';
@@ -621,7 +623,7 @@ const ZapPage: React.FC<Props> = () => {
   }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName, slippage]);
 
   useEffect(() => {
-    const response = checkSwapSetting();
+    const response = getZapSetting();
     setSlippage(response.slippage);
     setDeadline(response.deadline);
   }, []);
@@ -634,7 +636,7 @@ const ZapPage: React.FC<Props> = () => {
   //   }, 1000);
   // };
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
-
+  const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
   const isInvalidInput =
     selectedName === 'from'
       ? exchangeFrom.value === null || Number(exchangeFrom.value) === 0
@@ -724,7 +726,20 @@ const ZapPage: React.FC<Props> = () => {
               <ExchangeBox>
                 <ExchangeHeader>
                   <h5>To{selectedName === 'from' ? 'LP' : ''}</h5>
-                  <p>Balance: {0}</p>
+                  <p>
+                    Balance:{' '}
+                    {toTokens.length > 0
+                      ? Number(toTokens[0].balance) > 0
+                        ? formatForNumberLessThanCondition({
+                            value: toTokens[0].balance,
+                            minValueCondition: 0.000001,
+                            callback: formatPrice,
+                            callBackParams: [6, 0],
+                            addLessThanSymbol: true,
+                          })
+                        : '0.0'
+                      : '0.0'}
+                  </p>
                 </ExchangeHeader>
 
                 <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
@@ -788,7 +803,7 @@ const ZapPage: React.FC<Props> = () => {
       </Box>
 
       {openSetting && (
-        <SwapSettingModal
+        <ZapSettingModal
           open={openSetting}
           setDeadline={setDeadline}
           setSlippage={setSlippage}
