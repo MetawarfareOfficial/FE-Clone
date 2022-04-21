@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core';
-import { usdcAbi } from 'abis/usdcAbi';
+import { usdcAbi } from 'abis/rinkeby/usdcAbi';
 import BigNumber from 'bignumber.js';
 import { intervalTime } from 'consts/swap';
 import { bigNumber2Number } from 'helpers/formatNumber';
