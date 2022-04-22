@@ -9,19 +9,25 @@ body {
   overflow: hidden;
 }
 
+main {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100vh;
+}
 
-body::-webkit-scrollbar-track {
+
+main::-webkit-scrollbar-track {
   -webkit-box-shadow: none;
   background-color: none;
 }
 
-body::-webkit-scrollbar {
+main::-webkit-scrollbar {
   width: 0;
   height: 0;
   background-color: none;
 }
 
-body::-webkit-scrollbar-thumb {
+main::-webkit-scrollbar-thumb {
   background-color: #3864FF;
   border-radius: 10px;
 }

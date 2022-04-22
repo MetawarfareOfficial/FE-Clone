@@ -248,7 +248,6 @@ const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
   boxSizing: 'border-box',
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
-  // overflow: 'hidden',
   transition: transition,
 
   [theme.breakpoints.down('lg')]: {
