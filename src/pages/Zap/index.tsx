@@ -457,7 +457,7 @@ const ZapPage: React.FC<Props> = () => {
         value: exchangeFrom.value,
       });
       setExchangeTo({
-        id: exchangeTo.id,
+        id: tokenId,
         value: String(handleEstimateZapOutLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
       });
     }
@@ -492,7 +492,7 @@ const ZapPage: React.FC<Props> = () => {
       }
     } else {
       if (selectedName === 'from') {
-        if (value !== '') {
+        if (value !== '' && value !== '0') {
           setExchangeFrom({
             id: exchangeFrom.id,
             value: value,
