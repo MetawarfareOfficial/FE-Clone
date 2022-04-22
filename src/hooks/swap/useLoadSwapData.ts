@@ -24,6 +24,7 @@ interface loadEstimateTokenParams {
   tokenIn: SwapTokenId;
   tokenOut: SwapTokenId;
   amount: string;
+  isSubtractFee?: boolean;
 }
 
 export const useLoadSwapData = () => {
@@ -56,7 +57,13 @@ export const useLoadSwapData = () => {
     dispatch(setRecentTransactions(get(recentTransactionResult, 'data.swaps', [])));
   }, [recentTransactionResult.data]);
 
-  const loadEstimateToken = ({ isExactInput, tokenIn, tokenOut, amount }: loadEstimateTokenParams) => {
+  const loadEstimateToken = ({
+    isExactInput,
+    tokenIn,
+    tokenOut,
+    amount,
+    isSubtractFee = true,
+  }: loadEstimateTokenParams) => {
     const settingData = getSwapSettingData();
 
     try {
@@ -81,16 +88,16 @@ export const useLoadSwapData = () => {
       });
       if (isExactInput) {
         if (isEqual(tokenInRouter, tokenOutRouter)) {
-          const trade = new Trade(
-            tokenInRouter,
-            new TokenAmount(
-              tokenData[tokenIn],
-              new BigNumber(amount)
+          const valueIn = isSubtractFee
+            ? new BigNumber(amount)
                 .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
                 .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
                 .toString()
-                .split('.')[0],
-            ),
+                .split('.')[0]
+            : new BigNumber(amount).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
+          const trade = new Trade(
+            tokenInRouter,
+            new TokenAmount(tokenData[tokenIn], valueIn),
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
@@ -110,16 +117,16 @@ export const useLoadSwapData = () => {
             isExactInput: isExactInput,
           });
         } else {
-          const tradeTokenInToWavax = new Trade(
-            tokenInRouter,
-            new TokenAmount(
-              tokenData[tokenIn],
-              new BigNumber(amount)
+          const valueIn = isSubtractFee
+            ? new BigNumber(amount)
                 .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
                 .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
                 .toString()
-                .split('.')[0],
-            ),
+                .split('.')[0]
+            : new BigNumber(amount).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
+          const tradeTokenInToWavax = new Trade(
+            tokenInRouter,
+            new TokenAmount(tokenData[tokenIn], valueIn),
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );

@@ -54,6 +54,7 @@ export const useEstimateLPTokenAmount = () => {
         tokenOut: SwapTokenId.OXB,
         isExactInput: true,
         amount: halfAmount,
+        isSubtractFee: false,
       });
       amountAvax = halfAmount;
       amountOxb = estimatedAmountToken !== '' ? estimatedAmountToken : '0';
@@ -64,12 +65,14 @@ export const useEstimateLPTokenAmount = () => {
         tokenOut: SwapTokenId.OXB,
         isExactInput: true,
         amount: halfAmount,
+        isSubtractFee: false,
       });
       const { estimatedAmountToken: estimateAvax } = loadEstimateToken({
         tokenIn,
         tokenOut: SwapTokenId.AVAX,
         isExactInput: true,
         amount: halfAmount,
+        isSubtractFee: false,
       });
       amountAvax = estimateAvax !== '' ? estimateAvax : '0';
       amountOxb = estimateOxb !== '' ? estimateOxb : '0';
@@ -108,6 +111,7 @@ export const useEstimateLPTokenAmount = () => {
         tokenOut: tokenOut,
         isExactInput: true,
         amount: lpTokenToAvaxAmount,
+        isSubtractFee: false,
       });
       amountTokenSwapFromAvax = _amountTokenSwapFromAvax;
     } else {
@@ -120,6 +124,7 @@ export const useEstimateLPTokenAmount = () => {
         tokenOut: tokenOut,
         isExactInput: true,
         amount: lpTokenToOxbAmount,
+        isSubtractFee: false,
       });
       amountTokenSwapFromOxb = _amountTokenSwapFromOxb;
     } else {
