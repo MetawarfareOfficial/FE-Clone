@@ -8,11 +8,7 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment';
 import { useEffect, useMemo } from 'react';
-import {
-  setIsInsufficientLiquidityError,
-  setIsLoadEstimateToken,
-  setRecentTransactions,
-} from 'services/swap';
+import { setIsInsufficientLiquidityError, setIsLoadEstimateToken, setRecentTransactions } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useQuery } from 'urql';
 import { SwapTokenId } from './useSwapToken';

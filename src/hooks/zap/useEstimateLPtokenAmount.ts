@@ -83,6 +83,51 @@ export const useEstimateLPTokenAmount = () => {
     );
   };
 
+  const handleEstimateZapOutLpTokenAmount = (
+    tokenOut: SwapTokenId,
+    amount: string,
+    liquidityPoolInfo: LiquidityPoolData,
+  ) => {
+    const oxbInToken0 = liquidityPoolInfo.token0.symbol === '0xB';
+    const avaxReserve = oxbInToken0 ? liquidityPoolInfo.reserve1 : liquidityPoolInfo.reserve0;
+    const oxbReserve = oxbInToken0 ? liquidityPoolInfo.reserve0 : liquidityPoolInfo.reserve1;
+    let amountTokenSwapFromAvax = '0';
+    let amountTokenSwapFromOxb = '0';
+    const lpTokenToAvaxAmount = new BigNumber(amount)
+      .div(liquidityPoolInfo.totalSupply)
+      .multipliedBy(avaxReserve)
+      .toString();
+    const lpTokenToOxbAmount = new BigNumber(amount)
+      .div(liquidityPoolInfo.totalSupply)
+      .multipliedBy(oxbReserve)
+      .toString();
+
+    if (tokenOut !== SwapTokenId.AVAX) {
+      const { estimatedAmountToken: _amountTokenSwapFromAvax } = loadEstimateToken({
+        tokenIn: SwapTokenId.AVAX,
+        tokenOut: tokenOut,
+        isExactInput: true,
+        amount: lpTokenToAvaxAmount,
+      });
+      amountTokenSwapFromAvax = _amountTokenSwapFromAvax;
+    } else {
+      amountTokenSwapFromAvax = lpTokenToAvaxAmount;
+    }
+
+    if (tokenOut !== SwapTokenId.OXB) {
+      const { estimatedAmountToken: _amountTokenSwapFromOxb } = loadEstimateToken({
+        tokenIn: SwapTokenId.OXB,
+        tokenOut: tokenOut,
+        isExactInput: true,
+        amount: lpTokenToOxbAmount,
+      });
+      amountTokenSwapFromOxb = _amountTokenSwapFromOxb;
+    } else {
+      amountTokenSwapFromOxb = lpTokenToOxbAmount;
+    }
+    return new BigNumber(amountTokenSwapFromAvax).plus(new BigNumber(amountTokenSwapFromOxb)).toString();
+  };
+
   useEffect(() => {
     let interval: NodeJS.Timer;
     if (account) {
@@ -99,5 +144,6 @@ export const useEstimateLPTokenAmount = () => {
 
   return {
     handleEstimateZapInLpTokenAmount,
+    handleEstimateZapOutLpTokenAmount,
   };
 };

@@ -16,12 +16,13 @@ import ErrorIcon from 'assets/images/clarity_error-line.svg';
 import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
-import { ReactComponent as SwapIcon } from 'assets/images/zap-convert.svg';
+import { ReactComponent as SwapIcon } from 'assets/images/swap-icon.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
-import { ZapSettingModal, SwapTokensModal, Empty } from 'components/Zap';
+import { ZapSettingModal, SwapTokensModal, Empty, PercentSelects } from 'components/Zap';
 import InputLP from 'components/Zap/InputLP';
 import ZapConfirmModal from 'components/Zap/ZapConfirmModal';
+import ZapStatusModal from 'components/Zap/ZapStatusModal';
 import { injected } from 'connectors';
 import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
@@ -31,16 +32,17 @@ import { getMinAmountTokenToSwap } from 'helpers/swaps';
 import { getZapSetting } from 'helpers/zap/getZapSetting';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
-import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
-import { useInteractiveContract } from 'hooks/useInteractiveContract';
+// import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
 import { useToast } from 'hooks/useToast';
 import { useEstimateLPTokenAmount } from 'hooks/zap/useEstimateLPtokenAmount';
 import { useLoadTokensBalance } from 'hooks/zap/useLoadTokensBalance';
-import animationData from 'lotties/loading-button.json';
+// import animationData from 'lotties/loading-button.json';
 import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
+// import Lottie from 'react-lottie';
 import { setIsOpenSelectWalletModal } from 'services/account';
-import { setIsInsufficientError, setSelectedName } from 'services/swap';
+import { setIsInsufficientError } from 'services/swap';
+import { setSelectedName } from 'services/zap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 
 // const defaultOptions = {
@@ -261,42 +263,42 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const BillingBox = styled(Box)<BoxProps>(() => ({
-  width: '100%',
-  marginTop: '32px',
-}));
+// const BillingBox = styled(Box)<BoxProps>(() => ({
+//   width: '100%',
+//   marginTop: '32px',
+// }));
 
-const BillingLine = styled(Box)<BoxProps>(({ theme }) => ({
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
+// const BillingLine = styled(Box)<BoxProps>(({ theme }) => ({
+//   width: '100%',
+//   display: 'flex',
+//   alignItems: 'center',
 
-  h4: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: '14px',
-    lineHeight: '26px',
-    letterSpacing: '0.04em',
-    textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-    margin: 0,
-    display: 'inline-flex',
-    alignItems: 'center',
-  },
+//   h4: {
+//     fontFamily: 'Poppins',
+//     fontStyle: 'normal',
+//     fontWeight: '400',
+//     fontSize: '14px',
+//     lineHeight: '26px',
+//     letterSpacing: '0.04em',
+//     textTransform: 'capitalize',
+//     color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+//     margin: 0,
+//     display: 'inline-flex',
+//     alignItems: 'center',
+//   },
 
-  p: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: '14px',
-    lineHeight: '26px',
-    letterSpacing: '0.04em',
-    textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-    margin: '0 0 0 auto',
-  },
-}));
+//   p: {
+//     fontFamily: 'Poppins',
+//     fontStyle: 'normal',
+//     fontWeight: '400',
+//     fontSize: '14px',
+//     lineHeight: '26px',
+//     letterSpacing: '0.04em',
+//     textTransform: 'capitalize',
+//     color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+//     margin: '0 0 0 auto',
+//   },
+// }));
 
 const ExchangeIcon = styled(Box)<BoxProps>(() => ({
   width: '100%',
@@ -346,17 +348,6 @@ const SwapSubmit = styled(Button)<
   },
 }));
 
-interface SetExchangeParams {
-  selectedName: string;
-  estimatedAmountToken: string | null;
-  minReceive: string | null;
-  maxSold: string | null;
-  tradingFee: string;
-  priceImpact: string;
-  isSwap?: boolean;
-  exchangeId?: SwapTokenId;
-}
-
 const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
@@ -374,25 +365,24 @@ const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
 const ZapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const { error, connector, activate, account } = useWeb3React();
-  const { checkSwapSetting } = useSwapHelpers();
+  // const { checkSwapSetting } = useSwapHelpers();
   const { createToast } = useToast();
 
-  const tokenList = useAppSelector((state) => state.swap.tokenList);
+  const tokenList = useAppSelector((state) => state.zap.zapTokenList);
   const liquidityPoolData = useAppSelector((state) => state.zap.liquidityPoolData);
 
   const { handleGetTokenBalances } = useLoadTokensBalance(tokenList, account, true);
   useLoadPairInfo();
-  const { handleEstimateZapInLpTokenAmount } = useEstimateLPTokenAmount();
+  const { handleEstimateZapInLpTokenAmount, handleEstimateZapOutLpTokenAmount } = useEstimateLPTokenAmount();
   const { approveToken } = useSwapToken();
 
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const isLiquidityPoolLoaded = useAppSelector((state) => state.zap.isLiquidityPoolLoaded);
 
   const isInsufficientError = useAppSelector((state) => state.swap.isInsufficientError);
-  const selectedName = useAppSelector((state) => state.swap.selectedName) as any;
+  const selectedName = useAppSelector((state) => state.zap.ZapSelectedName) as any;
   const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
   const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);
-
   const dispatch = useAppDispatch();
 
   const [openSetting, setOpenSetting] = useState(false);
@@ -410,10 +400,11 @@ const ZapPage: React.FC<Props> = () => {
   });
 
   const [isFirstTime, setIsFirstTime] = useState(true);
+  const [approvedTokens, setApprovedTokens] = useState<SwapTokenId[]>([]);
   const [isApproved, setIsApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [currentAction, setCurrentAction] = useState('zap');
-  const [swapStatus, setZapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
+  const [zapStatus, setZapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [slippage, setSlippage] = useState('0.5');
   const [deadline, setDeadline] = useState('10');
 
@@ -438,6 +429,18 @@ const ZapPage: React.FC<Props> = () => {
     setOpenStatus(!openStatus);
   };
 
+  const handleReset = () => {
+    setExchangeFrom({
+      id: exchangeFrom.id,
+      value: '',
+    });
+    setExchangeTo({
+      id: exchangeTo.id,
+      value: '',
+    });
+    setIsFirstTime(true);
+  };
+
   const handelSelectToken = (tokenId: SwapTokenId) => {
     if (isOpenSelectTokenFromModal) {
       setExchangeFrom({
@@ -449,6 +452,14 @@ const ZapPage: React.FC<Props> = () => {
         value: String(handleEstimateZapInLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
       });
     } else {
+      setExchangeFrom({
+        id: exchangeFrom.id,
+        value: exchangeFrom.value,
+      });
+      setExchangeTo({
+        id: exchangeTo.id,
+        value: String(handleEstimateZapOutLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
+      });
     }
     setIsSwapMaxFromToken(false);
   };
@@ -481,15 +492,32 @@ const ZapPage: React.FC<Props> = () => {
       }
     } else {
       if (selectedName === 'from') {
-        setExchangeFrom({
-          id: exchangeFrom.id,
-          value: value,
-        });
-        setExchangeTo({
-          id: exchangeTo.id,
-          value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, value, liquidityPoolData)),
-        });
-      } else {
+        if (value !== '') {
+          setExchangeFrom({
+            id: exchangeFrom.id,
+            value: value,
+          });
+          if (exchangeFrom.id === SwapTokenId.JOELP) {
+            setExchangeTo({
+              id: exchangeTo.id,
+              value: String(handleEstimateZapOutLpTokenAmount(exchangeTo.id, value, liquidityPoolData)),
+            });
+          } else {
+            setExchangeTo({
+              id: exchangeTo.id,
+              value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, value, liquidityPoolData)),
+            });
+          }
+        } else {
+          setExchangeFrom({
+            id: exchangeFrom.id,
+            value: value,
+          });
+          setExchangeTo({
+            id: exchangeTo.id,
+            value: '',
+          });
+        }
       }
     }
     setIsSwapMaxFromToken(false);
@@ -523,6 +551,25 @@ const ZapPage: React.FC<Props> = () => {
       setIsFirstTime(false);
     }
   };
+  const handlePercentClicked = (value: number) => {
+    const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
+    if (Number(currentToken[0].balance) > 0) {
+      setExchangeFrom({
+        id: exchangeFrom.id,
+        value: new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toString(),
+      });
+      setExchangeTo({
+        id: exchangeTo.id,
+        value: String(
+          handleEstimateZapOutLpTokenAmount(
+            exchangeFrom.id,
+            new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toString(),
+            liquidityPoolData,
+          ),
+        ),
+      });
+    }
+  };
 
   const handleToggleConfirm = () => {
     setOpenConfirm(!openConfirm);
@@ -548,6 +595,7 @@ const ZapPage: React.FC<Props> = () => {
           type: 'approve',
           id: response.hash,
         });
+        setApprovedTokens([...approvedTokens, id]);
         handleGetTokenBalances();
       }
     } catch (error: any) {
@@ -598,7 +646,18 @@ const ZapPage: React.FC<Props> = () => {
       setIsApproved(false);
     }
   };
-
+  const handleSwapIconClick = () => {
+    dispatch(setSelectedName('from'));
+    setExchangeFrom({
+      id: exchangeTo.id,
+      value: '0',
+    });
+    setExchangeTo({
+      id: exchangeFrom.id,
+      value: '0',
+    });
+    setIsSwapMaxFromToken(false);
+  };
   useEffect(() => {
     handleCheckIsApproved();
   }, [exchangeFrom, tokenList]);
@@ -621,6 +680,20 @@ const ZapPage: React.FC<Props> = () => {
       }
     }
   }, [exchangeFrom.id, exchangeTo.value, tokenList, selectedName, slippage]);
+
+  useEffect(() => {
+    if (currentTransactionId.id !== '' && currentTransactionId.id === zapCompleted.id) {
+      setZapStatus('success');
+      setOpenStatus(true);
+      if (zapCompleted.type !== 'approve') {
+        handleReset();
+      }
+      setZapCompleted({
+        id: '',
+        type: '',
+      });
+    }
+  }, [currentTransactionId, zapCompleted]);
 
   useEffect(() => {
     const response = getZapSetting();
@@ -668,7 +741,7 @@ const ZapPage: React.FC<Props> = () => {
 
                 <ExchangeBox>
                   <ExchangeHeader>
-                    <h5>From Token{selectedName === 'to' ? '(estimated)' : ''}</h5>
+                    <h5>From Token</h5>
                     <p>
                       Balance:{' '}
                       {fromTokens.length > 0
@@ -685,18 +758,29 @@ const ZapPage: React.FC<Props> = () => {
                     </p>
                   </ExchangeHeader>
 
-                  <InputSwap
-                    disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
-                    tokens={tokenList}
-                    value={exchangeFrom.value}
-                    selected={exchangeFrom.id}
-                    onChange={handleChange}
-                    onChangeToken={handleChangeToken}
-                    onMax={handleFromMax}
-                    isMax={true}
-                    name="from"
-                  />
+                  {fromTokens[0].id === SwapTokenId.JOELP ? (
+                    <InputLP
+                      disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
+                      value={exchangeFrom.value}
+                      onChange={handleChange}
+                      name="from"
+                    />
+                  ) : (
+                    <InputSwap
+                      disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
+                      tokens={tokenList}
+                      value={exchangeFrom.value}
+                      selected={exchangeFrom.id}
+                      onChange={handleChange}
+                      onChangeToken={handleChangeToken}
+                      onMax={handleFromMax}
+                      isMax={Number(fromTokens[0].balance) > 0}
+                      name="from"
+                    />
+                  )}
                 </ExchangeBox>
+
+                {exchangeFrom.id === SwapTokenId.JOELP && <PercentSelects onChange={handlePercentClicked} />}
 
                 <ExchangeIcon>
                   {theme.palette.mode === 'light' ? (
@@ -706,7 +790,7 @@ const ZapPage: React.FC<Props> = () => {
                       }}
                       onClick={() => {
                         if (!isLoadEstimateToken) {
-                          // handleSwapIconClick();
+                          handleSwapIconClick();
                         }
                       }}
                     />
@@ -717,7 +801,7 @@ const ZapPage: React.FC<Props> = () => {
                       }}
                       onClick={() => {
                         if (!isLoadEstimateToken) {
-                          // handleSwapIconClick();
+                          handleSwapIconClick();
                         }
                       }}
                     />
@@ -743,7 +827,21 @@ const ZapPage: React.FC<Props> = () => {
                     </p>
                   </ExchangeHeader>
 
-                  <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
+                  {toTokens[0].id === SwapTokenId.JOELP ? (
+                    <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
+                  ) : (
+                    <InputSwap
+                      disabled={true}
+                      tokens={tokenList}
+                      value={exchangeTo.value}
+                      selected={exchangeTo.id}
+                      onChange={() => {}}
+                      onChangeToken={handleChangeToken}
+                      onMax={() => {}}
+                      isMax={false}
+                      name="to"
+                    />
+                  )}
                 </ExchangeBox>
 
                 {!isFirstTime && account && isApproved && (
@@ -758,14 +856,16 @@ const ZapPage: React.FC<Props> = () => {
                       <>
                         <img alt="" src={ErrorIcon} /> {`Insufficient liquidity for this trade`}
                       </>
-                    ) : (
+                    ) : approvedTokens.includes(fromTokens[0].id) ? (
                       'Approved'
+                    ) : (
+                      ''
                     )}
                   </TextStatus>
                 )}
-
-                {/* <SwapSubmit fullWidth unEnable={false} loading={submitting} onClick={handleApprove}>
-                {submitting ? <Lottie options={defaultOptions} height={33} width={33} /> : 'Approve'}
+                {/* 
+                <SwapSubmit fullWidth unEnable={false} loading={true} onClick={()=>{}}>
+                {true ? <Lottie options={defaultOptions} height={33} width={33} /> : 'Approve'}
               </SwapSubmit> */}
                 {!isFirstTime ? (
                   !account ? (
@@ -832,7 +932,7 @@ const ZapPage: React.FC<Props> = () => {
           to: exchangeTo.id,
           toValue: exchangeTo.value,
         }}
-        slippage={slippage}
+        slippage={`${slippage} ${deadline}`}
         isMinReceive={selectedName === 'from'}
         minReceive={''}
         open={openConfirm}
@@ -840,12 +940,12 @@ const ZapPage: React.FC<Props> = () => {
         onConfirm={() => {}}
         priceImpact={''}
       />
-      {/* {openStatus && swapStatus != null && (
-        <SwapStatusModal
-          status={swapStatus}
+      {openStatus && zapStatus != null && (
+        <ZapStatusModal
+          status={zapStatus}
           open={openStatus}
           transactionId={currentTransactionId.id}
-          action={currentAction === 'swap' ? 'swap' : 'approve'}
+          action={currentAction === 'zap' ? 'zap' : 'approve'}
           onClose={() => {
             handleToggleStatus();
             setCurrenTransactionId({
@@ -854,7 +954,7 @@ const ZapPage: React.FC<Props> = () => {
             });
           }}
         />
-      )} */}
+      )}
     </Wrapper>
   );
 };

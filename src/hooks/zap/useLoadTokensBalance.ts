@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { handleSetTokenBalances } from 'services/swap';
 import { useEffect } from 'react';
 import { getBalanceIntervalTime } from 'consts/swap';
+import { handleSetZapTokenBalances } from 'services/zap';
 
 export const useLoadTokensBalance = (tokenList: TokenItem[], account?: string | null, isZapPage = false) => {
   const { getBalanceNativeTokenOf, multipleCall } = useInteractiveContract();
@@ -85,8 +86,10 @@ export const useLoadTokensBalance = (tokenList: TokenItem[], account?: string | 
         ...item,
         disabled: false,
       }));
+      dispatch(handleSetZapTokenBalances(newTokens));
+    } else {
+      dispatch(handleSetTokenBalances(newTokens));
     }
-    dispatch(handleSetTokenBalances(newTokens));
   };
 
   useEffect(() => {

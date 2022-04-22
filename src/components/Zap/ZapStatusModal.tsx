@@ -32,7 +32,7 @@ interface Props {
   status: String | null;
   onClose: () => void;
   transactionId: string;
-  action?: 'swap' | 'approve';
+  action?: 'zap' | 'approve';
 }
 
 interface DialogTitleCustomProps {
@@ -67,15 +67,6 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     },
   },
 }));
-
-// const Transition = React.forwardRef(function Transition(
-//   props: TransitionProps & {
-//     children: React.ReactElement<any, any>;
-//   },
-//   ref: React.Ref<unknown>,
-// ) {
-//   return <Slide direction="up" ref={ref} {...props} />;
-// });
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
@@ -186,19 +177,13 @@ const ViewTokenLink = styled(Link)<LinkProps>(() => ({
   cursor: 'pointer',
 }));
 
-const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId, action = 'swap' }) => {
+const ZapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId, action = 'zap' }) => {
   const theme = useTheme();
 
   return (
-    <Wrapper
-      className="swapDialog"
-      open={open}
-      // TransitionComponent={Transition}
-      keepMounted
-      aria-describedby="alert-dialog-slide-description"
-    >
+    <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText> {action === 'swap' ? 'Swap' : 'Approve'} Information</HeaderText>
+        <HeaderText> {action === 'zap' ? 'zap' : 'Approve'} Information</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -243,4 +228,4 @@ const SwapStatusModal: React.FC<Props> = ({ open, onClose, status, transactionId
   );
 };
 
-export default SwapStatusModal;
+export default ZapStatusModal;

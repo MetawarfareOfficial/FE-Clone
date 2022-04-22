@@ -34,7 +34,7 @@ export const loadLiquidityPoolInfo = async () => {
            `,
       variables: {
         token0: String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
-        token1: String(process.env.REACT_APP_NATIVE_TOKEN_ADDRESS).toLocaleLowerCase()
+        token1: String(process.env.REACT_APP_NATIVE_TOKEN_ADDRESS).toLocaleLowerCase(),
       },
     }),
   });

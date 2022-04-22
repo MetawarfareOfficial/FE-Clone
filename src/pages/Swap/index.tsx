@@ -47,7 +47,7 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
 import { setIsOpenSelectWalletModal } from 'services/account';
-import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
+import { handleDisableToken, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useLoadTokensBalance } from 'hooks/zap';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
