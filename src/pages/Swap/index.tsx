@@ -90,12 +90,12 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   boxSizing: 'border-box',
   overflow: 'hidden',
   display: 'flex',
-  // alignItems: 'center',
-  paddingTop: '150px',
-  paddingBottom: '100px',
+  alignItems: 'center',
+  paddingTop: '50px',
+  paddingBottom: '12%',
 
   [theme.breakpoints.down('lg')]: {
-    paddingTop: '90px',
+    // paddingTop: '90px',
     paddingBottom: '70px',
   },
 
