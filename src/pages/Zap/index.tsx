@@ -736,7 +736,7 @@ const ZapPage: React.FC<Props> = () => {
 
                 <ExchangeBox>
                   <ExchangeHeader>
-                    <h5>From Token</h5>
+                    <h5>From {fromTokens[0].id === SwapTokenId.JOELP ? ` LP` : ` Token`}</h5>
                     <p>
                       Balance:{' '}
                       {fromTokens.length > 0
@@ -805,7 +805,7 @@ const ZapPage: React.FC<Props> = () => {
 
                 <ExchangeBox>
                   <ExchangeHeader>
-                    <h5>To{selectedName === 'from' ? ` LP` : ''}</h5>
+                    <h5>To{fromTokens[0].id === SwapTokenId.JOELP ? ` Token` : ` LP`}</h5>
                   </ExchangeHeader>
 
                   {toTokens[0].id === SwapTokenId.JOELP ? (

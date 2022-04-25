@@ -11,7 +11,9 @@ import BankIcon from 'assets/images/bank.svg';
 import BankActIcon from 'assets/images/bank-active.svg';
 import BankDarkIcon from 'assets/images/bank-dark.svg';
 import ContractIcon from 'assets/images/contract.svg';
+import ActiveContractIcon from 'assets/images/active-contract.svg';
 import ZapIcon from 'assets/images/zap.svg';
+import ActiveZapIcon from 'assets/images/active-zap.svg';
 
 export const menus = [
   {
@@ -32,7 +34,7 @@ export const menus = [
     name: 'My Contracts',
     path: '/my-contracts',
     icon: ContractIcon,
-    activeIcon: ContractIcon,
+    activeIcon: ActiveContractIcon,
     darkIcon: ContractIcon,
   },
   {
@@ -53,7 +55,7 @@ export const menus = [
     name: 'Zap',
     path: '/zap',
     icon: ZapIcon,
-    activeIcon: ZapIcon,
+    activeIcon: ActiveZapIcon,
     darkIcon: ZapIcon,
   },
 ];

@@ -139,6 +139,7 @@ export const useEstimateLPTokenAmount = () => {
 
   useEffect(() => {
     let interval: NodeJS.Timer;
+    loadLiquidityPoolData();
     if (account) {
       interval = setInterval(async () => {
         await loadLiquidityPoolData();
