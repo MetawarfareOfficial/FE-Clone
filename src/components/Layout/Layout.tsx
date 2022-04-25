@@ -595,7 +595,10 @@ const Layout: React.FC<Props> = ({ children }) => {
                             {!open ? (
                               <TooltipCustom title={item.name} arrow placement="right">
                                 {location.pathname === item.path ? (
-                                  <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                                  <img
+                                    alt=""
+                                    src={theme.palette.mode === 'light' ? item.activeIcon : item.activeDarkIcon}
+                                  />
                                 ) : (
                                   <img alt="" src={item.icon} />
                                 )}
@@ -603,7 +606,10 @@ const Layout: React.FC<Props> = ({ children }) => {
                             ) : (
                               <>
                                 {location.pathname === item.path ? (
-                                  <img alt="" src={theme.palette.mode === 'light' ? item.activeIcon : item.darkIcon} />
+                                  <img
+                                    alt=""
+                                    src={theme.palette.mode === 'light' ? item.activeIcon : item.activeDarkIcon}
+                                  />
                                 ) : (
                                   <img alt="" src={item.icon} />
                                 )}
