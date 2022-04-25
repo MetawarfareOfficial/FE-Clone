@@ -248,7 +248,6 @@ const MainLayout = styled(Box)<MainLayoutProps>(({ open, theme }) => ({
   boxSizing: 'border-box',
   width: `calc(100% - ${open ? drawerWidth : drawerWidthMinus}px)`,
   // height: '100vh',
-  // overflow: 'hidden',
   transition: transition,
 
   [theme.breakpoints.down('lg')]: {
@@ -624,7 +623,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                           variant="contained"
                           color="primary"
                         >
-                          Buy 0XB
+                          Buy 0xB
                         </ButtonBuy>
                       ) : (
                         <TooltipCustom title="Buy 0xB" arrow placement="right">
@@ -647,7 +646,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                           color="primary"
                           disabled={!currentUserAddress}
                         >
-                          Add 0XB
+                          Add 0xB
                         </ButtonRefresh>
                       ) : (
                         <TooltipCustom title="Add 0xB" arrow placement="right">
