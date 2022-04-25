@@ -173,7 +173,7 @@ export const useSwapToken = () => {
     }
   };
 
-  const getSwappaleTokens = (tokenId: SwapTokenId, selectedToken: SwapTokenId) => {
+  const getSwappableTokens = (tokenId: SwapTokenId, selectedToken: SwapTokenId) => {
     const clonedTokenList = [...tokenList.filter((item) => item.id !== SwapTokenId.JOELP)];
     const swappableTokens = SwappableToken[tokenId];
     return clonedTokenList.map((item) => {
@@ -206,7 +206,7 @@ export const useSwapToken = () => {
   }, [account]);
 
   return {
-    getSwappaleTokens,
+    getSwappableTokens,
     getSwapTokenBalances,
     handleSwapToken,
     loadEstimateToken,

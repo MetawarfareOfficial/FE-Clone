@@ -25,7 +25,7 @@ export const useSwapHelpers = () => {
       return errorMessage.SWAP_SLIPPAGE_TOO_SMALL.message;
     } else if (Number(value) >= 50) {
       return errorMessage.SWAP_SLIPPAGE_TOO_HIGH.message;
-    } else if (Number(value) >= 5) {
+    } else if (Number(value) > 5) {
       return errorMessage.SWAP_SLIPPAGE_HIGH.message;
     }
     return '';

@@ -107,6 +107,19 @@ export const zapSlice = createSlice({
     handleSetIsLiquidityPoolLoaded: (state, action) => {
       state.isLiquidityPoolLoaded = action.payload;
     },
+    handleDisableZapToken: (state, action: PayloadAction<any>) => {
+      const newTokenList = state.zapTokenList.map((tokenItem) => {
+        const foundedToken = action.payload.find((item: TokenItem) => item.id === tokenItem.id);
+        if (foundedToken) {
+          return {
+            ...tokenItem,
+            disabled: foundedToken.disabled,
+          };
+        }
+        return tokenItem;
+      });
+      state.zapTokenList = newTokenList;
+    },
     handleSetZapTokenBalances: (state, action: PayloadAction<any>) => {
       const newTokenList = state.zapTokenList.map((tokenItem) => {
         const foundedToken = action.payload.find((item: TokenItem) => item.id === tokenItem.id);
@@ -121,7 +134,7 @@ export const zapSlice = createSlice({
       });
       state.zapTokenList = newTokenList;
     },
-    setSelectedName: (state, action: PayloadAction<string | null>) => {
+    setZapSelectedName: (state, action: PayloadAction<string | null>) => {
       state.ZapSelectedName = action.payload;
     },
   },
@@ -131,7 +144,8 @@ export const {
   handleSetLiquidityPoolData,
   handleSetIsLiquidityPoolLoaded,
   handleSetZapTokenBalances,
-  setSelectedName,
+  setZapSelectedName,
+  handleDisableZapToken,
 } = zapSlice.actions;
 
 const { reducer: zapReducer } = zapSlice;

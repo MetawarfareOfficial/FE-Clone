@@ -1,58 +1,33 @@
-import {
-  Box,
-  BoxProps,
-  Button,
-  ButtonProps,
-  Grid,
-  IconButton,
-  IconButtonProps,
-  Typography,
-  TypographyProps,
-} from '@mui/material';
+import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import ErrorIcon from 'assets/images/clarity_error-line.svg';
-import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
-import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/swap-icon.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
-import { ZapSettingModal, SwapTokensModal, Empty, PercentSelects } from 'components/Zap';
+import { SwapTokensModal, Empty, PercentSelects } from 'components/Zap';
 import InputLP from 'components/Zap/InputLP';
-import ZapConfirmModal from 'components/Zap/ZapConfirmModal';
 import ZapStatusModal from 'components/Zap/ZapStatusModal';
 import { injected } from 'connectors';
 import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
-import { formatPercent, formatPrice } from 'helpers/formatPrice';
+import { formatPercent, formatPrice, truncateNumber } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
-import { getZapSetting } from 'helpers/zap/getZapSetting';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
-// import { useSwapHelpers } from 'hooks/swap/useSwapHelpers';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
 import { useEstimateLPTokenAmount } from 'hooks/zap/useEstimateLPtokenAmount';
 import { useLoadTokensBalance } from 'hooks/zap/useLoadTokensBalance';
-// import animationData from 'lotties/loading-button.json';
 import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
-// import Lottie from 'react-lottie';
 import { setIsOpenSelectWalletModal } from 'services/account';
 import { setIsInsufficientError } from 'services/swap';
-import { setSelectedName } from 'services/zap';
+import { handleDisableZapToken, setZapSelectedName } from 'services/zap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-
-// const defaultOptions = {
-//   loop: true,
-//   autoplay: true,
-//   animationData: animationData,
-//   rendererSettings: {
-//     preserveAspectRatio: 'xMidYMid slice',
-//   },
-// };
 
 interface Props {
   title?: string;
@@ -217,19 +192,6 @@ const SwapHeader = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const IconButtonCustom = styled(IconButton)<IconButtonProps>(({ theme }) => ({
-  padding: '0',
-  width: '20px',
-  height: '20px',
-  marginLeft: 'auto',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-
-  [theme.breakpoints.down('sm')]: {
-    width: '17px',
-    height: '17px',
-  },
-}));
-
 const ExchangeBox = styled(Box)<BoxProps>(() => ({
   width: '100%',
 }));
@@ -242,12 +204,12 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
 
   h5: {
     fontFamily: 'Poppins',
-    fontWeight: '400',
+    fontWeight: '500',
     fontSize: '14px',
     lineHeight: '26px',
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.65)' : 'rgba(255, 255, 255, 0.65)',
     margin: 0,
   },
 
@@ -262,43 +224,6 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
     margin: '0 0 0 auto',
   },
 }));
-
-// const BillingBox = styled(Box)<BoxProps>(() => ({
-//   width: '100%',
-//   marginTop: '32px',
-// }));
-
-// const BillingLine = styled(Box)<BoxProps>(({ theme }) => ({
-//   width: '100%',
-//   display: 'flex',
-//   alignItems: 'center',
-
-//   h4: {
-//     fontFamily: 'Poppins',
-//     fontStyle: 'normal',
-//     fontWeight: '400',
-//     fontSize: '14px',
-//     lineHeight: '26px',
-//     letterSpacing: '0.04em',
-//     textTransform: 'capitalize',
-//     color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-//     margin: 0,
-//     display: 'inline-flex',
-//     alignItems: 'center',
-//   },
-
-//   p: {
-//     fontFamily: 'Poppins',
-//     fontStyle: 'normal',
-//     fontWeight: '400',
-//     fontSize: '14px',
-//     lineHeight: '26px',
-//     letterSpacing: '0.04em',
-//     textTransform: 'capitalize',
-//     color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-//     margin: '0 0 0 auto',
-//   },
-// }));
 
 const ExchangeIcon = styled(Box)<BoxProps>(() => ({
   width: '100%',
@@ -332,14 +257,14 @@ const SwapSubmit = styled(Button)<
   lineHeight: '33px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
-  marginTop: '23px',
+  color: '#fff',
+  marginTop: '7px',
   cursor: unEnable ? 'not-allowed !important' : 'pointer',
 
   '&:hover': {
     background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
     border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
+    color: '#fff',
     boxShadow: !unEnable && '0px 5px 11px rgba(0, 82, 255, 0.38)',
   },
 
@@ -360,12 +285,13 @@ const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
   textTransform: 'capitalize',
   justifyContent: 'center',
   color: status === 'error' ? '#FF0E0E' : '#0ADB12',
+  marginTop: '7px',
 }));
 
 const ZapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const { error, connector, activate, account } = useWeb3React();
-  // const { checkSwapSetting } = useSwapHelpers();
+  const { handleZapInNativeToken, handleZapInToken } = useInteractiveContract();
   const { createToast } = useToast();
 
   const tokenList = useAppSelector((state) => state.zap.zapTokenList);
@@ -385,10 +311,8 @@ const ZapPage: React.FC<Props> = () => {
   const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);
   const dispatch = useAppDispatch();
 
-  const [openSetting, setOpenSetting] = useState(false);
   const [openSelect, setOpenSelect] = useState(false);
   const [isOpenSelectTokenFromModal, setIsOpenSelectTokenFromModal] = useState(false);
-  const [openConfirm, setOpenConfirm] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
   const [exchangeFrom, setExchangeFrom] = useState<ExchangeItem>({
     id: SwapTokenId.AVAX,
@@ -405,8 +329,7 @@ const ZapPage: React.FC<Props> = () => {
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [currentAction, setCurrentAction] = useState('zap');
   const [zapStatus, setZapStatus] = useState<'success' | 'error' | 'pending' | null>(null);
-  const [slippage, setSlippage] = useState('0.5');
-  const [deadline, setDeadline] = useState('10');
+  const slippage = '0.5';
 
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',
@@ -416,10 +339,6 @@ const ZapPage: React.FC<Props> = () => {
     type: '',
     id: '',
   });
-
-  const handleToggleSetting = () => {
-    setOpenSetting(!openSetting);
-  };
 
   const handleToggleSelect = () => {
     setOpenSelect(!openSelect);
@@ -447,19 +366,33 @@ const ZapPage: React.FC<Props> = () => {
         id: tokenId,
         value: exchangeFrom.value,
       });
-      setExchangeTo({
-        id: exchangeTo.id,
-        value: String(handleEstimateZapInLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
-      });
+      if (exchangeFrom.value && exchangeFrom.value !== '' && Number(exchangeFrom.value) > 0) {
+        setExchangeTo({
+          id: exchangeTo.id,
+          value: String(handleEstimateZapInLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
+        });
+      } else {
+        setExchangeTo({
+          id: exchangeTo.id,
+          value: exchangeFrom.value,
+        });
+      }
     } else {
       setExchangeFrom({
         id: exchangeFrom.id,
         value: exchangeFrom.value,
       });
-      setExchangeTo({
-        id: tokenId,
-        value: String(handleEstimateZapOutLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
-      });
+      if (exchangeFrom.value && exchangeFrom.value !== '' && Number(exchangeFrom.value) > 0) {
+        setExchangeTo({
+          id: tokenId,
+          value: String(handleEstimateZapOutLpTokenAmount(tokenId, exchangeFrom.value || '0', liquidityPoolData)),
+        });
+      } else {
+        setExchangeTo({
+          id: exchangeTo.id,
+          value: exchangeFrom.value,
+        });
+      }
     }
     setIsSwapMaxFromToken(false);
   };
@@ -537,7 +470,7 @@ const ZapPage: React.FC<Props> = () => {
         } else {
           valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
         }
-        dispatch(setSelectedName('from'));
+        dispatch(setZapSelectedName('from'));
         setExchangeFrom({
           id: exchangeFrom.id,
           value: valueIn,
@@ -556,13 +489,13 @@ const ZapPage: React.FC<Props> = () => {
     if (Number(currentToken[0].balance) > 0) {
       setExchangeFrom({
         id: exchangeFrom.id,
-        value: new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toString(),
+        value: truncateNumber(new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toNumber(), 10),
       });
       setExchangeTo({
         id: exchangeTo.id,
         value: String(
           handleEstimateZapOutLpTokenAmount(
-            exchangeFrom.id,
+            exchangeTo.id,
             new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toString(),
             liquidityPoolData,
           ),
@@ -571,9 +504,62 @@ const ZapPage: React.FC<Props> = () => {
     }
   };
 
-  const handleToggleConfirm = () => {
-    setOpenConfirm(!openConfirm);
+  const handleZapIn = async () => {
+    setCurrentAction('zap');
+    handleToggleStatus();
+    try {
+      setZapStatus('pending');
+      const fromToken = tokenList.filter((item) => item.id === exchangeFrom.id);
+      let fromValue = '0';
+      // convert input
+      if (isSwapMaxFromTokens && fromToken[0]) {
+        if (fromToken[0].id === SwapTokenId.AVAX) {
+          fromValue = new BigNumber(fromToken[0].balance).minus(0.01).toString();
+        } else {
+          fromValue = new BigNumber(fromToken[0].balance).toString();
+        }
+      } else {
+        fromValue = new BigNumber(exchangeFrom.value || 0).toString();
+      }
+      // exec zap
+
+      if (fromToken[0].id === SwapTokenId.AVAX) {
+        const transaction = await handleZapInNativeToken(fromValue, account!);
+        // wait for response
+        if (transaction.hash) {
+          setCurrenTransactionId({
+            id: transaction.hash,
+            type: 'zap',
+          });
+          await transaction.wait();
+          setZapCompleted({
+            id: transaction.hash,
+            type: 'zap',
+          });
+          handleGetTokenBalances();
+        }
+      } else {
+        const transaction = await handleZapInToken(fromToken[0].address, fromValue, account!, fromToken[0].decimal);
+        // wait for response
+        if (transaction.hash) {
+          setCurrenTransactionId({
+            id: transaction.hash,
+            type: 'zap',
+          });
+          await transaction.wait();
+          setZapCompleted({
+            id: transaction.hash,
+            type: 'zap',
+          });
+          handleGetTokenBalances();
+        }
+      }
+    } catch (error: any) {
+      setZapStatus('error');
+    }
   };
+
+  const handleZapOut = async () => {};
 
   const handleApproveToken = async (id: SwapTokenId) => {
     const tokenIn = tokenList.filter((item) => item.id === id);
@@ -646,8 +632,34 @@ const ZapPage: React.FC<Props> = () => {
       setIsApproved(false);
     }
   };
+  const getZapTokens = (selectedToken: SwapTokenId) => {
+    const clonedTokenList = [...tokenList.filter((item) => item.id !== SwapTokenId.JOELP)];
+    return clonedTokenList.map((item) => {
+      if (item.id == selectedToken) {
+        return {
+          ...item,
+          disabled: true,
+        };
+      }
+      return {
+        ...item,
+        disabled: false,
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (openSelect && isOpenSelectTokenFromModal) {
+      const selectableTokens = getZapTokens(exchangeFrom.id);
+      dispatch(handleDisableZapToken(selectableTokens));
+    } else if (openSelect && !isOpenSelectTokenFromModal) {
+      const selectableTokens = getZapTokens(exchangeTo.id);
+      dispatch(handleDisableZapToken(selectableTokens));
+    }
+  }, [openSelect, selectedName, exchangeTo.id, exchangeFrom.id, isOpenSelectTokenFromModal]);
+
   const handleSwapIconClick = () => {
-    dispatch(setSelectedName('from'));
+    dispatch(setZapSelectedName('from'));
     setExchangeFrom({
       id: exchangeTo.id,
       value: '0',
@@ -695,19 +707,6 @@ const ZapPage: React.FC<Props> = () => {
     }
   }, [currentTransactionId, zapCompleted]);
 
-  useEffect(() => {
-    const response = getZapSetting();
-    setSlippage(response.slippage);
-    setDeadline(response.deadline);
-  }, []);
-
-  // const handleApprove = () => {
-  //   setSubmitting(true);
-  //   setTimeout(() => {
-  //     setSubmitting(false);
-  //     setStatusZap('error');
-  //   }, 1000);
-  // };
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
   const isInvalidInput =
@@ -733,10 +732,6 @@ const ZapPage: React.FC<Props> = () => {
               <SwapBox>
                 <SwapHeader>
                   <h4>Zap</h4>
-
-                  <IconButtonCustom onClick={handleToggleSetting}>
-                    {theme.palette.mode === 'light' ? <SettingIcon /> : <SettingDarkIcon />}
-                  </IconButtonCustom>
                 </SwapHeader>
 
                 <ExchangeBox>
@@ -810,21 +805,7 @@ const ZapPage: React.FC<Props> = () => {
 
                 <ExchangeBox>
                   <ExchangeHeader>
-                    <h5>To{selectedName === 'from' ? 'LP' : ''}</h5>
-                    <p>
-                      Balance:{' '}
-                      {toTokens.length > 0
-                        ? Number(toTokens[0].balance) > 0
-                          ? formatForNumberLessThanCondition({
-                              value: toTokens[0].balance,
-                              minValueCondition: 0.000001,
-                              callback: formatPrice,
-                              callBackParams: [6, 0],
-                              addLessThanSymbol: true,
-                            })
-                          : '0.0'
-                        : '0.0'}
-                    </p>
+                    <h5>To{selectedName === 'from' ? ` LP` : ''}</h5>
                   </ExchangeHeader>
 
                   {toTokens[0].id === SwapTokenId.JOELP ? (
@@ -850,7 +831,7 @@ const ZapPage: React.FC<Props> = () => {
                       '  '
                     ) : isInsufficientError ? (
                       <>
-                        <img alt="" src={ErrorIcon} /> {`insufficient ${exchangeFrom.id.toUpperCase()} Balance`}
+                        <img alt="" src={ErrorIcon} /> {`Insufficient ${exchangeFrom.id.toUpperCase()} Balance`}
                       </>
                     ) : isInsufficientLiquidityError ? (
                       <>
@@ -863,10 +844,6 @@ const ZapPage: React.FC<Props> = () => {
                     )}
                   </TextStatus>
                 )}
-                {/* 
-                <SwapSubmit fullWidth unEnable={false} loading={true} onClick={()=>{}}>
-                {true ? <Lottie options={defaultOptions} height={33} width={33} /> : 'Approve'}
-              </SwapSubmit> */}
                 {!isFirstTime ? (
                   !account ? (
                     <SwapSubmit fullWidth unEnable={false} onClick={handleConnectWallet}>
@@ -878,7 +855,11 @@ const ZapPage: React.FC<Props> = () => {
                         fullWidth
                         unEnable={false}
                         onClick={() => {
-                          handleToggleConfirm();
+                          if (fromTokens[0].id !== SwapTokenId.JOELP) {
+                            handleZapIn();
+                          } else {
+                            handleZapOut();
+                          }
                         }}
                       >
                         Zap
@@ -906,39 +887,12 @@ const ZapPage: React.FC<Props> = () => {
         )}
       </Box>
 
-      {openSetting && (
-        <ZapSettingModal
-          open={openSetting}
-          setDeadline={setDeadline}
-          setSlippage={setSlippage}
-          onClose={handleToggleSetting}
-        />
-      )}
       <SwapTokensModal
         open={openSelect}
         onClose={handleToggleSelect}
         tokens={tokenList.filter((item) => item.id !== SwapTokenId.OXB && item.id !== SwapTokenId.JOELP)}
         onSelect={handelSelectToken}
         active={selectedName === 'from' ? exchangeFrom.id : exchangeTo.id}
-      />
-      <ZapConfirmModal
-        priceImpactStatus={'0'}
-        tradingFee={`${0} ${exchangeFrom.id.toLocaleUpperCase()}`}
-        tokenList={tokenList}
-        swapRate={''}
-        exchange={{
-          from: exchangeFrom.id,
-          fromValue: exchangeFrom.value,
-          to: exchangeTo.id,
-          toValue: exchangeTo.value,
-        }}
-        slippage={`${slippage} ${deadline}`}
-        isMinReceive={selectedName === 'from'}
-        minReceive={''}
-        open={openConfirm}
-        onClose={handleToggleConfirm}
-        onConfirm={() => {}}
-        priceImpact={''}
       />
       {openStatus && zapStatus != null && (
         <ZapStatusModal

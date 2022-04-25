@@ -64,7 +64,7 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
   },
 }));
 
-const Text = styled(Typography)<TypographyProps>(() => ({
+const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '400',
@@ -72,7 +72,7 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   lineHeight: '30px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fffff',
   borderRight: '1px solid rgba(56, 100, 255, 0.2)',
   paddingRight: '14px',
 }));

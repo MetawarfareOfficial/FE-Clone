@@ -398,7 +398,7 @@ const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const [windowSize] = useWindowSize();
   const { error, connector, activate } = useWeb3React();
-  const { getSwappaleTokens, account, handleSwapToken, loadEstimateToken, approveToken } = useSwapToken();
+  const { getSwappableTokens, account, handleSwapToken, loadEstimateToken, approveToken } = useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
   const { createToast } = useToast();
 
@@ -977,10 +977,10 @@ const SwapPage: React.FC<Props> = () => {
 
   useEffect(() => {
     if (openSelect && isOpenSelectTokenFromModal) {
-      const selectableTokens = getSwappaleTokens(exchangeTo.id, exchangeFrom.id);
+      const selectableTokens = getSwappableTokens(exchangeTo.id, exchangeFrom.id);
       dispatch(handleDisableToken(selectableTokens));
     } else if (openSelect && !isOpenSelectTokenFromModal) {
-      const selectableTokens = getSwappaleTokens(exchangeFrom.id, exchangeTo.id);
+      const selectableTokens = getSwappableTokens(exchangeFrom.id, exchangeTo.id);
       dispatch(handleDisableToken(selectableTokens));
     }
   }, [openSelect, selectedName, exchangeTo.id, exchangeFrom.id, isOpenSelectTokenFromModal]);

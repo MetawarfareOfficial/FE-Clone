@@ -8,6 +8,7 @@ import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
 import {
   contsRewardManagerAbi as rewardRinkebyAbi,
   usdcAbi as usdcRinkebyAbi,
+  zapManagerAbi,
   zeroXBlockAbi as oxbRinkebyAbi,
 } from 'abis/rinkeby';
 import {
@@ -18,6 +19,7 @@ import {
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
+const zapManagerAddress = process.env.REACT_APP_ZAP_MANAGER || '';
 
 const OxbAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? oxbRinkebyAbi : oxbAvaxAbi;
 const UsdcAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? usdcRinkebyAbi : usdcAvaxAbi;
@@ -26,6 +28,7 @@ const rewardManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? rewardRinkeb
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, OxbAbi, provider);
 const rewardManagerContractWithoutSigner = new ethers.Contract(rewardManagerAddress, rewardManagerAbi, provider);
+const zapManagerContractWithoutSigner = new ethers.Contract(zapManagerAddress, zapManagerAbi, provider);
 
 const OxbToken = new Token(
   Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
@@ -69,10 +72,16 @@ export const useInteractiveContract = () => {
     library && account
       ? new ethers.Contract(contractAddress, OxbAbi, library.getSigner(account))
       : contractWithoutSigner;
+
   const rewardManagerContractWithSigner =
     library && account
       ? new ethers.Contract(rewardManagerAddress, rewardManagerAbi, library.getSigner(account))
       : rewardManagerContractWithoutSigner;
+
+  const zapManagerContractWithSigner =
+    library && account
+      ? new ethers.Contract(zapManagerAddress, zapManagerAbi, library.getSigner(account))
+      : zapManagerContractWithoutSigner;
 
   const approveToken = async (tokenApproveAddress: string, spender: string) => {
     const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, library.getSigner(account));
@@ -365,6 +374,27 @@ export const useInteractiveContract = () => {
     }
   };
 
+  const handleZapInNativeToken = async (amountIn: string, receiver: string) => {
+    return zapManagerContractWithSigner.zapIn(
+      process.env.REACT_APP_ZAP_TYPE,
+      process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+      receiver,
+      {
+        value: ethers.utils.parseEther(amountIn),
+      },
+    );
+  };
+
+  const handleZapInToken = async (tokenIn: string, amountIn: string, receiver: string, decimal: string) => {
+    return zapManagerContractWithSigner.zapInToken({
+      protocolType: process.env.REACT_APP_ZAP_TYPE,
+      from: tokenIn,
+      amount: new BN(amountIn).multipliedBy(Number(`1e${decimal}`)).toString(),
+      to: process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+      receiver,
+    });
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -400,6 +430,8 @@ export const useInteractiveContract = () => {
     swapExactAVAXFor0xB,
     swapAVAXForExact0xB,
     getTotalSupply,
+    handleZapInNativeToken,
+    handleZapInToken,
     contractWithSigner,
     provider,
   };
