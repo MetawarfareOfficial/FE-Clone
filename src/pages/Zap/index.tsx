@@ -291,7 +291,7 @@ const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
 const ZapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const { error, connector, activate, account } = useWeb3React();
-  const { handleZapInNativeToken, handleZapInToken } = useInteractiveContract();
+  const { handleZapInNativeToken, handleZapInToken, handleZapOut } = useInteractiveContract();
   const { createToast } = useToast();
 
   const tokenList = useAppSelector((state) => state.zap.zapTokenList);
@@ -561,7 +561,33 @@ const ZapPage: React.FC<Props> = () => {
     }
   };
 
-  const handleZapOut = async () => {};
+  const handleZapOutToken = async () => {
+    setCurrentAction('zap');
+    handleToggleStatus();
+    try {
+      setZapStatus('pending');
+      const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
+      const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
+      const fromValue = new BigNumber(exchangeFrom.value || 0).toString();
+      // exec zap
+      const transaction = await handleZapOut(toTokens[0].address, fromValue, account!, fromTokens[0].decimal);
+      // wait for response
+      if (transaction.hash) {
+        setCurrenTransactionId({
+          id: transaction.hash,
+          type: 'zap',
+        });
+        await transaction.wait();
+        setZapCompleted({
+          id: transaction.hash,
+          type: 'zap',
+        });
+        handleGetTokenBalances();
+      }
+    } catch (error: any) {
+      setZapStatus('error');
+    }
+  };
 
   const handleApproveToken = async (id: SwapTokenId) => {
     const tokenIn = tokenList.filter((item) => item.id === id);
@@ -860,7 +886,7 @@ const ZapPage: React.FC<Props> = () => {
                           if (fromTokens[0].id !== SwapTokenId.JOELP) {
                             handleZapIn();
                           } else {
-                            handleZapOut();
+                            handleZapOutToken();
                           }
                         }}
                       >

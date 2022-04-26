@@ -406,6 +406,16 @@ export const useInteractiveContract = () => {
     });
   };
 
+  const handleZapOut = async (tokenOut: string, amountIn: string, receiver: string, decimal: string) => {
+    return zapManagerContractWithSigner.zapOut(
+      process.env.REACT_APP_ZAP_TYPE,
+      process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+      new BN(amountIn).multipliedBy(Number(`1e${decimal}`)).toString(),
+      tokenOut,
+      receiver,
+    );
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -443,6 +453,7 @@ export const useInteractiveContract = () => {
     getTotalSupply,
     handleZapInNativeToken,
     handleZapInToken,
+    handleZapOut,
     contractWithSigner,
     provider,
   };
