@@ -312,19 +312,27 @@ export const useInteractiveContract = () => {
   };
 
   const swap0xbToExactToken = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
-    return contractWithSigner.functions.swap0xBForExactToken(token, amountOut, amountInMax, deadline);
+    const _amountOut = amountOut.split('.')[0];
+    const _amountInMax = amountInMax.split('.')[0];
+    return contractWithSigner.functions.swap0xBForExactToken(token, _amountOut, _amountInMax, deadline);
   };
 
   const swapExact0xbToToken = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
-    return contractWithSigner.functions.swapExact0xBForToken(token, amountIn, amountOutMin, deadline);
+    const _amountIn = amountIn.split('.')[0];
+    const _amountOutMin = amountOutMin.split('.')[0];
+    return contractWithSigner.functions.swapExact0xBForToken(token, _amountIn, _amountOutMin, deadline);
   };
 
   const swapExactTokenTo0xb = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
-    return contractWithSigner.swapExactTokenFor0xB(token, amountIn, amountOutMin, deadline);
+    const _amountIn = amountIn.split('.')[0];
+    const _amountOutMin = amountOutMin.split('.')[0];
+    return contractWithSigner.swapExactTokenFor0xB(token, _amountIn, _amountOutMin, deadline);
   };
 
   const swapTokenToExact0xb = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
-    return contractWithSigner.swapTokenForExact0xB(token, amountOut, amountInMax, deadline);
+    const _amountOut = amountOut.split('.')[0];
+    const _amountInMax = amountInMax.split('.')[0];
+    return contractWithSigner.swapTokenForExact0xB(token, _amountOut, _amountInMax, deadline);
   };
 
   const swapAVAXForExact0xB = async (
@@ -333,12 +341,15 @@ export const useInteractiveContract = () => {
     amountInMax: string,
     deadline: string,
   ) => {
-    return contractWithSigner.swapAVAXForExact0xB(amountOut, amountInMax, deadline, {
+    const _amountOut = amountOut.split('.')[0];
+    const _amountInMax = amountInMax.split('.')[0];
+    return contractWithSigner.swapAVAXForExact0xB(_amountOut, _amountInMax, deadline, {
       value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };
   const swapExactAVAXFor0xB = async (payableAvaxAmount: string, amountOutMin: string, deadline: string) => {
-    return contractWithSigner.swapExactAVAXFor0xB(amountOutMin, deadline, {
+    const _amountOutMin = amountOutMin.split('.')[0];
+    return contractWithSigner.swapExactAVAXFor0xB(_amountOutMin, deadline, {
       value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };
