@@ -460,28 +460,30 @@ const ZapPage: React.FC<Props> = () => {
   const handleFromMax = () => {
     if (account) {
       const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-      if (currentToken[0]) {
-        let valueIn = '0';
-        if (currentToken[0].id === SwapTokenId.AVAX) {
-          valueIn =
-            Number(currentToken[0].balance) <= 0.01
-              ? '0'
-              : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
-        } else {
-          valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+      if (Number(currentToken[0].balance) > 0) {
+        if (currentToken[0]) {
+          let valueIn = '0';
+          if (currentToken[0].id === SwapTokenId.AVAX) {
+            valueIn =
+              Number(currentToken[0].balance) <= 0.01
+                ? '0'
+                : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
+          } else {
+            valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+          }
+          dispatch(setZapSelectedName('from'));
+          setExchangeFrom({
+            id: exchangeFrom.id,
+            value: valueIn,
+          });
+          setExchangeTo({
+            id: exchangeTo.id,
+            value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, valueIn, liquidityPoolData)),
+          });
+          setIsSwapMaxFromToken(true);
         }
-        dispatch(setZapSelectedName('from'));
-        setExchangeFrom({
-          id: exchangeFrom.id,
-          value: valueIn,
-        });
-        setExchangeTo({
-          id: exchangeTo.id,
-          value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, valueIn, liquidityPoolData)),
-        });
-        setIsSwapMaxFromToken(true);
+        setIsFirstTime(false);
       }
-      setIsFirstTime(false);
     }
   };
   const handlePercentClicked = (value: number) => {
@@ -570,7 +572,7 @@ const ZapPage: React.FC<Props> = () => {
       setCurrentAction('approve');
       handleToggleStatus();
       setZapStatus('pending');
-      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
+      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_ZAP_MANAGER));
       if (response.hash) {
         setCurrenTransactionId({
           id: response.hash,
@@ -769,7 +771,7 @@ const ZapPage: React.FC<Props> = () => {
                       onChange={handleChange}
                       onChangeToken={handleChangeToken}
                       onMax={handleFromMax}
-                      isMax={Number(fromTokens[0].balance) > 0}
+                      isMax={true}
                       name="from"
                     />
                   )}

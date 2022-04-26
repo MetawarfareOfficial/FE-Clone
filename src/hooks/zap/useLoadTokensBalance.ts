@@ -42,7 +42,10 @@ export const useLoadTokensBalance = (tokenList: TokenItem[], account?: string | 
               {
                 reference: 'allowance',
                 methodName: 'allowance',
-                methodParameters: [account, process.env.REACT_APP_CONTRACT_ADDRESS],
+                methodParameters: [
+                  account,
+                  !isZapPage ? process.env.REACT_APP_CONTRACT_ADDRESS : process.env.REACT_APP_ZAP_MANAGER,
+                ],
               },
             ],
           };
