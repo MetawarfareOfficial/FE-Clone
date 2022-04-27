@@ -7,13 +7,13 @@ import { ReactComponent as SwapDarkIcon } from 'assets/images/swap-dark.svg';
 import { ReactComponent as SwapIcon } from 'assets/images/swap-icon.svg';
 import BigNumber from 'bignumber.js';
 import InputSwap from 'components/Base/InputSwap';
-import { SwapTokensModal, Empty, PercentSelects } from 'components/Zap';
+import { SwapTokensModal, Empty } from 'components/Zap';
 import InputLP from 'components/Zap/InputLP';
 import ZapStatusModal from 'components/Zap/ZapStatusModal';
 import { injected } from 'connectors';
 import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
-import { formatPercent, formatPrice, truncateNumber } from 'helpers/formatPrice';
+import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
 import { SwapTokenId, useSwapToken } from 'hooks/swap';
@@ -472,37 +472,29 @@ const ZapPage: React.FC<Props> = () => {
             valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
           }
           dispatch(setZapSelectedName('from'));
-          setExchangeFrom({
-            id: exchangeFrom.id,
-            value: valueIn,
-          });
-          setExchangeTo({
-            id: exchangeTo.id,
-            value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, valueIn, liquidityPoolData)),
-          });
+          if (exchangeFrom.id === SwapTokenId.JOELP) {
+            setExchangeFrom({
+              id: exchangeFrom.id,
+              value: valueIn,
+            });
+            setExchangeTo({
+              id: exchangeTo.id,
+              value: String(handleEstimateZapOutLpTokenAmount(exchangeTo.id, valueIn, liquidityPoolData)),
+            });
+          } else {
+            setExchangeFrom({
+              id: exchangeFrom.id,
+              value: valueIn,
+            });
+            setExchangeTo({
+              id: exchangeTo.id,
+              value: String(handleEstimateZapInLpTokenAmount(exchangeFrom.id, valueIn, liquidityPoolData)),
+            });
+          }
           setIsSwapMaxFromToken(true);
         }
         setIsFirstTime(false);
       }
-    }
-  };
-  const handlePercentClicked = (value: number) => {
-    const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-    if (Number(currentToken[0].balance) > 0) {
-      setExchangeFrom({
-        id: exchangeFrom.id,
-        value: truncateNumber(new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toNumber(), 10),
-      });
-      setExchangeTo({
-        id: exchangeTo.id,
-        value: String(
-          handleEstimateZapOutLpTokenAmount(
-            exchangeTo.id,
-            new BigNumber(currentToken[0].balance).multipliedBy(value).div(100).toString(),
-            liquidityPoolData,
-          ),
-        ),
-      });
     }
   };
 
@@ -786,6 +778,8 @@ const ZapPage: React.FC<Props> = () => {
                       disabled={!pairInfoLoaded || !isLiquidityPoolLoaded}
                       value={exchangeFrom.value}
                       onChange={handleChange}
+                      onMax={handleFromMax}
+                      isMax={true}
                       name="from"
                     />
                   ) : (
@@ -803,7 +797,7 @@ const ZapPage: React.FC<Props> = () => {
                   )}
                 </ExchangeBox>
 
-                {exchangeFrom.id === SwapTokenId.JOELP && <PercentSelects onChange={handlePercentClicked} />}
+                {/* {exchangeFrom.id === SwapTokenId.JOELP && <PercentSelects onChange={handlePercentClicked} />} */}
 
                 <ExchangeIcon>
                   {theme.palette.mode === 'light' ? (
@@ -837,7 +831,14 @@ const ZapPage: React.FC<Props> = () => {
                   </ExchangeHeader>
 
                   {toTokens[0].id === SwapTokenId.JOELP ? (
-                    <InputLP disabled={true} value={exchangeTo.value} onChange={() => {}} name="to" />
+                    <InputLP
+                      disabled={true}
+                      value={exchangeTo.value}
+                      onChange={() => {}}
+                      onMax={() => {}}
+                      isMax={false}
+                      name="to"
+                    />
                   ) : (
                     <InputSwap
                       disabled={true}

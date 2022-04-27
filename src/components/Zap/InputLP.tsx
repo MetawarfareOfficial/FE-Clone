@@ -1,12 +1,22 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { TextField, TextFieldProps, InputAdornment, Typography, TypographyProps } from '@mui/material';
+import {
+  TextField,
+  TextFieldProps,
+  InputAdornment,
+  Typography,
+  TypographyProps,
+  ButtonProps,
+  Button,
+} from '@mui/material';
 
 import { swapInputRegex } from 'consts/swap';
 import BigNumber from 'bignumber.js';
 
 interface Props {
   name: string;
+  isMax: boolean;
+  onMax: () => void;
   value: string | null;
   max?: number;
   min?: number;
@@ -75,11 +85,30 @@ const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#293247' : '#fffff',
   borderRight: '1px solid rgba(56, 100, 255, 0.2)',
   paddingRight: '14px',
+  marginRight: '9px',
 }));
 
-const InputLP: React.FC<Props> = ({ name, value, max, min, onChange, disabled }) => {
-  // const theme = useTheme();
+const ButtonMax = styled(Button)<ButtonProps>(({ theme }) => ({
+  background: theme.palette.mode === 'light' ? '#E9EDFF' : '#171717',
+  borderRadius: '6px',
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '14px',
+  lineHeight: '26px',
+  letterSpacing: '0.04em',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  padding: '0px',
+  minWidth: '51px',
 
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '12px',
+    lineHeight: '22px',
+    minWidth: '47px',
+  },
+}));
+
+const InputLP: React.FC<Props> = ({ name, value, max, min, onChange, disabled, isMax, onMax }) => {
   return (
     <TextFieldSwap
       autoComplete="off"
@@ -114,6 +143,7 @@ const InputLP: React.FC<Props> = ({ name, value, max, min, onChange, disabled })
         startAdornment: (
           <InputAdornment position="start">
             <Text>LP</Text>
+            {isMax && <ButtonMax onClick={onMax}>Max</ButtonMax>}
           </InputAdornment>
         ),
       }}
