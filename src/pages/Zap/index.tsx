@@ -794,7 +794,7 @@ const ZapPage: React.FC<Props> = () => {
     selectedName === 'from'
       ? exchangeFrom.value === null || Number(exchangeFrom.value) === 0
       : exchangeTo.value === null || Number(exchangeTo.value) === 0;
-
+  const isInvalidSwap = isInvalidInput || isInsufficientError || isInsufficientLiquidityError;
   return (
     <Wrapper>
       <Box sx={{ width: '100%' }}>
@@ -964,12 +964,14 @@ const ZapPage: React.FC<Props> = () => {
                     !isInvalidInput && (
                       <SwapSubmit
                         fullWidth
-                        unEnable={false}
+                        unEnable={isInvalidSwap}
                         onClick={() => {
-                          if (fromTokens[0].id !== SwapTokenId.JOELP) {
-                            handleZapIn();
-                          } else {
-                            handleZapOutToken();
+                          if (!isInvalidSwap) {
+                            if (fromTokens[0].id !== SwapTokenId.JOELP) {
+                              handleZapIn();
+                            } else {
+                              handleZapOutToken();
+                            }
                           }
                         }}
                       >
