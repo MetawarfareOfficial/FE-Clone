@@ -1,4 +1,15 @@
-import { Box, BoxProps, Button, ButtonProps, Grid, Typography, TypographyProps } from '@mui/material';
+import {
+  Box,
+  BoxProps,
+  Button,
+  ButtonProps,
+  Grid,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
+  Typography,
+  TypographyProps,
+} from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
@@ -16,7 +27,7 @@ import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessTha
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
-import { SwapTokenId, useSwapToken } from 'hooks/swap';
+import { SwapTokenId, useSwapToken, useTooltip } from 'hooks/swap';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
@@ -28,6 +39,9 @@ import { setIsOpenSelectWalletModal } from 'services/account';
 import { setIsInsufficientError } from 'services/swap';
 import { handleDisableZapToken, setZapSelectedName } from 'services/zap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { ReactComponent as HelpCircleDarkIcon } from 'assets/images/bx_help-circle-dark.svg';
+import { ReactComponent as HelpCircleIcon } from 'assets/images/bx_help-circle.svg';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 interface Props {
   title?: string;
@@ -287,9 +301,50 @@ const TextStatus = styled(Typography)<TextStatusProps>(({ status }) => ({
   color: status === 'error' ? '#FF0E0E' : '#0ADB12',
   marginTop: '7px',
 }));
+interface TooltipCustomProps extends TooltipProps {
+  size?: string;
+}
+const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme, size }) => ({
+  zIndex: '2000',
+  filter: 'drop-shadow(0px 0px 5px rgba(56, 100, 255, 0.19))',
+
+  [`& .${tooltipClasses.tooltip}`]: {
+    background: theme.palette.mode === 'light' ? '#fff' : '#171717',
+    color: theme.palette.mode === 'light' ? 'rgba(49, 72, 98, 0.69)' : 'rgba(255, 255, 255, 0.69)',
+    padding: '11px 16px',
+    fontFamily: 'Poppins',
+    fontSize: '13px',
+    lineHeight: '18px',
+    fontWeight: '500',
+    boxShadow: '1px 5px 29px rgba(50, 71, 117, 0.2)',
+    borderRadius: '10px',
+    left: '15px',
+    top: '15px',
+    maxWidth: size || '246px',
+    minWidth: '206px',
+    boxSizing: 'border-box',
+  },
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'light' ? '#fff' : '#171717',
+    top: '-15px !important',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    [`& .${tooltipClasses.tooltip}`]: {
+      padding: '8px 20px',
+      fontSize: '12px',
+      lineHeight: '22px',
+      borderRadius: '10px',
+      left: '10px',
+    },
+  },
+}));
 
 const ZapPage: React.FC<Props> = () => {
   const theme = useTheme();
+  const [windowSize] = useWindowSize();
   const { error, connector, activate, account } = useWeb3React();
   const { handleZapInNativeToken, handleZapInToken, handleZapOut } = useInteractiveContract();
   const { createToast } = useToast();
@@ -339,6 +394,12 @@ const ZapPage: React.FC<Props> = () => {
     type: '',
     id: '',
   });
+
+  const {
+    open: toTokenTooltipOpen,
+    handleCloseTooltip: closeToTokenTooltipOpen,
+    handleOpenTooltip: openToTokenTooltipOpen,
+  } = useTooltip();
 
   const handleToggleSelect = () => {
     setOpenSelect(!openSelect);
@@ -827,7 +888,28 @@ const ZapPage: React.FC<Props> = () => {
 
                 <ExchangeBox>
                   <ExchangeHeader>
-                    <h5>To{fromTokens[0].id === SwapTokenId.JOELP ? ` Token` : ` LP`}</h5>
+                    <h5>To{fromTokens[0].id === SwapTokenId.JOELP ? ` Token (Estimate)` : ` LP (Estimate)`}</h5>
+                    <div
+                      style={{
+                        display: 'flex',
+                      }}
+                    >
+                      <TooltipCustom
+                        open={toTokenTooltipOpen}
+                        onMouseEnter={openToTokenTooltipOpen}
+                        onMouseLeave={closeToTokenTooltipOpen}
+                        title={`Zap can cause slippage. Small amounts only`}
+                        arrow
+                        placement={windowSize > 600 ? 'right' : 'top'}
+                        size="218px"
+                      >
+                        {theme.palette.mode === 'light' ? (
+                          <HelpCircleIcon style={{ marginLeft: '6px' }} />
+                        ) : (
+                          <HelpCircleDarkIcon style={{ marginLeft: '6px' }} />
+                        )}
+                      </TooltipCustom>
+                    </div>
                   </ExchangeHeader>
 
                   {toTokens[0].id === SwapTokenId.JOELP ? (
