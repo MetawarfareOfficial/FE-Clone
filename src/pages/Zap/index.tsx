@@ -389,7 +389,7 @@ const ZapPage: React.FC<Props> = () => {
         });
       } else {
         setExchangeTo({
-          id: exchangeTo.id,
+          id: tokenId,
           value: exchangeFrom.value,
         });
       }
