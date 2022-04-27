@@ -962,6 +962,7 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   useEffect(() => {
+    dispatch(setSelectedName('from'));
     const response = checkSwapSetting();
     setSlippage(response.slippage);
     setDeadline(response.deadline);
