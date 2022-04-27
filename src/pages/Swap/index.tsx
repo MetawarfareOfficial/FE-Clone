@@ -700,41 +700,43 @@ const SwapPage: React.FC<Props> = () => {
   const handleFromMax = () => {
     if (account) {
       const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-      if (currentToken[0]) {
-        let valueIn = '0';
-        if (currentToken[0].id === SwapTokenId.AVAX) {
-          valueIn =
-            Number(currentToken[0].balance) <= 0.01
-              ? '0'
-              : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
-        } else {
-          valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+      if (Number(currentToken[0].balance) > 0) {
+        if (currentToken[0]) {
+          let valueIn = '0';
+          if (currentToken[0].id === SwapTokenId.AVAX) {
+            valueIn =
+              Number(currentToken[0].balance) <= 0.01
+                ? '0'
+                : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
+          } else {
+            valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+          }
+          setExchangeFrom({
+            id: exchangeFrom.id,
+            value: valueIn,
+          });
+          dispatch(setSelectedName('from'));
+          const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+            isExactInput: true,
+            tokenIn: exchangeFrom.id,
+            tokenOut: exchangeTo.id,
+            amount:
+              currentToken[0].id === SwapTokenId.AVAX
+                ? new BigNumber(currentToken[0].balance).minus(0.01).toString()
+                : new BigNumber(currentToken[0].balance).toString(),
+          });
+          handleChangeSwapData({
+            estimatedAmountToken,
+            selectedName: 'from',
+            maxSold,
+            minReceive,
+            tradingFee,
+            priceImpact,
+          });
+          setIsSwapMaxFromToken(true);
         }
-        setExchangeFrom({
-          id: exchangeFrom.id,
-          value: valueIn,
-        });
-        dispatch(setSelectedName('from'));
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: true,
-          tokenIn: exchangeFrom.id,
-          tokenOut: exchangeTo.id,
-          amount:
-            currentToken[0].id === SwapTokenId.AVAX
-              ? new BigNumber(currentToken[0].balance).minus(0.01).toString()
-              : new BigNumber(currentToken[0].balance).toString(),
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'from',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-        });
-        setIsSwapMaxFromToken(true);
+        setIsFirstTime(false);
       }
-      setIsFirstTime(false);
     }
   };
 

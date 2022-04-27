@@ -86,7 +86,19 @@ export const useInteractiveContract = () => {
   const approveToken = async (tokenApproveAddress: string, spender: string) => {
     const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, library.getSigner(account));
     try {
-      return await contract.functions.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
+      const gasLimit = await contract.estimateGas.approve(
+        spender,
+        new BN('2').pow(new BN('256').minus(new BN('1'))).toString(),
+      );
+      // increase gas limit to 20 %
+      const increasedGasLimit = new BN(gasLimit._hex)
+        .plus(new BN(gasLimit._hex).multipliedBy(20).div(100))
+        .toString()
+        .split('.')[0];
+
+      return await contract.functions.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString(), {
+        gasLimit: increasedGasLimit,
+      });
     } catch (err: any) {
       if (err.code === 4001) throw err;
       throw new Error('Oop! Something went wrong');

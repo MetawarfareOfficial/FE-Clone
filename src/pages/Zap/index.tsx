@@ -257,8 +257,9 @@ const ExchangeIcon = styled(Box)<BoxProps>(() => ({
 const SwapSubmit = styled(Button)<
   ButtonProps & {
     unEnable: boolean;
+    enableMarginTop?: boolean;
   }
->(({ theme, unEnable }) => ({
+>(({ theme, unEnable, enableMarginTop }) => ({
   background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
   border: '1px solid rgba(56, 100, 255, 0.26)',
   boxSizing: 'border-box',
@@ -271,14 +272,14 @@ const SwapSubmit = styled(Button)<
   lineHeight: '33px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: '#fff',
-  marginTop: '7px',
+  marginTop: enableMarginTop ? '33px' : '7px',
   cursor: unEnable ? 'not-allowed !important' : 'pointer',
+  color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#fff',
 
   '&:hover': {
     background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
     border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: '#fff',
+    color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#fff',
     boxShadow: !unEnable && '0px 5px 11px rgba(0, 82, 255, 0.38)',
   },
 
@@ -469,9 +470,6 @@ const ZapPage: React.FC<Props> = () => {
 
   const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
     const { value, name, isOnblur } = event;
-    if (value === '0' && isOnblur) {
-      return;
-    }
     if (isOnblur) {
       if (name === 'from') {
         setExchangeFrom({
@@ -486,7 +484,7 @@ const ZapPage: React.FC<Props> = () => {
       }
     } else {
       if (selectedName === 'from') {
-        if (value !== '' && value !== '0') {
+        if (value !== '' && Number(value) !== 0) {
           setExchangeFrom({
             id: exchangeFrom.id,
             value: value,
@@ -788,6 +786,12 @@ const ZapPage: React.FC<Props> = () => {
     }
   }, [currentTransactionId, zapCompleted]);
 
+  useEffect(() => {
+    if (!account) {
+      handleReset();
+    }
+  }, [account]);
+
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
   const isInvalidInput =
@@ -795,6 +799,15 @@ const ZapPage: React.FC<Props> = () => {
       ? exchangeFrom.value === null || Number(exchangeFrom.value) === 0
       : exchangeTo.value === null || Number(exchangeTo.value) === 0;
   const isInvalidSwap = isInvalidInput || isInsufficientError || isInsufficientLiquidityError;
+  const buttonMarginTop = isInvalidInput
+    ? true
+    : isInsufficientError
+    ? false
+    : isInsufficientLiquidityError
+    ? false
+    : approvedTokens.includes(fromTokens[0].id)
+    ? false
+    : true;
   return (
     <Wrapper>
       <Box sx={{ width: '100%' }}>
@@ -964,6 +977,7 @@ const ZapPage: React.FC<Props> = () => {
                     !isInvalidInput && (
                       <SwapSubmit
                         fullWidth
+                        enableMarginTop={buttonMarginTop}
                         unEnable={isInvalidSwap}
                         onClick={() => {
                           if (!isInvalidSwap) {

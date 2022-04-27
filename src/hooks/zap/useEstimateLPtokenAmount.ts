@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { handleSetIsLiquidityPoolLoaded, handleSetLiquidityPoolData, LiquidityPoolData } from 'services/zap';
 import { useAppDispatch } from 'stores/hooks';
 import min from 'lodash/min';
-import { truncateNumber } from 'helpers/formatPrice';
+import { formatPercent } from 'helpers/formatPrice';
 
 export const useEstimateLPTokenAmount = () => {
   const { account } = useWeb3React();
@@ -30,12 +30,12 @@ export const useEstimateLPTokenAmount = () => {
     avaxAmount: string,
     totalLpSupply: string,
   ) => {
-    const estimateLpTokenByOxb = truncateNumber(
-      new BigNumber(oxbAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(oxbReserve)).toNumber(),
+    const estimateLpTokenByOxb = formatPercent(
+      new BigNumber(oxbAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(oxbReserve)).toString(),
       10,
     );
-    const estimateLpTokenByAvax = truncateNumber(
-      new BigNumber(avaxAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(avaxReserve)).toNumber(),
+    const estimateLpTokenByAvax = formatPercent(
+      new BigNumber(avaxAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(avaxReserve)).toString(),
       10,
     );
     return min([estimateLpTokenByAvax, estimateLpTokenByOxb]);
@@ -131,8 +131,8 @@ export const useEstimateLPTokenAmount = () => {
     } else {
       amountTokenSwapFromOxb = lpTokenToOxbAmount;
     }
-    return truncateNumber(
-      new BigNumber(amountTokenSwapFromAvax).plus(new BigNumber(amountTokenSwapFromOxb)).toNumber(),
+    return formatPercent(
+      new BigNumber(amountTokenSwapFromAvax).plus(new BigNumber(amountTokenSwapFromOxb)).toString(),
       10,
     );
   };
