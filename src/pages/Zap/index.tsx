@@ -451,6 +451,7 @@ const ZapPage: React.FC<Props> = () => {
           value: exchangeFrom.value,
         });
       }
+      setApprovedTokens([]);
     } else {
       setExchangeFrom({
         id: exchangeFrom.id,
@@ -760,6 +761,7 @@ const ZapPage: React.FC<Props> = () => {
       value: '',
     });
     setIsSwapMaxFromToken(false);
+    setApprovedTokens([]);
   };
   useEffect(() => {
     handleCheckIsApproved();
@@ -802,6 +804,7 @@ const ZapPage: React.FC<Props> = () => {
     if (!account) {
       handleResetExchange();
     }
+    setApprovedTokens([]);
   }, [account]);
 
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
@@ -1008,7 +1011,7 @@ const ZapPage: React.FC<Props> = () => {
                     <SwapSubmit
                       fullWidth
                       unEnable={false}
-                      enableMarginTop={buttonMarginTop}
+                      enableMarginTop={isApproved ? buttonMarginTop : true}
                       onClick={() => {
                         handleApproveToken(exchangeFrom.id);
                       }}
