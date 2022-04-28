@@ -1008,6 +1008,7 @@ const ZapPage: React.FC<Props> = () => {
                     <SwapSubmit
                       fullWidth
                       unEnable={false}
+                      enableMarginTop={buttonMarginTop}
                       onClick={() => {
                         handleApproveToken(exchangeFrom.id);
                       }}
