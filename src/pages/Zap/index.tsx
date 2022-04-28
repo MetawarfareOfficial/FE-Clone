@@ -632,7 +632,16 @@ const ZapPage: React.FC<Props> = () => {
       setZapStatus('pending');
       const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
       const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
-      const fromValue = new BigNumber(exchangeFrom.value || 0).toString();
+      let fromValue = '0';
+      if (isSwapMaxFromTokens && fromTokens[0]) {
+        if (fromTokens[0].id === SwapTokenId.AVAX) {
+          fromValue = new BigNumber(fromTokens[0].balance).minus(0.01).toString();
+        } else {
+          fromValue = new BigNumber(fromTokens[0].balance).toString();
+        }
+      } else {
+        fromValue = new BigNumber(exchangeFrom.value || 0).toString();
+      }
       // exec zap
       const transaction = await handleZapOut(toTokens[0].address, fromValue, account!, fromTokens[0].decimal);
       // wait for response
