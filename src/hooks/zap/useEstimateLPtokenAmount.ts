@@ -38,7 +38,8 @@ export const useEstimateLPTokenAmount = () => {
       new BigNumber(avaxAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(avaxReserve)).toString(),
       10,
     );
-    return min([estimateLpTokenByAvax, estimateLpTokenByOxb]);
+
+    return min([Number(estimateLpTokenByAvax), Number(estimateLpTokenByOxb)]);
   };
   const handleEstimateZapInLpTokenAmount = (
     tokenIn: SwapTokenId,
