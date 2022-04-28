@@ -106,7 +106,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
 
       <div className={`toggle-button-cover showMobile ${theme.palette.mode}Mode`}>
         <div className="button-cover">
-          <div className="button b2" id="button-10">
+          <div className="button b2 button-10" id="button-10">
             <input onChange={handleCheckBoxChange} type="checkbox" className="checkbox" />
             <div className="knobs">
               <span>Token price</span>
@@ -119,7 +119,7 @@ const PriceChart: React.FC<Props> = ({ data, heightTotal }) => {
       <ViewChart>
         <div className={`toggle-button-cover showDesktop ${theme.palette.mode}Mode`}>
           <div className="button-cover">
-            <div className="button b2" id="button-10">
+            <div className="button b2 button-10" id="button-10">
               <input onChange={handleCheckBoxChange} type="checkbox" className="checkbox" />
               <div className="knobs">
                 <span>Token price</span>
