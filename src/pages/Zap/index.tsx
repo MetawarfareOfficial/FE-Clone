@@ -741,11 +741,11 @@ const ZapPage: React.FC<Props> = () => {
     dispatch(setZapSelectedName('from'));
     setExchangeFrom({
       id: exchangeTo.id,
-      value: '0',
+      value: '',
     });
     setExchangeTo({
       id: exchangeFrom.id,
-      value: '0',
+      value: '',
     });
     setIsSwapMaxFromToken(false);
   };
