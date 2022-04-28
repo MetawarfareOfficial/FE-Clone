@@ -49,6 +49,13 @@ export const menus = [
     activeIcon: SliderActIcon,
     darkIcon: SliderDarkIcon,
   },
+  {
+    name: 'Stake',
+    path: '/stake',
+    icon: SliderIcon,
+    activeIcon: SliderActIcon,
+    darkIcon: SliderDarkIcon,
+  },
   // {
   //   name: 'Zap',
   //   path: '/zap',
