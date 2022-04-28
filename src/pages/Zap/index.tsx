@@ -410,13 +410,25 @@ const ZapPage: React.FC<Props> = () => {
     setOpenStatus(!openStatus);
   };
 
-  const handleReset = () => {
+  const handleResetExchangeValue = () => {
     setExchangeFrom({
       id: exchangeFrom.id,
       value: '',
     });
     setExchangeTo({
       id: exchangeTo.id,
+      value: '',
+    });
+    setIsFirstTime(true);
+  };
+
+  const handleResetExchange = () => {
+    setExchangeFrom({
+      id: SwapTokenId.AVAX,
+      value: '',
+    });
+    setExchangeTo({
+      id: SwapTokenId.JOELP,
       value: '',
     });
     setIsFirstTime(true);
@@ -777,7 +789,7 @@ const ZapPage: React.FC<Props> = () => {
       setZapStatus('success');
       setOpenStatus(true);
       if (zapCompleted.type !== 'approve') {
-        handleReset();
+        handleResetExchangeValue();
       }
       setZapCompleted({
         id: '',
@@ -788,7 +800,7 @@ const ZapPage: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!account) {
-      handleReset();
+      handleResetExchange();
     }
   }, [account]);
 
@@ -1000,7 +1012,7 @@ const ZapPage: React.FC<Props> = () => {
                         handleApproveToken(exchangeFrom.id);
                       }}
                     >
-                      Approve {exchangeFrom.id.toLocaleUpperCase()}
+                      Approve {exchangeFrom.id !== SwapTokenId.JOELP ? exchangeFrom.id.toLocaleUpperCase() : 'LP'}
                     </SwapSubmit>
                   )
                 ) : (
