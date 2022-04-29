@@ -6,6 +6,7 @@ import MyContract from 'pages/MyContract';
 import Treasury from 'pages/Treasury';
 import SwapPage from 'pages/Swap';
 import ZapPage from 'pages/Zap';
+import StakePage from 'pages/Stake';
 
 const routers = {
   dashboard: {
@@ -38,7 +39,12 @@ const routers = {
     component: SwapPage,
     route: PrivateRoute,
   },
-  // Hide Zap page
+  stake: {
+    exact: true,
+    path: routesConst.STAKE,
+    component: StakePage,
+    route: PrivateRoute,
+  },
   zap: {
     exact: true,
     path: routesConst.ZAP,

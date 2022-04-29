@@ -70,4 +70,11 @@ export const menus = [
     darkIcon: ZapIcon,
     activeDarkIcon: ZapActiveDarkIcon,
   },
+  {
+    name: 'Stake',
+    path: '/stake',
+    icon: SliderIcon,
+    activeIcon: SliderActIcon,
+    darkIcon: SliderDarkIcon,
+  },
 ];
