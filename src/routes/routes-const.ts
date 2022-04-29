@@ -5,6 +5,7 @@ const TREASURY = '/treasury';
 const SWAP = '/swap';
 const PRIVATE_DASHBOARD = '/private-dashboard';
 const ZAP = '/zap';
+const STAKE = '/stake';
 
 export default {
   DASHBOARD,
@@ -14,4 +15,5 @@ export default {
   SWAP,
   PRIVATE_DASHBOARD,
   ZAP,
+  STAKE,
 };
