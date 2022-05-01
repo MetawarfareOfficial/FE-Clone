@@ -14,7 +14,7 @@ interface LineProps {
   color: string;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   background: '#FFFFFF',
   border: '1px solid rgba(41, 50, 71, 0.1)',
@@ -22,6 +22,14 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
   boxShadow: '0px 2px 17px rgba(213, 215, 222, 0.24)',
   borderRadius: '27px 27px 27px 29px',
   padding: '35px 49px 35px 42px',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '34px 30px',
+  },
+
+  '@media(max-width: 320px)': {
+    padding: '26px 20px',
+  },
 }));
 
 const BoxHeader = styled(Box)<BoxProps>(() => ({
@@ -90,6 +98,10 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
     '&:last-child': {
       marginLeft: 'auto',
       textAlign: 'right',
+    },
+
+    '@media(max-width: 320px)': {
+      minWidth: '70px',
     },
   },
 }));
@@ -170,12 +182,12 @@ const PoolCard: React.FC<Props> = ({ onNext }) => {
 
       <BoxActions>
         <Grid container spacing={'39px'}>
-          <Grid item md={6}>
+          <Grid item xs={6}>
             <ButtonStake variant="outlined" fullWidth onClick={onNext}>
               Stake
             </ButtonStake>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={6}>
             <ButtonClaim variant="contained" fullWidth onClick={onNext}>
               Claim
             </ButtonClaim>

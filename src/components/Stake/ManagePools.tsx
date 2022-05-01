@@ -9,14 +9,23 @@ interface Props {
   onNext: () => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 17px',
+    boxSizing: 'border-box',
+  },
 }));
 
-const TabCustom = styled(Box)<BoxProps>(() => ({
+const TabCustom = styled(Box)<BoxProps>(({ theme }) => ({
   margin: '49px auto 65px',
   display: 'flex',
   justifyContent: 'center',
+
+  [theme.breakpoints.down('sm')]: {
+    margin: '51px auto 9px',
+  },
 }));
 
 const ManagePools: React.FC<Props> = ({ onNext }) => {
@@ -44,14 +53,14 @@ const ManagePools: React.FC<Props> = ({ onNext }) => {
       </TabCustom>
 
       <Box>
-        <Grid container spacing={'60px'}>
-          <Grid item md={6}>
+        <Grid container spacing={{ xs: '34px', md: '60px' }}>
+          <Grid item xs={12} sm={6}>
             <PoolCard onNext={onNext} />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6}>
             <PoolCard onNext={onNext} />
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6}>
             <PoolCard onNext={onNext} />
           </Grid>
         </Grid>
