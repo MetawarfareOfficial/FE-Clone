@@ -72,6 +72,10 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
         color: theme.palette.mode === 'light' ? ' #293247' : '#4F4F4F',
         margin: '0 5px',
         background: 'none',
+
+        '@media (max-width: 375px)': {
+          margin: 0,
+        },
       },
 
       '.Mui-selected': {

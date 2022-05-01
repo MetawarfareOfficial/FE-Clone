@@ -81,7 +81,7 @@ const ButtonStake = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(() => ({
+const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -107,9 +107,13 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
     outline: 'none',
     boxShadow: 'none',
   },
+
+  [theme.breakpoints.down('lg')]: {
+    marginLeft: '12px',
+  },
 }));
 
-const TableCellHeader = styled(TableCell)<TableCellProps>(() => ({
+const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -120,9 +124,14 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(() => ({
   color: 'rgba(41, 50, 71, 0.7)',
   padding: '19px 32px 15px',
   borderBottom: '1px solid rgba(41, 50, 71, 0.09)',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '10px 16px',
+    fontSize: '12px',
+  },
 }));
 
-const TableCellBody = styled(TableCell)<TableCellProps>(() => ({
+const TableCellBody = styled(TableCell)<TableCellProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -133,6 +142,11 @@ const TableCellBody = styled(TableCell)<TableCellProps>(() => ({
   color: '#293247',
   padding: '18px 32px',
   borderBottom: '1px solid rgba(41, 50, 71, 0.09)',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '10px 16px',
+    fontSize: '14px',
+  },
 }));
 
 const ViewPagination = styled(Box)<BoxProps>(() => ({
