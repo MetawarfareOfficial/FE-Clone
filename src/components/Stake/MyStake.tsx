@@ -4,7 +4,8 @@ import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Button, ButtonProps, IconButton, IconButtonProps, Grid } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
-import { MyStakeCard, TableMyStake, StakeSettingModal, StakeTokensModal, StakeStatusModal, ClaimModal } from './index';
+import { useWindowSize } from 'hooks/useWindowSize';
+import { MyStakeCard, TableMyStake, StakeSettingModal, StakeStatusModal, ClaimModal, ListMyStake } from './index';
 import InputLP from './InputLP';
 import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
@@ -27,11 +28,15 @@ interface Props {
   onBack: () => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   position: 'relative',
   padding: '35px 0 44px',
   boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '44px 14px 37px',
+  },
 }));
 
 const MyStakeHeader = styled(Box)<BoxProps>(() => ({
@@ -39,15 +44,15 @@ const MyStakeHeader = styled(Box)<BoxProps>(() => ({
   marginBottom: '10px',
 }));
 
-const BackButton = styled(IconButton)<IconButtonProps>(() => ({
+const BackButton = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   width: '38px',
   height: '38px',
   padding: '10px',
   boxSizing: 'border-box',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   position: 'absolute',
-  left: '-13px',
-  top: '-10px',
+  left: '3px',
+  top: '0px',
   zIndex: 2000,
 
   '&:hover': {
@@ -198,6 +203,7 @@ const ButtonSubmit = styled(Button)<
 }));
 
 const MyStake: React.FC<Props> = ({ onBack }) => {
+  const [width] = useWindowSize();
   const theme = useTheme();
   const [openSetting, setOpenSetting] = useState(false);
   const [openClaimAll, setOpenClaimAll] = useState(false);
@@ -287,10 +293,10 @@ const MyStake: React.FC<Props> = ({ onBack }) => {
 
       <Box>
         <Grid container spacing={'27px'}>
-          <Grid item md={7}>
+          <Grid item xs={12} md={7}>
             <MyStakeCard onClaimAll={handleToggleClaimAll} />
           </Grid>
-          <Grid item md={5}>
+          <Grid item xs={12} md={5}>
             <SwapBox>
               <SwapHeader>
                 <h4>Stake</h4>
@@ -328,12 +334,20 @@ const MyStake: React.FC<Props> = ({ onBack }) => {
               </ExchangeBox>
             </SwapBox>
           </Grid>
-          <Grid item md={12}>
-            <TableMyStake
-              onClaimAll={handleToggleClaimAll}
-              onClaim={handleToggleClaim}
-              onUnstake={handleToggleUnstake}
-            />
+          <Grid item xs={12}>
+            {width > 768 ? (
+              <TableMyStake
+                onClaimAll={handleToggleClaimAll}
+                onClaim={handleToggleClaim}
+                onUnstake={handleToggleUnstake}
+              />
+            ) : (
+              <ListMyStake
+                onClaimAll={handleToggleClaimAll}
+                onClaim={handleToggleClaim}
+                onUnstake={handleToggleUnstake}
+              />
+            )}
           </Grid>
         </Grid>
       </Box>

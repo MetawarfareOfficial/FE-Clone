@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Button, ButtonProps, Grid } from '@mui/material';
 
 import OxToken from 'assets/images/0x-token.png';
@@ -14,14 +14,23 @@ interface LineProps {
   color: string;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
-  background: '#FFFFFF',
-  border: '1px solid rgba(41, 50, 71, 0.1)',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
+  border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.1)' : 'rgba(255, 255, 255, 0.1)'}`,
   boxSizing: 'border-box',
-  boxShadow: '0px 2px 17px rgba(213, 215, 222, 0.24)',
+  boxShadow:
+    theme.palette.mode === 'light' ? '0px 2px 17px rgba(213, 215, 222, 0.24)' : '0px 2px 17px rgba(17, 18, 19, 0.24)',
   borderRadius: '27px 27px 27px 29px',
   padding: '35px 49px 35px 42px',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '34px 30px',
+  },
+
+  '@media(max-width: 320px)': {
+    padding: '26px 20px',
+  },
 }));
 
 const BoxHeader = styled(Box)<BoxProps>(() => ({
@@ -42,7 +51,7 @@ const ViewIcon = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   marginLeft: '10px',
   fontFamily: 'Poppins',
   fontStyle: 'normal',
@@ -50,7 +59,7 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontSize: '22px',
   lineHeight: '26px',
   letterSpacing: '0.025em',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 }));
 
 const BoxContent = styled(Box)<BoxProps>(() => ({
@@ -90,6 +99,10 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
     '&:last-child': {
       marginLeft: 'auto',
       textAlign: 'right',
+    },
+
+    '@media(max-width: 320px)': {
+      minWidth: '70px',
     },
   },
 }));
@@ -143,6 +156,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
 }));
 
 const PoolCard: React.FC<Props> = ({ onNext }) => {
+  const theme = useTheme();
   return (
     <Wrapper>
       <BoxHeader>
@@ -156,12 +170,12 @@ const PoolCard: React.FC<Props> = ({ onNext }) => {
       </BoxHeader>
 
       <BoxContent>
-        <Line color="rgba(41, 50, 71, 0.7)">
+        <Line color={theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)'}>
           <p>Liquidity</p>
           <p>APR</p>
           <p>Your Stake</p>
         </Line>
-        <Line color="#293247">
+        <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
           <p>$46380</p>
           <p>0%</p>
           <p>600 LP</p>
@@ -170,12 +184,12 @@ const PoolCard: React.FC<Props> = ({ onNext }) => {
 
       <BoxActions>
         <Grid container spacing={'39px'}>
-          <Grid item md={6}>
+          <Grid item xs={6}>
             <ButtonStake variant="outlined" fullWidth onClick={onNext}>
               Stake
             </ButtonStake>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={6}>
             <ButtonClaim variant="contained" fullWidth onClick={onNext}>
               Claim
             </ButtonClaim>

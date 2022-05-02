@@ -9,6 +9,7 @@ import StakeSettingModal from './StakeSettingModal';
 import StakeStatusModal from './StakeStatusModal';
 import StakeTokensModal from './StakeTokensModal';
 import ClaimModal from './ClaimModal';
+import ListMyStake from './ListMyStake';
 
 export {
   PoolCard,
@@ -22,4 +23,5 @@ export {
   StakeStatusModal,
   StakeTokensModal,
   ClaimModal,
+  ListMyStake,
 };
