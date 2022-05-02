@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 
 import {
   Typography,
@@ -18,6 +18,7 @@ import {
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
+import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 
 interface Props {
   open: boolean;
@@ -160,9 +161,9 @@ const ButtonConfirm = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const TotalEarned = styled(Box)<BoxProps>(() => ({
-  background: '#FFFFFF',
-  border: '1px solid rgba(41, 50, 71, 0.09)',
+const TotalEarned = styled(Box)<BoxProps>(({ theme }) => ({
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : 'none',
+  border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.09)' : 'rgba(255, 255, 255, 0.8)'}`,
   boxSizing: 'border-box',
   borderRadius: '11px',
   padding: '16px',
@@ -178,12 +179,12 @@ const TotalEarned = styled(Box)<BoxProps>(() => ({
     lineHeight: '21px',
     textAlign: 'center',
     textTransform: 'capitalize',
-    color: '#595872',
+    color: theme.palette.mode === 'light' ? '#595872' : '#fff',
     margin: '0 auto 16px',
   },
 }));
 
-const Line = styled(Box)<BoxProps>(() => ({
+const Line = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   marginBottom: '24px',
@@ -196,11 +197,12 @@ const Line = styled(Box)<BoxProps>(() => ({
     lineHeight: '26px',
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
-    color: 'rgba(41, 50, 71, 0.8)',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
     margin: 0,
 
     strong: {
       fontWeight: 600,
+      color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : '#fff',
     },
 
     '&:last-child': {
@@ -211,9 +213,20 @@ const Line = styled(Box)<BoxProps>(() => ({
       marginLeft: '0',
     },
   },
+
+  [theme.breakpoints.down('sm')]: {
+    display: 'inline-block',
+    textAlign: 'center',
+    width: '100%',
+    marginBottom: '0',
+
+    p: {
+      marginBottom: '16px',
+    },
+  },
 }));
 
-const UnstakeContent = styled(Box)<BoxProps>(() => ({
+const UnstakeContent = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignContent: 'center',
   padding: '9px 11px',
@@ -230,7 +243,7 @@ const UnstakeContent = styled(Box)<BoxProps>(() => ({
       alignItems: 'center',
       textAlign: 'center',
       textTransform: 'capitalize',
-      color: 'rgba(41, 50, 71, 0.8)',
+      color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
       margin: '0 0 9px',
     },
 
@@ -243,7 +256,7 @@ const UnstakeContent = styled(Box)<BoxProps>(() => ({
       alignItems: 'center',
       textAlign: 'center',
       textTransform: 'capitalize',
-      color: '#293247',
+      color: theme.palette.mode === 'light' ? '#293247' : '#fff',
       margin: 0,
     },
 
@@ -253,7 +266,7 @@ const UnstakeContent = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const Description = styled(Box)<BoxProps>(() => ({
+const Description = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   paddingLeft: '17px',
@@ -272,12 +285,14 @@ const Description = styled(Box)<BoxProps>(() => ({
     fontSize: '14px',
     lineHeight: '26px',
     textTransform: 'capitalize',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     margin: 0,
   },
 }));
 
 const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm }) => {
+  const theme = useTheme();
+
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
@@ -333,7 +348,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm }) => {
           </>
         ) : (
           <Description>
-            <WarnIcon />
+            {theme.palette.mode === 'light' ? <WarnIcon /> : <WarnDarkIcon />}
             <p>
               If you unstake before 30 days,
               <br /> you will be charged 5% on your unstake amount
