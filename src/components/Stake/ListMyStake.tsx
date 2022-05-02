@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, BoxProps, Button, ButtonProps, Grid } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { Box, BoxProps, Button, ButtonProps, Grid, Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
 
 import PaginationCustom from './Pagination';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
+import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 
 interface Props {
   onClaimAll: () => void;
@@ -11,9 +12,9 @@ interface Props {
   onUnstake: (index: any) => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
-  background: '#FFFFFF',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
   border: '1px solid rgba(41, 50, 71, 0.12)',
   boxSizing: 'border-box',
   boxShadow: '0px 2px 30px rgba(56, 100, 255, 0.03)',
@@ -35,7 +36,7 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
   boxShadow: 'none',
   padding: '6px 10px',
   width: '206px',
-  margin: '24px auto',
+  margin: '0 auto',
   display: 'block',
 
   '&:disabled': {
@@ -70,6 +71,11 @@ const ButtonStake = styled(Button)<ButtonProps>(() => ({
     borderColor: '#3864FF',
     color: '#fff',
   },
+
+  '@media(max-width: 320px)': {
+    width: 'auto',
+    fontSize: '18px',
+  },
 }));
 
 const ButtonClaim = styled(Button)<ButtonProps>(() => ({
@@ -99,6 +105,12 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
     outline: 'none',
     boxShadow: 'none',
   },
+
+  '@media(max-width: 320px)': {
+    marginLeft: '15px',
+    width: 'auto',
+    fontSize: '18px',
+  },
 }));
 
 const CardItem = styled(Box)<BoxProps>(() => ({
@@ -107,9 +119,13 @@ const CardItem = styled(Box)<BoxProps>(() => ({
   padding: '40px',
   boxSizing: 'border-box',
   textAlign: 'center',
+
+  '@media(max-width: 320px)': {
+    padding: '30px 24px',
+  },
 }));
 
-const Detail = styled(Box)<BoxProps>(() => ({
+const Detail = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   textAlign: 'center',
   marginBottom: '40px',
@@ -122,7 +138,7 @@ const Detail = styled(Box)<BoxProps>(() => ({
     lineHeight: '17px',
     letterSpacing: '0.025em',
     textTransform: 'uppercase',
-    color: 'rgba(41, 50, 71, 0.7)',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)',
     margin: '0 auto 18px',
   },
 
@@ -133,7 +149,7 @@ const Detail = styled(Box)<BoxProps>(() => ({
     fontSize: '16px',
     lineHeight: '19px',
     letterSpacing: '0.025em',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     margin: '0',
   },
 }));
@@ -144,6 +160,42 @@ const ViewPagination = styled(Box)<BoxProps>(() => ({
   display: 'flex',
   justifyContent: 'center',
   padding: '36px 0 47px',
+}));
+
+const ListAction = styled(Box)<BoxProps>(() => ({
+  padding: '24px',
+  boxSizing: 'border-box',
+  borderBottom: '0.586653px solid rgba(41, 50, 71, 0.09)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
+    top: '5px !important',
+
+    ['&::before']: {
+      boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+      backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    },
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+    fontFamily: 'Poppins',
+    fontWeight: 'normal',
+    fontSize: '12px',
+    lineHeight: '22px',
+    borderRadius: '7px',
+    padding: '2px 10px',
+    maxWidth: '245px',
+  },
+  zIndex: 1200,
 }));
 
 const dataTable = () => {
@@ -163,12 +215,14 @@ const dataTable = () => {
 };
 
 const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
+  const theme = useTheme();
   const data = dataTable();
   const [records, setRecords] = useState(data.slice(0, 5));
   const [pagination, setPagination] = useState({
     limit: 5,
     index: 0,
   });
+  const [openTooltip, setOpenTooltip] = useState<any>(null);
 
   const handleChangePage = (value: number) => {
     const values = data.slice((value - 1) * pagination.limit, value * pagination.limit);
@@ -179,9 +233,19 @@ const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
     });
   };
 
+  const handleToggleTooltip = (index: number) => {
+    const open: any = {
+      ...openTooltip,
+    };
+    open[index] = open[index] ? !open[index] : true;
+    setOpenTooltip(open);
+  };
+
   return (
     <Wrapper>
-      <ButtonClaimAll onClick={onClaimAll}>Claim All</ButtonClaimAll>
+      <ListAction>
+        <ButtonClaimAll onClick={onClaimAll}>Claim All</ButtonClaimAll>
+      </ListAction>
 
       {records.map((item: any, i: number) => (
         <CardItem key={i}>
@@ -220,7 +284,23 @@ const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
               <Detail>
                 <h4>{''}</h4>
                 <h3>
-                  <WarnIcon />
+                  <TooltipCustom
+                    open={(openTooltip && openTooltip[i]) || false}
+                    title={
+                      <div>
+                        <p>If you unstake before 30 days, you will be charged 5% on your unstake amount</p>
+                        <p>If you unstake before 60 days, you will be charged 2.5% on your unstake amount </p>
+                      </div>
+                    }
+                    arrow
+                    placement="top-end"
+                  >
+                    {theme.palette.mode === 'light' ? (
+                      <WarnIcon width={28} height={28} onClick={() => handleToggleTooltip(i)} />
+                    ) : (
+                      <WarnDarkIcon width={28} height={28} onClick={() => handleToggleTooltip(i)} />
+                    )}
+                  </TooltipCustom>
                 </h3>
               </Detail>
             </Grid>

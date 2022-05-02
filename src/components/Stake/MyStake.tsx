@@ -28,11 +28,15 @@ interface Props {
   onBack: () => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   position: 'relative',
   padding: '35px 0 44px',
   boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '44px 14px 37px',
+  },
 }));
 
 const MyStakeHeader = styled(Box)<BoxProps>(() => ({
@@ -40,15 +44,15 @@ const MyStakeHeader = styled(Box)<BoxProps>(() => ({
   marginBottom: '10px',
 }));
 
-const BackButton = styled(IconButton)<IconButtonProps>(() => ({
+const BackButton = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   width: '38px',
   height: '38px',
   padding: '10px',
   boxSizing: 'border-box',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   position: 'absolute',
-  left: '-13px',
-  top: '-10px',
+  left: '3px',
+  top: '0px',
   zIndex: 2000,
 
   '&:hover': {
