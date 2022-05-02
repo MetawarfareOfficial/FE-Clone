@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
   BoxProps,
@@ -12,9 +12,14 @@ import {
   TableRow,
   Button,
   ButtonProps,
+  Tooltip,
+  TooltipProps,
+  tooltipClasses,
 } from '@mui/material';
 
 import PaginationCustom from './Pagination';
+import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
+import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 
 interface Props {
   title?: string;
@@ -23,10 +28,10 @@ interface Props {
   onUnstake: (index: any) => void;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   overflow: 'hidden',
-  background: '#FFFFFF',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
   border: '1px solid rgba(41, 50, 71, 0.09)',
   boxSizing: 'border-box',
   borderRadius: '11px',
@@ -121,7 +126,7 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
   lineHeight: '17px',
   letterSpacing: '0.025em',
   textTransform: 'uppercase',
-  color: 'rgba(41, 50, 71, 0.7)',
+  color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)',
   padding: '19px 32px 15px',
   borderBottom: '1px solid rgba(41, 50, 71, 0.09)',
 
@@ -139,7 +144,7 @@ const TableCellBody = styled(TableCell)<TableCellProps>(({ theme }) => ({
   lineHeight: '19px',
   letterSpacing: '0.025em',
   textTransform: 'uppercase',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   padding: '18px 32px',
   borderBottom: '1px solid rgba(41, 50, 71, 0.09)',
 
@@ -155,6 +160,34 @@ const ViewPagination = styled(Box)<BoxProps>(() => ({
   display: 'flex',
   justifyContent: 'center',
   padding: '19px 0',
+}));
+
+const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
+    top: '5px !important',
+
+    ['&::before']: {
+      boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+      backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#171717',
+    },
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#171717',
+    boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+    fontFamily: 'Poppins',
+    fontWeight: 'normal',
+    fontSize: '12px',
+    lineHeight: '22px',
+    borderRadius: '7px',
+    padding: '2px 10px',
+    maxWidth: '552px',
+    filter: theme.palette.mode === 'light' ? 'unset' : 'drop-shadow(0px 0px 5px rgba(56, 100, 255, 0.19))',
+  },
+  zIndex: 1200,
 }));
 
 const dataTable = () => {
@@ -174,6 +207,7 @@ const dataTable = () => {
 };
 
 const TableMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
+  const theme = useTheme();
   const data = dataTable();
   const [records, setRecords] = useState(data.slice(0, 5));
   const [pagination, setPagination] = useState({
@@ -218,7 +252,29 @@ const TableMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
                 <TableCellBody align="center">{item.stake_amount}</TableCellBody>
                 <TableCellBody align="center">{item.unstake_amount}</TableCellBody>
                 <TableCellBody align="center">{item.staking_time}</TableCellBody>
-                <TableCellBody align="center">{item.rewards}</TableCellBody>
+                <TableCellBody align="center">
+                  {item.rewards}{' '}
+                  <TooltipCustom
+                    title={
+                      <div>
+                        <p style={{ margin: 0 }}>
+                          If you unstake before 30 days, you will be charged 5% on your unstake amount
+                        </p>
+                        <p style={{ margin: 0 }}>
+                          If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
+                        </p>
+                      </div>
+                    }
+                    arrow
+                    placement="left-start"
+                  >
+                    {theme.palette.mode === 'light' ? (
+                      <WarnIcon width={16} style={{ float: 'right' }} />
+                    ) : (
+                      <WarnDarkIcon width={16} style={{ float: 'right' }} />
+                    )}
+                  </TooltipCustom>
+                </TableCellBody>
                 <TableCellBody align="right">
                   <ButtonStake variant="outlined" onClick={() => onUnstake(item.id)}>
                     Unstake

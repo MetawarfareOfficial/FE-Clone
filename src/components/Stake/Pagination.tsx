@@ -23,7 +23,7 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
         fontSize: '14px',
         lineHeight: '24px',
         textAlign: 'center',
-        color: theme.palette.mode === 'light' ? ' #293247' : '#4F4F4F',
+        color: theme.palette.mode === 'light' ? ' #293247' : '#fff',
         margin: '0 5px',
         background: 'none',
         borderRadius: '6px',
@@ -46,7 +46,7 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
       },
 
       '.MuiPaginationItem-previousNext': {
-        color: '#4F4F4F',
+        color: theme.palette.mode === 'light' ? '#4F4F4F' : '#fff',
         fontWeight: 'bold',
         fontSize: '16px',
         lineHeight: '24px',
@@ -54,7 +54,7 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
           background: 'none',
         },
         '&:active': {
-          background: '#F3F4F6',
+          background: theme.palette.mode === 'light' ? '#F3F4F6' : '#4A4B4E',
           color: '#fff',
         },
       },
@@ -69,7 +69,7 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
         fontSize: '14px',
         lineHeight: '24px',
         textAlign: 'center',
-        color: theme.palette.mode === 'light' ? ' #293247' : '#4F4F4F',
+        color: theme.palette.mode === 'light' ? ' #293247' : '#fff',
         margin: '0 5px',
         background: 'none',
 
@@ -80,8 +80,8 @@ const Wrapper = styled(Pagination)<PaginationProps>(({ theme }) => ({
 
       '.Mui-selected': {
         fontFamily: 'Poppins',
-        background: '#F3F4F6 !important',
-        color: '#293247',
+        background: theme.palette.mode === 'light' ? '#F3F4F6 !important' : '#4A4B4E !important',
+        color: theme.palette.mode === 'light' ? '#293247' : '#fff',
         fontWeight: '400',
         fontSize: '16px',
         lineHeight: '24px',
@@ -103,7 +103,7 @@ const PaginationCustom: React.FC<Props> = ({ total, page, limit, onChange }) => 
     onChange(value);
   };
 
-  return <Wrapper count={count} page={page} onChange={handleChange} />;
+  return <Wrapper count={count} page={page} onChange={handleChange} siblingCount={0} />;
 };
 
 export default PaginationCustom;

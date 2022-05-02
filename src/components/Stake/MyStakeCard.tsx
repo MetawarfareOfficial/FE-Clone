@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 
 import OxToken from 'assets/images/0x-token.png';
@@ -14,12 +14,12 @@ interface LineProps {
   color: string;
 }
 
-const Wrapper = styled(Box)<BoxProps>(() => ({
+const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
-  background: '#FFFFFF',
+  background: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
   border: '1px solid rgba(41, 50, 71, 0.09)',
   boxSizing: 'border-box',
-  boxShadow: '0px 2px 17px rgba(213, 215, 222, 0.24)',
+  boxShadow: theme.palette.mode === 'light' ? '0px 2px 17px rgba(213, 215, 222, 0.24)' : 'unset',
   borderRadius: '11px',
 }));
 
@@ -44,7 +44,7 @@ const ViewIcon = styled(Box)<BoxProps>(() => ({
   },
 }));
 
-const Title = styled(Typography)<TypographyProps>(() => ({
+const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   marginLeft: '10px',
   fontFamily: 'Poppins',
   fontStyle: 'normal',
@@ -52,13 +52,17 @@ const Title = styled(Typography)<TypographyProps>(() => ({
   fontSize: '22px',
   lineHeight: '26px',
   letterSpacing: '0.025em',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 }));
 
-const BoxContent = styled(Box)<BoxProps>(() => ({
+const BoxContent = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   padding: '36px 37px 24px',
   boxSizing: 'border-box',
+
+  [theme.breakpoints.down('sm')]: {
+    padding: '36px 14px 24px',
+  },
 }));
 
 const BoxActions = styled(Box)<BoxProps>(() => ({
@@ -66,7 +70,16 @@ const BoxActions = styled(Box)<BoxProps>(() => ({
   textAlign: 'center',
 }));
 
-const ViewValue = styled(Box)<BoxProps>(() => ({
+const Info = styled(Box)<BoxProps>(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: '16px',
+  },
+}));
+
+const ViewValue = styled(Box)<BoxProps>(({ theme }) => ({
   maxWidth: '476px',
   margin: '0 auto 28px',
   border: '1px solid rgba(41, 50, 71, 0.09)',
@@ -76,6 +89,15 @@ const ViewValue = styled(Box)<BoxProps>(() => ({
   display: 'inline-flex',
   alignItems: 'center',
 
+  [theme.breakpoints.down('sm')]: {
+    display: 'inline-block',
+    maxWidth: '314px',
+  },
+
+  '@media(max-width: 320px)': {
+    maxWidth: '90%',
+  },
+
   h3: {
     fontFamily: 'Poppins',
     fontStyle: 'normal',
@@ -84,8 +106,12 @@ const ViewValue = styled(Box)<BoxProps>(() => ({
     lineHeight: '16px',
     letterSpacing: '0.025em',
     textTransform: 'uppercase',
-    color: 'rgba(41, 50, 71, 0.7)',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)',
     margin: '0 ',
+
+    '@media(max-width: 320px)': {
+      fontSize: '12px',
+    },
   },
 
   h4: {
@@ -95,12 +121,17 @@ const ViewValue = styled(Box)<BoxProps>(() => ({
     fontSize: '16px',
     lineHeight: '19px',
     letterSpacing: '0.025em',
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     margin: '0 0 0 56px',
+
+    '@media(max-width: 320px)': {
+      fontSize: '14px',
+      margin: '0 0 0 24px',
+    },
   },
 }));
 
-const Line = styled(Box)<LineProps>(({ color }) => ({
+const Line = styled(Box)<LineProps>(({ color, theme }) => ({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -128,6 +159,25 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
     '&:last-child': {
       textAlign: 'right',
     },
+
+    [theme.breakpoints.down('sm')]: {
+      width: 'auto',
+      minWidth: '60px',
+      margin: 'auto',
+
+      '&:first-child': {
+        marginLeft: '0',
+      },
+
+      '&:last-child': {
+        marginRight: '0',
+      },
+    },
+
+    '@media(max-width: 320px)': {
+      fontSize: '11px',
+      minWidth: '45px',
+    },
   },
 
   h4: {
@@ -151,10 +201,31 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
     '&:last-child': {
       textAlign: 'right',
     },
+
+    [theme.breakpoints.down('sm')]: {
+      width: 'auto',
+      minWidth: '60px',
+      margin: 'auto',
+      textAlign: 'left',
+
+      '&:first-child': {
+        marginLeft: '0',
+      },
+
+      '&:last-child': {
+        textAlign: 'center',
+        marginRight: '0',
+      },
+    },
+
+    '@media(max-width: 320px)': {
+      fontSize: '13px',
+      minWidth: '45px',
+    },
   },
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(() => ({
+const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -182,9 +253,15 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
     outline: 'none',
     boxShadow: 'none',
   },
+
+  [theme.breakpoints.down('sm')]: {
+    borderRadius: '10px',
+  },
 }));
 
 const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
+  const theme = useTheme();
+
   return (
     <Wrapper>
       <BoxHeader>
@@ -198,13 +275,13 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
       </BoxHeader>
 
       <BoxContent>
-        <Line color="rgba(41, 50, 71, 0.7)">
+        <Line color={theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)'}>
           <p>Liquidity</p>
           <p>APR</p>
           <p>Your Stake</p>
           <p>your share</p>
         </Line>
-        <Line color="#293247">
+        <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
           <h4>$46380</h4>
           <h4>49%</h4>
           <h4>600</h4>
@@ -214,9 +291,11 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
 
       <BoxActions>
         <ViewValue>
-          <h3>rewards</h3>
-          <h4>600xB</h4>
-          <h4>$120</h4>
+          <Info>
+            <h3>rewards</h3>
+            <h4>600xB</h4>
+            <h4>$120</h4>
+          </Info>
           <ButtonClaim variant="contained" onClick={onClaimAll}>
             Claim All
           </ButtonClaim>
