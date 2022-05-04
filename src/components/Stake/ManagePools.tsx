@@ -3,10 +3,18 @@ import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Grid } from '@mui/material';
 
 import { PoolCard } from 'components/Stake';
-
+import { PoolItem } from 'services/staking';
+import { useWeb3React } from '@web3-react/core';
+import { Empty } from 'components/Zap';
+import { pools as defaultPools } from 'consts/stake';
+import { SkeletonPoolCard } from './SkeletonPoolCard';
 interface Props {
   title?: string;
-  onNext: () => void;
+  onNext: (value: number) => void;
+  tabChange: (value: 'myPool' | 'allPool') => void;
+  pools: PoolItem[];
+  onClaimAll: (id: string) => void;
+  currentTab: string;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -28,12 +36,16 @@ const TabCustom = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const ManagePools: React.FC<Props> = ({ onNext }) => {
+const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, currentTab }) => {
   const theme = useTheme();
-
+  const { account } = useWeb3React();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChangeTab = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log('checked: ', event.target.checked);
+    if (event.target.checked) {
+      tabChange('myPool');
+    } else {
+      tabChange('allPool');
+    }
   };
 
   return (
@@ -53,17 +65,39 @@ const ManagePools: React.FC<Props> = ({ onNext }) => {
       </TabCustom>
 
       <Box>
-        <Grid container spacing={{ xs: '34px', md: '60px' }}>
-          <Grid item xs={12} sm={6}>
-            <PoolCard onNext={onNext} />
+        {account ? (
+          <Grid container spacing={{ xs: '34px', md: '60px' }}>
+            {pools.length > 0
+              ? pools.map((item, index) => {
+                  return (
+                    <Grid item xs={12} sm={6} key={index}>
+                      <PoolCard
+                        onClaimAll={() => {
+                          onClaimAll(item.id);
+                        }}
+                        title={item.title}
+                        stakedAmount={item.account === account ? item.yourTotalStakedAmount : '0'}
+                        apr={item.apr}
+                        liquidity={item.liquidity}
+                        onNext={onNext}
+                        id={Number(item.id)}
+                      />
+                    </Grid>
+                  );
+                })
+              : currentTab === 'allPool'
+              ? defaultPools.map((item, index) => {
+                  return (
+                    <Grid item xs={12} sm={6} key={index}>
+                      <SkeletonPoolCard />
+                    </Grid>
+                  );
+                })
+              : ''}
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <PoolCard onNext={onNext} />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <PoolCard onNext={onNext} />
-          </Grid>
-        </Grid>
+        ) : (
+          <Empty />
+        )}
       </Box>
     </Wrapper>
   );

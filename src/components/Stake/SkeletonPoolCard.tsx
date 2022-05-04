@@ -1,19 +1,6 @@
 import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, BoxProps, Typography, TypographyProps, Button, ButtonProps, Grid } from '@mui/material';
-
-import OxToken from 'assets/images/0x-token.png';
-import AvaxToken from 'assets/images/avax-token.png';
-
-interface Props {
-  title: String;
-  onNext: (value: number) => void;
-  liquidity: string;
-  apr: string;
-  stakedAmount: string;
-  id: number;
-  onClaimAll: () => void;
-}
+import { Box, BoxProps, Typography, TypographyProps, Button, ButtonProps, Grid, Skeleton } from '@mui/material';
 
 interface LineProps {
   color: string;
@@ -64,6 +51,8 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontSize: '22px',
   lineHeight: '26px',
   letterSpacing: '0.025em',
+  width: '100%',
+  maxWidth: '100px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 }));
 
@@ -159,19 +148,21 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
     boxShadow: 'none',
   },
 }));
-
-const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount, id, onClaimAll }) => {
+export const SkeletonPoolCard = () => {
   const theme = useTheme();
+
   return (
     <Wrapper>
       <BoxHeader>
         <ViewIcon>
-          <img alt="" src={OxToken} />
+          <Skeleton animation="wave" />
         </ViewIcon>
         <ViewIcon>
-          <img alt="" src={AvaxToken} />
+          <Skeleton animation="wave" />
         </ViewIcon>
-        <Title>{title}</Title>
+        <Title>
+          <Skeleton animation="wave" />
+        </Title>
       </BoxHeader>
 
       <BoxContent>
@@ -181,27 +172,27 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
           <p>Your Stake</p>
         </Line>
         <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <p>${liquidity}</p>
-          <p>{apr}%</p>
-          <p>{stakedAmount} LP</p>
+          <p>
+            <Skeleton animation="wave" />
+          </p>
+          <p>
+            <Skeleton animation="wave" />
+          </p>
+          <p>
+            <Skeleton animation="wave" />
+          </p>
         </Line>
       </BoxContent>
 
       <BoxActions>
         <Grid container spacing={'39px'}>
           <Grid item md={6}>
-            <ButtonStake
-              variant="outlined"
-              fullWidth
-              onClick={() => {
-                onNext(id);
-              }}
-            >
+            <ButtonStake variant="outlined" fullWidth onClick={() => {}}>
               Stake
             </ButtonStake>
           </Grid>
           <Grid item md={6}>
-            <ButtonClaim variant="contained" fullWidth onClick={onClaimAll}>
+            <ButtonClaim variant="contained" fullWidth onClick={() => {}}>
               Claim
             </ButtonClaim>
           </Grid>
@@ -210,5 +201,3 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
     </Wrapper>
   );
 };
-
-export default PoolCard;

@@ -445,13 +445,6 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'bool', name: '_enable', type: 'bool' }],
-    name: 'setEnableAntiBot',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     inputs: [{ internalType: 'bool', name: '_enableCashout', type: 'bool' }],
     name: 'setEnableCashout',
     outputs: [],
@@ -663,20 +656,6 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
     name: 'updateCashoutFee',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateCashoutTaxPool',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateCashoutTaxPool',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

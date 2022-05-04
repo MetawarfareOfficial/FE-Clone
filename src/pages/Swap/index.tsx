@@ -50,7 +50,6 @@ import { setIsOpenSelectWalletModal } from 'services/account';
 import { handleDisableToken, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useLoadTokensBalance } from 'hooks/zap';
-import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 
 interface Props {
   title?: string;
@@ -427,7 +426,6 @@ const SwapPage: React.FC<Props> = () => {
   const tokenList = useAppSelector((state) => state.swap.tokenList);
 
   const { handleGetTokenBalances } = useLoadTokensBalance(tokenList, account);
-  useLoadPairInfo();
   const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
   const isInsufficientError = useAppSelector((state) => state.swap.isInsufficientError);
   const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);

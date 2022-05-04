@@ -44,12 +44,14 @@ import ImportTokenDarkIcon from 'assets/images/bx_dark_import.svg';
 // import ImportTokenIcon from 'assets/images/import-token.svg';
 // import ImportTokenDarkIcon from 'assets/images/import-token-dark.svg';
 import useFetchInforContract from 'hooks/useFetchInforContract';
-import BuyLightIcon from 'assets/images/buy.svg';
 
 import { addAssets } from 'helpers/addAssets';
 import { useAppSelector } from 'stores/hooks';
 import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
 import { useWindowClose } from 'hooks/useWindowClose';
+import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
+import { useLoadLiquidityPoolData } from 'hooks/zap';
+import { useFetchPoolsInfo } from 'hooks/staking';
 // import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 interface Props {
@@ -289,27 +291,28 @@ const ButtonRefresh = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ButtonBuy = styled(Button)<ButtonProps>(({ theme }) => ({
-  textTransform: 'none',
-  fontWeight: '700',
-  fontFamily: 'Poppins',
-  color: '#fff',
-  background: theme.palette.mode === 'light' ? '#3864FF' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
-  borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
-  padding: '8px 35px',
-  borderRadius: '8px',
-  marginBottom: '20px',
-  fontSize: '14px',
-  lineHeight: '21px',
-  width: '152px',
+// const ButtonBuy = styled(Button)<ButtonProps>(({ theme }) => ({
+//   textTransform: 'none',
+//   fontWeight: '700',
+//   fontFamily: 'Poppins',
+//   color: '#fff',
+//   background: theme.palette.mode === 'light' ? '#3864FF' :
+// 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+//   borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
+//   padding: '8px 35px',
+//   borderRadius: '8px',
+//   marginBottom: '20px',
+//   fontSize: '14px',
+//   lineHeight: '21px',
+//   width: '152px',
 
-  '&:hover': {
-    background:
-      theme.palette.mode === 'light' ? '#3864FF' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
-    borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
-    opacity: 0.7,
-  },
-}));
+//   '&:hover': {
+//     background:
+//       theme.palette.mode === 'light' ? '#3864FF' : 'linear-gradient(141.34deg, #2978F4 28.42%, #23ABF8 132.6%)',
+//     borderColor: theme.palette.mode === 'light' ? theme.palette.primary.main : 'rgba(255, 255, 255, 0.43)',
+//     opacity: 0.7,
+//   },
+// }));
 
 const ButtonIconAdd = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.primary[theme.palette.mode],
@@ -551,6 +554,9 @@ const Layout: React.FC<Props> = ({ children }) => {
 
   useFetchInforContract();
   useWindowClose();
+  useLoadPairInfo();
+  useLoadLiquidityPoolData();
+  useFetchPoolsInfo();
 
   if (location.pathname === '/private-dashboard') {
     return <Box sx={{ overflow: 'hidden' }}>{children}</Box>;
@@ -622,28 +628,6 @@ const Layout: React.FC<Props> = ({ children }) => {
                   </SideMenus>
 
                   <SideAction>
-                    <Box>
-                      {open ? (
-                        <ButtonBuy
-                          onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
-                          variant="contained"
-                          color="primary"
-                        >
-                          Buy 0xB
-                        </ButtonBuy>
-                      ) : (
-                        <TooltipCustom title="Buy 0xB" arrow placement="right">
-                          <ButtonIconAdd
-                            onClick={() => window.open('https://traderjoexyz.com/home', '_blank')}
-                            variant="outlined"
-                            color="primary"
-                          >
-                            <img className="addImg" alt="import token icon" src={BuyLightIcon} />
-                          </ButtonIconAdd>
-                        </TooltipCustom>
-                      )}
-                    </Box>
-
                     <Box>
                       {open ? (
                         <ButtonRefresh

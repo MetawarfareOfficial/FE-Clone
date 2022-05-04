@@ -5,14 +5,19 @@ import { Box, BoxProps, Button, ButtonProps, IconButton, IconButtonProps, Grid }
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 import { useWindowSize } from 'hooks/useWindowSize';
-import { MyStakeCard, TableMyStake, StakeSettingModal, StakeStatusModal, ClaimModal, ListMyStake } from './index';
+import { MyStakeCard, TableMyStake, StakeSettingModal, StakeStatusModal, ListMyStake } from './index';
 import InputLP from './InputLP';
 import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 
-import Lottie from 'react-lottie';
-
 import animationData from 'lotties/loading-button.json';
+import { PoolItem } from 'services/staking';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { useAppSelector } from 'stores/hooks';
+import { formatPercent } from 'helpers/formatPrice';
+import { useSwapToken } from 'hooks/swap';
+import { useInteractiveContract } from 'hooks/useInteractiveContract';
+import { useHistory } from 'react-router-dom';
 
 const defaultOptions = {
   loop: true,
@@ -26,6 +31,11 @@ const defaultOptions = {
 interface Props {
   title?: string;
   onBack: () => void;
+  data: PoolItem;
+  handleToggleClaimAll: () => void;
+  handleToggleClaimOne: (index: number) => void;
+  handleToggleUnstake: (index: number) => void;
+  handleGetTokenBalances: () => void;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -115,6 +125,16 @@ const ExchangeBox = styled(Box)<BoxProps>(() => ({
   width: '100%',
 }));
 
+const ErrorText = styled(Box)<BoxProps>(() => ({
+  width: '100%',
+  textAlign: 'center',
+  marginBottom: '8px',
+  color: '#FF0000',
+  fontSize: '14px',
+  lineHeight: '120x%',
+  fontWeight: '400',
+}));
+
 const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   display: 'flex',
@@ -144,7 +164,11 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const ButtonGetLpToken = styled(Button)<ButtonProps>(() => ({
+const ButtonGetLpToken = styled(Button)<
+  ButtonProps & {
+    isError: boolean;
+  }
+>(({ isError }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -153,7 +177,7 @@ const ButtonGetLpToken = styled(Button)<ButtonProps>(() => ({
   letterSpacing: '0.025em',
   color: '#3864FF',
   textTransform: 'capitalize',
-  margin: '17px auto 32px',
+  margin: !isError ? '17px auto 32px' : '17px auto 1px',
   display: 'block',
 
   '&:hover': {
@@ -202,35 +226,50 @@ const ButtonSubmit = styled(Button)<
   },
 }));
 
-const MyStake: React.FC<Props> = ({ onBack }) => {
+const MyStake: React.FC<Props> = ({
+  onBack,
+  data,
+  handleToggleClaimAll,
+  handleToggleClaimOne,
+  handleToggleUnstake,
+  handleGetTokenBalances,
+}) => {
+  const history = useHistory();
+
   const [width] = useWindowSize();
+  const { approveToken } = useSwapToken(false);
+  const { stakeLp } = useInteractiveContract();
   const theme = useTheme();
   const [openSetting, setOpenSetting] = useState(false);
-  const [openClaimAll, setOpenClaimAll] = useState(false);
+  // const [openClaimAll, setOpenClaimAll] = useState(false);
+  // const [disabledStake, setDisabledStake] = useState(false);
+  const [tokenApproved, setTokenApproved] = useState(false);
+  const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
-  const [disabledStake, setDisabledStake] = useState(false);
-  const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
-  const [status, setStatus] = useState<any>(null);
+
+  const [lpTokenInput, setLpTokenInput] = useState('0');
+  // const [isFirstTime, setIsFirstTime] = useState(true);
+
+  // const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
+  const [status, setStatus] = useState<'success' | 'error' | 'pending' | null>(null);
+
   const [deadline, setDeadline] = useState('10');
-  const [submitting, setSubmitting] = useState(false);
+  const [currentAction, setCurrentAction] = useState('stake');
 
-  useEffect(() => {
-    if (status === 'pending') {
-      setTimeout(() => {
-        setStatus('success');
-      }, 3000);
-    }
-  }, [status]);
+  const lpToken = useAppSelector((state) => state.stake.lpToken);
 
-  useEffect(() => {
-    if (submitting) {
-      setTimeout(() => {
-        setSubmitting(false);
-      }, 3000);
-    }
-  }, [submitting]);
+  const [currentTransactionId, setCurrenTransactionId] = useState({
+    type: '',
+    id: '',
+  });
+  const [zapCompleted, setZapCompleted] = useState({
+    type: '',
+    id: '',
+  });
 
-  const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {};
+  const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
+    setLpTokenInput(event.value);
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSetSlippage = (value: string) => {};
@@ -246,42 +285,98 @@ const MyStake: React.FC<Props> = ({ onBack }) => {
     setOpenStatus(!openStatus);
   };
 
-  const handleToggleClaimAll = () => {
-    setClaimType('claim_all');
-    setOpenClaimAll(!openClaimAll);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleToggleClaim = (id: any) => {
-    setClaimType('claim');
-    setOpenClaimAll(!openClaimAll);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleToggleUnstake = (id: any) => {
-    setClaimType('unstake');
-    setOpenClaimAll(!openClaimAll);
-  };
-
-  const handleConfirmClaim = () => {
-    setOpenClaimAll(false);
-    setStatus('pending');
-    setOpenStatus(true);
-  };
-
-  const handleNextStatus = () => {
-    if (!status) {
+  const handleApproveToken = async () => {
+    try {
+      setCurrentAction('approve');
+      handleToggleStatus();
       setStatus('pending');
-    } else if (status === 'pending') {
-      setStatus('success');
-    } else {
+      const response = await approveToken(
+        String(process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS),
+        String(process.env.REACT_APP_STAKING_MANAGER),
+      );
+      if (response.hash) {
+        setCurrenTransactionId({
+          id: response.hash,
+          type: 'approve',
+        });
+        await response.wait();
+        setZapCompleted({
+          type: 'approve',
+          id: response.hash,
+        });
+        setTokenApproved(true);
+        handleGetTokenBalances();
+      }
+    } catch (error: any) {
       setStatus('error');
     }
   };
 
-  const handleApprove = () => {
-    setSubmitting(true);
+  const handleStakeLp = async () => {
+    if (lpTokenInput && lpTokenInput !== '' && Number(lpTokenInput) !== 0) {
+      try {
+        setCurrentAction('stake');
+        handleToggleStatus();
+        setStatus('pending');
+        const response = await stakeLp(data.id, lpTokenInput);
+        if (response.hash) {
+          setCurrenTransactionId({
+            id: response.hash,
+            type: 'stake',
+          });
+          await response.wait();
+          setZapCompleted({
+            type: 'stake',
+            id: response.hash,
+          });
+          setTokenApproved(true);
+          handleGetTokenBalances();
+        }
+      } catch (error: any) {
+        setStatus('error');
+      }
+    }
   };
+  const handleResetInputValue = () => {
+    setLpTokenInput('');
+    // setIsFirstTime(true);
+  };
+
+  useEffect(() => {
+    if (currentTransactionId.id !== '' && currentTransactionId.id === zapCompleted.id) {
+      setStatus('success');
+      setOpenStatus(true);
+      if (zapCompleted.type !== 'approve') {
+        handleResetInputValue();
+      }
+      setZapCompleted({
+        id: '',
+        type: '',
+      });
+    }
+  }, [currentTransactionId, zapCompleted]);
+
+  const handleCheckIsApproved = () => {
+    if (isSwapMaxFromTokens) {
+      if (Number(lpToken.allowance) !== 0 && Number(lpToken.allowance) >= Number(lpToken.balance)) {
+        setTokenApproved(true);
+      } else {
+        setTokenApproved(false);
+      }
+    } else {
+      if (Number(lpToken.allowance) !== 0 && Number(lpToken.allowance) >= Number(lpTokenInput)) {
+        setTokenApproved(true);
+      } else {
+        setTokenApproved(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleCheckIsApproved();
+  }, [lpTokenInput, lpToken]);
+
+  const isInsufficientError = Number(lpTokenInput) > Number(lpToken.balance);
 
   return (
     <Wrapper>
@@ -294,7 +389,7 @@ const MyStake: React.FC<Props> = ({ onBack }) => {
       <Box>
         <Grid container spacing={'27px'}>
           <Grid item xs={12} md={7}>
-            <MyStakeCard onClaimAll={handleToggleClaimAll} />
+            <MyStakeCard data={data} onClaimAll={handleToggleClaimAll} />
           </Grid>
           <Grid item xs={12} md={5}>
             <SwapBox>
@@ -309,44 +404,47 @@ const MyStake: React.FC<Props> = ({ onBack }) => {
               <ExchangeBox>
                 <ExchangeHeader>
                   <h5>LP Token Balance</h5>
-                  <p>500 LP</p>
+                  <p>
+                    {formatForNumberLessThanCondition({
+                      value: lpToken.balance,
+                      addLessThanSymbol: true,
+                      minValueCondition: '0.000001',
+                      callback: formatPercent,
+                      callBackParams: [6],
+                    })}{' '}
+                    LP
+                  </p>
                 </ExchangeHeader>
 
                 <InputLP disabled={false} value={null} onChange={handleChange} name="to" />
 
-                <ButtonGetLpToken variant="text">{'Get LP Token ->'}</ButtonGetLpToken>
-
+                <ButtonGetLpToken
+                  isError={isInsufficientError}
+                  onClick={() => {
+                    history.push('/zap');
+                  }}
+                  variant="text"
+                >
+                  {'Get LP Token ->'}
+                </ButtonGetLpToken>
+                {isInsufficientError && <ErrorText>Insufficient balance</ErrorText>}
                 <ButtonSubmit
-                  loading={submitting}
+                  loading={false}
                   fullWidth
                   unEnable={false}
-                  disabled={disabledStake}
-                  onClick={handleApprove}
+                  disabled={false}
+                  onClick={tokenApproved ? handleStakeLp : handleApproveToken}
                 >
-                  {submitting ? (
-                    <Lottie options={defaultOptions} height={33} width={33} />
-                  ) : disabledStake ? (
-                    'Enter Amount'
-                  ) : (
-                    'Approve'
-                  )}
+                  {tokenApproved ? 'Stake' : 'Approve'}
                 </ButtonSubmit>
               </ExchangeBox>
             </SwapBox>
           </Grid>
           <Grid item xs={12}>
             {width > 768 ? (
-              <TableMyStake
-                onClaimAll={handleToggleClaimAll}
-                onClaim={handleToggleClaim}
-                onUnstake={handleToggleUnstake}
-              />
+              <TableMyStake data={data.yourAllStakes} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
             ) : (
-              <ListMyStake
-                onClaimAll={handleToggleClaimAll}
-                onClaim={handleToggleClaim}
-                onUnstake={handleToggleUnstake}
-              />
+              <ListMyStake data={data.yourAllStakes} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
             )}
           </Grid>
         </Grid>
@@ -359,13 +457,12 @@ const MyStake: React.FC<Props> = ({ onBack }) => {
         onClose={handleToggleSetting}
       />
 
-      <ClaimModal type={claimType} open={openClaimAll} onClose={handleToggleClaimAll} onConfirm={handleConfirmClaim} />
-
       <StakeStatusModal
+        title={currentAction === 'approve' ? 'Approve Information' : data.title}
         open={openStatus}
         onClose={handleToggleStatus}
         status={status}
-        onNextStatus={handleNextStatus}
+        onNextStatus={() => {}}
       />
     </Wrapper>
   );

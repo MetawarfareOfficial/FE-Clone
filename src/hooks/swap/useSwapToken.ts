@@ -28,7 +28,7 @@ const SwappableToken = {
   [SwapTokenId.JOELP]: [SwapTokenId.OXB],
 };
 
-export const useSwapToken = () => {
+export const useSwapToken = (isSwapPage = true) => {
   const { account } = useWeb3React();
   const { loadRecentTransaction, loadEstimateToken } = useLoadSwapData();
   const {
@@ -196,13 +196,15 @@ export const useSwapToken = () => {
   };
 
   useEffect(() => {
-    loadRecentTransaction();
-    const interval = setInterval(() => {
+    if (isSwapPage) {
       loadRecentTransaction();
-    }, intervalTime);
-    return () => {
-      clearInterval(interval);
-    };
+      const interval = setInterval(() => {
+        loadRecentTransaction();
+      }, intervalTime);
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, [account]);
 
   return {

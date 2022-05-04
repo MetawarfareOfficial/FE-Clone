@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Button, ButtonProps, Grid, Tooltip, TooltipProps, tooltipClasses } from '@mui/material';
 
 import PaginationCustom from './Pagination';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
+import { stakeItem } from 'services/staking';
+import moment from 'moment';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
-  onClaimAll: () => void;
+  title?: string;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
+  data: stakeItem[];
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -21,36 +27,36 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '9px',
 }));
 
-const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: '500',
-  fontSize: '21px',
-  lineHeight: '32px',
-  textAlign: 'center',
-  background: '#3864FF',
-  color: '#fff',
-  textTransform: 'capitalize',
-  height: '51px',
-  borderRadius: '15px',
-  boxShadow: 'none',
-  padding: '6px 10px',
-  width: '206px',
-  margin: '0 auto',
-  display: 'block',
+// const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
+//   fontFamily: 'Poppins',
+//   fontStyle: 'normal',
+//   fontWeight: '500',
+//   fontSize: '21px',
+//   lineHeight: '32px',
+//   textAlign: 'center',
+//   background: '#3864FF',
+//   color: '#fff',
+//   textTransform: 'capitalize',
+//   height: '51px',
+//   borderRadius: '15px',
+//   boxShadow: 'none',
+//   padding: '6px 10px',
+//   width: '206px',
+//   margin: '0 auto',
+//   display: 'block',
 
-  '&:disabled': {
-    background: 'rgba(56, 100, 255, 0.16)',
-    color: '#fff',
-  },
+//   '&:disabled': {
+//     background: 'rgba(56, 100, 255, 0.16)',
+//     color: '#fff',
+//   },
 
-  '&:hover': {
-    background: '#1239C4',
-    color: '#fff',
-    outline: 'none',
-    boxShadow: 'none',
-  },
-}));
+//   '&:hover': {
+//     background: '#1239C4',
+//     color: '#fff',
+//     outline: 'none',
+//     boxShadow: 'none',
+//   },
+// }));
 
 const ButtonStake = styled(Button)<ButtonProps>(() => ({
   fontFamily: 'Poppins',
@@ -162,14 +168,14 @@ const ViewPagination = styled(Box)<BoxProps>(() => ({
   padding: '36px 0 47px',
 }));
 
-const ListAction = styled(Box)<BoxProps>(() => ({
-  padding: '24px',
-  boxSizing: 'border-box',
-  borderBottom: '0.586653px solid rgba(41, 50, 71, 0.09)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+// const ListAction = styled(Box)<BoxProps>(() => ({
+//   padding: '24px',
+//   boxSizing: 'border-box',
+//   borderBottom: '0.586653px solid rgba(41, 50, 71, 0.09)',
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+// }));
 
 const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -198,25 +204,10 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
-const dataTable = () => {
-  const results: any = [];
-  for (let i = 0; i < 41; i++) {
-    results.push({
-      id: i + 1,
-      date: 'Apr 11 2022',
-      stake_amount: '50',
-      unstake_amount: '50',
-      staking_time: '5 Days',
-      rewards: '400',
-    });
-  }
-
-  return results;
-};
-
-const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
+const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
   const theme = useTheme();
-  const data = dataTable();
+  const { account } = useWeb3React();
+
   const [records, setRecords] = useState(data.slice(0, 5));
   const [pagination, setPagination] = useState({
     limit: 5,
@@ -241,11 +232,17 @@ const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
     setOpenTooltip(open);
   };
 
+  useEffect(() => {
+    if (account) {
+      setRecords(data.slice(0, 5));
+    }
+  }, [account, data]);
+
   return (
     <Wrapper>
-      <ListAction>
+      {/* <ListAction>
         <ButtonClaimAll onClick={onClaimAll}>Claim All</ButtonClaimAll>
-      </ListAction>
+      </ListAction> */}
 
       {records.map((item: any, i: number) => (
         <CardItem key={i}>
@@ -253,31 +250,57 @@ const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
             <Grid item xs={6}>
               <Detail>
                 <h4>stake date</h4>
-                <h3>{item.date}</h3>
+                <h3>{moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}</h3>
               </Detail>
             </Grid>
             <Grid item xs={6}>
               <Detail>
                 <h4>stake amount</h4>
-                <h3>{item.stake_amount}</h3>
+                <h3>
+                  {' '}
+                  {formatForNumberLessThanCondition({
+                    value: item.stakedAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}
+                </h3>
               </Detail>
             </Grid>
             <Grid item xs={6}>
               <Detail>
                 <h4>unstaked amount</h4>
-                <h3>{item.unstake_amount}</h3>
+                <h3>
+                  {formatForNumberLessThanCondition({
+                    value: item.unstakedAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}
+                </h3>
               </Detail>
             </Grid>
             <Grid item xs={6}>
               <Detail>
                 <h4>staking time</h4>
-                <h3>{item.staking_time}</h3>
+                <h3>{`${item.stakingTime} days`}</h3>
               </Detail>
             </Grid>
             <Grid item xs={6}>
               <Detail>
                 <h4>rewards 0xB</h4>
-                <h3>{item.staking_time}</h3>
+                <h3>
+                  {' '}
+                  {formatForNumberLessThanCondition({
+                    value: item.reward,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}
+                </h3>
               </Detail>
             </Grid>
             <Grid item xs={6}>
@@ -306,10 +329,10 @@ const ListMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
             </Grid>
             <Grid item xs={12}>
               <Box>
-                <ButtonStake variant="outlined" onClick={() => onUnstake(item.id)}>
+                <ButtonStake variant="outlined" onClick={() => onUnstake(i)}>
                   Unstake
                 </ButtonStake>
-                <ButtonClaim variant="contained" onClick={() => onClaim(item.id)}>
+                <ButtonClaim variant="contained" onClick={() => onClaim(i)}>
                   Claim
                 </ButtonClaim>
               </Box>

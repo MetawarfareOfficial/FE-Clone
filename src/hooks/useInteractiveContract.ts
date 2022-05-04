@@ -7,28 +7,36 @@ import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-mu
 import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
 import {
   contsRewardManagerAbi as rewardRinkebyAbi,
+  stakingScAbi as stakingManagerRinkebyAbi,
   usdcAbi as usdcRinkebyAbi,
-  zapManagerAbi,
+  zapManagerAbi as zapManagerRinkebyAbi,
   zeroXBlockAbi as oxbRinkebyAbi,
 } from 'abis/rinkeby';
 import {
   contsRewardManagerAbi as rewardAvaxAbi,
   usdcAbi as usdcAvaxAbi,
   zeroXBlockAbi as oxbAvaxAbi,
+  zapManagerAbi as zapManagerAvaxAbi,
+  stakingScAbi as stakingManagerAvaxAbi,
 } from 'abis/avalanche';
+import { pools } from 'consts/stake';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
 const zapManagerAddress = process.env.REACT_APP_ZAP_MANAGER || '';
+const stakingManagerAddress = process.env.REACT_APP_STAKING_MANAGER || '';
 
 const OxbAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? oxbRinkebyAbi : oxbAvaxAbi;
 const UsdcAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? usdcRinkebyAbi : usdcAvaxAbi;
 const rewardManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? rewardRinkebyAbi : rewardAvaxAbi;
+const zapManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? zapManagerRinkebyAbi : zapManagerAvaxAbi;
+const stakingManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? stakingManagerRinkebyAbi : stakingManagerAvaxAbi;
 
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, OxbAbi, provider);
 const rewardManagerContractWithoutSigner = new ethers.Contract(rewardManagerAddress, rewardManagerAbi, provider);
 const zapManagerContractWithoutSigner = new ethers.Contract(zapManagerAddress, zapManagerAbi, provider);
+const stakingContractWithoutSigner = new ethers.Contract(stakingManagerAddress, stakingManagerAbi, provider);
 
 const OxbToken = new Token(
   Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
@@ -81,6 +89,11 @@ export const useInteractiveContract = () => {
   const zapManagerContractWithSigner =
     library && account
       ? new ethers.Contract(zapManagerAddress, zapManagerAbi, library.getSigner(account))
+      : zapManagerContractWithoutSigner;
+
+  const stakingManagerContractWithSigner =
+    library && account
+      ? new ethers.Contract(stakingManagerAddress, stakingManagerAbi, library.getSigner(account))
       : zapManagerContractWithoutSigner;
 
   const approveToken = async (tokenApproveAddress: string, spender: string) => {
@@ -422,9 +435,44 @@ export const useInteractiveContract = () => {
     return zapManagerContractWithSigner.zapOut(
       process.env.REACT_APP_ZAP_TYPE,
       process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
-      new BN(amountIn).multipliedBy(Number(`1e${decimal}`)).toString(),
+      new BN(amountIn)
+        .multipliedBy(Number(`1e${decimal}`))
+        .minus('0')
+        .toString(),
       tokenOut,
       receiver,
+    );
+  };
+
+  const getPoolInfo = async (account: string) => {
+    const fetches = pools.map(async (item) => {
+      return {
+        ...(await stakingContractWithoutSigner.pools(item.id)),
+        yourStakedAmounts: await stakingContractWithoutSigner.getUserStakeAmounts(item.id, account),
+        yourRewardAmounts: '0',
+        yourStakingTimes: await stakingContractWithoutSigner.getUserTimestamps(item.id, account),
+        yourUnStakedAmounts: await stakingContractWithoutSigner.getUserUnstakedAmount(item.id, account),
+      };
+    });
+    return Promise.all(fetches);
+  };
+
+  const claimAllStakingReward = async (poolId: string) => {
+    return await stakingManagerContractWithSigner.claimAllReward(poolId);
+  };
+
+  const claimStakingReward = async (poolId: string, index: string) => {
+    return await stakingManagerContractWithSigner.claimReward(poolId, index);
+  };
+
+  const withdrawOne = async (poolId: string, index: string) => {
+    return await stakingManagerContractWithSigner.withdraw(poolId, index, '0');
+  };
+
+  const stakeLp = async (poolId: string, amount: string) => {
+    return await stakingManagerContractWithSigner.deposit(
+      poolId,
+      new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
     );
   };
 
@@ -466,6 +514,11 @@ export const useInteractiveContract = () => {
     handleZapInNativeToken,
     handleZapInToken,
     handleZapOut,
+    getPoolInfo,
+    claimAllStakingReward,
+    claimStakingReward,
+    withdrawOne,
+    stakeLp,
     contractWithSigner,
     provider,
   };

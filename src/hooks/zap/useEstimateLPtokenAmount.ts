@@ -1,28 +1,13 @@
-import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
-import { intervalTime } from 'consts/swap';
-import { loadLiquidityPoolInfo } from 'helpers/zap/loadLiquidityPoolInfo';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
 import { SwapTokenId } from 'hooks/swap';
 import { useLoadSwapData } from 'hooks/swap/useLoadSwapData';
-import { useEffect } from 'react';
-import { handleSetIsLiquidityPoolLoaded, handleSetLiquidityPoolData, LiquidityPoolData } from 'services/zap';
-import { useAppDispatch } from 'stores/hooks';
-import min from 'lodash/min';
-import { formatPercent } from 'helpers/formatPrice';
+import { LiquidityPoolData } from 'services/zap';
 
 export const useEstimateLPTokenAmount = () => {
-  const { account } = useWeb3React();
   const { loadEstimateToken } = useLoadSwapData();
-  const dispatch = useAppDispatch();
-  const loadLiquidityPoolData = async () => {
-    try {
-      const data = await loadLiquidityPoolInfo();
-      if (data.length > 0) {
-        dispatch(handleSetLiquidityPoolData(data[0]));
-      }
-      dispatch(handleSetIsLiquidityPoolLoaded(true));
-    } catch {}
-  };
+
   const calculateLpToken = (
     avaxReserve: string,
     oxbReserve: string,
@@ -30,16 +15,23 @@ export const useEstimateLPTokenAmount = () => {
     avaxAmount: string,
     totalLpSupply: string,
   ) => {
-    const estimateLpTokenByOxb = formatPercent(
-      new BigNumber(oxbAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(oxbReserve)).toString(),
-      10,
-    );
-    const estimateLpTokenByAvax = formatPercent(
-      new BigNumber(avaxAmount).multipliedBy(new BigNumber(totalLpSupply)).div(new BigNumber(avaxReserve)).toString(),
-      10,
-    );
-
-    return min([Number(estimateLpTokenByAvax), Number(estimateLpTokenByOxb)]);
+    const estimateLpTokenByOxb = new BigNumber(oxbAmount)
+      .multipliedBy(new BigNumber(totalLpSupply))
+      .div(new BigNumber(oxbReserve))
+      .toString();
+    const estimateLpTokenByAvax = new BigNumber(avaxAmount)
+      .multipliedBy(new BigNumber(totalLpSupply))
+      .div(new BigNumber(avaxReserve))
+      .toString();
+    const oxbLargeThanAvax =
+      new BigNumber(estimateLpTokenByOxb).toNumber() > new BigNumber(estimateLpTokenByAvax).toNumber();
+    return formatForNumberLessThanCondition({
+      value: oxbLargeThanAvax ? estimateLpTokenByAvax : estimateLpTokenByOxb,
+      minValueCondition: '0.0000000001',
+      addLessThanSymbol: false,
+      callback: formatPercent,
+      callBackParams: [10],
+    });
   };
   const handleEstimateZapInLpTokenAmount = (
     tokenIn: SwapTokenId,
@@ -119,7 +111,6 @@ export const useEstimateLPTokenAmount = () => {
     } else {
       amountTokenSwapFromAvax = lpTokenToAvaxAmount;
     }
-
     if (tokenOut !== SwapTokenId.OXB) {
       const { estimatedAmountToken: _amountTokenSwapFromOxb } = loadEstimateToken({
         tokenIn: SwapTokenId.OXB,
@@ -132,26 +123,14 @@ export const useEstimateLPTokenAmount = () => {
     } else {
       amountTokenSwapFromOxb = lpTokenToOxbAmount;
     }
-    return formatPercent(
-      new BigNumber(amountTokenSwapFromAvax).plus(new BigNumber(amountTokenSwapFromOxb)).toString(),
-      10,
-    );
+    return formatForNumberLessThanCondition({
+      value: new BigNumber(amountTokenSwapFromAvax).plus(new BigNumber(amountTokenSwapFromOxb)).toString(),
+      minValueCondition: '0.0000000001',
+      addLessThanSymbol: false,
+      callback: formatPercent,
+      callBackParams: [10],
+    });
   };
-
-  useEffect(() => {
-    let interval: NodeJS.Timer;
-    loadLiquidityPoolData();
-    if (account) {
-      interval = setInterval(async () => {
-        await loadLiquidityPoolData();
-      }, intervalTime);
-    }
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [account]);
 
   return {
     handleEstimateZapInLpTokenAmount,

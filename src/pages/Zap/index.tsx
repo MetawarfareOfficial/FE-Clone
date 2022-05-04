@@ -28,7 +28,6 @@ import { formatPercent, formatPrice } from 'helpers/formatPrice';
 import { removeCharacterInString } from 'helpers/removeCharacterInString';
 import { getMinAmountTokenToSwap } from 'helpers/swaps';
 import { SwapTokenId, useSwapToken, useTooltip } from 'hooks/swap';
-import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
 import { useEstimateLPTokenAmount } from 'hooks/zap/useEstimateLPtokenAmount';
@@ -354,9 +353,8 @@ const ZapPage: React.FC<Props> = () => {
   const liquidityPoolData = useAppSelector((state) => state.zap.liquidityPoolData);
 
   const { handleGetTokenBalances } = useLoadTokensBalance(tokenList, account, true);
-  useLoadPairInfo();
   const { handleEstimateZapInLpTokenAmount, handleEstimateZapOutLpTokenAmount } = useEstimateLPTokenAmount();
-  const { approveToken } = useSwapToken();
+  const { approveToken } = useSwapToken(false);
 
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const isLiquidityPoolLoaded = useAppSelector((state) => state.zap.isLiquidityPoolLoaded);
@@ -861,7 +859,7 @@ const ZapPage: React.FC<Props> = () => {
                         ? Number(fromTokens[0].balance) > 0
                           ? formatForNumberLessThanCondition({
                               value: fromTokens[0].balance,
-                              minValueCondition: 0.000001,
+                              minValueCondition: '0.000001',
                               callback: formatPrice,
                               callBackParams: [6, 0],
                               addLessThanSymbol: true,

@@ -28,6 +28,7 @@ import ErrorGif from 'assets/images/swap-failed-white.gif';
 import ErrorDarkGif from 'assets/images/swap-failed-dark.gif';
 
 interface Props {
+  title: string;
   open: boolean;
   status: String | null;
   onClose: () => void;
@@ -176,13 +177,13 @@ const ViewTokenLink = styled(Link)<LinkProps>(() => ({
   cursor: 'pointer',
 }));
 
-const StakeStatusModal: React.FC<Props> = ({ open, onClose, status, onNextStatus }) => {
+const StakeStatusModal: React.FC<Props> = ({ open, onClose, status, onNextStatus, title }) => {
   const theme = useTheme();
 
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText> 0xB/AVAX</HeaderText>
+        <HeaderText>{title}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
