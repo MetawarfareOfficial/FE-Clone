@@ -1,7 +1,7 @@
 import Empty from './Empty';
 import InputLP from './InputLP';
-import SwapSettingModal from './SwapSettingModal';
-import SwapStatusModal from './SwapStatusModal';
+import ZapStatusModal from './ZapStatusModal';
 import SwapTokensModal from './SwapTokensModal';
+import PercentSelects from './PercentSelects';
 
-export { Empty, InputLP, SwapSettingModal, SwapStatusModal, SwapTokensModal };
+export { Empty, InputLP, ZapStatusModal as SwapStatusModal, SwapTokensModal, PercentSelects };

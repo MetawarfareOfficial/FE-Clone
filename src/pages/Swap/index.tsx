@@ -35,7 +35,6 @@ import {
 } from 'components/Swap';
 import { SwapRoute } from 'components/Swap/SwapRoute';
 import { injected } from 'connectors';
-import { getBalanceIntervalTime } from 'consts/swap';
 import { addEthereumChain } from 'helpers';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
@@ -48,8 +47,9 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { errorMessage } from 'messages/errorMessages';
 import React, { useEffect, useState } from 'react';
 import { setIsOpenSelectWalletModal } from 'services/account';
-import { handleDisableToken, handleSetTokenBalances, setIsInsufficientError, setSelectedName } from 'services/swap';
+import { handleDisableToken, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { useLoadTokensBalance } from 'hooks/zap';
 
 interface Props {
   title?: string;
@@ -397,9 +397,10 @@ const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const [windowSize] = useWindowSize();
   const { error, connector, activate } = useWeb3React();
-  const { getSwappaleTokens, getSwapTokenBalances, account, handleSwapToken, loadEstimateToken, approveToken } =
-    useSwapToken();
+  const { getSwappableTokens, account, handleSwapToken, loadEstimateToken, approveToken } = useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
+  const { createToast } = useToast();
+
   const {
     open: minReceiveTooltipOpen,
     handleCloseTooltip: closeMinReceiveTooltip,
@@ -423,6 +424,8 @@ const SwapPage: React.FC<Props> = () => {
   } = useTooltip();
 
   const tokenList = useAppSelector((state) => state.swap.tokenList);
+
+  const { handleGetTokenBalances } = useLoadTokensBalance(tokenList, account);
   const recentTransactions = useAppSelector((state) => state.swap.recentTransactions);
   const isInsufficientError = useAppSelector((state) => state.swap.isInsufficientError);
   const isInsufficientLiquidityError = useAppSelector((state) => state.swap.isInsufficientLiquidityError);
@@ -430,7 +433,6 @@ const SwapPage: React.FC<Props> = () => {
   const isLoadEstimateToken = useAppSelector((state) => state.swap.isLoadEstimateToken);
   const dispatch = useAppDispatch();
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
-  const { createToast } = useToast();
   const [slippage, setSlippage] = useState('0.5');
   const [deadline, setDeadline] = useState('10');
   const [isFirstTime, setIsFirstTime] = useState(true);
@@ -696,41 +698,43 @@ const SwapPage: React.FC<Props> = () => {
   const handleFromMax = () => {
     if (account) {
       const currentToken = tokenList.filter((item) => item.id === exchangeFrom.id);
-      if (currentToken[0]) {
-        let valueIn = '0';
-        if (currentToken[0].id === SwapTokenId.AVAX) {
-          valueIn =
-            Number(currentToken[0].balance) <= 0.01
-              ? '0'
-              : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
-        } else {
-          valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+      if (Number(currentToken[0].balance) > 0) {
+        if (currentToken[0]) {
+          let valueIn = '0';
+          if (currentToken[0].id === SwapTokenId.AVAX) {
+            valueIn =
+              Number(currentToken[0].balance) <= 0.01
+                ? '0'
+                : formatPercent(new BigNumber(currentToken[0].balance).minus(0.01).toString(), 10);
+          } else {
+            valueIn = formatPercent(new BigNumber(currentToken[0].balance).toString(), 10);
+          }
+          setExchangeFrom({
+            id: exchangeFrom.id,
+            value: valueIn,
+          });
+          dispatch(setSelectedName('from'));
+          const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
+            isExactInput: true,
+            tokenIn: exchangeFrom.id,
+            tokenOut: exchangeTo.id,
+            amount:
+              currentToken[0].id === SwapTokenId.AVAX
+                ? new BigNumber(currentToken[0].balance).minus(0.01).toString()
+                : new BigNumber(currentToken[0].balance).toString(),
+          });
+          handleChangeSwapData({
+            estimatedAmountToken,
+            selectedName: 'from',
+            maxSold,
+            minReceive,
+            tradingFee,
+            priceImpact,
+          });
+          setIsSwapMaxFromToken(true);
         }
-        setExchangeFrom({
-          id: exchangeFrom.id,
-          value: valueIn,
-        });
-        dispatch(setSelectedName('from'));
-        const { estimatedAmountToken, maxSold, minReceive, tradingFee, priceImpact } = loadEstimateToken({
-          isExactInput: true,
-          tokenIn: exchangeFrom.id,
-          tokenOut: exchangeTo.id,
-          amount:
-            currentToken[0].id === SwapTokenId.AVAX
-              ? new BigNumber(currentToken[0].balance).minus(0.01).toString()
-              : new BigNumber(currentToken[0].balance).toString(),
-        });
-        handleChangeSwapData({
-          estimatedAmountToken,
-          selectedName: 'from',
-          maxSold,
-          minReceive,
-          tradingFee,
-          priceImpact,
-        });
-        setIsSwapMaxFromToken(true);
+        setIsFirstTime(false);
       }
-      setIsFirstTime(false);
     }
   };
 
@@ -744,11 +748,6 @@ const SwapPage: React.FC<Props> = () => {
 
   const handleToggleStatus = () => {
     setOpenStatus(!openStatus);
-  };
-
-  const handleGetTokenBalances = async () => {
-    const newTokens = await getSwapTokenBalances(tokenList);
-    dispatch(handleSetTokenBalances(newTokens));
   };
 
   const handleApproveToken = async (id: SwapTokenId) => {
@@ -963,19 +962,7 @@ const SwapPage: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    handleGetTokenBalances();
-    let getTokenBalancesInterval: NodeJS.Timer;
-    if (account) {
-      getTokenBalancesInterval = setInterval(handleGetTokenBalances, getBalanceIntervalTime);
-    }
-    return () => {
-      if (getTokenBalancesInterval) {
-        clearInterval(getTokenBalancesInterval);
-      }
-    };
-  }, [account]);
-
-  useEffect(() => {
+    dispatch(setSelectedName('from'));
     const response = checkSwapSetting();
     setSlippage(response.slippage);
     setDeadline(response.deadline);
@@ -991,10 +978,10 @@ const SwapPage: React.FC<Props> = () => {
 
   useEffect(() => {
     if (openSelect && isOpenSelectTokenFromModal) {
-      const selectableTokens = getSwappaleTokens(exchangeTo.id, exchangeFrom.id);
+      const selectableTokens = getSwappableTokens(exchangeTo.id, exchangeFrom.id);
       dispatch(handleDisableToken(selectableTokens));
     } else if (openSelect && !isOpenSelectTokenFromModal) {
-      const selectableTokens = getSwappaleTokens(exchangeFrom.id, exchangeTo.id);
+      const selectableTokens = getSwappableTokens(exchangeFrom.id, exchangeTo.id);
       dispatch(handleDisableToken(selectableTokens));
     }
   }, [openSelect, selectedName, exchangeTo.id, exchangeFrom.id, isOpenSelectTokenFromModal]);
@@ -1031,22 +1018,6 @@ const SwapPage: React.FC<Props> = () => {
       });
     }
   }, [currentTransactionId, tokenSwapCompleted]);
-
-  useEffect(() => {
-    const nativeToken = tokenList.filter((item) => item.id === SwapTokenId.AVAX);
-    const OxbToken = tokenList.filter((item) => item.id === SwapTokenId.OXB);
-    const usdcToken = tokenList.filter((item) => item.id === SwapTokenId.USDC);
-    const usdtToken = tokenList.filter((item) => item.id === SwapTokenId.USDT);
-    if (
-      !account &&
-      (Number(nativeToken[0].balance) > 0 ||
-        Number(OxbToken[0].balance) > 0 ||
-        Number(usdcToken[0].balance) > 0 ||
-        Number(usdtToken[0].balance) > 0)
-    ) {
-      handleGetTokenBalances();
-    }
-  }, [tokenList, account]);
 
   const fromTokens = tokenList.filter((item) => item.id === exchangeFrom.id);
   const toTokens = tokenList.filter((item) => item.id === exchangeTo.id);
@@ -1227,7 +1198,7 @@ const SwapPage: React.FC<Props> = () => {
                           onMouseEnter={openTradingFeeTooltip}
                           onMouseLeave={closeTradingFeeTooltip}
                           title={`A portion of each trade (0.3%) goes to traderjoe 
-                          as trading fee and 0.1% goes to marketing wallet`}
+                          as trading fee and 0.1% goes to 0xBlock`}
                           arrow
                           placement={windowSize > 600 ? 'right' : 'top'}
                           size="230px"
@@ -1301,7 +1272,7 @@ const SwapPage: React.FC<Props> = () => {
                               open={routeTooltipOpen}
                               onMouseEnter={openRouteTooltip}
                               onMouseLeave={closeRouteTooltip}
-                              title={`The difference between the market price and estimated price due to trade size`}
+                              title={`Routing through these tokens resulted in the best price for your trade.`}
                               arrow
                               placement={windowSize > 600 ? 'right' : 'top'}
                               size="218px"
@@ -1386,7 +1357,7 @@ const SwapPage: React.FC<Props> = () => {
       <SwapTokensModal
         open={openSelect}
         onClose={handleToggleSelect}
-        tokens={tokenList}
+        tokens={tokenList.filter((item) => item.id !== SwapTokenId.JOELP)}
         onSelect={handelSelectToken}
         active={selectedName === 'from' ? exchangeFrom.id : exchangeTo.id}
       />

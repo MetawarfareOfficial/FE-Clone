@@ -6,4 +6,5 @@ export interface TokenData {
   [SwapTokenId.OXB]: Token;
   [SwapTokenId.USDC]: Token;
   [SwapTokenId.USDT]: Token;
+  [SwapTokenId.JOELP]: Token;
 }

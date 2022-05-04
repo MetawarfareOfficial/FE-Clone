@@ -6,8 +6,13 @@ import OxToken from 'assets/images/0x-token.png';
 import AvaxToken from 'assets/images/avax-token.png';
 
 interface Props {
-  title?: String;
-  onNext: () => void;
+  title: String;
+  onNext: (value: number) => void;
+  liquidity: string;
+  apr: string;
+  stakedAmount: string;
+  id: number;
+  onClaimAll: () => void;
 }
 
 interface LineProps {
@@ -155,7 +160,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const PoolCard: React.FC<Props> = ({ onNext }) => {
+const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount, id, onClaimAll }) => {
   const theme = useTheme();
   return (
     <Wrapper>
@@ -166,7 +171,7 @@ const PoolCard: React.FC<Props> = ({ onNext }) => {
         <ViewIcon>
           <img alt="" src={AvaxToken} />
         </ViewIcon>
-        <Title>0xB/AVAX</Title>
+        <Title>{title}</Title>
       </BoxHeader>
 
       <BoxContent>
@@ -176,21 +181,27 @@ const PoolCard: React.FC<Props> = ({ onNext }) => {
           <p>Your Stake</p>
         </Line>
         <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <p>$46380</p>
-          <p>0%</p>
-          <p>600 LP</p>
+          <p>${liquidity}</p>
+          <p>{apr}%</p>
+          <p>{stakedAmount} LP</p>
         </Line>
       </BoxContent>
 
       <BoxActions>
         <Grid container spacing={'39px'}>
-          <Grid item xs={6}>
-            <ButtonStake variant="outlined" fullWidth onClick={onNext}>
+          <Grid item md={6}>
+            <ButtonStake
+              variant="outlined"
+              fullWidth
+              onClick={() => {
+                onNext(id);
+              }}
+            >
               Stake
             </ButtonStake>
           </Grid>
-          <Grid item xs={6}>
-            <ButtonClaim variant="contained" fullWidth onClick={onNext}>
+          <Grid item md={6}>
+            <ButtonClaim variant="contained" fullWidth onClick={onClaimAll}>
               Claim
             </ButtonClaim>
           </Grid>

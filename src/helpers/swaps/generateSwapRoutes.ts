@@ -20,6 +20,7 @@ export const generateSwapRoutes = (from: SwapTokenId, to: SwapTokenId) => {
       [SwapTokenId.AVAX]: [],
       [SwapTokenId.USDC]: [],
       [SwapTokenId.USDT]: [],
+      [SwapTokenId.JOELP]: [],
     },
     [SwapTokenId.OXB]: {
       [SwapTokenId.AVAX]: [
@@ -61,6 +62,7 @@ export const generateSwapRoutes = (from: SwapTokenId, to: SwapTokenId) => {
         },
       ],
       [SwapTokenId.OXB]: [],
+      [SwapTokenId.JOELP]: [],
     },
     [SwapTokenId.USDC]: {
       [SwapTokenId.OXB]: [
@@ -80,6 +82,7 @@ export const generateSwapRoutes = (from: SwapTokenId, to: SwapTokenId) => {
       [SwapTokenId.AVAX]: [],
       [SwapTokenId.USDC]: [],
       [SwapTokenId.USDT]: [],
+      [SwapTokenId.JOELP]: [],
     },
     [SwapTokenId.USDT]: {
       [SwapTokenId.OXB]: [
@@ -99,6 +102,14 @@ export const generateSwapRoutes = (from: SwapTokenId, to: SwapTokenId) => {
       [SwapTokenId.AVAX]: [],
       [SwapTokenId.USDC]: [],
       [SwapTokenId.USDT]: [],
+      [SwapTokenId.JOELP]: [],
+    },
+    [SwapTokenId.JOELP]: {
+      [SwapTokenId.OXB]: [],
+      [SwapTokenId.AVAX]: [],
+      [SwapTokenId.USDC]: [],
+      [SwapTokenId.USDT]: [],
+      [SwapTokenId.JOELP]: [],
     },
   };
   return routeMap[from][to];

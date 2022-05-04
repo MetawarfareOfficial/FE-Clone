@@ -17,6 +17,7 @@ export enum SwapTokenId {
   OXB = '0xb',
   USDC = 'usdc',
   USDT = 'usdt',
+  JOELP = 'joelp',
 }
 
 const SwappableToken = {
@@ -24,9 +25,10 @@ const SwappableToken = {
   [SwapTokenId.USDC]: [SwapTokenId.OXB],
   [SwapTokenId.AVAX]: [SwapTokenId.OXB],
   [SwapTokenId.USDT]: [SwapTokenId.OXB],
+  [SwapTokenId.JOELP]: [SwapTokenId.OXB],
 };
 
-export const useSwapToken = () => {
+export const useSwapToken = (isSwapPage = true) => {
   const { account } = useWeb3React();
   const { loadRecentTransaction, loadEstimateToken } = useLoadSwapData();
   const {
@@ -171,8 +173,8 @@ export const useSwapToken = () => {
     }
   };
 
-  const getSwappaleTokens = (tokenId: SwapTokenId, selectedToken: SwapTokenId) => {
-    const clonedTokenList = [...tokenList];
+  const getSwappableTokens = (tokenId: SwapTokenId, selectedToken: SwapTokenId) => {
+    const clonedTokenList = [...tokenList.filter((item) => item.id !== SwapTokenId.JOELP)];
     const swappableTokens = SwappableToken[tokenId];
     return clonedTokenList.map((item) => {
       if (item.id == selectedToken) {
@@ -194,17 +196,19 @@ export const useSwapToken = () => {
   };
 
   useEffect(() => {
-    loadRecentTransaction();
-    const interval = setInterval(() => {
+    if (isSwapPage) {
       loadRecentTransaction();
-    }, intervalTime);
-    return () => {
-      clearInterval(interval);
-    };
+      const interval = setInterval(() => {
+        loadRecentTransaction();
+      }, intervalTime);
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, [account]);
 
   return {
-    getSwappaleTokens,
+    getSwappableTokens,
     getSwapTokenBalances,
     handleSwapToken,
     loadEstimateToken,

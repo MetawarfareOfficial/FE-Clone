@@ -4,10 +4,14 @@ import { Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from 
 
 import OxToken from 'assets/images/0x-token.png';
 import AvaxToken from 'assets/images/avax-token.png';
+import { PoolItem } from 'services/staking';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent, formatPrice } from 'helpers/formatPrice';
 
 interface Props {
   title?: String;
   onClaimAll: () => void;
+  data: PoolItem;
 }
 
 interface LineProps {
@@ -259,7 +263,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
+const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
   const theme = useTheme();
 
   return (
@@ -271,7 +275,7 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
         <ViewIcon>
           <img alt="" src={AvaxToken} />
         </ViewIcon>
-        <Title>0xB/AVAX</Title>
+        <Title>{data.title}</Title>
       </BoxHeader>
 
       <BoxContent>
@@ -282,10 +286,27 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
           <p>your share</p>
         </Line>
         <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <h4>$46380</h4>
-          <h4>49%</h4>
-          <h4>600</h4>
-          <h4>50%</h4>
+          <h4>
+            $
+            {formatForNumberLessThanCondition({
+              value: data.liquidity,
+              addLessThanSymbol: true,
+              minValueCondition: '0.000001',
+              callback: formatPercent,
+              callBackParams: [6],
+            })}
+          </h4>
+          <h4>{formatPercent(data.apr, 2)}%</h4>
+          <h4>
+            {formatForNumberLessThanCondition({
+              value: data.yourTotalStakedAmount,
+              addLessThanSymbol: true,
+              minValueCondition: '0.000001',
+              callback: formatPercent,
+              callBackParams: [6],
+            })}
+          </h4>
+          <h4>{formatPercent(data.yourShare)}%</h4>
         </Line>
       </BoxContent>
 
@@ -293,9 +314,28 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll }) => {
         <ViewValue>
           <Info>
             <h3>rewards</h3>
-            <h4>600xB</h4>
-            <h4>$120</h4>
+            <h4>
+              {formatForNumberLessThanCondition({
+                value: data.yourTotalRewardAmount,
+                addLessThanSymbol: true,
+                minValueCondition: '0.000001',
+                callback: formatPercent,
+                callBackParams: [6],
+              })}
+              xB
+            </h4>
+            <h4>
+              $
+              {formatForNumberLessThanCondition({
+                value: data.yourTotalRewardValue,
+                addLessThanSymbol: true,
+                minValueCondition: '0.000001',
+                callback: formatPrice,
+                callBackParams: [6],
+              })}
+            </h4>
           </Info>
+
           <ButtonClaim variant="contained" onClick={onClaimAll}>
             Claim All
           </ButtonClaim>

@@ -1,4 +1,4 @@
-export const intervalTime = 5000;
+export const intervalTime = 10000;
 export const getBalanceIntervalTime = 10000;
 export const getPairsInfoIntervalTime = 10000;
 

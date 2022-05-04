@@ -2,23 +2,13 @@ import { InsufficientReservesError, Percent, TokenAmount, Trade, TradeType } fro
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { recentTransactionQuery } from 'consts/query';
-import { getPairsInfoIntervalTime } from 'consts/swap';
 import { getSwapSettingData } from 'helpers';
 import { convertTraderJoeRouterData, getTraderJoeRouter } from 'helpers/swaps';
-import { useInteractiveContract } from 'hooks/useInteractiveContract';
-import { useToast } from 'hooks/useToast';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import { useEffect, useMemo } from 'react';
-import {
-  setIsInsufficientLiquidityError,
-  setIsLoadEstimateToken,
-  setPairData,
-  setPairInfoLoaded,
-  setRecentTransactions,
-} from 'services/swap';
+import { setIsInsufficientLiquidityError, setIsLoadEstimateToken, setRecentTransactions } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useQuery } from 'urql';
 import { SwapTokenId } from './useSwapToken';
@@ -34,16 +24,15 @@ interface loadEstimateTokenParams {
   tokenIn: SwapTokenId;
   tokenOut: SwapTokenId;
   amount: string;
+  isSubtractFee?: boolean;
 }
 
 export const useLoadSwapData = () => {
-  const { getPairsInfo } = useInteractiveContract();
   const { account } = useWeb3React();
   const pairsData = useAppSelector((state) => state.swap.pairsData);
 
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const dispatch = useAppDispatch();
-  const { createToast } = useToast();
 
   const [recentTransactionResult, reExecuteLoadRecentTransactionQuery] = useQuery({
     query: recentTransactionQuery,
@@ -68,7 +57,13 @@ export const useLoadSwapData = () => {
     dispatch(setRecentTransactions(get(recentTransactionResult, 'data.swaps', [])));
   }, [recentTransactionResult.data]);
 
-  const loadEstimateToken = ({ isExactInput, tokenIn, tokenOut, amount }: loadEstimateTokenParams) => {
+  const loadEstimateToken = ({
+    isExactInput,
+    tokenIn,
+    tokenOut,
+    amount,
+    isSubtractFee = true,
+  }: loadEstimateTokenParams) => {
     const settingData = getSwapSettingData();
 
     try {
@@ -93,16 +88,16 @@ export const useLoadSwapData = () => {
       });
       if (isExactInput) {
         if (isEqual(tokenInRouter, tokenOutRouter)) {
-          const trade = new Trade(
-            tokenInRouter,
-            new TokenAmount(
-              tokenData[tokenIn],
-              new BigNumber(amount)
+          const valueIn = isSubtractFee
+            ? new BigNumber(amount)
                 .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
                 .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
                 .toString()
-                .split('.')[0],
-            ),
+                .split('.')[0]
+            : new BigNumber(amount).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
+          const trade = new Trade(
+            tokenInRouter,
+            new TokenAmount(tokenData[tokenIn], valueIn),
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
@@ -122,16 +117,16 @@ export const useLoadSwapData = () => {
             isExactInput: isExactInput,
           });
         } else {
-          const tradeTokenInToWavax = new Trade(
-            tokenInRouter,
-            new TokenAmount(
-              tokenData[tokenIn],
-              new BigNumber(amount)
+          const valueIn = isSubtractFee
+            ? new BigNumber(amount)
                 .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
                 .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
                 .toString()
-                .split('.')[0],
-            ),
+                .split('.')[0]
+            : new BigNumber(amount).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
+          const tradeTokenInToWavax = new Trade(
+            tokenInRouter,
+            new TokenAmount(tokenData[tokenIn], valueIn),
             TradeType.EXACT_INPUT,
             Number(process.env.REACT_APP_CHAIN_ID),
           );
@@ -245,45 +240,6 @@ export const useLoadSwapData = () => {
       dispatch(setIsLoadEstimateToken(false));
     }
   };
-
-  const handleLoadPairInfo = async () => {
-    try {
-      const [WAVAX_OXB, WAVAX_USDC, WAVAX_USDT] = await getPairsInfo();
-      dispatch(
-        setPairData({
-          [SwapTokenId.OXB]: WAVAX_OXB,
-          [SwapTokenId.AVAX]: WAVAX_OXB,
-          [SwapTokenId.USDC]: WAVAX_USDC,
-          [SwapTokenId.USDT]: WAVAX_USDT,
-        }),
-      );
-      dispatch(setPairInfoLoaded(true));
-    } catch (error: any) {
-      if (error.code === 'NETWORK_ERROR') {
-        createToast({
-          message: errorMessage.NO_NETWORK_ERROR.message,
-          type: 'error',
-        });
-      }
-      createToast({
-        message: error.message,
-        type: 'error',
-      });
-    }
-  };
-
-  useEffect(() => {
-    handleLoadPairInfo();
-    const interval = setInterval(() => {
-      handleLoadPairInfo();
-    }, getPairsInfoIntervalTime);
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, []);
 
   return {
     loadRecentTransaction,

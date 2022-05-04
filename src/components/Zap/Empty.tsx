@@ -19,8 +19,10 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 
 const EmptyContent = styled(Box)<BoxProps>(() => ({}));
 
-const ViewImg = styled(Box)<BoxProps>(() => ({}));
-
+const ViewImg = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+}));
 const Text = styled(Typography)<TypographyProps>(() => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',

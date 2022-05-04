@@ -20,12 +20,17 @@ import {
 import PaginationCustom from './Pagination';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
+import { stakeItem } from 'services/staking';
+import moment from 'moment';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   title?: string;
-  onClaimAll: () => void;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
+  data: stakeItem[];
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -37,34 +42,34 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '11px',
 }));
 
-const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: '500',
-  fontSize: '14px',
-  lineHeight: '21px',
-  textAlign: 'center',
-  background: '#3864FF',
-  color: '#fff',
-  textTransform: 'capitalize',
-  height: '34px',
-  borderRadius: '10px',
-  boxShadow: 'none',
-  padding: '6px 10px',
-  maxWidth: '184px',
+// const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
+//   fontFamily: 'Poppins',
+//   fontStyle: 'normal',
+//   fontWeight: '500',
+//   fontSize: '14px',
+//   lineHeight: '21px',
+//   textAlign: 'center',
+//   background: '#3864FF',
+//   color: '#fff',
+//   textTransform: 'capitalize',
+//   height: '34px',
+//   borderRadius: '10px',
+//   boxShadow: 'none',
+//   padding: '6px 10px',
+//   maxWidth: '184px',
 
-  '&:disabled': {
-    background: 'rgba(56, 100, 255, 0.16)',
-    color: '#fff',
-  },
+//   '&:disabled': {
+//     background: 'rgba(56, 100, 255, 0.16)',
+//     color: '#fff',
+//   },
 
-  '&:hover': {
-    background: '#1239C4',
-    color: '#fff',
-    outline: 'none',
-    boxShadow: 'none',
-  },
-}));
+//   '&:hover': {
+//     background: '#1239C4',
+//     color: '#fff',
+//     outline: 'none',
+//     boxShadow: 'none',
+//   },
+// }));
 
 const ButtonStake = styled(Button)<ButtonProps>(() => ({
   fontFamily: 'Poppins',
@@ -190,30 +195,21 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
-const dataTable = () => {
-  const results: any = [];
-  for (let i = 0; i < 41; i++) {
-    results.push({
-      id: i + 1,
-      date: 'Apr 11 2022',
-      stake_amount: '50',
-      unstake_amount: '50',
-      staking_time: '5 Days',
-      rewards: '400',
-    });
-  }
-
-  return results;
-};
-
-const TableMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
+const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
   const theme = useTheme();
-  const data = dataTable();
+  // const data = dataTable();
+  const { account } = useWeb3React();
   const [records, setRecords] = useState(data.slice(0, 5));
   const [pagination, setPagination] = useState({
     limit: 5,
     index: 0,
   });
+
+  useEffect(() => {
+    if (account) {
+      setRecords(data.slice(0, 5));
+    }
+  }, [account, data]);
 
   useEffect(() => {}, [pagination]);
 
@@ -237,23 +233,40 @@ const TableMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
               <TableCellHeader align="center">unstaked amount</TableCellHeader>
               <TableCellHeader align="center">staking time</TableCellHeader>
               <TableCellHeader align="center">rewards 0xB</TableCellHeader>
-              <TableCellHeader align="right">
-                <ButtonClaimAll variant="contained" fullWidth onClick={onClaimAll}>
-                  Claim All
-                </ButtonClaimAll>
-              </TableCellHeader>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {records.map((item: any, i: number) => (
+            {records.map((item, i: number) => (
               <TableRow key={i}>
-                <TableCellBody align="left">{item.date}</TableCellBody>
-                <TableCellBody align="center">{item.stake_amount}</TableCellBody>
-                <TableCellBody align="center">{item.unstake_amount}</TableCellBody>
-                <TableCellBody align="center">{item.staking_time}</TableCellBody>
+                <TableCellBody align="left">{moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}</TableCellBody>
                 <TableCellBody align="center">
-                  {item.rewards}{' '}
+                  {formatForNumberLessThanCondition({
+                    value: item.stakedAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}
+                </TableCellBody>
+                <TableCellBody align="center">
+                  {formatForNumberLessThanCondition({
+                    value: item.unstakedAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}
+                </TableCellBody>
+                <TableCellBody align="center">{`${item.stakingTime} days`}</TableCellBody>
+                <TableCellBody align="center">
+                  {formatForNumberLessThanCondition({
+                    value: item.reward,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}
                   <TooltipCustom
                     title={
                       <div>
@@ -275,11 +288,22 @@ const TableMyStake: React.FC<Props> = ({ onClaimAll, onClaim, onUnstake }) => {
                     )}
                   </TooltipCustom>
                 </TableCellBody>
+
                 <TableCellBody align="right">
-                  <ButtonStake variant="outlined" onClick={() => onUnstake(item.id)}>
+                  <ButtonStake
+                    variant="outlined"
+                    onClick={() => {
+                      onUnstake(item.id);
+                    }}
+                  >
                     Unstake
                   </ButtonStake>
-                  <ButtonClaim variant="contained" onClick={() => onClaim(item.id)}>
+                  <ButtonClaim
+                    variant="contained"
+                    onClick={() => {
+                      onClaim(item.id);
+                    }}
+                  >
                     Claim
                   </ButtonClaim>
                 </TableCellBody>

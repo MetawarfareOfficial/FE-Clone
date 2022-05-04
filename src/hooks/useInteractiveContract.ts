@@ -7,25 +7,36 @@ import { Multicall, ContractCallResults, ContractCallContext } from 'ethereum-mu
 import { ChainId, Fetcher, Token, WAVAX } from '@traderjoe-xyz/sdk';
 import {
   contsRewardManagerAbi as rewardRinkebyAbi,
+  stakingScAbi as stakingManagerRinkebyAbi,
   usdcAbi as usdcRinkebyAbi,
+  zapManagerAbi as zapManagerRinkebyAbi,
   zeroXBlockAbi as oxbRinkebyAbi,
 } from 'abis/rinkeby';
 import {
   contsRewardManagerAbi as rewardAvaxAbi,
   usdcAbi as usdcAvaxAbi,
   zeroXBlockAbi as oxbAvaxAbi,
+  zapManagerAbi as zapManagerAvaxAbi,
+  stakingScAbi as stakingManagerAvaxAbi,
 } from 'abis/avalanche';
+import { pools } from 'consts/stake';
 
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
+const zapManagerAddress = process.env.REACT_APP_ZAP_MANAGER || '';
+const stakingManagerAddress = process.env.REACT_APP_STAKING_MANAGER || '';
 
 const OxbAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? oxbRinkebyAbi : oxbAvaxAbi;
 const UsdcAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? usdcRinkebyAbi : usdcAvaxAbi;
 const rewardManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? rewardRinkebyAbi : rewardAvaxAbi;
+const zapManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? zapManagerRinkebyAbi : zapManagerAvaxAbi;
+const stakingManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? stakingManagerRinkebyAbi : stakingManagerAvaxAbi;
 
 const provider = new ethers.providers.JsonRpcProvider(getNetWorkRpcUrl());
 const contractWithoutSigner = new ethers.Contract(contractAddress, OxbAbi, provider);
 const rewardManagerContractWithoutSigner = new ethers.Contract(rewardManagerAddress, rewardManagerAbi, provider);
+const zapManagerContractWithoutSigner = new ethers.Contract(zapManagerAddress, zapManagerAbi, provider);
+const stakingContractWithoutSigner = new ethers.Contract(stakingManagerAddress, stakingManagerAbi, provider);
 
 const OxbToken = new Token(
   Number(process.env.REACT_APP_CHAIN_ID) as ChainId,
@@ -69,15 +80,38 @@ export const useInteractiveContract = () => {
     library && account
       ? new ethers.Contract(contractAddress, OxbAbi, library.getSigner(account))
       : contractWithoutSigner;
+
   const rewardManagerContractWithSigner =
     library && account
       ? new ethers.Contract(rewardManagerAddress, rewardManagerAbi, library.getSigner(account))
       : rewardManagerContractWithoutSigner;
 
+  const zapManagerContractWithSigner =
+    library && account
+      ? new ethers.Contract(zapManagerAddress, zapManagerAbi, library.getSigner(account))
+      : zapManagerContractWithoutSigner;
+
+  const stakingManagerContractWithSigner =
+    library && account
+      ? new ethers.Contract(stakingManagerAddress, stakingManagerAbi, library.getSigner(account))
+      : zapManagerContractWithoutSigner;
+
   const approveToken = async (tokenApproveAddress: string, spender: string) => {
     const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, library.getSigner(account));
     try {
-      return await contract.functions.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
+      const gasLimit = await contract.estimateGas.approve(
+        spender,
+        new BN('2').pow(new BN('256').minus(new BN('1'))).toString(),
+      );
+      // increase gas limit to 20 %
+      const increasedGasLimit = new BN(gasLimit._hex)
+        .plus(new BN(gasLimit._hex).multipliedBy(20).div(100))
+        .toString()
+        .split('.')[0];
+
+      return await contract.functions.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString(), {
+        gasLimit: increasedGasLimit,
+      });
     } catch (err: any) {
       if (err.code === 4001) throw err;
       throw new Error('Oop! Something went wrong');
@@ -303,19 +337,27 @@ export const useInteractiveContract = () => {
   };
 
   const swap0xbToExactToken = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
-    return contractWithSigner.functions.swap0xBForExactToken(token, amountOut, amountInMax, deadline);
+    const _amountOut = amountOut.split('.')[0];
+    const _amountInMax = amountInMax.split('.')[0];
+    return contractWithSigner.functions.swap0xBForExactToken(token, _amountOut, _amountInMax, deadline);
   };
 
   const swapExact0xbToToken = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
-    return contractWithSigner.functions.swapExact0xBForToken(token, amountIn, amountOutMin, deadline);
+    const _amountIn = amountIn.split('.')[0];
+    const _amountOutMin = amountOutMin.split('.')[0];
+    return contractWithSigner.functions.swapExact0xBForToken(token, _amountIn, _amountOutMin, deadline);
   };
 
   const swapExactTokenTo0xb = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
-    return contractWithSigner.swapExactTokenFor0xB(token, amountIn, amountOutMin, deadline);
+    const _amountIn = amountIn.split('.')[0];
+    const _amountOutMin = amountOutMin.split('.')[0];
+    return contractWithSigner.swapExactTokenFor0xB(token, _amountIn, _amountOutMin, deadline);
   };
 
   const swapTokenToExact0xb = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
-    return contractWithSigner.swapTokenForExact0xB(token, amountOut, amountInMax, deadline);
+    const _amountOut = amountOut.split('.')[0];
+    const _amountInMax = amountInMax.split('.')[0];
+    return contractWithSigner.swapTokenForExact0xB(token, _amountOut, _amountInMax, deadline);
   };
 
   const swapAVAXForExact0xB = async (
@@ -324,12 +366,15 @@ export const useInteractiveContract = () => {
     amountInMax: string,
     deadline: string,
   ) => {
-    return contractWithSigner.swapAVAXForExact0xB(amountOut, amountInMax, deadline, {
+    const _amountOut = amountOut.split('.')[0];
+    const _amountInMax = amountInMax.split('.')[0];
+    return contractWithSigner.swapAVAXForExact0xB(_amountOut, _amountInMax, deadline, {
       value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };
   const swapExactAVAXFor0xB = async (payableAvaxAmount: string, amountOutMin: string, deadline: string) => {
-    return contractWithSigner.swapExactAVAXFor0xB(amountOutMin, deadline, {
+    const _amountOutMin = amountOutMin.split('.')[0];
+    return contractWithSigner.swapExactAVAXFor0xB(_amountOutMin, deadline, {
       value: ethers.utils.parseEther(payableAvaxAmount),
     });
   };
@@ -363,6 +408,72 @@ export const useInteractiveContract = () => {
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
+  };
+
+  const handleZapInNativeToken = async (amountIn: string, receiver: string) => {
+    return zapManagerContractWithSigner.zapIn(
+      process.env.REACT_APP_ZAP_TYPE,
+      process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+      receiver,
+      {
+        value: ethers.utils.parseEther(amountIn),
+      },
+    );
+  };
+
+  const handleZapInToken = async (tokenIn: string, amountIn: string, receiver: string, decimal: string) => {
+    return zapManagerContractWithSigner.zapInToken({
+      protocolType: process.env.REACT_APP_ZAP_TYPE,
+      from: tokenIn,
+      amount: new BN(amountIn).multipliedBy(Number(`1e${decimal}`)).toString(),
+      to: process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+      receiver,
+    });
+  };
+
+  const handleZapOut = async (tokenOut: string, amountIn: string, receiver: string, decimal: string) => {
+    return zapManagerContractWithSigner.zapOut(
+      process.env.REACT_APP_ZAP_TYPE,
+      process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+      new BN(amountIn)
+        .multipliedBy(Number(`1e${decimal}`))
+        .minus('0')
+        .toString(),
+      tokenOut,
+      receiver,
+    );
+  };
+
+  const getPoolInfo = async (account: string) => {
+    const fetches = pools.map(async (item) => {
+      return {
+        ...(await stakingContractWithoutSigner.pools(item.id)),
+        yourStakedAmounts: await stakingContractWithoutSigner.getUserStakeAmounts(item.id, account),
+        yourRewardAmounts: '0',
+        yourStakingTimes: await stakingContractWithoutSigner.getUserTimestamps(item.id, account),
+        yourUnStakedAmounts: await stakingContractWithoutSigner.getUserUnstakedAmount(item.id, account),
+      };
+    });
+    return Promise.all(fetches);
+  };
+
+  const claimAllStakingReward = async (poolId: string) => {
+    return await stakingManagerContractWithSigner.claimAllReward(poolId);
+  };
+
+  const claimStakingReward = async (poolId: string, index: string) => {
+    return await stakingManagerContractWithSigner.claimReward(poolId, index);
+  };
+
+  const withdrawOne = async (poolId: string, index: string) => {
+    return await stakingManagerContractWithSigner.withdraw(poolId, index, '0');
+  };
+
+  const stakeLp = async (poolId: string, amount: string) => {
+    return await stakingManagerContractWithSigner.deposit(
+      poolId,
+      new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
+    );
   };
 
   return {
@@ -400,6 +511,14 @@ export const useInteractiveContract = () => {
     swapExactAVAXFor0xB,
     swapAVAXForExact0xB,
     getTotalSupply,
+    handleZapInNativeToken,
+    handleZapInToken,
+    handleZapOut,
+    getPoolInfo,
+    claimAllStakingReward,
+    claimStakingReward,
+    withdrawOne,
+    stakeLp,
     contractWithSigner,
     provider,
   };
