@@ -22,6 +22,7 @@ export interface PoolItem {
   lpAddress: string;
   title: string;
   account: string;
+  endTime: string;
 }
 
 interface States {
@@ -31,6 +32,7 @@ interface States {
     allowance: string;
   };
   lpBalanceLoaded: boolean;
+  totalPools: number[] | null;
 }
 
 const initialState: States = {
@@ -40,6 +42,7 @@ const initialState: States = {
     allowance: '0',
   },
   lpBalanceLoaded: false,
+  totalPools: null,
 };
 
 export const stakeSlice = createSlice({
@@ -55,10 +58,13 @@ export const stakeSlice = createSlice({
     setLpBalanceLoaded: (state, action) => {
       state.lpToken = action.payload;
     },
+    setTotalPools: (state, action) => {
+      state.totalPools = action.payload;
+    },
   },
 });
 
-export const { setPools, setLpToken } = stakeSlice.actions;
+export const { setPools, setLpToken, setTotalPools } = stakeSlice.actions;
 
 const { reducer: stakeReducer } = stakeSlice;
 

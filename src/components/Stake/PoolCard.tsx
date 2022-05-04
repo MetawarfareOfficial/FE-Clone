@@ -201,9 +201,11 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
             </ButtonStake>
           </Grid>
           <Grid item md={6}>
-            <ButtonClaim variant="contained" fullWidth onClick={onClaimAll}>
-              Claim
-            </ButtonClaim>
+            {Number(stakedAmount) > 0 && (
+              <ButtonClaim variant="contained" fullWidth onClick={onClaimAll}>
+                Claim
+              </ButtonClaim>
+            )}
           </Grid>
         </Grid>
       </BoxActions>

@@ -51,7 +51,7 @@ import { useCheckEthereumResponse } from 'hooks/useCheckEthereumResponse';
 import { useWindowClose } from 'hooks/useWindowClose';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 import { useLoadLiquidityPoolData } from 'hooks/zap';
-import { useFetchPoolsInfo } from 'hooks/staking';
+import { useFetchPoolsInfo, useFetchTotalStakingPool } from 'hooks/staking';
 // import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 interface Props {
@@ -551,7 +551,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   const handleRefresh = () => {
     window.location.reload();
   };
-
+  useFetchTotalStakingPool();
   useFetchInforContract();
   useWindowClose();
   useLoadPairInfo();

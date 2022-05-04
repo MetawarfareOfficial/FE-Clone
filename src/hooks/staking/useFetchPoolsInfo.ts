@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import { setPools } from 'services/staking';
 import { useAppSelector } from 'stores/hooks';
 import get from 'lodash/get';
-import { poolTitleMap } from 'consts/stake';
 
 export const useFetchPoolsInfo = () => {
   // const [loading, setLoading] = useState(false);
@@ -20,6 +19,8 @@ export const useFetchPoolsInfo = () => {
   const liquidityPoolData = useAppSelector((state) => state.zap.liquidityPoolData);
   const isLiquidityPoolLoaded = useAppSelector((state) => state.zap.isLiquidityPoolLoaded);
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
+  const totalPools = useAppSelector((state) => state.stake.totalPools);
+
   // const globalPools = useAppSelector((state) => state.stake.pools);
 
   const handleLoadPools = async () => {
@@ -55,6 +56,7 @@ export const useFetchPoolsInfo = () => {
           totalStaked: new BigNumber(item.lpAmountInPool._hex).div(1e18).toString(),
           lpPrice: lpToUsdcAmount,
         }),
+        endTime: new BigNumber(item.duration._hex).toString(),
         yourShare: new BigNumber(yourTotalStakedAmount)
           .div(new BigNumber(item.lpAmountInPool._hex).div(1e18))
           .multipliedBy(100)
@@ -73,7 +75,7 @@ export const useFetchPoolsInfo = () => {
           }),
         }),
         lpAddress: String(item['0']).toLocaleLowerCase(),
-        title: poolTitleMap[String(item['0']).toLocaleLowerCase()],
+        title: item.name,
         account,
       };
     });
@@ -81,8 +83,8 @@ export const useFetchPoolsInfo = () => {
   };
 
   useEffect(() => {
-    if (isLiquidityPoolLoaded && pairInfoLoaded && account) {
+    if (isLiquidityPoolLoaded && pairInfoLoaded && account && totalPools) {
       handleLoadPools();
     }
-  }, [liquidityPoolData, isLiquidityPoolLoaded, pairInfoLoaded, account]);
+  }, [liquidityPoolData, isLiquidityPoolLoaded, pairInfoLoaded, account, totalPools]);
 };
