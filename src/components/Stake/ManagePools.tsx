@@ -6,8 +6,9 @@ import { PoolCard } from 'components/Stake';
 import { PoolItem } from 'services/staking';
 import { useWeb3React } from '@web3-react/core';
 import { Empty } from 'components/Zap';
-import { pools as defaultPools } from 'consts/stake';
 import { SkeletonPoolCard } from './SkeletonPoolCard';
+import { useAppSelector } from 'stores/hooks';
+import moment from 'moment';
 interface Props {
   title?: string;
   onNext: (value: number) => void;
@@ -39,6 +40,10 @@ const TabCustom = styled(Box)<BoxProps>(({ theme }) => ({
 const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, currentTab }) => {
   const theme = useTheme();
   const { account } = useWeb3React();
+  const totalPools = useAppSelector((state) => state.stake.totalPools);
+  const activePools = pools.filter((pool) => {
+    return Number(pool.endTime) > moment().unix();
+  });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChangeTab = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -65,10 +70,10 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
       </TabCustom>
 
       <Box>
-        {account ? (
+        {currentTab === 'allPool' && (
           <Grid container spacing={{ xs: '34px', md: '60px' }}>
-            {pools.length > 0
-              ? pools.map((item, index) => {
+            {activePools.length > 0
+              ? activePools.map((item, index) => {
                   return (
                     <Grid item xs={12} sm={6} key={index}>
                       <PoolCard
@@ -85,18 +90,51 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                     </Grid>
                   );
                 })
-              : currentTab === 'allPool'
-              ? defaultPools.map((item, index) => {
+              : (totalPools || []).map((item, index) => {
                   return (
                     <Grid item xs={12} sm={6} key={index}>
                       <SkeletonPoolCard />
                     </Grid>
                   );
-                })
-              : ''}
+                })}
           </Grid>
-        ) : (
-          <Empty />
+        )}
+        {currentTab !== 'allPool' && (
+          <>
+            {account ? (
+              <>
+                {activePools.length > 0 ? (
+                  activePools.map((item, index) => {
+                    return (
+                      <Grid item xs={12} sm={6} key={index}>
+                        <PoolCard
+                          onClaimAll={() => {
+                            onClaimAll(item.id);
+                          }}
+                          title={item.title}
+                          stakedAmount={item.account === account ? item.yourTotalStakedAmount : '0'}
+                          apr={item.apr}
+                          liquidity={item.liquidity}
+                          onNext={onNext}
+                          id={Number(item.id)}
+                        />
+                      </Grid>
+                    );
+                  })
+                ) : (
+                  <p
+                    style={{
+                      textAlign: 'center',
+                    }}
+                  >
+                    No Records Found
+                  </p>
+                )}
+              </>
+            ) : (
+              <Empty title="You need to connect your wallet to see your Pools." />
+            )}
+          </>
         )}
       </Box>
     </Wrapper>

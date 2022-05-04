@@ -1,43 +1,7 @@
 export const stakingScAbi = [
   {
-    anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'contract IERC20Upgradeable', name: 'token', type: 'address' },
-      { indexed: false, internalType: 'address', name: 'to', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
-    ],
-    name: 'ERC20PaymentReleased',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'address', name: 'account', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'shares', type: 'uint256' },
-    ],
-    name: 'PayeeAdded',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'address', name: 'from', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
-    ],
-    name: 'PaymentReceived',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'address', name: 'to', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
-    ],
-    name: 'PaymentReleased',
-    type: 'event',
-  },
-  {
-    inputs: [
+      { internalType: 'string', name: '_name', type: 'string' },
       { internalType: 'address', name: '_token', type: 'address' },
       { internalType: 'uint256', name: '_totalDistribute', type: 'uint256' },
       { internalType: 'uint256', name: '_startTime', type: 'uint256' },
@@ -73,6 +37,23 @@ export const stakingScAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'deb',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint32', name: '_poolId', type: 'uint32' },
+      { internalType: 'uint32', name: '_index', type: 'uint32' },
+    ],
+    name: 'debug',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'uint32', name: '_poolId', type: 'uint32' },
       { internalType: 'uint256', name: '_amount', type: 'uint256' },
@@ -93,6 +74,13 @@ export const stakingScAbi = [
     inputs: [{ internalType: 'uint32', name: '_poolId', type: 'uint32' }],
     name: 'getAPR',
     outputs: [{ internalType: 'uint256', name: 'apr', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getPoolsCount',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -152,13 +140,6 @@ export const stakingScAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: 'index', type: 'uint256' }],
-    name: 'payee',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       { internalType: 'uint32', name: '_poolId', type: 'uint32' },
       { internalType: 'address', name: 'addr', type: 'address' },
@@ -173,6 +154,7 @@ export const stakingScAbi = [
     inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     name: 'pools',
     outputs: [
+      { internalType: 'string', name: 'name', type: 'string' },
       { internalType: 'contract IERC20', name: 'lpToken', type: 'address' },
       { internalType: 'uint256', name: 'lpAmountInPool', type: 'uint256' },
       { internalType: 'uint256', name: 'totalDistribute', type: 'uint256' },
@@ -185,51 +167,10 @@ export const stakingScAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address payable', name: 'account', type: 'address' }],
-    name: 'release',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'contract IERC20Upgradeable', name: 'token', type: 'address' },
-      { internalType: 'address', name: 'account', type: 'address' },
-    ],
-    name: 'release',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'contract IERC20Upgradeable', name: 'token', type: 'address' },
-      { internalType: 'address', name: 'account', type: 'address' },
-    ],
-    name: 'released',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'released',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [{ internalType: 'address', name: '_token', type: 'address' }],
     name: 'setToken',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'shares',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -247,27 +188,6 @@ export const stakingScAbi = [
     inputs: [],
     name: 'token0xBAddress',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'contract IERC20Upgradeable', name: 'token', type: 'address' }],
-    name: 'totalReleased',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'totalReleased',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'totalShares',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -290,11 +210,31 @@ export const stakingScAbi = [
   },
   {
     inputs: [
+      { internalType: 'uint32', name: '', type: 'uint32' },
+      { internalType: 'address', name: '', type: 'address' },
+    ],
+    name: 'userInfo',
+    outputs: [{ internalType: 'uint8', name: 'size', type: 'uint8' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
       { internalType: 'uint32', name: '_poolId', type: 'uint32' },
       { internalType: 'uint32', name: '_index', type: 'uint32' },
-      { internalType: 'uint32', name: '_amount', type: 'uint32' },
+      { internalType: 'uint256', name: '_amount', type: 'uint256' },
     ],
     name: 'withdraw',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint32', name: '_poolId', type: 'uint32' },
+      { internalType: 'uint8[]', name: '_entityIndices', type: 'uint8[]' },
+    ],
+    name: 'withdrawMultiple',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

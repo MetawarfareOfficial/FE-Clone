@@ -35,14 +35,14 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   maxWidth: '321px',
 }));
 
-const Empty: React.FC<Props> = () => {
+const Empty: React.FC<Props> = ({ title = 'You need to connect your wallet to use ZAP feature.' }) => {
   return (
     <Wrapper>
       <EmptyContent>
         <ViewImg>
           <img alt="" src={EmptyIcon} width={264} />
         </ViewImg>
-        <Text variant="body1">You need to connect your wallet to use ZAP feature.</Text>
+        <Text variant="body1">{title}</Text>
       </EmptyContent>
     </Wrapper>
   );

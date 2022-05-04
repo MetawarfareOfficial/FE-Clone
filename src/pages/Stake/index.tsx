@@ -16,10 +16,7 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 }));
 
 const StakePage: React.FC<Props> = () => {
-  // const [step, setStep] = useState(-1);
-  // const { account } = useWeb3React();
   const { claimAllStakingReward, claimStakingReward, withdrawOne } = useInteractiveContract();
-
   const [currentTab, setCurrentTab] = useState<'allPool' | 'myPool'>('allPool');
   const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
   const [status, setStatus] = useState<any>(null);

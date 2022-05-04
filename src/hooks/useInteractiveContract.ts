@@ -449,7 +449,7 @@ export const useInteractiveContract = () => {
       return {
         ...(await stakingContractWithoutSigner.pools(item.id)),
         yourStakedAmounts: await stakingContractWithoutSigner.getUserStakeAmounts(item.id, account),
-        yourRewardAmounts: '0',
+        yourRewardAmounts: await stakingContractWithoutSigner.getUserPendingReward(item.id, account),
         yourStakingTimes: await stakingContractWithoutSigner.getUserTimestamps(item.id, account),
         yourUnStakedAmounts: await stakingContractWithoutSigner.getUserUnstakedAmount(item.id, account),
       };
@@ -474,6 +474,10 @@ export const useInteractiveContract = () => {
       poolId,
       new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
     );
+  };
+
+  const getTotalStakingPools = async () => {
+    return await stakingContractWithoutSigner.getPoolsCount({});
   };
 
   return {
@@ -519,6 +523,7 @@ export const useInteractiveContract = () => {
     claimStakingReward,
     withdrawOne,
     stakeLp,
+    getTotalStakingPools,
     contractWithSigner,
     provider,
   };
