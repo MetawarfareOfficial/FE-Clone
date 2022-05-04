@@ -86,7 +86,7 @@ export interface ExchangeItem {
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
-  height: '100%',
+  // height: '100%',
   boxSizing: 'border-box',
   overflow: 'hidden',
   display: 'flex',
