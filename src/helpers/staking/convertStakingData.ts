@@ -21,6 +21,11 @@ export const convertStakingData = ({ dates, stakedAmounts, rewards, unstakedAmou
           .toString(),
         reward: new BigNumber(reward).div(1e18).toString(),
       };
+    }).map((item, index) => {
+      return {
+        ...item,
+        id: index,
+      };
     });
   }
   return [];

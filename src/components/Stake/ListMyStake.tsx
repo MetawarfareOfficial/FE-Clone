@@ -244,7 +244,7 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
         <ButtonClaimAll onClick={onClaimAll}>Claim All</ButtonClaimAll>
       </ListAction> */}
 
-      {records.map((item: any, i: number) => (
+      {records.map((item, i: number) => (
         <CardItem key={i}>
           <Grid container spacing={'15px'}>
             <Grid item xs={6}>
@@ -329,10 +329,10 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
             </Grid>
             <Grid item xs={12}>
               <Box>
-                <ButtonStake variant="outlined" onClick={() => onUnstake(i)}>
+                <ButtonStake variant="outlined" onClick={() => onUnstake(item.id)}>
                   Unstake
                 </ButtonStake>
-                <ButtonClaim variant="contained" onClick={() => onClaim(i)}>
+                <ButtonClaim variant="contained" onClick={() => onClaim(item.id)}>
                   Claim
                 </ButtonClaim>
               </Box>

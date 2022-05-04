@@ -293,7 +293,7 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                   <ButtonStake
                     variant="outlined"
                     onClick={() => {
-                      onUnstake(i);
+                      onUnstake(item.id);
                     }}
                   >
                     Unstake
@@ -301,7 +301,7 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                   <ButtonClaim
                     variant="contained"
                     onClick={() => {
-                      onClaim(i);
+                      onClaim(item.id);
                     }}
                   >
                     Claim

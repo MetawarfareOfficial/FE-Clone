@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface stakeItem {
+  id: string;
   reward: string;
   stakeDate: string;
   stakedAmount: string;
