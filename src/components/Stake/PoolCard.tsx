@@ -82,6 +82,7 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   marginBottom: '19px',
+  overflow: 'hidden',
 
   p: {
     fontFamily: 'Poppins',
@@ -104,6 +105,34 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
     '&:last-child': {
       marginLeft: 'auto',
       textAlign: 'right',
+    },
+
+    '@media(max-width: 320px)': {
+      minWidth: '70px',
+    },
+  },
+
+  h4: {
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: '500',
+    fontSize: '16px',
+    lineHeight: '18px',
+    textAlign: 'center',
+    letterSpacing: '0.025em',
+    textTransform: 'uppercase',
+    color: color,
+    margin: '0 0',
+    minWidth: '100px',
+
+    '&:first-child': {
+      marginRight: 'auto',
+      textAlign: 'left',
+    },
+
+    '&:last-child': {
+      marginLeft: 'auto',
+      textAlign: 'center',
     },
 
     '@media(max-width: 320px)': {
@@ -181,9 +210,9 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
           <p>Your Stake</p>
         </Line>
         <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <p>${liquidity}</p>
-          <p>{apr}%</p>
-          <p>{stakedAmount} LP</p>
+          <h4>${liquidity}</h4>
+          <h4>{apr}%</h4>
+          <h4>{stakedAmount} LP</h4>
         </Line>
       </BoxContent>
 
