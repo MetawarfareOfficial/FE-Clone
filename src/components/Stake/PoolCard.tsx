@@ -4,6 +4,9 @@ import { Box, BoxProps, Typography, TypographyProps, Button, ButtonProps, Grid }
 
 import OxToken from 'assets/images/0x-token.png';
 import AvaxToken from 'assets/images/avax-token.png';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
+import { useWeb3React } from '@web3-react/core';
 
 interface Props {
   title: String;
@@ -191,6 +194,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
 
 const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount, id, onClaimAll }) => {
   const theme = useTheme();
+  const { account } = useWeb3React();
   return (
     <Wrapper>
       <BoxHeader>
@@ -210,24 +214,55 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
           <p>Your Stake</p>
         </Line>
         <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <h4>${liquidity}</h4>
-          <h4>{apr}%</h4>
-          <h4>{stakedAmount} LP</h4>
+          <h4>
+            $
+            {formatForNumberLessThanCondition({
+              value: liquidity,
+              minValueCondition: '0.000001',
+              addLessThanSymbol: true,
+              callback: formatPercent,
+              callBackParams: [6],
+            })}
+          </h4>
+          <h4>
+            {formatForNumberLessThanCondition({
+              value: apr,
+              minValueCondition: '0.01',
+              addLessThanSymbol: true,
+              callback: formatPercent,
+              callBackParams: [2],
+            })}
+            %
+          </h4>
+          <h4>
+            {stakedAmount !== '0'
+              ? formatForNumberLessThanCondition({
+                  value: apr,
+                  minValueCondition: '0.000001',
+                  addLessThanSymbol: true,
+                  callback: formatPercent,
+                  callBackParams: [6],
+                })
+              : '0.0'}{' '}
+            LP
+          </h4>
         </Line>
       </BoxContent>
 
       <BoxActions>
         <Grid container spacing={'39px'}>
           <Grid item md={6}>
-            <ButtonStake
-              variant="outlined"
-              fullWidth
-              onClick={() => {
-                onNext(id);
-              }}
-            >
-              Stake
-            </ButtonStake>
+            {account && (
+              <ButtonStake
+                variant="outlined"
+                fullWidth
+                onClick={() => {
+                  onNext(id);
+                }}
+              >
+                Stake
+              </ButtonStake>
+            )}
           </Grid>
           <Grid item md={6}>
             {Number(stakedAmount) > 0 && (

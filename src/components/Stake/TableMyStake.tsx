@@ -15,22 +15,25 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
+  // Checkbox,
+  // CheckboxProps,
 } from '@mui/material';
 
 import PaginationCustom from './Pagination';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
-import { stakeItem } from 'services/staking';
+import { StakeItem } from 'services/staking';
 import moment from 'moment';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import { useWeb3React } from '@web3-react/core';
+// import { removeArrayItemByValue } from 'helpers/removeArrayItemByIndex';
 
 interface Props {
   title?: string;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
-  data: stakeItem[];
+  data: StakeItem[];
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -195,21 +198,60 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
+// const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
+//   fontFamily: 'Poppins',
+//   fontStyle: 'normal',
+//   fontWeight: '500',
+//   fontSize: '14px',
+//   lineHeight: '21px',
+//   textAlign: 'center',
+//   background: '#3864FF',
+//   color: '#fff',
+//   textTransform: 'capitalize',
+//   height: '34px',
+//   borderRadius: '10px',
+//   boxShadow: 'none',
+//   padding: '6px 10px',
+//   maxWidth: '184px',
+
+//   '&:disabled': {
+//     background: 'rgba(56, 100, 255, 0.16)',
+//     color: '#fff',
+//   },
+
+//   '&:hover': {
+//     background: '#1239C4',
+//     color: '#fff',
+//     outline: 'none',
+//     boxShadow: 'none',
+//   },
+// }));
+
+// const SelectBox = styled(Checkbox)<CheckboxProps>(() => ({}));
+
 const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
   const theme = useTheme();
-  // const data = dataTable();
   const { account } = useWeb3React();
-  const [records, setRecords] = useState(data.slice(0, 5));
+  const [records, setRecords] = useState(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
   const [pagination, setPagination] = useState({
     limit: 5,
     index: 0,
   });
+  // const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (account) {
-      setRecords(data.slice(0, 5));
-    }
-  }, [account, data]);
+  // const handleSelectStakingTableRow = (checked: boolean, index: string) => {
+  //   const rowIndexes = selectedRows.filter((item) => item === String(index));
+  //   if (rowIndexes.length > 0) {
+  //     if (!checked) {
+  //       setSelectedRows(removeArrayItemByValue<string>(selectedRows, String(index)));
+  //     }
+  //   } else {
+  //     if (checked) {
+  //       const newSelectedRows = [...selectedRows, String(index)];
+  //       setSelectedRows(newSelectedRows);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {}, [pagination]);
 
@@ -222,6 +264,14 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
     });
   };
 
+  useEffect(() => {
+    if (account) {
+      setRecords(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
+    } else {
+      setRecords([]);
+    }
+  }, [account, data]);
+
   return (
     <Wrapper>
       <TableContainer>
@@ -230,7 +280,6 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
             <TableRow>
               <TableCellHeader align="left">stake date</TableCellHeader>
               <TableCellHeader align="center">stake amount</TableCellHeader>
-              <TableCellHeader align="center">unstaked amount</TableCellHeader>
               <TableCellHeader align="center">staking time</TableCellHeader>
               <TableCellHeader align="center">rewards 0xB</TableCellHeader>
             </TableRow>
@@ -243,15 +292,6 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                 <TableCellBody align="center">
                   {formatForNumberLessThanCondition({
                     value: item.stakedAmount,
-                    addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
-                    callback: formatPercent,
-                    callBackParams: [6],
-                  })}
-                </TableCellBody>
-                <TableCellBody align="center">
-                  {formatForNumberLessThanCondition({
-                    value: item.unstakedAmount,
                     addLessThanSymbol: true,
                     minValueCondition: '0.000001',
                     callback: formatPercent,

@@ -11,5 +11,6 @@ export const calculateApr = ({ totalReward, oxbPrice, totalStaked, lpPrice }: Pa
   return new BigNumber(totalReward)
     .multipliedBy(new BigNumber(oxbPrice))
     .div(new BigNumber(totalStaked).multipliedBy(new BigNumber(lpPrice)))
+    .multipliedBy(100)
     .toString();
 };

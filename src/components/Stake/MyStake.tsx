@@ -11,7 +11,7 @@ import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.sv
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 
 import animationData from 'lotties/loading-button.json';
-import { PoolItem } from 'services/staking';
+import { PoolItem, StakeItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { useAppSelector } from 'stores/hooks';
 import { formatPercent } from 'helpers/formatPrice';
@@ -32,6 +32,7 @@ interface Props {
   title?: string;
   onBack: () => void;
   data: PoolItem;
+  tableData: StakeItem[];
   handleToggleClaimAll: () => void;
   handleToggleClaimOne: (index: number) => void;
   handleToggleUnstake: (index: number) => void;
@@ -229,6 +230,7 @@ const ButtonSubmit = styled(Button)<
 const MyStake: React.FC<Props> = ({
   onBack,
   data,
+  tableData,
   handleToggleClaimAll,
   handleToggleClaimOne,
   handleToggleUnstake,
@@ -442,9 +444,9 @@ const MyStake: React.FC<Props> = ({
           </Grid>
           <Grid item xs={12}>
             {width > 768 ? (
-              <TableMyStake data={data.yourAllStakes} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
+              <TableMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
             ) : (
-              <ListMyStake data={data.yourAllStakes} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
+              <ListMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
             )}
           </Grid>
         </Grid>
