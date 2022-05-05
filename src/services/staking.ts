@@ -1,12 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface stakeItem {
+export interface StakeItem {
   id: string;
   reward: string;
   stakeDate: string;
   stakedAmount: string;
   stakingTime: string;
-  unstakedAmount: string;
 }
 
 export interface PoolItem {
@@ -18,7 +17,7 @@ export interface PoolItem {
   yourTotalRewardAmount: string;
   yourTotalRewardValue: string;
   yourTotalStakedAmount: string;
-  yourAllStakes: stakeItem[];
+  yourStakingTime: string;
   lpAddress: string;
   title: string;
   account: string;
@@ -33,6 +32,7 @@ interface States {
   };
   lpBalanceLoaded: boolean;
   totalPools: number[] | null;
+  selectedPoolData: StakeItem[];
 }
 
 const initialState: States = {
@@ -43,6 +43,7 @@ const initialState: States = {
   },
   lpBalanceLoaded: false,
   totalPools: null,
+  selectedPoolData: [],
 };
 
 export const stakeSlice = createSlice({
@@ -61,10 +62,13 @@ export const stakeSlice = createSlice({
     setTotalPools: (state, action) => {
       state.totalPools = action.payload;
     },
+    setSelectedPoolData: (state, action) => {
+      state.selectedPoolData = action.payload;
+    },
   },
 });
 
-export const { setPools, setLpToken, setTotalPools } = stakeSlice.actions;
+export const { setPools, setLpToken, setTotalPools, setSelectedPoolData } = stakeSlice.actions;
 
 const { reducer: stakeReducer } = stakeSlice;
 

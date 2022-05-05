@@ -5,7 +5,7 @@ import { Box, BoxProps, Button, ButtonProps, Grid, Tooltip, TooltipProps, toolti
 import PaginationCustom from './Pagination';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
-import { stakeItem } from 'services/staking';
+import { StakeItem } from 'services/staking';
 import moment from 'moment';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
@@ -15,7 +15,7 @@ interface Props {
   title?: string;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
-  data: stakeItem[];
+  data: StakeItem[];
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -260,20 +260,6 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                   {' '}
                   {formatForNumberLessThanCondition({
                     value: item.stakedAmount,
-                    addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
-                    callback: formatPercent,
-                    callBackParams: [6],
-                  })}
-                </h3>
-              </Detail>
-            </Grid>
-            <Grid item xs={6}>
-              <Detail>
-                <h4>unstaked amount</h4>
-                <h3>
-                  {formatForNumberLessThanCondition({
-                    value: item.unstakedAmount,
                     addLessThanSymbol: true,
                     minValueCondition: '0.000001',
                     callback: formatPercent,

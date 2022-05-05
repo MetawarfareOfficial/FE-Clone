@@ -3,10 +3,13 @@ import { styled } from '@mui/material/styles';
 import { Box, BoxProps } from '@mui/material';
 
 import { ClaimModal, ManagePools, MyStake, StakeStatusModal } from 'components/Stake';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useFetchLPTokenBalance } from 'hooks/staking/useFetchLPTokenBalance';
 import get from 'lodash/get';
+import { useWeb3React } from '@web3-react/core';
+import { convertStakingData } from 'helpers/staking';
+import { setSelectedPoolData } from 'services/staking';
 interface Props {
   title?: string;
 }
@@ -16,11 +19,12 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 }));
 
 const StakePage: React.FC<Props> = () => {
-  const { claimAllStakingReward, claimStakingReward, withdrawOne } = useInteractiveContract();
+  const { claimRewards, withDrawSelectedEntities, getPoolInfo } = useInteractiveContract();
+  const { account } = useWeb3React();
   const [currentTab, setCurrentTab] = useState<'allPool' | 'myPool'>('allPool');
   const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
   const [status, setStatus] = useState<any>(null);
-
+  const dispatch = useAppDispatch();
   const [openStatus, setOpenStatus] = useState(false);
 
   const [openClaimAll, setOpenClaimAll] = useState(false);
@@ -30,12 +34,13 @@ const StakePage: React.FC<Props> = () => {
   const [selectedIndex, setSelectedIndex] = useState('0');
 
   const pools = useAppSelector((state) => state.stake.pools);
-  const myPools = pools.filter((item) => item.yourAllStakes.length > 0);
+  const myPools = pools.filter((item) => Number(item.yourTotalStakedAmount) > 0);
   const selectedPool = pools.filter((item) => item.id === String(selected))[0];
 
+  const selectedPoolTableData = useAppSelector((state) => state.stake.selectedPoolData);
   // const [currentAction, setCurrentAction] = useState('claimAll');
   const { handleGetTokenBalances } = useFetchLPTokenBalance();
-
+  const [tableDataLoading, setTableDataLoading] = useState(false);
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',
     id: '',
@@ -70,13 +75,26 @@ const StakePage: React.FC<Props> = () => {
     setOpenStatus(!openStatus);
   };
 
+  const handleFetchTableData = async () => {
+    try {
+      setTableDataLoading(true);
+      const selectedPoolInfo = await getPoolInfo(account!, String(selected));
+      const convertedData = convertStakingData({
+        dates: selectedPoolInfo.yourStakingTimes[0].split('#'),
+        stakedAmounts: selectedPoolInfo.yourStakedAmounts[0].split('#'),
+        rewards: selectedPoolInfo.yourRewardAmounts[0].split('#'),
+      });
+      dispatch(setSelectedPoolData(convertedData));
+    } catch {}
+    setTableDataLoading(false);
+  };
+
   const handleConfirmClaim = async () => {
-    // setCurrentAction('claimAll');
     handleToggleStatus();
     setStatus('pending');
     try {
       if (claimType === 'claim_all') {
-        const transaction = await claimAllStakingReward(poolToClaim);
+        const transaction = await claimRewards(poolToClaim, ['a']);
         if (transaction.hash) {
           setCurrenTransactionId({
             id: transaction.hash,
@@ -87,9 +105,10 @@ const StakePage: React.FC<Props> = () => {
             id: transaction.hash,
             type: 'claimAll',
           });
+          handleFetchTableData();
         }
       } else if (claimType === 'claim') {
-        const transaction = await claimStakingReward(poolToClaim, selectedIndex);
+        const transaction = await claimRewards(poolToClaim, [selectedIndex]);
         if (transaction.hash) {
           setCurrenTransactionId({
             id: transaction.hash,
@@ -100,9 +119,10 @@ const StakePage: React.FC<Props> = () => {
             id: transaction.hash,
             type: 'claim',
           });
+          handleFetchTableData();
         }
       } else if (claimType === 'unstake') {
-        const transaction = await withdrawOne(poolToClaim, selectedIndex);
+        const transaction = await withDrawSelectedEntities(poolToClaim, [selectedIndex]);
         if (transaction.hash) {
           setCurrenTransactionId({
             id: transaction.hash,
@@ -113,6 +133,7 @@ const StakePage: React.FC<Props> = () => {
             id: transaction.hash,
             type: 'unstake',
           });
+          handleFetchTableData();
         }
       }
     } catch (error) {
@@ -130,6 +151,26 @@ const StakePage: React.FC<Props> = () => {
       });
     }
   }, [currentTransactionId, txCompleted]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timer;
+    if (selected !== -1 && account) {
+      handleFetchTableData();
+      interval = setInterval(() => {
+        handleFetchTableData();
+      }, 10000);
+    } else if (!account) {
+      dispatch(setSelectedPoolData([]));
+      setSelected(-1);
+    } else if (selected === -1) {
+      dispatch(setSelectedPoolData([]));
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [selected, account]);
 
   return (
     <Wrapper>
@@ -161,6 +202,7 @@ const StakePage: React.FC<Props> = () => {
             handleToggleClaimAll();
           }}
           data={selectedPool}
+          tableData={selectedPoolTableData}
           onBack={() => setSelected(-1)}
           handleGetTokenBalances={handleGetTokenBalances}
         />

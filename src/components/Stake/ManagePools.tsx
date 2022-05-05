@@ -72,8 +72,8 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
       <Box>
         {currentTab === 'allPool' && (
           <Grid container spacing={{ xs: '34px', md: '60px' }}>
-            {activePools.length > 0
-              ? activePools.map((item, index) => {
+            {pools.length > 0
+              ? pools.map((item, index) => {
                   return (
                     <Grid item xs={12} sm={6} key={index}>
                       <PoolCard

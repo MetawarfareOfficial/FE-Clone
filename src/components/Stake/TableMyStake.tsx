@@ -22,7 +22,7 @@ import {
 import PaginationCustom from './Pagination';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
-import { stakeItem } from 'services/staking';
+import { StakeItem } from 'services/staking';
 import moment from 'moment';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
@@ -33,7 +33,7 @@ interface Props {
   title?: string;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
-  data: stakeItem[];
+  data: StakeItem[];
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -231,9 +231,8 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 
 const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
   const theme = useTheme();
-  // const data = dataTable();
   const { account } = useWeb3React();
-  const [records, setRecords] = useState(data.slice(0, 5));
+  const [records, setRecords] = useState(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
   const [pagination, setPagination] = useState({
     limit: 5,
     index: 0,
@@ -267,7 +266,9 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
 
   useEffect(() => {
     if (account) {
-      setRecords(data.slice(0, 5));
+      setRecords(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
+    } else {
+      setRecords([]);
     }
   }, [account, data]);
 
@@ -279,7 +280,6 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
             <TableRow>
               <TableCellHeader align="left">stake date</TableCellHeader>
               <TableCellHeader align="center">stake amount</TableCellHeader>
-              <TableCellHeader align="center">unstaked amount</TableCellHeader>
               <TableCellHeader align="center">staking time</TableCellHeader>
               <TableCellHeader align="center">rewards 0xB</TableCellHeader>
             </TableRow>
@@ -292,15 +292,6 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                 <TableCellBody align="center">
                   {formatForNumberLessThanCondition({
                     value: item.stakedAmount,
-                    addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
-                    callback: formatPercent,
-                    callBackParams: [6],
-                  })}
-                </TableCellBody>
-                <TableCellBody align="center">
-                  {formatForNumberLessThanCondition({
-                    value: item.unstakedAmount,
                     addLessThanSymbol: true,
                     minValueCondition: '0.000001',
                     callback: formatPercent,

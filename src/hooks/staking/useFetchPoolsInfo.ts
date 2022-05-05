@@ -1,6 +1,6 @@
 import { useWeb3React } from '@web3-react/core';
 import { BigNumber } from 'bignumber.js';
-import { calculateApr, convertStakingData, fetchTokensPrice } from 'helpers/staking';
+import { calculateApr, fetchTokensPrice } from 'helpers/staking';
 import { SwapTokenId } from 'hooks/swap';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useEstimateLPTokenAmount } from 'hooks/zap/useEstimateLPtokenAmount';
@@ -12,7 +12,7 @@ import get from 'lodash/get';
 
 export const useFetchPoolsInfo = () => {
   // const [loading, setLoading] = useState(false);
-  const { getPoolInfo } = useInteractiveContract();
+  const { getJsonAllPool, getJsonAllPoolByUser } = useInteractiveContract();
   const { account } = useWeb3React();
   const dispatch = useDispatch();
   const { handleEstimateZapOutLpTokenAmount } = useEstimateLPTokenAmount();
@@ -21,58 +21,48 @@ export const useFetchPoolsInfo = () => {
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const totalPools = useAppSelector((state) => state.stake.totalPools);
 
-  // const globalPools = useAppSelector((state) => state.stake.pools);
-
   const handleLoadPools = async () => {
-    // const avaxPrice = await fetchTokensPrice(String(process.env.REACT_APP_NATIVE_TOKEN_ADDRESS).toLocaleLowerCase());
-    // const OxbPrice = await ;
     const lpToUsdcAmount = handleEstimateZapOutLpTokenAmount(SwapTokenId.USDC, '1', liquidityPoolData);
-    // const rawPools = await getPoolInfo(account || '');
-    const [OxbPrice, rawPools] = await Promise.all([
+    const [OxbPrice, rawPools, usePoolsInfo] = await Promise.all([
       fetchTokensPrice(String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase()),
-      getPoolInfo(account || ''),
+      getJsonAllPool(),
+      account ? getJsonAllPoolByUser(account) : [],
     ]);
-    const pools = rawPools.map((item, index) => {
-      const yourStakedAmount = item.yourStakedAmounts.split('#');
-      const yourTotalStakedAmount = yourStakedAmount.reduce((acc: number, item: string) => {
-        const value = item !== '' ? item : '0';
-        return new BigNumber(value).div(1e18).plus(new BigNumber(acc)).toNumber();
-      }, 0);
-      const yourRewardsAmount = item.yourRewardAmounts.split('#');
-      const yourTotalRewardAmount = yourRewardsAmount.reduce((acc: number, item: string) => {
-        const value = item !== '' ? item : '0';
-        return new BigNumber(value).div(1e18).plus(new BigNumber(acc)).toNumber();
-      }, 0);
-      const yourStakingTimes = item.yourStakingTimes.split('#');
-      const yourUnStakedAmounts = item.yourUnStakedAmounts.split('#');
-
+    const pools = rawPools.map((item) => {
+      const userPool = usePoolsInfo.filter((pool) => pool.index === item.index);
+      const yourTotalStakedAmount =
+        userPool.length > 0 ? new BigNumber(userPool[0].stakedAmount).div(1e18).toString() : '0';
+      const yourTotalRewardAmount =
+        userPool.length > 0 ? new BigNumber(userPool[0].pendingReward).div(1e18).toString() : '0';
+      const yourStakingTime = userPool.length > 0 ? userPool[0].minTimestamp : '0';
       return {
-        id: index.toString(),
-        liquidity: new BigNumber(item.lpAmountInPool._hex).div(1e18).multipliedBy(lpToUsdcAmount).toString(),
-        totalStaked: new BigNumber(item.lpAmountInPool._hex).div(1e18).toString(),
-        apr: calculateApr({
-          totalReward: new BigNumber(item.totalDistribute._hex).div(1e18).toString(),
-          oxbPrice: get(OxbPrice, '[0].priceUSD', '0'),
-          totalStaked: new BigNumber(item.lpAmountInPool._hex).div(1e18).toString(),
-          lpPrice: lpToUsdcAmount,
-        }),
-        endTime: new BigNumber(item.duration._hex).toString(),
-        yourShare: new BigNumber(yourTotalStakedAmount)
-          .div(new BigNumber(item.lpAmountInPool._hex).div(1e18))
-          .multipliedBy(100)
-          .toString(),
+        id: item.index,
+        liquidity: new BigNumber(item.lpAmountInPool).div(1e18).multipliedBy(lpToUsdcAmount).toString(),
+        totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
+        apr:
+          item.lpAmountInPool !== '0'
+            ? calculateApr({
+                totalReward: new BigNumber(item.totalDistribute).div(1e18).toString(),
+                oxbPrice: get(OxbPrice, '[0].priceUSD', '0'),
+                totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
+                lpPrice: lpToUsdcAmount,
+              })
+            : '0',
+        endTime: new BigNumber(item.duration).toString(),
+        yourShare:
+          yourTotalStakedAmount !== '0'
+            ? new BigNumber(yourTotalStakedAmount)
+                .div(new BigNumber(item.lpAmountInPool).div(1e18))
+                .multipliedBy(100)
+                .toString()
+            : '0',
         yourTotalStakedAmount: String(yourTotalStakedAmount),
         yourTotalRewardAmount: String(yourTotalRewardAmount),
         yourTotalRewardValue: new BigNumber(yourTotalRewardAmount)
           .multipliedBy(get(OxbPrice, '[0].priceUSD', 0))
           .toString(),
-        yourAllStakes: convertStakingData({
-          dates: yourStakingTimes,
-          stakedAmounts: yourStakedAmount,
-          unstakedAmounts: yourUnStakedAmounts,
-          rewards: yourRewardsAmount,
-        }),
-        lpAddress: String(item['0']).toLocaleLowerCase(),
+        yourStakingTime,
+        lpAddress: String(item.lpTokenAddress).toLocaleLowerCase(),
         title: item.name,
         account,
       };

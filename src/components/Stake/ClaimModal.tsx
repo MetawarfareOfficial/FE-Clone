@@ -24,6 +24,7 @@ import { formatPercent } from 'helpers/formatPrice';
 import moment from 'moment';
 import get from 'lodash/get';
 import { calculateEarlyUnstakingFee } from 'helpers/staking';
+import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   open: boolean;
@@ -298,8 +299,7 @@ const Description = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, selectedIndex }) => {
-  // const theme = useTheme();
-
+  const selectedPool = useAppSelector((state) => state.stake.selectedPoolData);
   const accureDays =
     type === 'unstake'
       ? moment().diff(
@@ -325,7 +325,10 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                 <p>{type === 'claim_all' && 'Total '}Earned Rewards </p>
                 <ButtonReward variant="contained">
                   {`${formatForNumberLessThanCondition({
-                    value: type === 'claim_all' ? data.yourTotalRewardAmount : data.yourAllStakes[selectedIndex].reward,
+                    value:
+                      type === 'claim_all'
+                        ? data.yourTotalRewardAmount
+                        : get(selectedPool, `[${selectedIndex}].reward`, 0),
                     minValueCondition: '0.000001',
                     addLessThanSymbol: true,
                     callback: formatPercent,
@@ -343,7 +346,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                   Unstake amount:{' '}
                   <strong>
                     {formatForNumberLessThanCondition({
-                      value: data.yourAllStakes[selectedIndex].stakedAmount,
+                      value: get(selectedPool, `[${selectedIndex}].stakedAmount`, '0'),
                       minValueCondition: '0.000001',
                       addLessThanSymbol: true,
                       callback: formatPercent,
@@ -362,7 +365,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                   <strong>
                     {formatForNumberLessThanCondition({
                       value: calculateEarlyUnstakingFee(
-                        Number(data.yourAllStakes[selectedIndex].stakedAmount),
+                        Number(get(selectedPool, `[${selectedIndex}].stakedAmount`, '0')),
                         Number(accureDays),
                       ),
                       minValueCondition: '0.000001',

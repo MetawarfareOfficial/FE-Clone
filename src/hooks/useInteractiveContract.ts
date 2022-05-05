@@ -19,8 +19,7 @@ import {
   zapManagerAbi as zapManagerAvaxAbi,
   stakingScAbi as stakingManagerAvaxAbi,
 } from 'abis/avalanche';
-import { pools } from 'consts/stake';
-
+import values from 'lodash/values';
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
 const zapManagerAddress = process.env.REACT_APP_ZAP_MANAGER || '';
@@ -444,29 +443,26 @@ export const useInteractiveContract = () => {
     );
   };
 
-  const getPoolInfo = async (account: string) => {
-    const fetches = pools.map(async (item) => {
-      return {
-        ...(await stakingContractWithoutSigner.pools(item.id)),
-        yourStakedAmounts: account ? await stakingContractWithoutSigner.getUserStakeAmounts(item.id, account) : '0',
-        yourRewardAmounts: account ? await stakingContractWithoutSigner.getUserPendingReward(item.id, account) : '0',
-        yourStakingTimes: account ? await stakingContractWithoutSigner.getUserTimestamps(item.id, account) : '0',
-        yourUnStakedAmounts: account ? await stakingContractWithoutSigner.getUserUnstakedAmount(item.id, account) : '0',
-      };
-    });
-    return Promise.all(fetches);
+  const getPoolInfo = async (account: string, index: string) => {
+    return {
+      yourStakedAmounts: account ? await stakingContractWithoutSigner.getUserStakeAmounts(index, account) : '0',
+      yourRewardAmounts: account ? await stakingContractWithoutSigner.getUserPendingReward(index, account) : '0',
+      yourStakingTimes: account ? await stakingContractWithoutSigner.getUserTimestamps(index, account) : '0',
+    };
   };
 
-  const claimAllStakingReward = async (poolId: string) => {
-    return await stakingManagerContractWithSigner.claimAllReward(poolId);
+  const getJsonAllPool = async () => {
+    const response = await stakingContractWithoutSigner.getJSONAllPoolsInfo(false);
+    return values(JSON.parse(response)).filter((item) => item !== '');
   };
 
-  const claimStakingReward = async (poolId: string, index: string) => {
-    return await stakingManagerContractWithSigner.claimReward(poolId, index);
+  const getJsonAllPoolByUser = async (account: string) => {
+    const response = await stakingContractWithoutSigner.getJSONAllPoolsUser(false, account);
+    return values(JSON.parse(response)).filter((item) => item !== '' && item.stakedAmount !== '0');
   };
 
-  const withdrawOne = async (poolId: string, index: string) => {
-    return await stakingManagerContractWithSigner.withdraw(poolId, index, '0');
+  const claimRewards = async (poolId: string, indexes: string[]) => {
+    return await stakingManagerContractWithSigner.claimReward(poolId, indexes);
   };
 
   const stakeLp = async (poolId: string, amount: string) => {
@@ -478,6 +474,10 @@ export const useInteractiveContract = () => {
 
   const getTotalStakingPools = async () => {
     return await stakingContractWithoutSigner.getPoolsCount({});
+  };
+
+  const withDrawSelectedEntities = async (poolId: string, indexes: string[]) => {
+    return await stakingManagerContractWithSigner.withdrawMultiple(poolId, indexes);
   };
 
   return {
@@ -519,11 +519,12 @@ export const useInteractiveContract = () => {
     handleZapInToken,
     handleZapOut,
     getPoolInfo,
-    claimAllStakingReward,
-    claimStakingReward,
-    withdrawOne,
+    claimRewards,
     stakeLp,
     getTotalStakingPools,
+    withDrawSelectedEntities,
+    getJsonAllPool,
+    getJsonAllPoolByUser,
     contractWithSigner,
     provider,
   };

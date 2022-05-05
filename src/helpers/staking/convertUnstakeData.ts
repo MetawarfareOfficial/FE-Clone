@@ -1,14 +1,14 @@
 import moment from 'moment';
-import { PoolItem } from 'services/staking';
+import { StakeItem } from 'services/staking';
 import { calculateEarlyUnstakingFee } from './calculateEarlyUnstakingFee';
 
 interface Params {
-  data: PoolItem;
+  data: StakeItem[];
   selectedIndexes: string[];
 }
 
 export const convertUnstakeData = ({ data, selectedIndexes }: Params) => {
-  const selectedStakedEntities = data.yourAllStakes.filter((item) => {
+  const selectedStakedEntities = data.filter((item) => {
     return selectedIndexes.includes(item.id);
   });
 
