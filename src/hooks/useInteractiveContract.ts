@@ -448,10 +448,10 @@ export const useInteractiveContract = () => {
     const fetches = pools.map(async (item) => {
       return {
         ...(await stakingContractWithoutSigner.pools(item.id)),
-        yourStakedAmounts: await stakingContractWithoutSigner.getUserStakeAmounts(item.id, account),
-        yourRewardAmounts: await stakingContractWithoutSigner.getUserPendingReward(item.id, account),
-        yourStakingTimes: await stakingContractWithoutSigner.getUserTimestamps(item.id, account),
-        yourUnStakedAmounts: await stakingContractWithoutSigner.getUserUnstakedAmount(item.id, account),
+        yourStakedAmounts: account ? await stakingContractWithoutSigner.getUserStakeAmounts(item.id, account) : '0',
+        yourRewardAmounts: account ? await stakingContractWithoutSigner.getUserPendingReward(item.id, account) : '0',
+        yourStakingTimes: account ? await stakingContractWithoutSigner.getUserTimestamps(item.id, account) : '0',
+        yourUnStakedAmounts: account ? await stakingContractWithoutSigner.getUserUnstakedAmount(item.id, account) : '0',
       };
     });
     return Promise.all(fetches);

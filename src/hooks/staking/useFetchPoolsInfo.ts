@@ -70,9 +70,7 @@ export const useFetchPoolsInfo = () => {
           dates: yourStakingTimes,
           stakedAmounts: yourStakedAmount,
           unstakedAmounts: yourUnStakedAmounts,
-          rewards: yourUnStakedAmounts.map(() => {
-            return '0';
-          }),
+          rewards: yourRewardsAmount,
         }),
         lpAddress: String(item['0']).toLocaleLowerCase(),
         title: item.name,
@@ -83,7 +81,7 @@ export const useFetchPoolsInfo = () => {
   };
 
   useEffect(() => {
-    if (isLiquidityPoolLoaded && pairInfoLoaded && account && totalPools) {
+    if (isLiquidityPoolLoaded && pairInfoLoaded && totalPools) {
       handleLoadPools();
     }
   }, [liquidityPoolData, isLiquidityPoolLoaded, pairInfoLoaded, account, totalPools]);
