@@ -20,6 +20,9 @@ import ActiveDarkContractIcon from 'assets/images/active-dark-contract.svg';
 import ZapIcon from 'assets/images/zap.svg';
 import ActiveZapIcon from 'assets/images/active-zap.svg';
 import ZapActiveDarkIcon from 'assets/images/zap-active-dark.svg';
+import StakeIcon from 'assets/images/bxs_lock.svg';
+import StakeActiveIcon from 'assets/images/bxs_lock-active.svg';
+import StakeDarkActiveIcon from 'assets/images/bxs_lock-dark-active.svg';
 
 export const menus = [
   {
@@ -73,8 +76,9 @@ export const menus = [
   {
     name: 'Stake',
     path: '/stake',
-    icon: SliderIcon,
-    activeIcon: SliderActIcon,
-    darkIcon: SliderDarkIcon,
+    icon: StakeIcon,
+    activeIcon: StakeActiveIcon,
+    darkIcon: StakeIcon,
+    activeDarkIcon: StakeDarkActiveIcon,
   },
 ];

@@ -1,8 +1,9 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Box, BoxProps, Typography, TypographyProps } from '@mui/material';
 
 import EmptyIcon from 'assets/images/empty-zap.svg';
+import EmptyDarkIcon from 'assets/images/empty-zap-dark.svg';
 // import EmptyLinkIcon from 'assets/images/empty-link.svg';
 
 interface Props {
@@ -33,14 +34,17 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   letterSpacing: '0.04em',
   color: '#9CA0AC',
   maxWidth: '321px',
+  marginTop: '27px',
 }));
 
 const Empty: React.FC<Props> = ({ title = 'You need to connect your wallet to use ZAP feature.' }) => {
+  const theme = useTheme();
+
   return (
     <Wrapper>
       <EmptyContent>
         <ViewImg>
-          <img alt="" src={EmptyIcon} width={264} />
+          <img alt="" src={theme.palette.mode === 'light' ? EmptyIcon : EmptyDarkIcon} width={264} />
         </ViewImg>
         <Text variant="body1">{title}</Text>
       </EmptyContent>

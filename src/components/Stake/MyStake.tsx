@@ -258,7 +258,7 @@ const MyStake: React.FC<Props> = ({
   const [deadline, setDeadline] = useState('10');
   const [currentAction, setCurrentAction] = useState('stake');
 
-  const lpToken = useAppSelector((state) => state.stake.lpToken);
+  const lpToken = useAppSelector((state: any) => state.stake.lpToken);
 
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',

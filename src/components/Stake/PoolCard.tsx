@@ -85,6 +85,7 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   marginBottom: '19px',
+  overflow: 'hidden',
 
   p: {
     fontFamily: 'Poppins',
@@ -107,6 +108,34 @@ const Line = styled(Box)<LineProps>(({ color }) => ({
     '&:last-child': {
       marginLeft: 'auto',
       textAlign: 'right',
+    },
+
+    '@media(max-width: 320px)': {
+      minWidth: '70px',
+    },
+  },
+
+  h4: {
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: '500',
+    fontSize: '16px',
+    lineHeight: '18px',
+    textAlign: 'center',
+    letterSpacing: '0.025em',
+    textTransform: 'uppercase',
+    color: color,
+    margin: '0 0',
+    minWidth: '100px',
+
+    '&:first-child': {
+      marginRight: 'auto',
+      textAlign: 'left',
+    },
+
+    '&:last-child': {
+      marginLeft: 'auto',
+      textAlign: 'center',
     },
 
     '@media(max-width: 320px)': {
@@ -185,7 +214,7 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
           <p>Your Stake</p>
         </Line>
         <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <p>
+          <h4>
             $
             {formatForNumberLessThanCondition({
               value: liquidity,
@@ -194,8 +223,8 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
               callback: formatPercent,
               callBackParams: [6],
             })}
-          </p>
-          <p>
+          </h4>
+          <h4>
             {formatForNumberLessThanCondition({
               value: apr,
               minValueCondition: '0.01',
@@ -204,8 +233,8 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
               callBackParams: [2],
             })}
             %
-          </p>
-          <p>
+          </h4>
+          <h4>
             {stakedAmount !== '0'
               ? formatForNumberLessThanCondition({
                   value: apr,
@@ -216,7 +245,7 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
                 })
               : '0.0'}{' '}
             LP
-          </p>
+          </h4>
         </Line>
       </BoxContent>
 
