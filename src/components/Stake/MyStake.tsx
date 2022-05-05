@@ -77,7 +77,7 @@ const SwapBox = styled(Box)<BoxProps>(({ theme }) => ({
   // maxWidth: '484px',
   boxSizing: 'border-box',
   background: theme.palette.mode === 'light' ? '#FFFFFF' : '#171717',
-  border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.09)' : 'rgba(255, 255, 255, 0.12)'}`,
+  border: `1px solid ${theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.09)' : 'rgba(41, 50, 71, 0.09)'}`,
   boxShadow: '0px 2px 30px rgba(56, 100, 255, 0.03)',
   borderRadius: '14px',
   padding: '13px 20px 24px',
@@ -205,13 +205,13 @@ const ButtonSubmit = styled(Button)<
   lineHeight: '33px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
+  color: theme.palette.mode === 'light' ? '#fff' : '#fff',
   cursor: unEnable ? 'not-allowed !important' : 'pointer',
 
   '&:hover': {
     background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
     border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
+    color: theme.palette.mode === 'light' ? '#fff' : '#fff',
     boxShadow: !unEnable && '0px 5px 11px rgba(0, 82, 255, 0.38)',
     outline: 'none',
   },
@@ -434,7 +434,7 @@ const MyStake: React.FC<Props> = ({
                   loading={false}
                   fullWidth
                   unEnable={false}
-                  disabled={false}
+                  disabled={isInsufficientError}
                   onClick={tokenApproved ? handleStakeLp : handleApproveToken}
                 >
                   {tokenApproved ? 'Stake' : 'Approve'}
