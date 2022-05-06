@@ -12,10 +12,12 @@ import animationData from 'lotties/loading-button.json';
 import { PoolItem, StakeItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { useAppSelector } from 'stores/hooks';
-import { formatPercent, truncateNumber } from 'helpers/formatPrice';
+import { formatPercent } from 'helpers/formatPrice';
 import { useSwapToken } from 'hooks/swap';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useHistory } from 'react-router-dom';
+import InputToken from './InputToken';
+import OxImg from 'assets/images/coin-0xb.svg';
 
 const defaultOptions = {
   loop: true,
@@ -429,14 +431,29 @@ const MyStake: React.FC<Props> = ({
                     {isOxbPool ? '0xB' : 'LP'}
                   </p>
                 </ExchangeHeader>
-
-                <InputLP
-                  disabled={false}
-                  value={lpTokenInput}
-                  onChange={handleChange}
-                  onMax={handleMaxBtnClick}
-                  name="to"
-                />
+                {isOxbPool ? (
+                  <InputToken
+                    onChange={handleChange}
+                    onMax={handleMaxBtnClick}
+                    value={lpTokenInput}
+                    name="to"
+                    disabled={false}
+                    token={{
+                      name: 'OxB',
+                      logo: OxImg,
+                    }}
+                    showMaxBtn={Number(oxbToken.balance) > 0}
+                  />
+                ) : (
+                  <InputLP
+                    disabled={false}
+                    value={lpTokenInput}
+                    onChange={handleChange}
+                    onMax={handleMaxBtnClick}
+                    name="to"
+                    showMaxBtn={Number(lpToken.balance) > 0}
+                  />
+                )}
 
                 <ButtonGetLpToken
                   isError={false}

@@ -1,28 +1,23 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import {
-  TextField,
-  TextFieldProps,
-  InputAdornment,
-  Typography,
-  TypographyProps,
-  Button,
-  ButtonProps,
-} from '@mui/material';
+import { TextField, TextFieldProps, InputAdornment, Button, ButtonProps, Link, LinkProps } from '@mui/material';
 
 import { swapInputRegex } from 'consts/swap';
 import BigNumber from 'bignumber.js';
 
 interface Props {
-  tokenName?: string | null;
   name: string;
   value: string | null;
+  showMaxBtn?: boolean;
   max?: number;
   min?: number;
+  onMax?: () => void;
   onChange: (event: { value: string; name: string; isOnblur?: boolean }) => void;
   disabled: boolean;
-  onMax?: () => void;
-  showMaxBtn?: boolean;
+  token: {
+    name: string;
+    logo: string;
+  };
 }
 BigNumber.config({
   EXPONENTIAL_AT: 100,
@@ -75,20 +70,6 @@ const TextFieldSwap = styled(TextField)<TextFieldProps>(({ theme }) => ({
   },
 }));
 
-const Text = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: '400',
-  fontSize: '16px',
-  lineHeight: '30px',
-  letterSpacing: '0.04em',
-  textTransform: 'capitalize',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-  borderRight: '1px solid rgba(56, 100, 255, 0.2)',
-  paddingRight: '14px',
-  marginRight: '19px',
-}));
-
 const ButtonMax = styled(Button)<ButtonProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#E9EDFF' : '#171717',
   borderRadius: '6px',
@@ -109,19 +90,52 @@ const ButtonMax = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const InputLP: React.FC<Props> = ({
-  name,
-  value,
-  max,
-  min,
-  onChange,
-  disabled,
-  onMax,
-  tokenName = 'LP',
-  showMaxBtn,
-}) => {
-  // const theme = useTheme();
+const TokenActive = styled(Link)<LinkProps>(({ theme }) => ({
+  textDecoration: 'none',
+  display: 'inline-flex',
+  alignItems: 'center',
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '400',
+  fontSize: '16px',
+  lineHeight: '29px',
+  letterSpacing: '0.04em',
+  textTransform: 'capitalize',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  borderRight: '1px solid rgba(56, 100, 255, 0.2) !important',
+  marginRight: '9px',
+  paddingRight: '15px',
+  cursor: 'pointer',
 
+  p: {
+    margin: 0,
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    fontSize: '16px',
+    lineHeight: '33px',
+    letterSpacing: '0.04em',
+    textTransform: 'capitalize',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  },
+
+  svg: {
+    marginLeft: 'auto',
+    marginRight: '10px',
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '14px',
+    lineHeight: '26px',
+
+    p: {
+      fontSize: '14px',
+      lineHeight: '26px',
+    },
+  },
+}));
+
+const InputToken: React.FC<Props> = ({ name, value, max, min, onMax, onChange, showMaxBtn, token, disabled }) => {
   return (
     <TextFieldSwap
       autoComplete="off"
@@ -155,7 +169,10 @@ const InputLP: React.FC<Props> = ({
         },
         startAdornment: (
           <InputAdornment position="start">
-            <Text>{tokenName}</Text>
+            <TokenActive>
+              <img alt="" src={token.logo} width={27} style={{ marginRight: 9 }} />
+              <p>{token.name}</p>
+            </TokenActive>
 
             {showMaxBtn && <ButtonMax onClick={onMax}>Max</ButtonMax>}
           </InputAdornment>
@@ -165,4 +182,4 @@ const InputLP: React.FC<Props> = ({
   );
 };
 
-export default InputLP;
+export default InputToken;
