@@ -151,7 +151,7 @@ const TableCellBody = styled(TableCell)<TableCellProps>(({ theme }) => ({
   fontSize: '16px',
   lineHeight: '19px',
   letterSpacing: '0.025em',
-  textTransform: 'uppercase',
+  // textTransform: 'uppercase',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   padding: '18px 32px',
   borderBottom: '1px solid rgba(41, 50, 71, 0.09)',
@@ -280,7 +280,7 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
             <TableRow>
               <TableCellHeader align="left">stake date</TableCellHeader>
               <TableCellHeader align="center">stake amount</TableCellHeader>
-              <TableCellHeader align="center">staking time</TableCellHeader>
+              <TableCellHeader align="center">staked time</TableCellHeader>
               <TableCellHeader align="center">rewards 0xB</TableCellHeader>
             </TableRow>
           </TableHead>
@@ -298,7 +298,7 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                     callBackParams: [6],
                   })}
                 </TableCellBody>
-                <TableCellBody align="center">{`${item.stakingTime} days`}</TableCellBody>
+                <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
                 <TableCellBody align="center">
                   {formatForNumberLessThanCondition({
                     value: item.reward,
@@ -353,14 +353,16 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
         </Table>
       </TableContainer>
 
-      <ViewPagination>
-        <PaginationCustom
-          total={data.length}
-          limit={pagination.limit}
-          page={pagination.index + 1}
-          onChange={handleChangePage}
-        />
-      </ViewPagination>
+      {data.length > pagination.limit && (
+        <ViewPagination>
+          <PaginationCustom
+            total={data.length}
+            limit={pagination.limit}
+            page={pagination.index + 1}
+            onChange={handleChangePage}
+          />{' '}
+        </ViewPagination>
+      )}
     </Wrapper>
   );
 };

@@ -235,16 +235,20 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
             %
           </h4>
           <h4>
-            {stakedAmount !== '0'
-              ? formatForNumberLessThanCondition({
-                  value: apr,
+            {stakedAmount !== '0' ? (
+              <>
+                {formatForNumberLessThanCondition({
+                  value: stakedAmount,
                   minValueCondition: '0.000001',
                   addLessThanSymbol: true,
                   callback: formatPercent,
                   callBackParams: [6],
-                })
-              : '0.0'}{' '}
-            LP
+                })}{' '}
+                LP
+              </>
+            ) : (
+              '-'
+            )}
           </h4>
         </Line>
       </BoxContent>

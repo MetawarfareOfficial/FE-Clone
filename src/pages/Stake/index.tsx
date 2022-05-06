@@ -76,6 +76,10 @@ const StakePage: React.FC<Props> = () => {
     setOpenStatus(!openStatus);
   };
 
+  const closeStatusModal = () => {
+    setOpenStatus(false);
+  };
+
   const handleFetchTableData = async () => {
     try {
       setTableDataLoading(true);
@@ -92,6 +96,7 @@ const StakePage: React.FC<Props> = () => {
 
   const handleConfirmClaim = async () => {
     handleToggleStatus();
+    closeClaimModal();
     setStatus('pending');
     try {
       if (claimType === 'claim_all') {
@@ -221,7 +226,7 @@ const StakePage: React.FC<Props> = () => {
       <StakeStatusModal
         title={get(selectedPool, 'title', '')}
         open={openStatus}
-        onClose={handleToggleStatus}
+        onClose={closeStatusModal}
         status={status}
         onNextStatus={() => {}}
       />
