@@ -40,6 +40,7 @@ const StakePage: React.FC<Props> = () => {
   const selectedPoolTableData = useAppSelector((state) => state.stake.selectedPoolData);
   // const [currentAction, setCurrentAction] = useState('claimAll');
   const { handleGetTokenBalances } = useFetchLPTokenBalance();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tableDataLoading, setTableDataLoading] = useState(false);
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',
