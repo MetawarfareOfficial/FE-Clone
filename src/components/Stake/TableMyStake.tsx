@@ -273,7 +273,9 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
 
   useEffect(() => {
     if (account) {
-      setRecords(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
+      const start = pagination.index * pagination.limit;
+      const end = start + pagination.limit;
+      setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
     } else {
       setRecords([]);
     }
