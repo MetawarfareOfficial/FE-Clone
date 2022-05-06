@@ -239,8 +239,6 @@ const MyStake: React.FC<Props> = ({
   const [width] = useWindowSize();
   const { approveToken } = useSwapToken(false);
   const { stakeLp } = useInteractiveContract();
-  // const [openClaimAll, setOpenClaimAll] = useState(false);
-  // const [disabledStake, setDisabledStake] = useState(false);
   const [tokenApproved, setTokenApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
@@ -252,6 +250,12 @@ const MyStake: React.FC<Props> = ({
   const [currentAction, setCurrentAction] = useState('stake');
 
   const lpToken = useAppSelector((state) => state.stake.lpToken);
+
+  const oxbToken = useAppSelector((state) => state.stake.oxbToken);
+
+  const [isOxbPool, setIsOxbPool] = useState(
+    data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
+  );
 
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',
@@ -268,9 +272,9 @@ const MyStake: React.FC<Props> = ({
   };
 
   const handleMaxBtnClick = async () => {
-    if (Number(lpToken.balance) > 0) {
+    if (Number(isOxbPool ? oxbToken.balance : lpToken.balance) > 0) {
       setIsSwapMaxFromToken(true);
-      setLpTokenInput(formatPercent(lpToken.balance, 10));
+      setLpTokenInput(formatPercent(oxbToken ? oxbToken.balance : lpToken.balance, 10));
     }
   };
 
@@ -292,7 +296,7 @@ const MyStake: React.FC<Props> = ({
       handleToggleStatus();
       setStatus('pending');
       const response = await approveToken(
-        String(process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS),
+        isOxbPool ? String(process.env.REACT_APP_CONTRACT_ADDRESS) : String(process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS),
         String(process.env.REACT_APP_STAKING_MANAGER),
       );
       if (response.hash) {
@@ -319,7 +323,8 @@ const MyStake: React.FC<Props> = ({
         setCurrentAction('stake');
         handleToggleStatus();
         setStatus('pending');
-        const valueToStake = isSwapMaxFromTokens ? lpToken.balance : lpTokenInput;
+        const maxBalance = isOxbPool ? oxbToken.balance : lpToken.balance;
+        const valueToStake = isSwapMaxFromTokens ? maxBalance : lpTokenInput;
         const response = await stakeLp(data.id, valueToStake);
         if (response.hash) {
           setCurrenTransactionId({
@@ -340,9 +345,9 @@ const MyStake: React.FC<Props> = ({
       setIsSwapMaxFromToken(false);
     }
   };
+
   const handleResetInputValue = () => {
     setLpTokenInput('');
-    // setIsFirstTime(true);
   };
 
   useEffect(() => {
@@ -360,14 +365,15 @@ const MyStake: React.FC<Props> = ({
   }, [currentTransactionId, txCompleted]);
 
   const handleCheckIsApproved = () => {
+    const allowanceAmount = isOxbPool ? oxbToken.allowance : lpToken.allowance;
     if (isSwapMaxFromTokens) {
-      if (Number(lpToken.allowance) !== 0 && Number(lpToken.allowance) >= Number(lpToken.balance)) {
+      if (Number(allowanceAmount) !== 0 && Number(allowanceAmount) >= Number(lpToken.balance)) {
         setTokenApproved(true);
       } else {
         setTokenApproved(false);
       }
     } else {
-      if (Number(lpToken.allowance) !== 0 && Number(lpToken.allowance) >= Number(lpTokenInput)) {
+      if (Number(allowanceAmount) !== 0 && Number(allowanceAmount) >= Number(lpTokenInput)) {
         setTokenApproved(true);
       } else {
         setTokenApproved(false);
@@ -377,11 +383,17 @@ const MyStake: React.FC<Props> = ({
 
   useEffect(() => {
     handleCheckIsApproved();
-  }, [lpTokenInput, lpToken]);
+  }, [lpTokenInput, lpToken, oxbToken]);
 
-  const isInsufficientError = Number(lpTokenInput) > Number(lpToken.balance);
+  useEffect(() => {
+    setIsOxbPool(
+      data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
+    );
+  }, [data]);
+
+  const tokenBalance = isOxbPool ? oxbToken.balance : lpToken.balance;
+  const isInsufficientError = Number(lpTokenInput) > Number(tokenBalance);
   const invalidInput = lpTokenInput.trim() === '';
-
   return (
     <Wrapper>
       <MyStakeHeader>
@@ -403,18 +415,18 @@ const MyStake: React.FC<Props> = ({
 
               <ExchangeBox>
                 <ExchangeHeader>
-                  <h5>LP Token Balance</h5>
+                  <h5>{isOxbPool ? '0xB' : 'LP'} Token Balance</h5>
                   <p>
-                    {lpToken.balance !== '0'
+                    {tokenBalance !== '0'
                       ? formatForNumberLessThanCondition({
-                          value: lpToken.balance,
+                          value: tokenBalance,
                           addLessThanSymbol: true,
                           minValueCondition: '0.000001',
                           callback: formatPercent,
                           callBackParams: [6],
                         })
                       : '0.0'}{' '}
-                    LP
+                    {isOxbPool ? '0xB' : 'LP'}
                   </p>
                 </ExchangeHeader>
 
@@ -427,15 +439,19 @@ const MyStake: React.FC<Props> = ({
                 />
 
                 <ButtonGetLpToken
-                  isError={isInsufficientError}
+                  isError={false}
                   onClick={() => {
-                    history.push('/zap');
+                    if (isOxbPool) {
+                      history.push('/swap');
+                    } else {
+                      history.push('/zap');
+                    }
                   }}
                   variant="text"
                 >
-                  {'Get LP Token ->'}
+                  {`Get ${isOxbPool ? 'OxB' : 'LP'} Token ->`}
                 </ButtonGetLpToken>
-                {isInsufficientError && <ErrorText>Insufficient balance</ErrorText>}
+                {/* {isInsufficientError && <ErrorText>Insufficient balance</ErrorText>} */}
                 <ButtonSubmit
                   loading={false}
                   fullWidth
@@ -449,20 +465,30 @@ const MyStake: React.FC<Props> = ({
                       }
                     }
                   }}
-                  disabled={isInsufficientError}
+                  disabled={tokenApproved ? isInsufficientError : false}
                 >
-                  {invalidInput ? 'Enter Amount' : tokenApproved ? 'Stake' : 'Approve'}
+                  {invalidInput
+                    ? 'Enter Amount'
+                    : tokenApproved
+                    ? isInsufficientError
+                      ? 'Insufficient balance'
+                      : 'Stake'
+                    : 'Approve'}
                 </ButtonSubmit>
               </ExchangeBox>
             </SwapBox>
           </Grid>
-          <Grid item xs={12}>
-            {width > 768 ? (
+          {width > 768 ? (
+            <Grid item xs={12}>
               <TableMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
-            ) : (
+            </Grid>
+          ) : tableData.length > 0 ? (
+            <Grid item xs={12}>
               <ListMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
-            )}
-          </Grid>
+            </Grid>
+          ) : (
+            ''
+          )}
         </Grid>
       </Box>
 

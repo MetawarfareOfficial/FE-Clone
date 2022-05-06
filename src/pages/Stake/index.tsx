@@ -10,6 +10,7 @@ import get from 'lodash/get';
 import { useWeb3React } from '@web3-react/core';
 import { convertStakingData } from 'helpers/staking';
 import { setSelectedPoolData } from 'services/staking';
+import { useFetchOxbTokenBalance } from 'hooks/staking/useFetchOxbTokenBalance';
 interface Props {
   title?: string;
 }
@@ -40,6 +41,7 @@ const StakePage: React.FC<Props> = () => {
   const selectedPoolTableData = useAppSelector((state) => state.stake.selectedPoolData);
   // const [currentAction, setCurrentAction] = useState('claimAll');
   const { handleGetTokenBalances } = useFetchLPTokenBalance();
+  const { handleGetTokenBalances: getOxbBalance } = useFetchOxbTokenBalance();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tableDataLoading, setTableDataLoading] = useState(false);
   const [currentTransactionId, setCurrenTransactionId] = useState({
@@ -210,7 +212,12 @@ const StakePage: React.FC<Props> = () => {
           data={selectedPool}
           tableData={selectedPoolTableData}
           onBack={() => setSelected(-1)}
-          handleGetTokenBalances={handleGetTokenBalances}
+          handleGetTokenBalances={
+            selectedPool.lpAddress.toLocaleLowerCase() ===
+            String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase()
+              ? getOxbBalance
+              : handleGetTokenBalances
+          }
         />
       )}
 

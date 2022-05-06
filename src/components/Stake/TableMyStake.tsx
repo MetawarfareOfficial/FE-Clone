@@ -15,6 +15,8 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
+  Typography,
+  TypographyProps,
   // Checkbox,
   // CheckboxProps,
 } from '@mui/material';
@@ -229,6 +231,11 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 
 // const SelectBox = styled(Checkbox)<CheckboxProps>(() => ({}));
 
+const EmptyRecordsText = styled(Typography)<TypographyProps>(() => ({
+  textAlign: 'center',
+  width: '100%',
+}));
+
 const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
   const theme = useTheme();
   const { account } = useWeb3React();
@@ -286,71 +293,75 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
           </TableHead>
 
           <TableBody>
-            {records.map((item, i: number) => (
-              <TableRow key={i}>
-                <TableCellBody align="left">{moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}</TableCellBody>
-                <TableCellBody align="center">
-                  {formatForNumberLessThanCondition({
-                    value: item.stakedAmount,
-                    addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
-                    callback: formatPercent,
-                    callBackParams: [6],
-                  })}
-                </TableCellBody>
-                <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
-                <TableCellBody align="center">
-                  {formatForNumberLessThanCondition({
-                    value: item.reward,
-                    addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
-                    callback: formatPercent,
-                    callBackParams: [6],
-                  })}
-                  <TooltipCustom
-                    title={
-                      <div>
-                        <p style={{ margin: 0 }}>
-                          If you unstake before 30 days, you will be charged 5% on your unstake amount
-                        </p>
-                        <p style={{ margin: 0 }}>
-                          If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
-                        </p>
-                      </div>
-                    }
-                    arrow
-                    placement="left-start"
-                  >
-                    {theme.palette.mode === 'light' ? (
-                      <WarnIcon width={16} style={{ float: 'right' }} />
-                    ) : (
-                      <WarnDarkIcon width={16} style={{ float: 'right' }} />
-                    )}
-                  </TooltipCustom>
-                </TableCellBody>
+            {data.length > 0 &&
+              records.map((item, i: number) => (
+                <TableRow key={i}>
+                  <TableCellBody align="left">
+                    {moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}
+                  </TableCellBody>
+                  <TableCellBody align="center">
+                    {formatForNumberLessThanCondition({
+                      value: item.stakedAmount,
+                      addLessThanSymbol: true,
+                      minValueCondition: '0.000001',
+                      callback: formatPercent,
+                      callBackParams: [6],
+                    })}
+                  </TableCellBody>
+                  <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
+                  <TableCellBody align="center">
+                    {formatForNumberLessThanCondition({
+                      value: item.reward,
+                      addLessThanSymbol: true,
+                      minValueCondition: '0.000001',
+                      callback: formatPercent,
+                      callBackParams: [6],
+                    })}
+                    <TooltipCustom
+                      title={
+                        <div>
+                          <p style={{ margin: 0 }}>
+                            If you unstake before 30 days, you will be charged 5% on your unstake amount
+                          </p>
+                          <p style={{ margin: 0 }}>
+                            If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
+                          </p>
+                        </div>
+                      }
+                      arrow
+                      placement="left-start"
+                    >
+                      {theme.palette.mode === 'light' ? (
+                        <WarnIcon width={16} style={{ float: 'right' }} />
+                      ) : (
+                        <WarnDarkIcon width={16} style={{ float: 'right' }} />
+                      )}
+                    </TooltipCustom>
+                  </TableCellBody>
 
-                <TableCellBody align="right">
-                  <ButtonStake
-                    variant="outlined"
-                    onClick={() => {
-                      onUnstake(item.id);
-                    }}
-                  >
-                    Unstake
-                  </ButtonStake>
-                  <ButtonClaim
-                    variant="contained"
-                    onClick={() => {
-                      onClaim(item.id);
-                    }}
-                  >
-                    Claim
-                  </ButtonClaim>
-                </TableCellBody>
-              </TableRow>
-            ))}
+                  <TableCellBody align="right">
+                    <ButtonStake
+                      variant="outlined"
+                      onClick={() => {
+                        onUnstake(item.id);
+                      }}
+                    >
+                      Unstake
+                    </ButtonStake>
+                    <ButtonClaim
+                      variant="contained"
+                      onClick={() => {
+                        onClaim(item.id);
+                      }}
+                    >
+                      Claim
+                    </ButtonClaim>
+                  </TableCellBody>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
+        {data.length <= 0 && <EmptyRecordsText>No Records Found</EmptyRecordsText>}
       </TableContainer>
 
       {data.length > pagination.limit && (

@@ -205,11 +205,11 @@ const StakeStatusModal: React.FC<Props> = ({ open, onClose, status, onNextStatus
               )}
             </ViewImage>
 
-            {status === 'error' && <h3>Transaction Rejected</h3>}
+            <h3>{status === 'success' ? 'Transaction Completed' : 'Transaction Rejected'}</h3>
 
             {status === 'success' ? (
               <ViewTokenLink underline="none" onClick={onNextStatus}>
-                Transaction Completed
+                View On SnowTrace
               </ViewTokenLink>
             ) : (
               <SwapSubmit fullWidth onClick={onClose}>
