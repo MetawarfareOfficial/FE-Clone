@@ -298,13 +298,15 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
           </h4>
           <h4>{formatPercent(data.apr, 2)}%</h4>
           <h4>
-            {formatForNumberLessThanCondition({
-              value: data.yourTotalStakedAmount,
-              addLessThanSymbol: true,
-              minValueCondition: '0.000001',
-              callback: formatPercent,
-              callBackParams: [6],
-            })}
+            {data.yourTotalStakedAmount !== '0'
+              ? formatForNumberLessThanCondition({
+                  value: data.yourTotalStakedAmount,
+                  addLessThanSymbol: true,
+                  minValueCondition: '0.000001',
+                  callback: formatPercent,
+                  callBackParams: [6],
+                })
+              : '-'}
           </h4>
           <h4>{formatPercent(data.yourShare)}%</h4>
         </Line>
@@ -315,28 +317,39 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
           <Info>
             <h3>rewards</h3>
             <h4>
-              {formatForNumberLessThanCondition({
-                value: data.yourTotalRewardAmount,
-                addLessThanSymbol: true,
-                minValueCondition: '0.000001',
-                callback: formatPercent,
-                callBackParams: [4],
-              })}{' '}
+              {data.yourTotalRewardAmount !== '0'
+                ? formatForNumberLessThanCondition({
+                    value: data.yourTotalRewardAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [4],
+                  })
+                : '0.0'}{' '}
               0xB
             </h4>
             <h4>
               $
-              {formatForNumberLessThanCondition({
-                value: data.yourTotalRewardValue,
-                addLessThanSymbol: true,
-                minValueCondition: '0.000001',
-                callback: formatPrice,
-                callBackParams: [4],
-              })}
+              {data.yourTotalRewardValue !== '0'
+                ? formatForNumberLessThanCondition({
+                    value: data.yourTotalRewardValue,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPrice,
+                    callBackParams: [4],
+                  })
+                : '0.0'}
             </h4>
           </Info>
 
-          <ButtonClaim variant="contained" onClick={onClaimAll}>
+          <ButtonClaim
+            variant="contained"
+            onClick={() => {
+              if (Number(data.yourTotalRewardAmount) > 0) {
+                onClaimAll();
+              }
+            }}
+          >
             Claim All
           </ButtonClaim>
         </ViewValue>

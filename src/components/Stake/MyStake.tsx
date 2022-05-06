@@ -249,7 +249,7 @@ const MyStake: React.FC<Props> = ({
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
 
-  const [lpTokenInput, setLpTokenInput] = useState('0');
+  const [lpTokenInput, setLpTokenInput] = useState('');
   // const [isFirstTime, setIsFirstTime] = useState(true);
 
   // const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
@@ -264,7 +264,7 @@ const MyStake: React.FC<Props> = ({
     type: '',
     id: '',
   });
-  const [zapCompleted, setZapCompleted] = useState({
+  const [txCompleted, setTxCompleted] = useState({
     type: '',
     id: '',
   });
@@ -306,7 +306,7 @@ const MyStake: React.FC<Props> = ({
           type: 'approve',
         });
         await response.wait();
-        setZapCompleted({
+        setTxCompleted({
           type: 'approve',
           id: response.hash,
         });
@@ -331,7 +331,7 @@ const MyStake: React.FC<Props> = ({
             type: 'stake',
           });
           await response.wait();
-          setZapCompleted({
+          setTxCompleted({
             type: 'stake',
             id: response.hash,
           });
@@ -349,18 +349,18 @@ const MyStake: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (currentTransactionId.id !== '' && currentTransactionId.id === zapCompleted.id) {
+    if (currentTransactionId.id !== '' && currentTransactionId.id === txCompleted.id) {
       setStatus('success');
       setOpenStatus(true);
-      if (zapCompleted.type !== 'approve') {
+      if (txCompleted.type !== 'approve') {
         handleResetInputValue();
       }
-      setZapCompleted({
+      setTxCompleted({
         id: '',
         type: '',
       });
     }
-  }, [currentTransactionId, zapCompleted]);
+  }, [currentTransactionId, txCompleted]);
 
   const handleCheckIsApproved = () => {
     if (isSwapMaxFromTokens) {
@@ -383,6 +383,7 @@ const MyStake: React.FC<Props> = ({
   }, [lpTokenInput, lpToken]);
 
   const isInsufficientError = Number(lpTokenInput) > Number(lpToken.balance);
+  const invalidInput = lpTokenInput.trim() === '';
 
   return (
     <Wrapper>
@@ -411,13 +412,15 @@ const MyStake: React.FC<Props> = ({
                 <ExchangeHeader>
                   <h5>LP Token Balance</h5>
                   <p>
-                    {formatForNumberLessThanCondition({
-                      value: lpToken.balance,
-                      addLessThanSymbol: true,
-                      minValueCondition: '0.000001',
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })}{' '}
+                    {lpToken.balance !== '0'
+                      ? formatForNumberLessThanCondition({
+                          value: lpToken.balance,
+                          addLessThanSymbol: true,
+                          minValueCondition: '0.000001',
+                          callback: formatPercent,
+                          callBackParams: [6],
+                        })
+                      : '0.0'}{' '}
                     LP
                   </p>
                 </ExchangeHeader>
@@ -439,14 +442,16 @@ const MyStake: React.FC<Props> = ({
                   fullWidth
                   unEnable={false}
                   onClick={() => {
-                    if (tokenApproved && !isInsufficientError) {
-                      handleStakeLp();
-                    } else if (!tokenApproved) {
-                      handleApproveToken();
+                    if (!invalidInput) {
+                      if (tokenApproved && !isInsufficientError) {
+                        handleStakeLp();
+                      } else if (!tokenApproved) {
+                        handleApproveToken();
+                      }
                     }
                   }}
                 >
-                  {tokenApproved ? 'Stake' : 'Approve'}
+                  {invalidInput ? 'Enter Amount' : tokenApproved ? 'Stake' : 'Approve'}
                 </ButtonSubmit>
               </ExchangeBox>
             </SwapBox>
@@ -469,11 +474,13 @@ const MyStake: React.FC<Props> = ({
       />
 
       <StakeStatusModal
-        title={currentAction === 'approve' ? 'Approve Information' : data.title}
+        title={currentAction === 'approve' ? 'Approve Information' : 'Stake Information'}
         open={openStatus}
         onClose={handleCloseStatusModal}
         status={status}
-        onNextStatus={() => {}}
+        onNextStatus={() => {
+          window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
+        }}
       />
     </Wrapper>
   );

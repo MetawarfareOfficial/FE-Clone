@@ -208,14 +208,8 @@ const StakeStatusModal: React.FC<Props> = ({ open, onClose, status, onNextStatus
             {status === 'error' && <h3>Transaction Rejected</h3>}
 
             {status === 'success' ? (
-              <ViewTokenLink
-                // onClick={() => {
-                //   window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${transactionId}`, '_blank');
-                // }}
-                underline="none"
-                onClick={onNextStatus}
-              >
-                Rewards claimed successfully
+              <ViewTokenLink underline="none" onClick={onNextStatus}>
+                Transaction Completed
               </ViewTokenLink>
             ) : (
               <SwapSubmit fullWidth onClick={onClose}>

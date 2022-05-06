@@ -37,6 +37,10 @@ const TabCustom = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
+const EmptyBox = styled(Box)<BoxProps>(() => ({
+  marginTop: '200px',
+}));
+
 const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, currentTab }) => {
   const theme = useTheme();
   const { account } = useWeb3React();
@@ -132,7 +136,9 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                 )}
               </>
             ) : (
-              <Empty title="You need to connect your wallet to see your Pools." />
+              <EmptyBox>
+                <Empty title="You need to connect your wallet to see your Pools." />
+              </EmptyBox>
             )}
           </>
         )}
