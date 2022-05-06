@@ -287,6 +287,10 @@ const MyStake: React.FC<Props> = ({
     setOpenStatus(!openStatus);
   };
 
+  const handleCloseStatusModal = () => {
+    setOpenStatus(false);
+  };
+
   const handleApproveToken = async () => {
     try {
       setCurrentAction('approve');
@@ -418,7 +422,7 @@ const MyStake: React.FC<Props> = ({
                   </p>
                 </ExchangeHeader>
 
-                <InputLP disabled={false} value={null} onChange={handleChange} name="to" />
+                <InputLP disabled={false} value={lpTokenInput} onChange={handleChange} name="to" />
 
                 <ButtonGetLpToken
                   isError={isInsufficientError}
@@ -434,8 +438,13 @@ const MyStake: React.FC<Props> = ({
                   loading={false}
                   fullWidth
                   unEnable={false}
-                  disabled={false}
-                  onClick={tokenApproved ? handleStakeLp : handleApproveToken}
+                  onClick={() => {
+                    if (tokenApproved && !isInsufficientError) {
+                      handleStakeLp();
+                    } else if (!tokenApproved) {
+                      handleApproveToken();
+                    }
+                  }}
                 >
                   {tokenApproved ? 'Stake' : 'Approve'}
                 </ButtonSubmit>
@@ -462,7 +471,7 @@ const MyStake: React.FC<Props> = ({
       <StakeStatusModal
         title={currentAction === 'approve' ? 'Approve Information' : data.title}
         open={openStatus}
-        onClose={handleToggleStatus}
+        onClose={handleCloseStatusModal}
         status={status}
         onNextStatus={() => {}}
       />

@@ -84,7 +84,7 @@ const Info = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const ViewValue = styled(Box)<BoxProps>(({ theme }) => ({
-  maxWidth: '476px',
+  maxWidth: '560px',
   margin: '0 auto 28px',
   border: '1px solid rgba(41, 50, 71, 0.09)',
   borderRadius: '11px',
@@ -320,9 +320,9 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
                 addLessThanSymbol: true,
                 minValueCondition: '0.000001',
                 callback: formatPercent,
-                callBackParams: [6],
-              })}
-              xB
+                callBackParams: [4],
+              })}{' '}
+              0xB
             </h4>
             <h4>
               $
@@ -331,7 +331,7 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
                 addLessThanSymbol: true,
                 minValueCondition: '0.000001',
                 callback: formatPrice,
-                callBackParams: [6],
+                callBackParams: [4],
               })}
             </h4>
           </Info>
