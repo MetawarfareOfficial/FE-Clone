@@ -5,16 +5,14 @@ import { Box, BoxProps, Button, ButtonProps, IconButton, IconButtonProps, Grid }
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 import { useWindowSize } from 'hooks/useWindowSize';
-import { MyStakeCard, TableMyStake, StakeSettingModal, StakeStatusModal, ListMyStake } from './index';
+import { MyStakeCard, TableMyStake, StakeStatusModal, ListMyStake } from './index';
 import InputLP from './InputLP';
-import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
-import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
 
 import animationData from 'lotties/loading-button.json';
 import { PoolItem, StakeItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { useAppSelector } from 'stores/hooks';
-import { formatPercent } from 'helpers/formatPrice';
+import { formatPercent, truncateNumber } from 'helpers/formatPrice';
 import { useSwapToken } from 'hooks/swap';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useHistory } from 'react-router-dom';
@@ -241,8 +239,6 @@ const MyStake: React.FC<Props> = ({
   const [width] = useWindowSize();
   const { approveToken } = useSwapToken(false);
   const { stakeLp } = useInteractiveContract();
-  const theme = useTheme();
-  const [openSetting, setOpenSetting] = useState(false);
   // const [openClaimAll, setOpenClaimAll] = useState(false);
   // const [disabledStake, setDisabledStake] = useState(false);
   const [tokenApproved, setTokenApproved] = useState(false);
@@ -250,15 +246,12 @@ const MyStake: React.FC<Props> = ({
   const [openStatus, setOpenStatus] = useState(false);
 
   const [lpTokenInput, setLpTokenInput] = useState('');
-  // const [isFirstTime, setIsFirstTime] = useState(true);
 
-  // const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
   const [status, setStatus] = useState<'success' | 'error' | 'pending' | null>(null);
 
-  const [deadline, setDeadline] = useState('10');
   const [currentAction, setCurrentAction] = useState('stake');
 
-  const lpToken = useAppSelector((state: any) => state.stake.lpToken);
+  const lpToken = useAppSelector((state) => state.stake.lpToken);
 
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',
@@ -270,14 +263,15 @@ const MyStake: React.FC<Props> = ({
   });
 
   const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
+    setIsSwapMaxFromToken(false);
     setLpTokenInput(event.value);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSetSlippage = (value: string) => {};
-
-  const handleToggleSetting = () => {
-    setOpenSetting(!openSetting);
+  const handleMaxBtnClick = async () => {
+    if (Number(lpToken.balance) > 0) {
+      setIsSwapMaxFromToken(true);
+      setLpTokenInput(formatPercent(lpToken.balance, 10));
+    }
   };
 
   const handleToggleStatus = () => {
@@ -292,6 +286,7 @@ const MyStake: React.FC<Props> = ({
   };
 
   const handleApproveToken = async () => {
+    setIsSwapMaxFromToken(false);
     try {
       setCurrentAction('approve');
       handleToggleStatus();
@@ -324,7 +319,8 @@ const MyStake: React.FC<Props> = ({
         setCurrentAction('stake');
         handleToggleStatus();
         setStatus('pending');
-        const response = await stakeLp(data.id, lpTokenInput);
+        const valueToStake = isSwapMaxFromTokens ? lpToken.balance : lpTokenInput;
+        const response = await stakeLp(data.id, valueToStake);
         if (response.hash) {
           setCurrenTransactionId({
             id: response.hash,
@@ -341,6 +337,7 @@ const MyStake: React.FC<Props> = ({
       } catch (error: any) {
         setStatus('error');
       }
+      setIsSwapMaxFromToken(false);
     }
   };
   const handleResetInputValue = () => {
@@ -402,10 +399,6 @@ const MyStake: React.FC<Props> = ({
             <SwapBox>
               <SwapHeader>
                 <h4>Stake</h4>
-
-                <IconButtonCustom onClick={handleToggleSetting}>
-                  {theme.palette.mode === 'light' ? <SettingIcon /> : <SettingDarkIcon />}
-                </IconButtonCustom>
               </SwapHeader>
 
               <ExchangeBox>
@@ -425,7 +418,13 @@ const MyStake: React.FC<Props> = ({
                   </p>
                 </ExchangeHeader>
 
-                <InputLP disabled={false} value={lpTokenInput} onChange={handleChange} name="to" />
+                <InputLP
+                  disabled={false}
+                  value={lpTokenInput}
+                  onChange={handleChange}
+                  onMax={handleMaxBtnClick}
+                  name="to"
+                />
 
                 <ButtonGetLpToken
                   isError={isInsufficientError}
@@ -466,13 +465,6 @@ const MyStake: React.FC<Props> = ({
           </Grid>
         </Grid>
       </Box>
-
-      <StakeSettingModal
-        open={openSetting}
-        setDeadline={setDeadline}
-        setSlippage={handleSetSlippage}
-        onClose={handleToggleSetting}
-      />
 
       <StakeStatusModal
         title={currentAction === 'approve' ? 'Approve Information' : 'Stake Information'}
