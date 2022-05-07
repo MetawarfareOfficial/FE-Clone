@@ -5,7 +5,15 @@ import { Box, BoxProps, Button, ButtonProps, IconButton, IconButtonProps, Grid }
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 import { useWindowSize } from 'hooks/useWindowSize';
-import { MyStakeCard, TableMyStake, StakeSettingModal, StakeStatusModal, ListMyStake } from './index';
+import {
+  MyStakeCard,
+  TableMyStake,
+  StakeSettingModal,
+  StakeStatusModal,
+  ListMyStake,
+  UnStakeModal,
+  UnStakeAllModal,
+} from './index';
 import InputLP from './InputLP';
 import { ReactComponent as SettingDarkIcon } from 'assets/images/setting-dark.svg';
 import { ReactComponent as SettingIcon } from 'assets/images/setting-outlined.svg';
@@ -258,6 +266,17 @@ const MyStake: React.FC<Props> = ({
   const [deadline, setDeadline] = useState('10');
   const [currentAction, setCurrentAction] = useState('stake');
 
+  const [openUnStakeAll, setOpenUnStakeAll] = useState<boolean>(false);
+  const [openUnStake, setOpenUnStake] = useState(false);
+
+  const handleToggleUnStake = () => {
+    setOpenUnStake(!openUnStake);
+  };
+
+  const handleToggleUnStakeAll = () => {
+    setOpenUnStakeAll(!openUnStakeAll);
+  };
+
   const lpToken = useAppSelector((state: any) => state.stake.lpToken);
 
   const [currentTransactionId, setCurrenTransactionId] = useState({
@@ -461,7 +480,12 @@ const MyStake: React.FC<Props> = ({
             {width > 768 ? (
               <TableMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
             ) : (
-              <ListMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
+              <ListMyStake
+                data={tableData}
+                onClaim={handleToggleClaimOne}
+                onUnStakeAll={handleToggleUnStakeAll}
+                onUnstake={handleToggleUnStake}
+              />
             )}
           </Grid>
         </Grid>
@@ -483,6 +507,9 @@ const MyStake: React.FC<Props> = ({
           window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
         }}
       />
+
+      <UnStakeAllModal open={openUnStakeAll} onClose={handleToggleUnStakeAll} />
+      <UnStakeModal open={openUnStake} onClose={handleToggleUnStake} />
     </Wrapper>
   );
 };

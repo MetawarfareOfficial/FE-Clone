@@ -15,6 +15,7 @@ interface Props {
   title?: string;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
+  onUnStakeAll: () => void;
   data: StakeItem[];
 }
 
@@ -27,36 +28,61 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '9px',
 }));
 
-// const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
-//   fontFamily: 'Poppins',
-//   fontStyle: 'normal',
-//   fontWeight: '500',
-//   fontSize: '21px',
-//   lineHeight: '32px',
-//   textAlign: 'center',
-//   background: '#3864FF',
-//   color: '#fff',
-//   textTransform: 'capitalize',
-//   height: '51px',
-//   borderRadius: '15px',
-//   boxShadow: 'none',
-//   padding: '6px 10px',
-//   width: '206px',
-//   margin: '0 auto',
-//   display: 'block',
+const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '500',
+  fontSize: '21px',
+  lineHeight: '32px',
+  textAlign: 'center',
+  background: '#3864FF',
+  color: '#fff',
+  textTransform: 'capitalize',
+  height: '51px',
+  borderRadius: '15px',
+  boxShadow: 'none',
+  padding: '6px 10px',
+  width: '206px',
+  margin: '0 auto',
+  display: 'block',
 
-//   '&:disabled': {
-//     background: 'rgba(56, 100, 255, 0.16)',
-//     color: '#fff',
-//   },
+  '&:disabled': {
+    background: 'rgba(56, 100, 255, 0.16)',
+    color: '#fff',
+  },
 
-//   '&:hover': {
-//     background: '#1239C4',
-//     color: '#fff',
-//     outline: 'none',
-//     boxShadow: 'none',
-//   },
-// }));
+  '&:hover': {
+    background: '#1239C4',
+    color: '#fff',
+    outline: 'none',
+    boxShadow: 'none',
+  },
+}));
+
+const ButtonUnStakeAll = styled(Button)<ButtonProps>(() => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '500',
+  fontSize: '21px',
+  lineHeight: '32px',
+  textAlign: 'center',
+  border: '1px solid #3864FF',
+  color: '#3864FF',
+  textTransform: 'capitalize',
+  height: '51px',
+  borderRadius: '15px',
+  boxShadow: 'none',
+  padding: '6px 10px',
+  width: '206px',
+  margin: '0 auto 20px',
+  display: 'block',
+
+  '&:hover': {
+    background: '#3864FF',
+    borderColor: '#3864FF',
+    color: '#fff',
+  },
+}));
 
 const ButtonStake = styled(Button)<ButtonProps>(() => ({
   fontFamily: 'Poppins',
@@ -168,14 +194,12 @@ const ViewPagination = styled(Box)<BoxProps>(() => ({
   padding: '36px 0 47px',
 }));
 
-// const ListAction = styled(Box)<BoxProps>(() => ({
-//   padding: '24px',
-//   boxSizing: 'border-box',
-//   borderBottom: '0.586653px solid rgba(41, 50, 71, 0.09)',
-//   display: 'flex',
-//   alignItems: 'center',
-//   justifyContent: 'center',
-// }));
+const ListAction = styled(Box)<BoxProps>(() => ({
+  padding: '24px',
+  boxSizing: 'border-box',
+  borderBottom: '0.586653px solid rgba(41, 50, 71, 0.09)',
+  textAlign: 'center',
+}));
 
 const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -204,7 +228,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
-const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
+const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data }) => {
   const theme = useTheme();
   const { account } = useWeb3React();
 
@@ -240,9 +264,12 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
 
   return (
     <Wrapper>
-      {/* <ListAction>
-        <ButtonClaimAll onClick={onClaimAll}>Claim All</ButtonClaimAll>
-      </ListAction> */}
+      <ListAction>
+        <ButtonUnStakeAll variant="outlined" onClick={onUnStakeAll}>
+          Unstake All
+        </ButtonUnStakeAll>
+        <ButtonClaimAll>Claim All</ButtonClaimAll>
+      </ListAction>
 
       {records.map((item, i: number) => (
         <CardItem key={i}>
@@ -266,6 +293,12 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
                     callBackParams: [6],
                   })}
                 </h3>
+              </Detail>
+            </Grid>
+            <Grid item xs={6}>
+              <Detail>
+                <h4>unstaked amount</h4>
+                <h3>{moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}</h3>
               </Detail>
             </Grid>
             <Grid item xs={6}>
