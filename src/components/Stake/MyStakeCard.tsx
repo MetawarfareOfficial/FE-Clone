@@ -93,9 +93,16 @@ const ViewValue = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'inline-flex',
   alignItems: 'center',
 
+  [theme.breakpoints.down('lg')]: {
+    display: 'inline-block',
+    maxWidth: 'calc(100% - 60px)',
+    padding: '18px 20px',
+  },
+
   [theme.breakpoints.down('sm')]: {
     display: 'inline-block',
-    maxWidth: '314px',
+    maxWidth: 'calc(100% - 60px)',
+    padding: '18px 20px',
   },
 
   '@media(max-width: 320px)': {
@@ -127,6 +134,10 @@ const ViewValue = styled(Box)<BoxProps>(({ theme }) => ({
     letterSpacing: '0.025em',
     color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     margin: '0 0 0 56px',
+
+    [theme.breakpoints.down('lg')]: {
+      margin: '0 0 0 24px',
+    },
 
     '@media(max-width: 320px)': {
       fontSize: '14px',
@@ -256,6 +267,11 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
     color: '#fff',
     outline: 'none',
     boxShadow: 'none',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    marginLeft: '15px',
+    minWidth: 'auto',
   },
 
   [theme.breakpoints.down('sm')]: {

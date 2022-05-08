@@ -57,12 +57,12 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: 'Poppins',
+  fontFamily: 'Roboto',
   fontSize: '20px',
-  lineHeight: '37px',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  lineHeight: '23px',
+  color: theme.palette.mode === 'light' ? '#595872' : '#fff',
   textTransform: 'capitalize',
-  fontWeight: '600',
+  fontWeight: '700',
 }));
 
 const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
@@ -128,20 +128,23 @@ const ButtonConfirm = styled(Button)<ButtonProps>(() => ({
 }));
 
 const StakeDetail = styled(Box)<BoxProps>(({ theme }) => ({
+  margin: '0 15px',
+
   [theme.breakpoints.down('md')]: {
-    border: '1px solid rgba(41, 50, 71, 0.09)',
+    border: theme.palette.mode === 'light' ? '1px solid rgba(41, 50, 71, 0.09)' : '1px solid rgba(255, 255, 255, 0.8)',
     padding: '40px 20px 35px',
     boxSizing: 'border-box',
     borderRadius: '11px',
+    margin: '0',
     marginBottom: '26px',
   },
 }));
 
 const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
-  background: '#fff',
-  border: '1px solid rgba(41, 50, 71, 0.09)',
+  background: theme.palette.mode === 'light' ? '#fff' : 'unset',
+  border: theme.palette.mode === 'light' ? '1px solid rgba(41, 50, 71, 0.09)' : '1px solid rgba(255, 255, 255, 0.8)',
   borderRadius: '11px',
-  padding: '25px 20px 27px',
+  padding: '25px 20px 26px',
   boxSizing: 'border-box',
   display: 'flex',
   alignItems: 'center',
@@ -190,7 +193,7 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
     lineHeight: '21px',
     textTransform: 'capitalize',
     color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-    margin: '0 0 9px',
+    margin: '0 0',
   },
 }));
 

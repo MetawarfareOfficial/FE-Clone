@@ -30,7 +30,11 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   boxShadow:
     theme.palette.mode === 'light' ? '0px 2px 17px rgba(213, 215, 222, 0.24)' : '0px 2px 17px rgba(17, 18, 19, 0.24)',
   borderRadius: '27px 27px 27px 29px',
-  padding: '35px 49px 35px 42px',
+  padding: '35px 49px 35px 39px',
+
+  [theme.breakpoints.down('lg')]: {
+    padding: '34px 30px',
+  },
 
   [theme.breakpoints.down('sm')]: {
     padding: '34px 30px',
@@ -47,7 +51,7 @@ const BoxHeader = styled(Box)<BoxProps>(() => ({
   marginBottom: '42px',
 }));
 
-const ViewIcon = styled(Box)<BoxProps>(() => ({
+const ViewIcon = styled(Box)<BoxProps>(({ theme }) => ({
   width: '35px',
   height: '35px',
   borderRadius: '50%',
@@ -56,6 +60,16 @@ const ViewIcon = styled(Box)<BoxProps>(() => ({
 
   img: {
     maxWidth: '100%',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    width: '30px',
+    height: '30px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    width: '26px',
+    height: '26px',
   },
 }));
 
@@ -68,6 +82,14 @@ const Title = styled(Typography)<TypographyProps>(({ theme }) => ({
   lineHeight: '26px',
   letterSpacing: '0.025em',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '20px',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    fontSize: '16px',
+  },
 }));
 
 const BoxContent = styled(Box)<BoxProps>(() => ({
@@ -254,8 +276,8 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
       </BoxContent>
 
       <BoxActions>
-        <Grid container spacing={'39px'}>
-          <Grid item md={6}>
+        <Grid container spacing={{ lg: '39px', md: '20px', xs: '47px' }}>
+          <Grid item xs={6}>
             {account && (
               <ButtonStake
                 variant="outlined"
@@ -268,7 +290,7 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
               </ButtonStake>
             )}
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={6}>
             {Number(stakedAmount) > 0 && (
               <ButtonClaim variant="contained" fullWidth onClick={onClaimAll}>
                 Claim
