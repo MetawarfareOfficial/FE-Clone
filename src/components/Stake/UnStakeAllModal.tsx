@@ -64,12 +64,12 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: 'Poppins',
+  fontFamily: 'Roboto',
   fontSize: '20px',
-  lineHeight: '37px',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  lineHeight: '23px',
+  color: theme.palette.mode === 'light' ? '#595872' : '#fff',
   textTransform: 'capitalize',
-  fontWeight: '600',
+  fontWeight: '700',
 }));
 
 const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
@@ -177,7 +177,7 @@ const ButtonConfirm = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const TableCustom = styled(Table)<TableProps>(() => ({
+const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
   marginBottom: '35px',
   marginLeft: '-20px',
   marginRight: '-20px',
@@ -195,7 +195,7 @@ const TableCustom = styled(Table)<TableProps>(() => ({
         lineHeight: '21px',
         textAlign: 'center',
         textTransform: 'capitalize',
-        color: 'rgba(41, 50, 71, 0.8)',
+        color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : '#fff',
       },
     },
   },
@@ -211,7 +211,7 @@ const TableCustom = styled(Table)<TableProps>(() => ({
         lineHeight: '21px',
         textAlign: 'center',
         textTransform: 'capitalize',
-        color: '#293247',
+        color: theme.palette.mode === 'light' ? '#293247' : '#fff',
       },
 
       '.textRed': {

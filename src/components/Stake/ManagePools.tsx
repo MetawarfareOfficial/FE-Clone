@@ -20,10 +20,11 @@ interface Props {
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
+  padding: '0 55px',
+  boxSizing: 'border-box',
 
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('lg')]: {
     padding: '0 17px',
-    boxSizing: 'border-box',
   },
 }));
 
@@ -75,7 +76,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
 
       <Box>
         {currentTab === 'allPool' && (
-          <Grid container spacing={{ xs: '34px', md: '60px' }}>
+          <Grid container spacing={{ xs: '34px', md: '68px' }}>
             {pools.length > 0
               ? pools.map((item, index) => {
                   return (

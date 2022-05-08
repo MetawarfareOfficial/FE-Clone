@@ -47,7 +47,7 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '11px',
 }));
 
-const ButtonSelectAll = styled(Button)<ButtonProps>(() => ({
+const ButtonSelectAll = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -65,6 +65,10 @@ const ButtonSelectAll = styled(Button)<ButtonProps>(() => ({
     background: '#3864FF',
     borderColor: '#3864FF',
     color: '#fff',
+  },
+
+  [theme.breakpoints.down('lg')]: {
+    maxWidth: '170px',
   },
 }));
 
@@ -314,7 +318,11 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
                       onClick={() => {
                         setSelectedRows([]);
                       }}
-                      style={{ width: '99px', marginRight: '16px', marginLeft: '-90px' }}
+                      style={{
+                        width: '99px',
+                        marginRight: '16px',
+                        marginLeft: theme.breakpoints.down('lg') ? '-60px' : '-90px',
+                      }}
                     >
                       Deselect
                     </ButtonStake>
