@@ -16,6 +16,7 @@ interface Props {
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
   onUnStakeAll: () => void;
+  onClaimAll: () => void;
   data: StakeItem[];
 }
 
@@ -228,7 +229,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
-const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data }) => {
+const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data, onClaimAll }) => {
   const theme = useTheme();
   const { account } = useWeb3React();
 
@@ -268,7 +269,7 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data }
         <ButtonUnStakeAll variant="outlined" onClick={onUnStakeAll}>
           Unstake All
         </ButtonUnStakeAll>
-        <ButtonClaimAll>Claim All</ButtonClaimAll>
+        <ButtonClaimAll onClick={onClaimAll}>Claim All</ButtonClaimAll>
       </ListAction>
 
       {records.map((item, i: number) => (

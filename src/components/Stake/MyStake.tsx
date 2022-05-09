@@ -662,8 +662,18 @@ const MyStake: React.FC<Props> = ({
               <ListMyStake
                 data={tableData}
                 onClaim={handleToggleClaimOne}
-                onUnStakeAll={handleToggleUnStakeAll}
-                onUnstake={handleToggleUnStake}
+                onUnStakeAll={() => {
+                  const selectedRecords = tableData.map((item) => item.id);
+                  setUnstakeRow('-1');
+                  setSelectedRows(selectedRecords);
+                  handleMultipleUnstake(selectedRecords);
+                }}
+                onClaimAll={() => {
+                  const selectedRecords = tableData.map((item) => item.id);
+                  setSelectedRows(selectedRecords);
+                  handleMultipleClaim(selectedRecords);
+                }}
+                onUnstake={handleToggleUnstakeOne}
               />
             </Grid>
           ) : (
