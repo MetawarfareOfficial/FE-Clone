@@ -465,6 +465,10 @@ export const useInteractiveContract = () => {
     return await stakingManagerContractWithSigner.claimReward(poolId, indexes);
   };
 
+  const claimAllRewards = async (poolId: string) => {
+    return await stakingManagerContractWithSigner.claimAllReward(poolId);
+  };
+
   const stakeLp = async (poolId: string, amount: string) => {
     return await stakingManagerContractWithSigner.deposit(
       poolId,
@@ -477,7 +481,11 @@ export const useInteractiveContract = () => {
   };
 
   const withDrawSelectedEntities = async (poolId: string, indexes: string[]) => {
-    return await stakingManagerContractWithSigner.withdrawMultiple(poolId, indexes);
+    return await stakingManagerContractWithSigner.withdraw(poolId, indexes);
+  };
+
+  const withDrawAll = async (poolId: string) => {
+    return await stakingManagerContractWithSigner.withdrawAll(poolId);
   };
 
   return {
@@ -525,6 +533,8 @@ export const useInteractiveContract = () => {
     withDrawSelectedEntities,
     getJsonAllPool,
     getJsonAllPoolByUser,
+    withDrawAll,
+    claimAllRewards,
     contractWithSigner,
     provider,
   };

@@ -29,14 +29,15 @@ import moment from 'moment';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import { useWeb3React } from '@web3-react/core';
-// import { removeArrayItemByValue } from 'helpers/removeArrayItemByIndex';
-
-import { UnStakeAllModal, UnStakeModal } from './index';
 
 interface Props {
   title?: string;
   onClaim: (index: any) => void;
   onUnstake: (index: any) => void;
+  onMultipleClaim: (indexes: string[]) => void;
+  onMultipleUnstake: (indexes: string[]) => void;
+  selectedRows: string[];
+  setSelectedRows: (indexes: string[]) => void;
   data: StakeItem[];
 }
 
@@ -266,7 +267,15 @@ const ViewHelp = styled(Box)<BoxProps>(() => ({
   marginRight: '-60px',
 }));
 
-const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
+const TableMyStake: React.FC<Props> = ({
+  onClaim,
+  data,
+  selectedRows,
+  setSelectedRows,
+  onMultipleClaim,
+  onMultipleUnstake,
+  onUnstake,
+}) => {
   const tableData = data.filter((item) => item.stakeDate !== '0');
   const theme = useTheme();
   const { account } = useWeb3React();
@@ -275,19 +284,8 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
     limit: 5,
     index: 0,
   });
-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
-  const [openUnStakeAll, setOpenUnStakeAll] = useState<boolean>(false);
-  const [openUnStake, setOpenUnStake] = useState(false);
 
-  const handleToggleUnStake = () => {
-    setOpenUnStake(!openUnStake);
-  };
-
-  const handleToggleUnStakeAll = () => {
-    setOpenUnStakeAll(!openUnStakeAll);
-  };
-
-  const handleSelectRow = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleSelectRow = (event: React.ChangeEvent<HTMLInputElement>, index: string) => {
     const selectedIndex = selectedRows.indexOf(index);
     let newSelected: any = [];
 
@@ -326,19 +324,11 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
   }, [account, data]);
 
   const handleSelectAllClick = () => {
-    const newSelecteds = tableData.map((n) => n.id);
+    const newSelecteds = tableData.map((n) => String(n.id));
     setSelectedRows(newSelecteds);
   };
 
-  const handleUnStake = () => {
-    if (selectedRows.length === tableData.length) {
-      handleToggleUnStakeAll();
-    } else {
-      handleToggleUnStake();
-    }
-  };
-
-  const isSelected = (index: number) => selectedRows.indexOf(index) !== -1;
+  const isSelected = (index: string) => selectedRows.indexOf(index) !== -1;
 
   return (
     <Wrapper>
@@ -366,10 +356,24 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
                     >
                       Deselect
                     </ButtonStake>
-                    <ButtonStake variant="outlined" onClick={handleUnStake}>
+                    <ButtonStake
+                      variant="outlined"
+                      onClick={() => {
+                        if (selectedRows.length === tableData.length) {
+                          onUnstake('-1');
+                        } else {
+                          onMultipleUnstake(selectedRows);
+                        }
+                      }}
+                    >
                       Unstake {selectedRows.length === tableData.length && 'All'}
                     </ButtonStake>
-                    <ButtonClaim variant="contained">
+                    <ButtonClaim
+                      onClick={() => {
+                        onMultipleClaim(selectedRows);
+                      }}
+                      variant="contained"
+                    >
                       Claim {selectedRows.length === tableData.length && 'All'}
                     </ButtonClaim>
                   </Box>
@@ -385,7 +389,7 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
           <TableBody>
             {data.length > 0 &&
               records.map((item: any, i: number) => {
-                const isItemSelected = isSelected(item.id);
+                const isItemSelected = isSelected(String(item.id));
 
                 return (
                   <TableRow key={i} selected={isItemSelected}>
@@ -414,7 +418,7 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
 
                         <CheckboxCustom
                           color="primary"
-                          onChange={(event) => handleSelectRow(event, item.id)}
+                          onChange={(event) => handleSelectRow(event, String(item.id))}
                           // checked={isSelected(item.id)}
                           checked={isItemSelected}
                           inputProps={{
@@ -452,10 +456,9 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
                     <TableCellBody align="right">
                       <ButtonStake
                         variant="outlined"
-                        onClick={handleToggleUnStake}
-                        // onClick={() => {
-                        //   onUnstake(item.id);
-                        // }}
+                        onClick={() => {
+                          onUnstake(item.id);
+                        }}
                       >
                         Unstake
                       </ButtonStake>
@@ -486,9 +489,6 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
           />{' '}
         </ViewPagination>
       )}
-
-      <UnStakeAllModal open={openUnStakeAll} onClose={handleToggleUnStakeAll} />
-      <UnStakeModal open={openUnStake} onClose={handleToggleUnStake} />
     </Wrapper>
   );
 };

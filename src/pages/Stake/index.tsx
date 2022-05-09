@@ -20,10 +20,10 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 }));
 
 const StakePage: React.FC<Props> = () => {
-  const { claimRewards, withDrawSelectedEntities, getPoolInfo } = useInteractiveContract();
+  const { claimRewards, claimAllRewards, getPoolInfo } = useInteractiveContract();
   const { account } = useWeb3React();
   const [currentTab, setCurrentTab] = useState<'allPool' | 'myPool'>('allPool');
-  const [claimType, setClaimType] = useState<'claim_all' | 'claim' | 'unstake'>('claim_all');
+  const [claimType, setClaimType] = useState<'claim_all' | 'claim'>('claim_all');
   const [status, setStatus] = useState<any>(null);
   const dispatch = useAppDispatch();
   const [openStatus, setOpenStatus] = useState(false);
@@ -39,7 +39,7 @@ const StakePage: React.FC<Props> = () => {
   const selectedPool = pools.filter((item) => item.id === String(selected))[0];
 
   const selectedPoolTableData = useAppSelector((state) => state.stake.selectedPoolData);
-  // const [currentAction, setCurrentAction] = useState('claimAll');
+
   const { handleGetTokenBalances } = useFetchLPTokenBalance();
   const { handleGetTokenBalances: getOxbBalance } = useFetchOxbTokenBalance();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,10 +60,6 @@ const StakePage: React.FC<Props> = () => {
 
   const handleToggleClaimOne = () => {
     setClaimType('claim');
-    setOpenClaimAll(!openClaimAll);
-  };
-  const handleToggleCUnstake = () => {
-    setClaimType('unstake');
     setOpenClaimAll(!openClaimAll);
   };
 
@@ -102,7 +98,7 @@ const StakePage: React.FC<Props> = () => {
     setStatus('pending');
     try {
       if (claimType === 'claim_all') {
-        const transaction = await claimRewards(poolToClaim, ['a']);
+        const transaction = await claimAllRewards(poolToClaim);
         if (transaction.hash) {
           setCurrenTransactionId({
             id: transaction.hash,
@@ -126,20 +122,6 @@ const StakePage: React.FC<Props> = () => {
           setTxCompleted({
             id: transaction.hash,
             type: 'claim',
-          });
-          handleFetchTableData();
-        }
-      } else if (claimType === 'unstake') {
-        const transaction = await withDrawSelectedEntities(poolToClaim, [selectedIndex]);
-        if (transaction.hash) {
-          setCurrenTransactionId({
-            id: transaction.hash,
-            type: 'unstake',
-          });
-          await transaction.wait();
-          setTxCompleted({
-            id: transaction.hash,
-            type: 'unstake',
           });
           handleFetchTableData();
         }
@@ -200,11 +182,6 @@ const StakePage: React.FC<Props> = () => {
             setPoolToClaim(String(selected));
             handleToggleClaimOne();
           }}
-          handleToggleUnstake={(index) => {
-            setSelectedIndex(String(index));
-            setPoolToClaim(String(selected));
-            handleToggleCUnstake();
-          }}
           handleToggleClaimAll={() => {
             setPoolToClaim(String(selected));
             handleToggleClaimAll();
@@ -226,7 +203,13 @@ const StakePage: React.FC<Props> = () => {
         selectedIndex={Number(selectedIndex)}
         type={claimType}
         open={openClaimAll}
-        onClose={closeClaimModal}
+        onClose={() => {
+          closeClaimModal();
+          setCurrenTransactionId({
+            type: '',
+            id: '',
+          });
+        }}
         onConfirm={handleConfirmClaim}
       />
 
@@ -235,7 +218,9 @@ const StakePage: React.FC<Props> = () => {
         open={openStatus}
         onClose={closeStatusModal}
         status={status}
-        onNextStatus={() => {}}
+        onNextStatus={() => {
+          window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
+        }}
       />
     </Wrapper>
   );

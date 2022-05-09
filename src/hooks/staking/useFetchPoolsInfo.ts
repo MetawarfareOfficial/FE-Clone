@@ -36,7 +36,7 @@ export const useFetchPoolsInfo = () => {
         userPool.length > 0 ? new BigNumber(userPool[0].pendingReward).div(1e18).toString() : '0';
       const yourStakingTime = userPool.length > 0 ? userPool[0].minTimestamp : '0';
       return {
-        id: item.index,
+        id: String(item.index),
         liquidity: new BigNumber(item.lpAmountInPool).div(1e18).multipliedBy(lpToUsdcAmount).toString(),
         totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
         apr:

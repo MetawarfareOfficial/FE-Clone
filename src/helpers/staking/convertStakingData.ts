@@ -22,7 +22,7 @@ export const convertStakingData = ({ dates, stakedAmounts, rewards }: Params) =>
     }).map((item, index) => {
       return {
         ...item,
-        id: index,
+        id: String(index),
       };
     });
   }
