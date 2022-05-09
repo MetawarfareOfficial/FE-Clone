@@ -152,12 +152,12 @@ const ExchangeHeader = styled(Box)<BoxProps>(({ theme }) => ({
 
   h5: {
     fontFamily: 'Poppins',
-    fontWeight: '400',
+    fontWeight: '500',
     fontSize: '14px',
     lineHeight: '26px',
     letterSpacing: '0.04em',
     textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+    color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.65)' : 'rgba(255, 255, 255, 0.4)',
     margin: 0,
   },
 

@@ -69,12 +69,12 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
 }));
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
-  fontFamily: 'Poppins',
+  fontFamily: 'Roboto',
   fontSize: '20px',
-  lineHeight: '37px',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  lineHeight: '23px',
+  color: theme.palette.mode === 'light' ? '#595872' : '#fff',
   textTransform: 'capitalize',
-  fontWeight: '600',
+  fontWeight: '700',
 }));
 
 const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
@@ -209,7 +209,7 @@ const Line = styled(Box)<BoxProps>(({ theme }) => ({
     margin: 0,
 
     strong: {
-      fontWeight: 600,
+      fontWeight: 500,
       color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : '#fff',
     },
 
@@ -323,7 +323,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
             {
               <Box>
                 <p>{type === 'claim_all' && 'Total '}Earned Rewards </p>
-                <ButtonReward variant="contained">
+                <ButtonReward variant="contained" style={{ margin: 0 }}>
                   {`${formatForNumberLessThanCondition({
                     value:
                       type === 'claim_all'
