@@ -112,7 +112,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
         {currentTab !== 'allPool' && (
           <>
             {account ? (
-              <>
+              <Grid container spacing={{ xs: '34px', md: '68px' }}>
                 {activePools.length > 0 ? (
                   activePools.map((item, index) => {
                     return (
@@ -134,7 +134,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                 ) : (
                   <NoRecordsText>No Records Found</NoRecordsText>
                 )}
-              </>
+              </Grid>
             ) : (
               <EmptyBox>
                 <Empty title="You need to connect your wallet to see your Pools." mode="white" />
