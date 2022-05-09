@@ -218,9 +218,11 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, i
   };
 
   const calculateTotalStakedAmount = (records: DataItem[]) => {
-    return records.reduce((acc, item) => {
-      return acc + Number(item.stakedAmount);
-    }, 0);
+    return (
+      records.reduce((acc, item) => {
+        return acc + Number(item.stakedAmount);
+      }, 0) - handleCalculateUnstakeFee(records)
+    );
   };
 
   const calculateTotalEarnedReward = (records: DataItem[]) => {
