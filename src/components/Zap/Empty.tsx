@@ -8,6 +8,7 @@ import EmptyDarkIcon from 'assets/images/empty-zap-dark.svg';
 
 interface Props {
   title?: string;
+  mode?: 'white' | 'mixed';
 }
 
 const Wrapper = styled(Box)<BoxProps>(() => ({
@@ -37,14 +38,18 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   marginTop: '27px',
 }));
 
-const Empty: React.FC<Props> = ({ title = 'You need to connect your wallet to use ZAP feature.' }) => {
+const Empty: React.FC<Props> = ({ title = 'You need to connect your wallet to use ZAP feature.', mode = 'mixed' }) => {
   const theme = useTheme();
 
   return (
     <Wrapper>
       <EmptyContent>
         <ViewImg>
-          <img alt="" src={theme.palette.mode === 'light' ? EmptyIcon : EmptyDarkIcon} width={264} />
+          <img
+            alt=""
+            src={theme.palette.mode === 'light' ? EmptyIcon : mode === 'mixed' ? EmptyDarkIcon : EmptyIcon}
+            width={264}
+          />
         </ViewImg>
         <Text variant="body1">{title}</Text>
       </EmptyContent>

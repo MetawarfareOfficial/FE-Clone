@@ -34,6 +34,7 @@ interface DataItem {
   rewards: string;
 }
 interface Props {
+  isOxbPool: boolean;
   open: boolean;
   onClose: () => void;
   data: DataItem[];
@@ -58,7 +59,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   },
 
   '.MuiPaper-root': {
-    width: '437px',
+    width: '550px',
     boxShadow: '0px 4px 67px rgba(0, 0, 0, 0.09)',
     borderRadius: '11px',
     padding: '0',
@@ -232,7 +233,7 @@ const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
   },
 }));
 
-const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleConfirm }) => {
+const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleConfirm, isOxbPool }) => {
   const handleCalculateUnstakeFee = (records: DataItem[]) => {
     return records.reduce((acc, item) => {
       return acc + Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTime)));
@@ -269,12 +270,18 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
       </Header>
 
       <Content>
-        <TableContainer>
+        <TableContainer
+          sx={{
+            overflowX: 'unset',
+          }}
+        >
           <TableCustom size="small">
             <TableHead>
               <TableRow>
                 <TableCell align="center">Stake Amount</TableCell>
-                <TableCell align="center">Staked Time</TableCell>
+                <TableCell size="small" align="center">
+                  Staked Time
+                </TableCell>
                 <TableCell align="center">Rewards</TableCell>
               </TableRow>
             </TableHead>
@@ -289,12 +296,14 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                             addLessThanSymbol: true,
                             minValueCondition: '0.000001',
                             callback: formatPercent,
-                            callBackParams: [6],
+                            callBackParams: [2],
                           })
                         : '0.0'}{' '}
-                      0xb
+                      0xB
                     </TableCell>
-                    <TableCell align="center">{item.stakedTime} days</TableCell>
+                    <TableCell size="small" align="center">
+                      {item.stakedTime} days
+                    </TableCell>
                     <TableCell align="center">
                       {item.rewards !== '0'
                         ? formatForNumberLessThanCondition({
@@ -302,7 +311,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                             addLessThanSymbol: true,
                             minValueCondition: '0.000001',
                             callback: formatPercent,
-                            callBackParams: [6],
+                            callBackParams: [2],
                           })
                         : '0.0'}{' '}
                       0xB
@@ -318,12 +327,32 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
           <>
             <Line>
               <p>
-                Total early unstake fee: <strong>{handleCalculateUnstakeFee(data)} LP</strong>
+                Total early unstake fee:{' '}
+                <strong>
+                  {formatForNumberLessThanCondition({
+                    value: String(handleCalculateUnstakeFee(data)),
+                    minValueCondition: '0.000001',
+                    addLessThanSymbol: true,
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}{' '}
+                  {isOxbPool ? '0xB' : 'LP'}
+                </strong>
               </p>
             </Line>
             <Line>
               <p>
-                Total Unstake amount: <strong>{calculateTotalStakedAmount(data)} LP</strong>
+                Total Unstake amount:{' '}
+                <strong>
+                  {formatForNumberLessThanCondition({
+                    value: String(calculateTotalStakedAmount(data)),
+                    minValueCondition: '0.000001',
+                    addLessThanSymbol: true,
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })}{' '}
+                  {isOxbPool ? '0xB' : 'LP'}
+                </strong>
               </p>
             </Line>
           </>
@@ -339,7 +368,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                 callback: formatPercent,
                 callBackParams: [6],
               })}{' '}
-              LP
+              {isOxbPool ? '0xB' : 'LP'}
             </strong>
           </p>
         </Line>

@@ -137,7 +137,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
               </>
             ) : (
               <EmptyBox>
-                <Empty title="You need to connect your wallet to see your Pools." />
+                <Empty title="You need to connect your wallet to see your Pools." mode="white" />
               </EmptyBox>
             )}
           </>

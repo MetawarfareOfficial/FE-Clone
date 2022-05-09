@@ -212,7 +212,7 @@ const ButtonSubmit = styled(Button)<
   lineHeight: '33px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: theme.palette.mode === 'light' ? '#fff' : '#fff',
+  color: theme.palette.mode === 'light' ? '#fff' : unEnable ? 'rgba(255, 255, 255, 0.3)' : '#171717',
   cursor: unEnable ? 'not-allowed !important' : 'pointer',
 
   '&:hover': {
@@ -592,7 +592,6 @@ const MyStake: React.FC<Props> = ({
                       name: 'OxB',
                       logo: OxImg,
                     }}
-                    showMaxBtn={Number(oxbToken.balance) > 0}
                   />
                 ) : (
                   <InputLP
@@ -601,7 +600,6 @@ const MyStake: React.FC<Props> = ({
                     onChange={handleChange}
                     onMax={handleMaxBtnClick}
                     name="to"
-                    showMaxBtn={Number(lpToken.balance) > 0}
                   />
                 )}
 
@@ -618,11 +616,10 @@ const MyStake: React.FC<Props> = ({
                 >
                   {`Get ${isOxbPool ? 'OxB' : 'LP'} Token ->`}
                 </ButtonGetLpToken>
-                {/* {isInsufficientError && <ErrorText>Insufficient balance</ErrorText>} */}
                 <ButtonSubmit
                   loading={false}
                   fullWidth
-                  unEnable={false}
+                  unEnable={!invalidInput ? (tokenApproved ? invalidInput || isInsufficientError : false) : true}
                   onClick={() => {
                     if (!invalidInput) {
                       if (tokenApproved && !isInsufficientError) {
@@ -632,10 +629,9 @@ const MyStake: React.FC<Props> = ({
                       }
                     }
                   }}
-                  disabled={tokenApproved ? isInsufficientError : false}
                 >
                   {invalidInput
-                    ? 'Enter Amount'
+                    ? 'Please enter a valid amount'
                     : tokenApproved
                     ? isInsufficientError
                       ? 'Insufficient balance'
@@ -699,6 +695,7 @@ const MyStake: React.FC<Props> = ({
       />
 
       <UnStakeAllModal
+        isOxbPool={isOxbPool}
         data={getClaimModalData(selectedRows, tableData)}
         type={currentStakingType}
         open={openUnStakeAll}

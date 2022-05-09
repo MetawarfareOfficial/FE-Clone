@@ -53,7 +53,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   },
 
   '.MuiPaper-root': {
-    width: '437px',
+    width: '550px',
     boxShadow: '0px 4px 67px rgba(0, 0, 0, 0.09)',
     borderRadius: '11px',
     padding: '0',
@@ -249,7 +249,7 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, i
         <StakeDetail>
           <BoxDetail>
             <div className="boxItem">
-              <h3>Unstake Amount</h3>
+              <h3>{type === 'all' && 'Total '}Unstake Amount</h3>
               <h4>
                 {formatForNumberLessThanCondition({
                   value: String(calculateTotalStakedAmount(data)),
@@ -262,7 +262,7 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, i
               </h4>
             </div>
             <div className="boxItem">
-              <h3>Earned Reward</h3>
+              <h3>{type === 'all' && 'Total '}Earned Reward</h3>
               <h4>
                 {formatForNumberLessThanCondition({
                   value: String(calculateTotalEarnedReward(data)),
@@ -282,7 +282,7 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, i
               <h4>{calculateTotalStakingTime(data)} days</h4>
             </div>
             <div className="boxItem">
-              <h3>Early Unstake fee</h3>
+              <h3>{type === 'all' && 'Total '}Early Unstake fee</h3>
               <h4>
                 {formatForNumberLessThanCondition({
                   value: String(handleCalculateUnstakeFee(data)),
