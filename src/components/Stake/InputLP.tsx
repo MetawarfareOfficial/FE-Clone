@@ -22,7 +22,6 @@ interface Props {
   onChange: (event: { value: string; name: string; isOnblur?: boolean }) => void;
   disabled: boolean;
   onMax?: () => void;
-  showMaxBtn?: boolean;
 }
 BigNumber.config({
   EXPONENTIAL_AT: 100,
@@ -109,17 +108,7 @@ const ButtonMax = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const InputLP: React.FC<Props> = ({
-  name,
-  value,
-  max,
-  min,
-  onChange,
-  disabled,
-  onMax,
-  tokenName = 'LP',
-  showMaxBtn,
-}) => {
+const InputLP: React.FC<Props> = ({ name, value, max, min, onChange, disabled, onMax, tokenName = 'LP' }) => {
   // const theme = useTheme();
 
   return (
@@ -157,7 +146,7 @@ const InputLP: React.FC<Props> = ({
           <InputAdornment position="start">
             <Text>{tokenName}</Text>
 
-            {showMaxBtn && <ButtonMax onClick={onMax}>Max</ButtonMax>}
+            <ButtonMax onClick={onMax}>Max</ButtonMax>
           </InputAdornment>
         ),
       }}

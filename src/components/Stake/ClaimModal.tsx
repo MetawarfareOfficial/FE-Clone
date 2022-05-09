@@ -50,7 +50,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   },
 
   '.MuiPaper-root': {
-    width: '437px',
+    width: '500px',
     boxShadow: '0px 4px 67px rgba(0, 0, 0, 0.09)',
     borderRadius: '11px',
     padding: '0',
@@ -120,17 +120,17 @@ const ButtonReward = styled(Button)<ButtonProps>(() => ({
   height: '41px',
   borderRadius: '14px',
   boxShadow: 'none',
-  padding: '10px 10px',
+  padding: '10px 20px',
   marginLeft: '32px',
-  width: '122px',
+  maxWidth: '200px',
 
   '&:disabled': {
-    background: 'rgba(56, 100, 255, 0.16)',
+    background: '#3864FF',
     color: '#fff',
   },
 
   '&:hover': {
-    background: '#1239C4',
+    background: '#3864FF',
     color: '#fff',
     outline: 'none',
     boxShadow: 'none',
@@ -176,7 +176,7 @@ const TotalEarned = styled(Box)<BoxProps>(({ theme }) => ({
   textAlign: 'center',
   margin: '0 16px 36px',
   maxWidth: '364px',
-
+  minWidth: '300px',
   p: {
     fontFamily: 'Roboto',
     fontStyle: 'normal',
@@ -232,36 +232,12 @@ const Line = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-// const Description = styled(Box)<BoxProps>(({ theme }) => ({
-//   display: 'flex',
-//   alignItems: 'center',
-//   paddingLeft: '17px',
-//   marginBottom: '30px',
-
-//   svg: {
-//     width: '22px',
-//     height: '22px',
-//     marginRight: '14px',
-//   },
-
-//   p: {
-//     fontFamily: 'Poppins',
-//     fontStyle: 'normal',
-//     fontWeight: '400',
-//     fontSize: '14px',
-//     lineHeight: '26px',
-//     textTransform: 'capitalize',
-//     color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-//     margin: 0,
-//   },
-// }));
-
 const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, selectedIndex }) => {
   const selectedPool = useAppSelector((state) => state.stake.selectedPoolData);
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText>{type === 'claim' ? 'Claim rewards' : 'Claim All rewards'}</HeaderText>
+        <HeaderText>{type === 'claim' ? 'Claim Rewards' : 'Claim All'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -270,26 +246,34 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
 
       {data && (
         <Content>
-          <TotalEarned>
-            {
-              <Box>
-                <p>{type === 'claim_all' && 'Total '}Earned Rewards </p>
-                <ButtonReward variant="contained" style={{ margin: 0 }}>
-                  {`${formatForNumberLessThanCondition({
-                    value:
-                      type === 'claim_all'
-                        ? data.yourTotalRewardAmount
-                        : get(selectedPool, `[${selectedIndex}].reward`, 0),
-                    minValueCondition: '0.000001',
-                    addLessThanSymbol: true,
-                    callback: formatPercent,
-                    callBackParams: [6],
-                  })} `}
-                  0xB
-                </ButtonReward>
-              </Box>
-            }
-          </TotalEarned>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <TotalEarned>
+              {
+                <Box>
+                  <p>{type === 'claim_all' && 'Total '}Earned Rewards </p>
+                  <ButtonReward disabled variant="contained" style={{ margin: 0 }}>
+                    {`${formatForNumberLessThanCondition({
+                      value:
+                        type === 'claim_all'
+                          ? data.yourTotalRewardAmount
+                          : get(selectedPool, `[${selectedIndex}].reward`, 0),
+                      minValueCondition: '0.000001',
+                      addLessThanSymbol: true,
+                      callback: formatPercent,
+                      callBackParams: [6],
+                    })} `}
+                    0xB
+                  </ButtonReward>
+                </Box>
+              }
+            </TotalEarned>
+          </div>
           <Line>
             <p>
               {type === 'claim_all' ? 'Join' : 'Stake'} Date :{' '}

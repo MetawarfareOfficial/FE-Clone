@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js';
 interface Props {
   name: string;
   value: string | null;
-  showMaxBtn?: boolean;
   max?: number;
   min?: number;
   onMax?: () => void;
@@ -135,7 +134,7 @@ const TokenActive = styled(Link)<LinkProps>(({ theme }) => ({
   },
 }));
 
-const InputToken: React.FC<Props> = ({ name, value, max, min, onMax, onChange, showMaxBtn, token, disabled }) => {
+const InputToken: React.FC<Props> = ({ name, value, max, min, onMax, onChange, token, disabled }) => {
   return (
     <TextFieldSwap
       autoComplete="off"
@@ -174,7 +173,7 @@ const InputToken: React.FC<Props> = ({ name, value, max, min, onMax, onChange, s
               <p>{token.name}</p>
             </TokenActive>
 
-            {showMaxBtn && <ButtonMax onClick={onMax}>Max</ButtonMax>}
+            <ButtonMax onClick={onMax}>Max</ButtonMax>
           </InputAdornment>
         ),
       }}

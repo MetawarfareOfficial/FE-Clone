@@ -6,7 +6,6 @@ import { ClaimModal, ManagePools, MyStake, StakeStatusModal } from 'components/S
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useFetchLPTokenBalance } from 'hooks/staking/useFetchLPTokenBalance';
-import get from 'lodash/get';
 import { useWeb3React } from '@web3-react/core';
 import { convertStakingData } from 'helpers/staking';
 import { setSelectedPoolData } from 'services/staking';
@@ -214,7 +213,7 @@ const StakePage: React.FC<Props> = () => {
       />
 
       <StakeStatusModal
-        title={get(selectedPool, 'title', '')}
+        title="Claim rewards"
         open={openStatus}
         onClose={closeStatusModal}
         status={status}
