@@ -15,10 +15,10 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
+  Checkbox,
+  CheckboxProps,
   Typography,
   TypographyProps,
-  // Checkbox,
-  // CheckboxProps,
 } from '@mui/material';
 
 import PaginationCustom from './Pagination';
@@ -30,6 +30,8 @@ import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessTha
 import { formatPercent } from 'helpers/formatPrice';
 import { useWeb3React } from '@web3-react/core';
 // import { removeArrayItemByValue } from 'helpers/removeArrayItemByIndex';
+
+import { UnStakeAllModal, UnStakeModal } from './index';
 
 interface Props {
   title?: string;
@@ -47,34 +49,26 @@ const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
   borderRadius: '11px',
 }));
 
-// const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
-//   fontFamily: 'Poppins',
-//   fontStyle: 'normal',
-//   fontWeight: '500',
-//   fontSize: '14px',
-//   lineHeight: '21px',
-//   textAlign: 'center',
-//   background: '#3864FF',
-//   color: '#fff',
-//   textTransform: 'capitalize',
-//   height: '34px',
-//   borderRadius: '10px',
-//   boxShadow: 'none',
-//   padding: '6px 10px',
-//   maxWidth: '184px',
+const ButtonSelectAll = styled(Button)<ButtonProps>(() => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '500',
+  fontSize: '14px',
+  textAlign: 'center',
+  color: '#3864FF',
+  textTransform: 'capitalize',
+  border: '1px solid #3864FF',
+  height: '34px',
+  width: '100%',
+  maxWidth: '190px',
+  borderRadius: '10px',
 
-//   '&:disabled': {
-//     background: 'rgba(56, 100, 255, 0.16)',
-//     color: '#fff',
-//   },
-
-//   '&:hover': {
-//     background: '#1239C4',
-//     color: '#fff',
-//     outline: 'none',
-//     boxShadow: 'none',
-//   },
-// }));
+  '&:hover': {
+    background: '#3864FF',
+    borderColor: '#3864FF',
+    color: '#fff',
+  },
+}));
 
 const ButtonStake = styled(Button)<ButtonProps>(() => ({
   fontFamily: 'Poppins',
@@ -86,8 +80,10 @@ const ButtonStake = styled(Button)<ButtonProps>(() => ({
   textTransform: 'capitalize',
   border: '1px solid #3864FF',
   height: '34px',
-  width: '80px',
+  width: 'auto',
+  minWidth: '80px',
   borderRadius: '10px',
+  padding: '5px 9px',
 
   '&:hover': {
     background: '#3864FF',
@@ -106,9 +102,11 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   color: '#fff',
   textTransform: 'capitalize',
   height: '34px',
-  width: '80px',
+  width: 'auto',
+  minWidth: '80px',
   borderRadius: '10px',
   boxShadow: 'none',
+  padding: '5px 11px',
   marginLeft: '24px',
 
   '&:disabled': {
@@ -236,7 +234,36 @@ const EmptyRecordsText = styled(Typography)<TypographyProps>(() => ({
   width: '100%',
 }));
 
-const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
+const CheckboxCustom = styled(Checkbox)<CheckboxProps>(() => ({
+  padding: 0,
+  float: 'right',
+  marginRight: '-30px',
+  width: '23px',
+  height: '23px',
+
+  '.MuiSvgIcon-root': {
+    color: '#B8B8B8',
+  },
+}));
+
+const RewardsFlex = styled(Box)<BoxProps>(() => ({
+  width: '100%',
+  position: 'relative',
+
+  '.Mui-checked': {
+    '.MuiSvgIcon-root': {
+      color: '#3864FF',
+    },
+  },
+}));
+
+const ViewHelp = styled(Box)<BoxProps>(() => ({
+  float: 'right',
+  marginRight: '-60px',
+}));
+
+const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
+  const tableData = data.filter((item) => item.stakeDate !== '0');
   const theme = useTheme();
   const { account } = useWeb3React();
   const [records, setRecords] = useState(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
@@ -244,21 +271,34 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
     limit: 5,
     index: 0,
   });
-  // const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+  const [openUnStakeAll, setOpenUnStakeAll] = useState<boolean>(false);
+  const [openUnStake, setOpenUnStake] = useState(false);
 
-  // const handleSelectStakingTableRow = (checked: boolean, index: string) => {
-  //   const rowIndexes = selectedRows.filter((item) => item === String(index));
-  //   if (rowIndexes.length > 0) {
-  //     if (!checked) {
-  //       setSelectedRows(removeArrayItemByValue<string>(selectedRows, String(index)));
-  //     }
-  //   } else {
-  //     if (checked) {
-  //       const newSelectedRows = [...selectedRows, String(index)];
-  //       setSelectedRows(newSelectedRows);
-  //     }
-  //   }
-  // };
+  const handleToggleUnStake = () => {
+    setOpenUnStake(!openUnStake);
+  };
+
+  const handleToggleUnStakeAll = () => {
+    setOpenUnStakeAll(!openUnStakeAll);
+  };
+
+  const handleSelectRow = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const selectedIndex = selectedRows.indexOf(index);
+    let newSelected: any = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selectedRows, index);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selectedRows.slice(1));
+    } else if (selectedIndex === selectedRows.length - 1) {
+      newSelected = newSelected.concat(selectedRows.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(selectedRows.slice(0, selectedIndex), selectedRows.slice(selectedIndex + 1));
+    }
+
+    setSelectedRows(newSelected);
+  };
 
   useEffect(() => {}, [pagination]);
 
@@ -281,6 +321,21 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
     }
   }, [account, data]);
 
+  const handleSelectAllClick = () => {
+    const newSelecteds = tableData.map((n) => n.id);
+    setSelectedRows(newSelecteds);
+  };
+
+  const handleUnStake = () => {
+    if (selectedRows.length === tableData.length) {
+      handleToggleUnStakeAll();
+    } else {
+      handleToggleUnStake();
+    }
+  };
+
+  const isSelected = (index: number) => selectedRows.indexOf(index) !== -1;
+
   return (
     <Wrapper>
       <TableContainer>
@@ -291,76 +346,123 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
               <TableCellHeader align="center">stake amount</TableCellHeader>
               <TableCellHeader align="center">staked time</TableCellHeader>
               <TableCellHeader align="center">rewards 0xB</TableCellHeader>
+              <TableCellHeader align="right">
+                {selectedRows.length > 0 ? (
+                  <Box>
+                    <ButtonStake
+                      variant="outlined"
+                      onClick={() => {
+                        setSelectedRows([]);
+                      }}
+                      style={{ width: '99px', marginRight: '16px', marginLeft: '-90px' }}
+                    >
+                      Deselect
+                    </ButtonStake>
+                    <ButtonStake variant="outlined" onClick={handleUnStake}>
+                      Unstake {selectedRows.length === tableData.length && 'All'}
+                    </ButtonStake>
+                    <ButtonClaim variant="contained">
+                      Claim {selectedRows.length === tableData.length && 'All'}
+                    </ButtonClaim>
+                  </Box>
+                ) : (
+                  <ButtonSelectAll variant="outlined" fullWidth onClick={handleSelectAllClick}>
+                    Select All
+                  </ButtonSelectAll>
+                )}
+              </TableCellHeader>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {data.length > 0 &&
-              records.map((item, i: number) => (
-                <TableRow key={i}>
-                  <TableCellBody align="left">
-                    {moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}
-                  </TableCellBody>
-                  <TableCellBody align="center">
-                    {formatForNumberLessThanCondition({
-                      value: item.stakedAmount,
-                      addLessThanSymbol: true,
-                      minValueCondition: '0.000001',
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })}
-                  </TableCellBody>
-                  <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
-                  <TableCellBody align="center">
-                    {formatForNumberLessThanCondition({
-                      value: item.reward,
-                      addLessThanSymbol: true,
-                      minValueCondition: '0.000001',
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })}
-                    <TooltipCustom
-                      title={
-                        <div>
-                          <p style={{ margin: 0 }}>
-                            If you unstake before 30 days, you will be charged 5% on your unstake amount
-                          </p>
-                          <p style={{ margin: 0 }}>
-                            If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
-                          </p>
-                        </div>
-                      }
-                      arrow
-                      placement="left-start"
-                    >
-                      {theme.palette.mode === 'light' ? (
-                        <WarnIcon width={16} style={{ float: 'right' }} />
-                      ) : (
-                        <WarnDarkIcon width={16} style={{ float: 'right' }} />
-                      )}
-                    </TooltipCustom>
-                  </TableCellBody>
+              records.map((item: any, i: number) => {
+                const isItemSelected = isSelected(item.id);
 
-                  <TableCellBody align="right">
-                    <ButtonStake
-                      variant="outlined"
-                      onClick={() => {
-                        onUnstake(item.id);
-                      }}
-                    >
-                      Unstake
-                    </ButtonStake>
-                    <ButtonClaim
-                      variant="contained"
-                      onClick={() => {
-                        onClaim(item.id);
-                      }}
-                    >
-                      Claim
-                    </ButtonClaim>
-                  </TableCellBody>
-                </TableRow>
-              ))}
+                return (
+                  <TableRow key={i} selected={isItemSelected}>
+                    <TableCellBody align="left">
+                      {moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}
+                    </TableCellBody>
+                    <TableCellBody align="center">
+                      {formatForNumberLessThanCondition({
+                        value: item.stakedAmount,
+                        addLessThanSymbol: true,
+                        minValueCondition: '0.000001',
+                        callback: formatPercent,
+                        callBackParams: [6],
+                      })}
+                    </TableCellBody>
+                    <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
+                    <TableCellBody align="center">
+                      <RewardsFlex>
+                        {formatForNumberLessThanCondition({
+                          value: item.reward,
+                          addLessThanSymbol: true,
+                          minValueCondition: '0.000001',
+                          callback: formatPercent,
+                          callBackParams: [6],
+                        })}
+
+                        <CheckboxCustom
+                          color="primary"
+                          onChange={(event) => handleSelectRow(event, item.id)}
+                          // checked={isSelected(item.id)}
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': `enhanced-table-checkbox-${i}`,
+                          }}
+                        />
+
+                        <TooltipCustom
+                          title={
+                            <div>
+                              <p style={{ margin: 0 }}>
+                                If you unstake before 30 days, you will be charged 5% on your unstake amount
+                              </p>
+                              <p style={{ margin: 0 }}>
+                                If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
+                              </p>
+                            </div>
+                          }
+                          arrow
+                          placement="left-start"
+                        >
+                          {theme.palette.mode === 'light' ? (
+                            <ViewHelp>
+                              <WarnIcon width={16} />
+                            </ViewHelp>
+                          ) : (
+                            <ViewHelp>
+                              <WarnDarkIcon width={16} />
+                            </ViewHelp>
+                          )}
+                        </TooltipCustom>
+                      </RewardsFlex>
+                    </TableCellBody>
+
+                    <TableCellBody align="right">
+                      <ButtonStake
+                        variant="outlined"
+                        onClick={handleToggleUnStake}
+                        // onClick={() => {
+                        //   onUnstake(item.id);
+                        // }}
+                      >
+                        Unstake
+                      </ButtonStake>
+                      <ButtonClaim
+                        variant="contained"
+                        onClick={() => {
+                          onClaim(item.id);
+                        }}
+                      >
+                        Claim
+                      </ButtonClaim>
+                    </TableCellBody>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
         {data.length <= 0 && <EmptyRecordsText>No Records Found</EmptyRecordsText>}
@@ -376,6 +478,9 @@ const TableMyStake: React.FC<Props> = ({ onClaim, onUnstake, data }) => {
           />{' '}
         </ViewPagination>
       )}
+
+      <UnStakeAllModal open={openUnStakeAll} onClose={handleToggleUnStakeAll} />
+      <UnStakeModal open={openUnStake} onClose={handleToggleUnStake} />
     </Wrapper>
   );
 };

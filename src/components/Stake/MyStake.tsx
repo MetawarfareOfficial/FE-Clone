@@ -5,7 +5,15 @@ import { Box, BoxProps, Button, ButtonProps, IconButton, IconButtonProps, Grid }
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 import { useWindowSize } from 'hooks/useWindowSize';
-import { MyStakeCard, TableMyStake, StakeStatusModal, ListMyStake } from './index';
+import {
+  MyStakeCard,
+  TableMyStake,
+  StakeSettingModal,
+  StakeStatusModal,
+  ListMyStake,
+  UnStakeModal,
+  UnStakeAllModal,
+} from './index';
 import InputLP from './InputLP';
 
 import animationData from 'lotties/loading-button.json';
@@ -258,6 +266,16 @@ const MyStake: React.FC<Props> = ({
   const [isOxbPool, setIsOxbPool] = useState(
     data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
   );
+  const [openUnStakeAll, setOpenUnStakeAll] = useState<boolean>(false);
+  const [openUnStake, setOpenUnStake] = useState(false);
+
+  const handleToggleUnStake = () => {
+    setOpenUnStake(!openUnStake);
+  };
+
+  const handleToggleUnStakeAll = () => {
+    setOpenUnStakeAll(!openUnStakeAll);
+  };
 
   const [currentTransactionId, setCurrenTransactionId] = useState({
     type: '',
@@ -276,7 +294,7 @@ const MyStake: React.FC<Props> = ({
   const handleMaxBtnClick = async () => {
     if (Number(isOxbPool ? oxbToken.balance : lpToken.balance) > 0) {
       setIsSwapMaxFromToken(true);
-      setLpTokenInput(formatPercent(oxbToken ? oxbToken.balance : lpToken.balance, 10));
+      setLpTokenInput(formatPercent(isOxbPool ? oxbToken.balance : lpToken.balance, 10));
     }
   };
 
@@ -501,7 +519,12 @@ const MyStake: React.FC<Props> = ({
             </Grid>
           ) : tableData.length > 0 ? (
             <Grid item xs={12}>
-              <ListMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
+              <ListMyStake
+                data={tableData}
+                onClaim={handleToggleClaimOne}
+                onUnStakeAll={handleToggleUnStakeAll}
+                onUnstake={handleToggleUnStake}
+              />
             </Grid>
           ) : (
             ''
@@ -518,6 +541,9 @@ const MyStake: React.FC<Props> = ({
           window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
         }}
       />
+
+      <UnStakeAllModal open={openUnStakeAll} onClose={handleToggleUnStakeAll} />
+      <UnStakeModal open={openUnStake} onClose={handleToggleUnStake} />
     </Wrapper>
   );
 };
