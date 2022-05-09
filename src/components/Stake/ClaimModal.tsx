@@ -17,18 +17,16 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
-import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-circle.svg';
 import { PoolItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import moment from 'moment';
 import get from 'lodash/get';
-import { calculateEarlyUnstakingFee } from 'helpers/staking';
 import { useAppSelector } from 'stores/hooks';
 
 interface Props {
   open: boolean;
-  type: 'claim_all' | 'unstake' | 'claim';
+  type: 'claim_all' | 'claim';
   onClose: () => void;
   onConfirm: () => void;
   selectedIndex: number;
@@ -234,83 +232,36 @@ const Line = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-// const UnstakeContent = styled(Box)<BoxProps>(({ theme }) => ({
+// const Description = styled(Box)<BoxProps>(({ theme }) => ({
 //   display: 'flex',
-//   alignContent: 'center',
-//   padding: '9px 11px',
+//   alignItems: 'center',
+//   paddingLeft: '17px',
+//   marginBottom: '30px',
 
-//   div: {
-//     textAlign: 'center',
+//   svg: {
+//     width: '22px',
+//     height: '22px',
+//     marginRight: '14px',
+//   },
 
-//     h3: {
-//       fontFamily: 'Roboto',
-//       fontStyle: 'normal',
-//       fontWeight: '500',
-//       fontSize: '18px',
-//       lineHeight: '21px',
-//       alignItems: 'center',
-//       textAlign: 'center',
-//       textTransform: 'capitalize',
-//       color: theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-//       margin: '0 0 9px',
-//     },
-
-//     h4: {
-//       fontFamily: 'Roboto',
-//       fontStyle: 'normal',
-//       fontWeight: '600',
-//       fontSize: '18px',
-//       lineHeight: '21px',
-//       alignItems: 'center',
-//       textAlign: 'center',
-//       textTransform: 'capitalize',
-//       color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-//       margin: 0,
-//     },
-
-//     '&:last-child': {
-//       marginLeft: 'auto',
-//     },
+//   p: {
+//     fontFamily: 'Poppins',
+//     fontStyle: 'normal',
+//     fontWeight: '400',
+//     fontSize: '14px',
+//     lineHeight: '26px',
+//     textTransform: 'capitalize',
+//     color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+//     margin: 0,
 //   },
 // }));
 
-const Description = styled(Box)<BoxProps>(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  paddingLeft: '17px',
-  marginBottom: '30px',
-
-  svg: {
-    width: '22px',
-    height: '22px',
-    marginRight: '14px',
-  },
-
-  p: {
-    fontFamily: 'Poppins',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    fontSize: '14px',
-    lineHeight: '26px',
-    textTransform: 'capitalize',
-    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-    margin: 0,
-  },
-}));
-
 const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, selectedIndex }) => {
   const selectedPool = useAppSelector((state) => state.stake.selectedPoolData);
-  const accureDays =
-    type === 'unstake'
-      ? moment().diff(
-          moment(Number(get(data, `yourAllStakes[${selectedIndex}].stakeDate`, moment().unix())) * 1000),
-          'day',
-        )
-      : '0';
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText>{type !== 'unstake' ? 'Claim rewards' : 'Unstake'}</HeaderText>
+        <HeaderText>{type === 'claim' ? 'Claim rewards' : 'Claim All rewards'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -339,110 +290,72 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
               </Box>
             }
           </TotalEarned>
-          {type === 'unstake' && (
-            <>
-              <Line>
-                <p>
-                  Unstake amount:{' '}
-                  <strong>
-                    {formatForNumberLessThanCondition({
-                      value: get(selectedPool, `[${selectedIndex}].stakedAmount`, '0'),
-                      minValueCondition: '0.000001',
-                      addLessThanSymbol: true,
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })}
-                  </strong>
-                </p>
-                <p>
-                  Accrue days: <strong>{accureDays} days</strong>
-                </p>
-              </Line>
-
-              <Line>
-                <p>
-                  Early unstake fee:{' '}
-                  <strong>
-                    {formatForNumberLessThanCondition({
-                      value: calculateEarlyUnstakingFee(
-                        Number(get(selectedPool, `[${selectedIndex}].stakedAmount`, '0')),
-                        Number(accureDays),
-                      ),
-                      minValueCondition: '0.000001',
-                      addLessThanSymbol: true,
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })}{' '}
-                    LP
-                  </strong>
-                </p>
-              </Line>
-            </>
-          )}
-          {type !== 'unstake' ? (
-            <>
-              <Line>
-                <p>
-                  {type === 'claim_all' ? 'Join' : 'Stake'} Date :{' '}
-                  <strong>
-                    {moment
-                      .unix(Number(get(data, 'yourAllStakes[0].stakeDate', moment().unix())))
+          <Line>
+            <p>
+              {type === 'claim_all' ? 'Join' : 'Stake'} Date :{' '}
+              <strong>
+                {type === 'claim_all'
+                  ? moment.unix(Number(get(data, 'yourStakingTime', moment().unix()))).format('MMM DD YYYY')
+                  : moment
+                      .unix(Number(get(selectedPool, `[${selectedIndex}].stakeDate`, moment().unix())))
                       .format('MMM DD YYYY')}
-                  </strong>
-                </p>
-                <p>
-                  {type === 'claim_all' && 'Total '}Staking time:{' '}
-                  <strong>
-                    {moment().diff(
-                      moment(Number(get(data, 'yourAllStakes[0].stakeDate', moment().unix())) * 1000),
+              </strong>
+            </p>
+            <p>
+              {type === 'claim_all' && 'Total '}Staking time:{' '}
+              <strong>
+                {type === 'claim_all'
+                  ? moment().diff(moment(Number(get(data, 'yourStakingTime', moment().unix())) * 1000), 'day')
+                  : moment().diff(
+                      moment(Number(get(selectedPool, `[${selectedIndex}].stakeDate`, moment().unix())) * 1000),
                       'day',
                     )}{' '}
-                    days
-                  </strong>
-                </p>
-              </Line>
+                days
+              </strong>
+            </p>
+          </Line>
 
-              <Line>
-                <p>
-                  {type === 'claim_all' && 'Total '}Stake amount:{' '}
-                  <strong>
-                    {formatForNumberLessThanCondition({
+          <Line>
+            <p>
+              {type === 'claim_all' && 'Total '}Stake amount:{' '}
+              <strong>
+                {type === 'claim_all'
+                  ? formatForNumberLessThanCondition({
                       value: data.yourTotalStakedAmount,
                       minValueCondition: '0.000001',
                       addLessThanSymbol: true,
                       callback: formatPercent,
                       callBackParams: [6],
+                    })
+                  : formatForNumberLessThanCondition({
+                      value: get(selectedPool, `[${selectedIndex}].stakedAmount`, '0'),
+                      minValueCondition: '0.000001',
+                      addLessThanSymbol: true,
+                      callback: formatPercent,
+                      callBackParams: [6],
                     })}{' '}
-                    LP
-                  </strong>
-                </p>
-                {type === 'claim_all' && (
-                  <p>
-                    Your share:{' '}
-                    <strong>
-                      {formatForNumberLessThanCondition({
-                        value: data.yourShare,
-                        minValueCondition: '0.01',
-                        addLessThanSymbol: true,
-                        callback: formatPercent,
-                        callBackParams: [2],
-                      })}
-                      %
-                    </strong>
-                  </p>
-                )}
-              </Line>
-            </>
-          ) : (
-            <Description>
-              <WarnIcon />
+                {data.lpAddress.toLocaleLowerCase() ===
+                String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase()
+                  ? '0xB'
+                  : 'LP'}
+              </strong>
+            </p>
+            {type === 'claim_all' && (
               <p>
-                If you unstake before 30 days,
-                <br /> you will be charged 5% on your unstake amount
+                Your share:{' '}
+                <strong>
+                  {formatForNumberLessThanCondition({
+                    value: data.yourShare,
+                    minValueCondition: '0.01',
+                    addLessThanSymbol: true,
+                    callback: formatPercent,
+                    callBackParams: [2],
+                  })}
+                  %
+                </strong>
               </p>
-            </Description>
-          )}
-
+            )}
+          </Line>
           <ButtonConfirm variant="contained" fullWidth onClick={onConfirm}>
             Confirm
           </ButtonConfirm>

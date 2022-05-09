@@ -43,7 +43,6 @@ interface Props {
   tableData: StakeItem[];
   handleToggleClaimAll: () => void;
   handleToggleClaimOne: (index: number) => void;
-  handleToggleUnstake: (index: number) => void;
   handleGetTokenBalances: () => void;
 }
 
@@ -241,14 +240,13 @@ const MyStake: React.FC<Props> = ({
   tableData,
   handleToggleClaimAll,
   handleToggleClaimOne,
-  handleToggleUnstake,
   handleGetTokenBalances,
 }) => {
   const history = useHistory();
 
   const [width] = useWindowSize();
   const { approveToken } = useSwapToken(false);
-  const { stakeLp } = useInteractiveContract();
+  const { stakeLp, claimRewards, withDrawSelectedEntities, withDrawAll } = useInteractiveContract();
   const [tokenApproved, setTokenApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
@@ -256,16 +254,20 @@ const MyStake: React.FC<Props> = ({
   const [lpTokenInput, setLpTokenInput] = useState('');
 
   const [status, setStatus] = useState<'success' | 'error' | 'pending' | null>(null);
+  const [currentStakingType, setCurrentStakingType] = useState<'unstake' | 'claim'>('claim');
 
   const [currentAction, setCurrentAction] = useState('stake');
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+  const [unstakeRow, setUnstakeRow] = useState<string>('0');
 
   const lpToken = useAppSelector((state) => state.stake.lpToken);
-
   const oxbToken = useAppSelector((state) => state.stake.oxbToken);
 
   const [isOxbPool, setIsOxbPool] = useState(
     data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
   );
+
   const [openUnStakeAll, setOpenUnStakeAll] = useState<boolean>(false);
   const [openUnStake, setOpenUnStake] = useState(false);
 
@@ -307,6 +309,136 @@ const MyStake: React.FC<Props> = ({
 
   const handleCloseStatusModal = () => {
     setOpenStatus(false);
+  };
+
+  const handleMultipleClaim = (indexes: string[]) => {
+    if (indexes.length >= tableData.length) {
+      handleToggleClaimAll();
+    } else {
+      setCurrentStakingType('claim');
+      handleToggleUnStakeAll();
+    }
+  };
+
+  const handleMultipleUnstake = (indexes: string[]) => {
+    if (indexes.length >= tableData.length) {
+      handleToggleUnStake();
+    } else {
+      setCurrentStakingType('unstake');
+      handleToggleUnStakeAll();
+    }
+  };
+
+  const handleToggleUnstakeOne = (index: string) => {
+    setUnstakeRow(index);
+    setOpenUnStake(true);
+  };
+
+  const handleConfirmMultipleClaim = async () => {
+    handleToggleUnStakeAll();
+    try {
+      setCurrentAction('claim');
+      handleToggleStatus();
+      setStatus('pending');
+      const response = await claimRewards(data.id, selectedRows);
+      if (response.hash) {
+        setCurrenTransactionId({
+          id: response.hash,
+          type: 'claim',
+        });
+        await response.wait();
+        setTxCompleted({
+          type: 'claim',
+          id: response.hash,
+        });
+        handleGetTokenBalances();
+      }
+    } catch (error: any) {
+      setStatus('error');
+    }
+  };
+
+  const handleConfirmMultipleUnstake = async () => {
+    handleToggleUnStakeAll();
+    try {
+      setCurrentAction('unstake');
+      handleToggleStatus();
+      setStatus('pending');
+      const response = await withDrawSelectedEntities(data.id, selectedRows);
+      if (response.hash) {
+        setCurrenTransactionId({
+          id: response.hash,
+          type: 'unstake',
+        });
+        await response.wait();
+        setTxCompleted({
+          type: 'unstake',
+          id: response.hash,
+        });
+        handleGetTokenBalances();
+      }
+    } catch (error: any) {
+      setStatus('error');
+    }
+  };
+
+  const handleUnstakeAllOrOne = async (type: 'all' | 'one') => {
+    handleToggleUnStake();
+    try {
+      setCurrentAction('unstake');
+      handleToggleStatus();
+      setStatus('pending');
+      let response;
+      if (type === 'one') {
+        response = await withDrawSelectedEntities(data.id, [unstakeRow]);
+      } else {
+        response = await withDrawAll(data.id);
+      }
+      if (response.hash) {
+        setCurrenTransactionId({
+          id: response.hash,
+          type: 'unstake',
+        });
+        await response.wait();
+        setTxCompleted({
+          type: 'unstake',
+          id: response.hash,
+        });
+        handleGetTokenBalances();
+      }
+    } catch (error: any) {
+      setStatus('error');
+    }
+  };
+
+  const getClaimModalData = (rows: string[], records: StakeItem[]) => {
+    const stakingRecords = records
+      .filter((item) => {
+        return rows.includes(item.id);
+      })
+      .map((item) => {
+        return {
+          stakedAmount: item.stakedAmount,
+          stakedTime: item.stakingTime,
+          rewards: item.reward,
+        };
+      });
+    return stakingRecords;
+  };
+
+  const getUnstakeData = (records: StakeItem[], index: string) => {
+    let selectedRecords;
+    if (index === '-1') {
+      selectedRecords = records;
+    } else {
+      selectedRecords = records.filter((item) => item.id === index);
+    }
+
+    return selectedRecords.map((record) => ({
+      stakedAmount: record.stakedAmount,
+      stakedTime: record.stakingTime,
+      rewards: record.reward,
+    }));
   };
 
   const handleApproveToken = async () => {
@@ -515,7 +647,15 @@ const MyStake: React.FC<Props> = ({
           </Grid>
           {width > 768 ? (
             <Grid item xs={12}>
-              <TableMyStake data={tableData} onClaim={handleToggleClaimOne} onUnstake={handleToggleUnstake} />
+              <TableMyStake
+                data={tableData}
+                onMultipleClaim={handleMultipleClaim}
+                onMultipleUnstake={handleMultipleUnstake}
+                onClaim={handleToggleClaimOne}
+                onUnstake={handleToggleUnstakeOne}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+              />
             </Grid>
           ) : tableData.length > 0 ? (
             <Grid item xs={12}>
@@ -535,15 +675,46 @@ const MyStake: React.FC<Props> = ({
       <StakeStatusModal
         title={currentAction === 'approve' ? 'Approve Information' : 'Stake Information'}
         open={openStatus}
-        onClose={handleCloseStatusModal}
+        onClose={() => {
+          handleCloseStatusModal();
+          setCurrenTransactionId({
+            type: '',
+            id: '',
+          });
+        }}
         status={status}
         onNextStatus={() => {
           window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
         }}
       />
 
-      <UnStakeAllModal open={openUnStakeAll} onClose={handleToggleUnStakeAll} />
-      <UnStakeModal open={openUnStake} onClose={handleToggleUnStake} />
+      <UnStakeAllModal
+        data={getClaimModalData(selectedRows, tableData)}
+        type={currentStakingType}
+        open={openUnStakeAll}
+        onClose={handleToggleUnStakeAll}
+        handleConfirm={() => {
+          if (currentStakingType === 'claim') {
+            handleConfirmMultipleClaim();
+          } else {
+            handleConfirmMultipleUnstake();
+          }
+        }}
+      />
+      <UnStakeModal
+        isOxbPool={isOxbPool}
+        type={unstakeRow === '-1' ? 'all' : 'one'}
+        data={getUnstakeData(tableData, unstakeRow)}
+        open={openUnStake}
+        onClose={handleToggleUnStake}
+        onConfirm={() => {
+          if (unstakeRow !== '-1') {
+            handleUnstakeAllOrOne('one');
+          } else {
+            handleUnstakeAllOrOne('all');
+          }
+        }}
+      />
     </Wrapper>
   );
 };

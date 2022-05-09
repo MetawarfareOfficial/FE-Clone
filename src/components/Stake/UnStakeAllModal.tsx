@@ -24,10 +24,21 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
+import { calculateEarlyUnstakingFee } from 'helpers/staking';
 
+interface DataItem {
+  stakedAmount: string;
+  stakedTime: string;
+  rewards: string;
+}
 interface Props {
   open: boolean;
   onClose: () => void;
+  data: DataItem[];
+  type: 'claim' | 'unstake';
+  handleConfirm: (type: 'claim' | 'unstake') => void;
 }
 
 interface DialogTitleCustomProps {
@@ -221,9 +232,24 @@ const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
   },
 }));
 
-const UnStakeAllModal: React.FC<Props> = ({ open, onClose }) => {
-  const handleConfirm = () => {};
+const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleConfirm }) => {
+  const handleCalculateUnstakeFee = (records: DataItem[]) => {
+    return records.reduce((acc, item) => {
+      return acc + Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTime)));
+    }, 0);
+  };
 
+  const calculateTotalStakedAmount = (records: DataItem[]) => {
+    return records.reduce((acc, item) => {
+      return acc + Number(item.stakedAmount);
+    }, 0);
+  };
+
+  const calculateTotalEarnedReward = (records: DataItem[]) => {
+    return records.reduce((acc, item) => {
+      return acc + Number(item.rewards);
+    }, 0);
+  };
   return (
     <Wrapper
       className="swapDialog"
@@ -233,7 +259,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose }) => {
       aria-describedby="alert-dialog-slide-description"
     >
       <Header>
-        <HeaderText>Unstake all</HeaderText>
+        <HeaderText>{type === 'claim' ? 'Claim' : 'Unstake'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -246,44 +272,77 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose }) => {
             <TableHead>
               <TableRow>
                 <TableCell align="center">Stake Amount</TableCell>
-                <TableCell align="center">Accrue day</TableCell>
+                <TableCell align="center">Staked Time</TableCell>
                 <TableCell align="center">Rewards</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell align="center">50 0xb</TableCell>
-                <TableCell align="center" className="textRed">
-                  10 days
-                </TableCell>
-                <TableCell align="center">25 0xB</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell align="center">50 0xb</TableCell>
-                <TableCell align="center">10 days</TableCell>
-                <TableCell align="center">25 0xB</TableCell>
-              </TableRow>
+              {data.map((item, index) => {
+                return (
+                  <TableRow key={index}>
+                    <TableCell align="center">
+                      {item.stakedAmount !== '0'
+                        ? formatForNumberLessThanCondition({
+                            value: item.stakedAmount,
+                            addLessThanSymbol: true,
+                            minValueCondition: '0.000001',
+                            callback: formatPercent,
+                            callBackParams: [6],
+                          })
+                        : '0.0'}{' '}
+                      0xb
+                    </TableCell>
+                    <TableCell align="center">{item.stakedTime} days</TableCell>
+                    <TableCell align="center">
+                      {item.rewards !== '0'
+                        ? formatForNumberLessThanCondition({
+                            value: item.rewards,
+                            addLessThanSymbol: true,
+                            minValueCondition: '0.000001',
+                            callback: formatPercent,
+                            callBackParams: [6],
+                          })
+                        : '0.0'}{' '}
+                      0xB
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </TableCustom>
         </TableContainer>
 
+        {type === 'unstake' && (
+          <>
+            <Line>
+              <p>
+                Total early unstake fee: <strong>{handleCalculateUnstakeFee(data)} LP</strong>
+              </p>
+            </Line>
+            <Line>
+              <p>
+                Total Unstake amount: <strong>{calculateTotalStakedAmount(data)} LP</strong>
+              </p>
+            </Line>
+          </>
+        )}
         <Line>
           <p>
-            Total early unstake fee: <strong>3.75 LP</strong>
-          </p>
-        </Line>
-        <Line>
-          <p>
-            Total Unstake amount: <strong>196.25 LP</strong>
-          </p>
-        </Line>
-        <Line>
-          <p>
-            Total Earned reward: <strong>100 LP</strong>
+            Total Earned reward:{' '}
+            <strong>
+              {formatForNumberLessThanCondition({
+                value: String(calculateTotalEarnedReward(data)),
+                addLessThanSymbol: true,
+                minValueCondition: '0.000001',
+                callback: formatPercent,
+                callBackParams: [6],
+              })}{' '}
+              LP
+            </strong>
           </p>
         </Line>
 
-        <ButtonConfirm variant="contained" fullWidth onClick={handleConfirm}>
+        <ButtonConfirm variant="contained" fullWidth onClick={() => handleConfirm(type)}>
           Confirm
         </ButtonConfirm>
       </Content>

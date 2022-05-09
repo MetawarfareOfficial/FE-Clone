@@ -17,10 +17,23 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
+import { calculateEarlyUnstakingFee } from 'helpers/staking';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
+import get from 'lodash/get';
 
+interface DataItem {
+  stakedAmount: string;
+  stakedTime: string;
+  rewards: string;
+}
 interface Props {
   open: boolean;
   onClose: () => void;
+  onConfirm: (type: 'all' | 'one') => void;
+  data: DataItem[];
+  type: 'all' | 'one';
+  isOxbPool: boolean;
 }
 
 interface DialogTitleCustomProps {
@@ -197,11 +210,33 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const UnStakeModal: React.FC<Props> = ({ open, onClose }) => {
+const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, isOxbPool }) => {
+  const handleCalculateUnstakeFee = (records: DataItem[]) => {
+    return records.reduce((acc, item) => {
+      return acc + Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTime)));
+    }, 0);
+  };
+
+  const calculateTotalStakedAmount = (records: DataItem[]) => {
+    return records.reduce((acc, item) => {
+      return acc + Number(item.stakedAmount);
+    }, 0);
+  };
+
+  const calculateTotalEarnedReward = (records: DataItem[]) => {
+    return records.reduce((acc, item) => {
+      return acc + Number(item.rewards);
+    }, 0);
+  };
+
+  const calculateTotalStakingTime = (records: DataItem[]) => {
+    return get(records, '[0].stakedTime', 0);
+  };
+
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText>Unstake</HeaderText>
+        <HeaderText>Unstake {type === 'all' && 'All'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -213,27 +248,54 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose }) => {
           <BoxDetail>
             <div className="boxItem">
               <h3>Unstake Amount</h3>
-              <h4>40 LP</h4>
+              <h4>
+                {formatForNumberLessThanCondition({
+                  value: String(calculateTotalStakedAmount(data)),
+                  addLessThanSymbol: true,
+                  minValueCondition: '0.000001',
+                  callBackParams: [6],
+                  callback: formatPercent,
+                })}{' '}
+                LP
+              </h4>
             </div>
             <div className="boxItem">
               <h3>Earned Reward</h3>
-              <h4>20 0xB</h4>
+              <h4>
+                {formatForNumberLessThanCondition({
+                  value: String(calculateTotalEarnedReward(data)),
+                  addLessThanSymbol: true,
+                  minValueCondition: '0.000001',
+                  callBackParams: [6],
+                  callback: formatPercent,
+                })}{' '}
+                0xB
+              </h4>
             </div>
           </BoxDetail>
 
           <BoxDetail>
             <div className="boxItem">
-              <h3>Accrue days</h3>
-              <h4>20 days</h4>
+              <h3>{type === 'all' ? 'Total staked time' : 'Staked time'}</h3>
+              <h4>{calculateTotalStakingTime(data)} days</h4>
             </div>
             <div className="boxItem">
               <h3>Early Unstake fee</h3>
-              <h4>2 LP</h4>
+              <h4>
+                {formatForNumberLessThanCondition({
+                  value: String(handleCalculateUnstakeFee(data)),
+                  addLessThanSymbol: true,
+                  minValueCondition: '0.000001',
+                  callBackParams: [6],
+                  callback: formatPercent,
+                })}{' '}
+                {isOxbPool ? '0xB' : 'LP'}
+              </h4>
             </div>
           </BoxDetail>
         </StakeDetail>
 
-        <ButtonConfirm variant="contained" fullWidth onClick={onClose}>
+        <ButtonConfirm variant="contained" fullWidth onClick={() => onConfirm(type)}>
           Confirm
         </ButtonConfirm>
       </Content>
