@@ -360,14 +360,16 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data }
         </CardItem>
       ))}
 
-      <ViewPagination>
-        <PaginationCustom
-          total={data.length}
-          limit={pagination.limit}
-          page={pagination.index + 1}
-          onChange={handleChangePage}
-        />
-      </ViewPagination>
+      {data.length > pagination.limit && (
+        <ViewPagination>
+          <PaginationCustom
+            total={data.length}
+            limit={pagination.limit}
+            page={pagination.index + 1}
+            onChange={handleChangePage}
+          />
+        </ViewPagination>
+      )}
     </Wrapper>
   );
 };

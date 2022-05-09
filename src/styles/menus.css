@@ -231,6 +231,13 @@
   text-align: center;
   color: rgba(41, 50, 71, 0.46);
 }
+.lightMode .button-11 .knobs:after {
+  color: rgba(41, 50, 71, 0.46);
+}
+
+.darkMode .button-11 .knobs:after {
+  color: rgba(255, 255, 255, 0.46);
+}
 
 .button-10 .knobs span {
   display: inline-block;
@@ -252,8 +259,12 @@
   color: #666971;
 }
 
-.button-11 .checkbox:checked+.knobs span {
+.lightMode .button-11 .checkbox:checked+.knobs span {
   color: rgba(41, 50, 71, 0.46);
+}
+
+.darkMode .button-11 .checkbox:checked+.knobs span {
+  color: rgba(255, 255, 255, 0.46);
 }
 
 .button-10 .checkbox:checked+.knobs:before {

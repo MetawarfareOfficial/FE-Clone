@@ -17,6 +17,8 @@ import {
   tooltipClasses,
   Checkbox,
   CheckboxProps,
+  Typography,
+  TypographyProps,
 } from '@mui/material';
 
 import PaginationCustom from './Pagination';
@@ -200,6 +202,42 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
+// const ButtonClaimAll = styled(Button)<ButtonProps>(() => ({
+//   fontFamily: 'Poppins',
+//   fontStyle: 'normal',
+//   fontWeight: '500',
+//   fontSize: '14px',
+//   lineHeight: '21px',
+//   textAlign: 'center',
+//   background: '#3864FF',
+//   color: '#fff',
+//   textTransform: 'capitalize',
+//   height: '34px',
+//   borderRadius: '10px',
+//   boxShadow: 'none',
+//   padding: '6px 10px',
+//   maxWidth: '184px',
+
+//   '&:disabled': {
+//     background: 'rgba(56, 100, 255, 0.16)',
+//     color: '#fff',
+//   },
+
+//   '&:hover': {
+//     background: '#1239C4',
+//     color: '#fff',
+//     outline: 'none',
+//     boxShadow: 'none',
+//   },
+// }));
+
+// const SelectBox = styled(Checkbox)<CheckboxProps>(() => ({}));
+
+const EmptyRecordsText = styled(Typography)<TypographyProps>(() => ({
+  textAlign: 'center',
+  width: '100%',
+}));
+
 const CheckboxCustom = styled(Checkbox)<CheckboxProps>(() => ({
   padding: 0,
   float: 'right',
@@ -279,7 +317,9 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
 
   useEffect(() => {
     if (account) {
-      setRecords(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
+      const start = pagination.index * pagination.limit;
+      const end = start + pagination.limit;
+      setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
     } else {
       setRecords([]);
     }
@@ -343,95 +383,97 @@ const TableMyStake: React.FC<Props> = ({ onClaim, data }) => {
           </TableHead>
 
           <TableBody>
-            {records.map((item: any, i: number) => {
-              const isItemSelected = isSelected(item.id);
+            {data.length > 0 &&
+              records.map((item: any, i: number) => {
+                const isItemSelected = isSelected(item.id);
 
-              return (
-                <TableRow key={i} selected={isItemSelected}>
-                  <TableCellBody align="left">
-                    {moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}
-                  </TableCellBody>
-                  <TableCellBody align="center">
-                    {formatForNumberLessThanCondition({
-                      value: item.stakedAmount,
-                      addLessThanSymbol: true,
-                      minValueCondition: '0.000001',
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })}
-                  </TableCellBody>
-                  <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
-                  <TableCellBody align="center">
-                    <RewardsFlex>
+                return (
+                  <TableRow key={i} selected={isItemSelected}>
+                    <TableCellBody align="left">
+                      {moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}
+                    </TableCellBody>
+                    <TableCellBody align="center">
                       {formatForNumberLessThanCondition({
-                        value: item.reward,
+                        value: item.stakedAmount,
                         addLessThanSymbol: true,
                         minValueCondition: '0.000001',
                         callback: formatPercent,
                         callBackParams: [6],
                       })}
+                    </TableCellBody>
+                    <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
+                    <TableCellBody align="center">
+                      <RewardsFlex>
+                        {formatForNumberLessThanCondition({
+                          value: item.reward,
+                          addLessThanSymbol: true,
+                          minValueCondition: '0.000001',
+                          callback: formatPercent,
+                          callBackParams: [6],
+                        })}
 
-                      <CheckboxCustom
-                        color="primary"
-                        onChange={(event) => handleSelectRow(event, item.id)}
-                        // checked={isSelected(item.id)}
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': `enhanced-table-checkbox-${i}`,
-                        }}
-                      />
+                        <CheckboxCustom
+                          color="primary"
+                          onChange={(event) => handleSelectRow(event, item.id)}
+                          // checked={isSelected(item.id)}
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': `enhanced-table-checkbox-${i}`,
+                          }}
+                        />
 
-                      <TooltipCustom
-                        title={
-                          <div>
-                            <p style={{ margin: 0 }}>
-                              If you unstake before 30 days, you will be charged 5% on your unstake amount
-                            </p>
-                            <p style={{ margin: 0 }}>
-                              If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
-                            </p>
-                          </div>
-                        }
-                        arrow
-                        placement="left-start"
+                        <TooltipCustom
+                          title={
+                            <div>
+                              <p style={{ margin: 0 }}>
+                                If you unstake before 30 days, you will be charged 5% on your unstake amount
+                              </p>
+                              <p style={{ margin: 0 }}>
+                                If you unstake before 60 days, you will be charged 2.5% on your unstake amount{' '}
+                              </p>
+                            </div>
+                          }
+                          arrow
+                          placement="left-start"
+                        >
+                          {theme.palette.mode === 'light' ? (
+                            <ViewHelp>
+                              <WarnIcon width={16} />
+                            </ViewHelp>
+                          ) : (
+                            <ViewHelp>
+                              <WarnDarkIcon width={16} />
+                            </ViewHelp>
+                          )}
+                        </TooltipCustom>
+                      </RewardsFlex>
+                    </TableCellBody>
+
+                    <TableCellBody align="right">
+                      <ButtonStake
+                        variant="outlined"
+                        onClick={handleToggleUnStake}
+                        // onClick={() => {
+                        //   onUnstake(item.id);
+                        // }}
                       >
-                        {theme.palette.mode === 'light' ? (
-                          <ViewHelp>
-                            <WarnIcon width={16} />
-                          </ViewHelp>
-                        ) : (
-                          <ViewHelp>
-                            <WarnDarkIcon width={16} />
-                          </ViewHelp>
-                        )}
-                      </TooltipCustom>
-                    </RewardsFlex>
-                  </TableCellBody>
-
-                  <TableCellBody align="right">
-                    <ButtonStake
-                      variant="outlined"
-                      onClick={handleToggleUnStake}
-                      // onClick={() => {
-                      //   onUnstake(item.id);
-                      // }}
-                    >
-                      Unstake
-                    </ButtonStake>
-                    <ButtonClaim
-                      variant="contained"
-                      onClick={() => {
-                        onClaim(item.id);
-                      }}
-                    >
-                      Claim
-                    </ButtonClaim>
-                  </TableCellBody>
-                </TableRow>
-              );
-            })}
+                        Unstake
+                      </ButtonStake>
+                      <ButtonClaim
+                        variant="contained"
+                        onClick={() => {
+                          onClaim(item.id);
+                        }}
+                      >
+                        Claim
+                      </ButtonClaim>
+                    </TableCellBody>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
+        {data.length <= 0 && <EmptyRecordsText>No Records Found</EmptyRecordsText>}
       </TableContainer>
 
       {data.length > pagination.limit && (

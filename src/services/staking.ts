@@ -30,6 +30,10 @@ interface States {
     balance: string;
     allowance: string;
   };
+  oxbToken: {
+    balance: string;
+    allowance: string;
+  };
   lpBalanceLoaded: boolean;
   totalPools: number[] | null;
   selectedPoolData: StakeItem[];
@@ -38,6 +42,10 @@ interface States {
 const initialState: States = {
   pools: [],
   lpToken: {
+    balance: '0',
+    allowance: '0',
+  },
+  oxbToken: {
     balance: '0',
     allowance: '0',
   },
@@ -56,8 +64,8 @@ export const stakeSlice = createSlice({
     setLpToken: (state, action) => {
       state.lpToken = action.payload;
     },
-    setLpBalanceLoaded: (state, action) => {
-      state.lpToken = action.payload;
+    setOxbToken: (state, action) => {
+      state.oxbToken = action.payload;
     },
     setTotalPools: (state, action) => {
       state.totalPools = action.payload;
@@ -68,7 +76,7 @@ export const stakeSlice = createSlice({
   },
 });
 
-export const { setPools, setLpToken, setTotalPools, setSelectedPoolData } = stakeSlice.actions;
+export const { setPools, setLpToken, setTotalPools, setSelectedPoolData, setOxbToken } = stakeSlice.actions;
 
 const { reducer: stakeReducer } = stakeSlice;
 

@@ -46,6 +46,9 @@ export const useFetchPoolsInfo = () => {
                 oxbPrice: get(OxbPrice, '[0].priceUSD', '0'),
                 totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
                 lpPrice: lpToUsdcAmount,
+                isOxbPool:
+                  `0x${String(item.lpTokenAddress).toLocaleLowerCase()}` ===
+                  String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
               })
             : '0',
         endTime: new BigNumber(item.duration).toString(),
@@ -62,7 +65,7 @@ export const useFetchPoolsInfo = () => {
           .multipliedBy(get(OxbPrice, '[0].priceUSD', 0))
           .toString(),
         yourStakingTime,
-        lpAddress: String(item.lpTokenAddress).toLocaleLowerCase(),
+        lpAddress: `0x${String(item.lpTokenAddress).toLocaleLowerCase()}`,
         title: item.name,
         account,
       };

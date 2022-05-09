@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import { Box, BoxProps, Grid } from '@mui/material';
+import { Box, BoxProps, Grid, Typography, TypographyProps } from '@mui/material';
 
 import { PoolCard } from 'components/Stake';
 import { PoolItem } from 'services/staking';
@@ -40,6 +40,11 @@ const TabCustom = styled(Box)<BoxProps>(({ theme }) => ({
 
 const EmptyBox = styled(Box)<BoxProps>(() => ({
   marginTop: '200px',
+}));
+
+const NoRecordsText = styled(Typography)<TypographyProps>(({ theme }) => ({
+  textAlign: 'center',
+  color: theme.palette.mode === 'dark' ? '#ffff' : '#121212',
 }));
 
 const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, currentTab }) => {
@@ -127,13 +132,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                     );
                   })
                 ) : (
-                  <p
-                    style={{
-                      textAlign: 'center',
-                    }}
-                  >
-                    No Records Found
-                  </p>
+                  <NoRecordsText>No Records Found</NoRecordsText>
                 )}
               </>
             ) : (
