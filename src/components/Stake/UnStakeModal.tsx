@@ -21,6 +21,7 @@ import { calculateEarlyUnstakingFee } from 'helpers/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import get from 'lodash/get';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 interface DataItem {
   stakedAmount: string;
@@ -209,8 +210,11 @@ const BoxDetail = styled(Box)<BoxProps>(({ theme }) => ({
     margin: '0 0',
   },
 }));
-
+const Divider = styled(Box)<BoxProps>(() => ({
+  height: '42px',
+}));
 const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, isOxbPool }) => {
+  const [size] = useWindowSize();
   const handleCalculateUnstakeFee = (records: DataItem[]) => {
     return records.reduce((acc, item) => {
       return acc + Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTime)));
@@ -275,7 +279,7 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, i
               </h4>
             </div>
           </BoxDetail>
-
+          {size < 900 && <Divider />}
           <BoxDetail>
             <div className="boxItem">
               <h3>{type === 'all' ? 'Total staked time' : 'Staked time'}</h3>

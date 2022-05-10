@@ -83,6 +83,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                   return (
                     <Grid item xs={12} sm={6} key={index}>
                       <PoolCard
+                        isOxbPool={item.isOxbPool}
                         onClaimAll={() => {
                           onClaimAll(item.id);
                         }}
@@ -114,6 +115,7 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                     return (
                       <Grid item xs={12} sm={6} key={index}>
                         <PoolCard
+                          isOxbPool={item.isOxbPool}
                           onClaimAll={() => {
                             onClaimAll(item.id);
                           }}

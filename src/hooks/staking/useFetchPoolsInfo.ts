@@ -75,6 +75,7 @@ export const useFetchPoolsInfo = () => {
         lpAddress: `0x${String(item.lpTokenAddress).toLocaleLowerCase()}`,
         title: item.name,
         account,
+        isOxbPool,
       };
     });
     dispatch(setPools(pools));
