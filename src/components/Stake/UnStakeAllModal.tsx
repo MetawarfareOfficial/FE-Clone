@@ -299,11 +299,17 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                             callBackParams: [4],
                           })
                         : '0.0'}{' '}
-                      0xB
+                      {isOxbPool ? '0xB' : 'LP'}
                     </TableCell>
-                    <TableCell size="small" align="center">
-                      {item.stakedTime} days
-                    </TableCell>
+                    {Number(item.stakedTime) < 60 ? (
+                      <TableCell size="small" className="textRed" align="center">
+                        {item.stakedTime} days
+                      </TableCell>
+                    ) : (
+                      <TableCell size="small" align="center">
+                        {item.stakedTime} days
+                      </TableCell>
+                    )}
                     <TableCell align="center">
                       {item.rewards !== '0'
                         ? formatForNumberLessThanCondition({

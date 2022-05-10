@@ -450,7 +450,11 @@ const TableMyStake: React.FC<Props> = ({
                               <WarnIcon width={16} />
                             </ViewHelp>
                           ) : (
-                            <ViewHelp>
+                            <ViewHelp
+                              sx={{
+                                marginTop: '5px',
+                              }}
+                            >
                               <WarnDarkIcon width={16} />
                             </ViewHelp>
                           )}

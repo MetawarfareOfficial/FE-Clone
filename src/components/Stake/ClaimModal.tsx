@@ -286,7 +286,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
               </strong>
             </p>
             <p>
-              {type === 'claim_all' && 'Total '}Staking time:{' '}
+              {type === 'claim_all' && 'Total '}Staked time:{' '}
               <strong>
                 {type === 'claim_all'
                   ? moment().diff(moment(Number(get(data, 'yourStakingTime', moment().unix())) * 1000), 'day')
