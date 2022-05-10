@@ -312,7 +312,16 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
               callBackParams: [6],
             })}
           </h4>
-          <h4>{formatPercent(data.apr, 2)}%</h4>
+          <h4>
+            {formatForNumberLessThanCondition({
+              value: data.apr,
+              addLessThanSymbol: true,
+              minValueCondition: '0.01',
+              callback: formatPercent,
+              callBackParams: [2],
+            })}
+            %
+          </h4>
           <h4>
             {data.yourTotalStakedAmount !== '0'
               ? formatForNumberLessThanCondition({
@@ -324,7 +333,16 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
                 })
               : '-'}
           </h4>
-          <h4>{formatPercent(data.yourShare)}%</h4>
+          <h4>
+            {formatForNumberLessThanCondition({
+              value: data.yourShare,
+              addLessThanSymbol: true,
+              minValueCondition: '0.01',
+              callback: formatPercent,
+              callBackParams: [2],
+            })}
+            %
+          </h4>
         </Line>
       </BoxContent>
 

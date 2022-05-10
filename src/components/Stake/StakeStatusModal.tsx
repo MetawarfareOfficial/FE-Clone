@@ -26,6 +26,7 @@ import SuccessGif from 'assets/images/swap-success-white.gif';
 import SuccessDarkGif from 'assets/images/swap-success-dark.gif';
 import ErrorGif from 'assets/images/swap-failed-white.gif';
 import ErrorDarkGif from 'assets/images/swap-failed-dark.gif';
+import { Actions } from './MyStake';
 
 interface Props {
   title: string;
@@ -33,6 +34,8 @@ interface Props {
   status: String | null;
   onClose: () => void;
   onNextStatus: () => void;
+  type: Actions;
+  unstakeAmount?: string;
 }
 
 interface DialogTitleCustomProps {
@@ -177,7 +180,15 @@ const ViewTokenLink = styled(Link)<LinkProps>(() => ({
   cursor: 'pointer',
 }));
 
-const StakeStatusModal: React.FC<Props> = ({ open, onClose, status, onNextStatus, title }) => {
+const StakeStatusModal: React.FC<Props> = ({
+  open,
+  onClose,
+  status,
+  title,
+  type,
+  unstakeAmount = '0',
+  onNextStatus,
+}) => {
   const theme = useTheme();
 
   return (
@@ -205,12 +216,24 @@ const StakeStatusModal: React.FC<Props> = ({ open, onClose, status, onNextStatus
               )}
             </ViewImage>
 
-            <h3>{status === 'success' ? 'Transaction Completed' : 'Transaction Rejected'}</h3>
+            <h3>
+              {status === 'success'
+                ? type === 'claim' || type === 'claim_all'
+                  ? 'Rewards claimed successfully'
+                  : type === 'unstake' || type === 'unstake_all'
+                  ? `unstake: ${unstakeAmount}`
+                  : 'Transaction Completed'
+                : 'Transaction Rejected'}
+            </h3>
 
             {status === 'success' ? (
-              <ViewTokenLink underline="none" onClick={onNextStatus}>
-                View On SnowTrace
-              </ViewTokenLink>
+              type === 'approve' || type === 'stake' ? (
+                <ViewTokenLink underline="none" onClick={onNextStatus}>
+                  View On SnowTrace
+                </ViewTokenLink>
+              ) : (
+                <></>
+              )
             ) : (
               <SwapSubmit fullWidth onClick={onClose}>
                 Dismiss
