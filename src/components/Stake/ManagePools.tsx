@@ -8,7 +8,6 @@ import { useWeb3React } from '@web3-react/core';
 import { Empty } from 'components/Zap';
 import { SkeletonPoolCard } from './SkeletonPoolCard';
 import { useAppSelector } from 'stores/hooks';
-import moment from 'moment';
 interface Props {
   title?: string;
   onNext: (value: number) => void;
@@ -51,9 +50,6 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
   const theme = useTheme();
   const { account } = useWeb3React();
   const totalPools = useAppSelector((state) => state.stake.totalPools);
-  const activePools = pools.filter((pool) => {
-    return Number(pool.endTime) > moment().unix();
-  });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChangeTab = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -113,8 +109,8 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
           <>
             {account ? (
               <Grid container spacing={{ xs: '34px', md: '68px' }}>
-                {activePools.length > 0 ? (
-                  activePools.map((item, index) => {
+                {pools.length > 0 ? (
+                  pools.map((item, index) => {
                     return (
                       <Grid item xs={12} sm={6} key={index}>
                         <PoolCard

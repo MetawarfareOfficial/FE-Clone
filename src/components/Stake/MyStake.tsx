@@ -259,6 +259,7 @@ const MyStake: React.FC<Props> = ({
 
   const lpToken = useAppSelector((state) => state.stake.lpToken);
   const oxbToken = useAppSelector((state) => state.stake.oxbToken);
+  const stakingRecordsLimit = useAppSelector((state) => state.stake.stakingRecordsLimit);
 
   const [isOxbPool, setIsOxbPool] = useState(
     data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
@@ -651,7 +652,7 @@ const MyStake: React.FC<Props> = ({
                 )}
 
                 <ButtonGetLpToken
-                  isError={false}
+                  isError={tableData.length >= stakingRecordsLimit}
                   onClick={() => {
                     if (isOxbPool) {
                       history.push('/swap');
@@ -663,12 +664,21 @@ const MyStake: React.FC<Props> = ({
                 >
                   {`Get ${isOxbPool ? '0xB' : 'LP'} Token ->`}
                 </ButtonGetLpToken>
+                {tableData.length >= stakingRecordsLimit && (
+                  <ErrorText>You have reached maximum staked time for this pool</ErrorText>
+                )}
                 <ButtonSubmit
                   loading={false}
                   fullWidth
-                  unEnable={!invalidInput ? (tokenApproved ? invalidInput || isInsufficientError : false) : true}
+                  unEnable={
+                    !invalidInput
+                      ? tokenApproved
+                        ? invalidInput || isInsufficientError || tableData.length >= stakingRecordsLimit
+                        : false
+                      : true
+                  }
                   onClick={() => {
-                    if (!invalidInput) {
+                    if (!invalidInput && tableData.length < stakingRecordsLimit) {
                       if (tokenApproved && !isInsufficientError) {
                         handleStakeLp();
                       } else if (!tokenApproved) {

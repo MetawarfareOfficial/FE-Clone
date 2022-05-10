@@ -488,6 +488,10 @@ export const useInteractiveContract = () => {
     return await stakingManagerContractWithSigner.withdrawAll(poolId);
   };
 
+  const getStakingRecordsLimit = async () => {
+    return await stakingContractWithoutSigner.lpStakingEntitiesLimit();
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -535,6 +539,7 @@ export const useInteractiveContract = () => {
     getJsonAllPoolByUser,
     withDrawAll,
     claimAllRewards,
+    getStakingRecordsLimit,
     contractWithSigner,
     provider,
   };

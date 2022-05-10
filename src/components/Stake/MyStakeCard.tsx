@@ -258,8 +258,8 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   minWidth: '122px',
 
   '&:disabled': {
-    background: 'rgba(56, 100, 255, 0.16)',
-    color: '#fff',
+    background: theme.palette.mode === 'light' ? '#BCCBE2' : '#4F4F4F',
+    color: theme.palette.mode === 'light' ? '#fff' : '#82828',
   },
 
   '&:hover': {
@@ -378,6 +378,7 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
 
           <ButtonClaim
             variant="contained"
+            disabled={Number(data.yourTotalRewardAmount) <= 0}
             onClick={() => {
               if (Number(data.yourTotalRewardAmount) > 0) {
                 onClaimAll();
