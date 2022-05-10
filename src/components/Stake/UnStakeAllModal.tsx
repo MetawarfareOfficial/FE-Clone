@@ -374,7 +374,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                 callback: formatPercent,
                 callBackParams: [6],
               })}{' '}
-              {isOxbPool ? '0xB' : 'LP'}
+              0xB
             </strong>
           </p>
         </Line>
