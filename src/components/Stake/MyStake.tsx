@@ -5,27 +5,20 @@ import { Box, BoxProps, Button, ButtonProps, IconButton, IconButtonProps, Grid }
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 import { useWindowSize } from 'hooks/useWindowSize';
-import {
-  MyStakeCard,
-  TableMyStake,
-  StakeSettingModal,
-  StakeStatusModal,
-  ListMyStake,
-  UnStakeModal,
-  UnStakeAllModal,
-} from './index';
+import { MyStakeCard, TableMyStake, StakeStatusModal, ListMyStake, UnStakeModal, UnStakeAllModal } from './index';
 import InputLP from './InputLP';
 
 import animationData from 'lotties/loading-button.json';
 import { PoolItem, StakeItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { useAppSelector } from 'stores/hooks';
-import { formatPercent } from 'helpers/formatPrice';
+import { formatPercent, truncateNumber } from 'helpers/formatPrice';
 import { useSwapToken } from 'hooks/swap';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useHistory } from 'react-router-dom';
 import InputToken from './InputToken';
 import OxImg from 'assets/images/coin-0xb.svg';
+import { calculateTotalUnstake } from 'helpers/staking/calculateTotalUnstake';
 
 const defaultOptions = {
   loop: true,
@@ -71,7 +64,7 @@ const BackButton = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   position: 'absolute',
   left: '3px',
   top: '0px',
-  zIndex: 2000,
+  zIndex: 1500,
 
   '&:hover': {
     outline: 'none',
@@ -218,7 +211,6 @@ const ButtonSubmit = styled(Button)<
   '&:hover': {
     background: unEnable ? 'rgba(0, 0, 0, 0.26)' : '#3864FF',
     border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: theme.palette.mode === 'light' ? '#fff' : '#fff',
     boxShadow: !unEnable && '0px 5px 11px rgba(0, 82, 255, 0.38)',
     outline: 'none',
   },
@@ -233,6 +225,8 @@ const ButtonSubmit = styled(Button)<
     padding: '8px',
   },
 }));
+
+export type Actions = 'approve' | 'claim' | 'unstake' | 'unstake_all' | 'stake' | 'claim_all';
 
 const MyStake: React.FC<Props> = ({
   onBack,
@@ -256,10 +250,11 @@ const MyStake: React.FC<Props> = ({
   const [status, setStatus] = useState<'success' | 'error' | 'pending' | null>(null);
   const [currentStakingType, setCurrentStakingType] = useState<'unstake' | 'claim'>('claim');
 
-  const [currentAction, setCurrentAction] = useState('stake');
+  const [currentAction, setCurrentAction] = useState<Actions>('stake');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const [unstakeRow, setUnstakeRow] = useState<string>('0');
+  const [unstakeAmount, setUnstakeAmount] = useState<string>('0');
 
   const lpToken = useAppSelector((state) => state.stake.lpToken);
   const oxbToken = useAppSelector((state) => state.stake.oxbToken);
@@ -296,7 +291,7 @@ const MyStake: React.FC<Props> = ({
   const handleMaxBtnClick = async () => {
     if (Number(isOxbPool ? oxbToken.balance : lpToken.balance) > 0) {
       setIsSwapMaxFromToken(true);
-      setLpTokenInput(formatPercent(isOxbPool ? oxbToken.balance : lpToken.balance, 10));
+      setLpTokenInput(truncateNumber(Number(isOxbPool ? oxbToken.balance : lpToken.balance), 10));
     }
   };
 
@@ -318,6 +313,20 @@ const MyStake: React.FC<Props> = ({
       setCurrentStakingType('claim');
       handleToggleUnStakeAll();
     }
+  };
+  const getClaimModalData = (rows: string[], records: StakeItem[]) => {
+    const stakingRecords = records
+      .filter((item) => {
+        return rows.includes(item.id);
+      })
+      .map((item) => {
+        return {
+          stakedAmount: item.stakedAmount,
+          stakedTime: item.stakingTime,
+          rewards: item.reward,
+        };
+      });
+    return stakingRecords;
   };
 
   const handleMultipleUnstake = (indexes: string[]) => {
@@ -371,6 +380,7 @@ const MyStake: React.FC<Props> = ({
           type: 'unstake',
         });
         await response.wait();
+        setUnstakeAmount(String(calculateTotalUnstake(getClaimModalData(selectedRows, tableData))));
         setTxCompleted({
           type: 'unstake',
           id: response.hash,
@@ -385,13 +395,14 @@ const MyStake: React.FC<Props> = ({
   const handleUnstakeAllOrOne = async (type: 'all' | 'one') => {
     handleToggleUnStake();
     try {
-      setCurrentAction('unstake');
       handleToggleStatus();
       setStatus('pending');
       let response;
       if (type === 'one') {
+        setCurrentAction('unstake');
         response = await withDrawSelectedEntities(data.id, [unstakeRow]);
       } else {
+        setCurrentAction('unstake_all');
         response = await withDrawAll(data.id);
       }
       if (response.hash) {
@@ -400,6 +411,20 @@ const MyStake: React.FC<Props> = ({
           type: 'unstake',
         });
         await response.wait();
+        if (type === 'one') {
+          setUnstakeAmount(String(calculateTotalUnstake(getClaimModalData([unstakeRow], tableData))));
+        } else {
+          setUnstakeAmount(
+            String(
+              calculateTotalUnstake(
+                getClaimModalData(
+                  tableData.map((item) => item.id),
+                  tableData,
+                ),
+              ),
+            ),
+          );
+        }
         setTxCompleted({
           type: 'unstake',
           id: response.hash,
@@ -409,21 +434,6 @@ const MyStake: React.FC<Props> = ({
     } catch (error: any) {
       setStatus('error');
     }
-  };
-
-  const getClaimModalData = (rows: string[], records: StakeItem[]) => {
-    const stakingRecords = records
-      .filter((item) => {
-        return rows.includes(item.id);
-      })
-      .map((item) => {
-        return {
-          stakedAmount: item.stakedAmount,
-          stakedTime: item.stakingTime,
-          rewards: item.reward,
-        };
-      });
-    return stakingRecords;
   };
 
   const getUnstakeData = (records: StakeItem[], index: string) => {
@@ -509,6 +519,9 @@ const MyStake: React.FC<Props> = ({
       if (txCompleted.type !== 'approve') {
         handleResetInputValue();
       }
+      if (txCompleted.type === 'unstake' || txCompleted.type === 'claim') {
+        setSelectedRows([]);
+      }
       setTxCompleted({
         id: '',
         type: '',
@@ -533,6 +546,30 @@ const MyStake: React.FC<Props> = ({
     }
   };
 
+  const getStatusTitle = (action: Actions) => {
+    let title = '';
+    switch (action) {
+      case 'approve':
+        title = 'Approve Information';
+        break;
+      case 'claim':
+        title = 'Claim Rewards';
+        break;
+      case 'stake':
+        title = 'Stake Information';
+        break;
+      case 'unstake':
+        title = 'Unstake';
+        break;
+      case 'unstake_all':
+        title = 'Unstake All';
+        break;
+      default:
+        break;
+    }
+    return title;
+  };
+
   useEffect(() => {
     handleCheckIsApproved();
   }, [lpTokenInput, lpToken, oxbToken]);
@@ -543,9 +580,15 @@ const MyStake: React.FC<Props> = ({
     );
   }, [data]);
 
+  useEffect(() => {
+    const allRowIds = tableData.map((item) => item.id);
+    setSelectedRows(selectedRows.filter((item) => allRowIds.includes(item)));
+  }, [tableData]);
+
   const tokenBalance = isOxbPool ? oxbToken.balance : lpToken.balance;
   const isInsufficientError = Number(lpTokenInput) > Number(tokenBalance);
   const invalidInput = lpTokenInput.trim() === '';
+
   return (
     <Wrapper>
       <MyStakeHeader>
@@ -679,7 +722,7 @@ const MyStake: React.FC<Props> = ({
       </Box>
 
       <StakeStatusModal
-        title={currentAction === 'approve' ? 'Approve Information' : 'Stake Information'}
+        title={getStatusTitle(currentAction)}
         open={openStatus}
         onClose={() => {
           handleCloseStatusModal();
@@ -688,7 +731,9 @@ const MyStake: React.FC<Props> = ({
             id: '',
           });
         }}
+        type={currentAction}
         status={status}
+        unstakeAmount={unstakeAmount}
         onNextStatus={() => {
           window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
         }}

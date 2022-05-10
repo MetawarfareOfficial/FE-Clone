@@ -378,7 +378,12 @@ const TableMyStake: React.FC<Props> = ({
                     </ButtonClaim>
                   </Box>
                 ) : (
-                  <ButtonSelectAll variant="outlined" fullWidth onClick={handleSelectAllClick}>
+                  <ButtonSelectAll
+                    disabled={tableData.length === 0}
+                    variant="outlined"
+                    fullWidth
+                    onClick={handleSelectAllClick}
+                  >
                     Select All
                   </ButtonSelectAll>
                 )}

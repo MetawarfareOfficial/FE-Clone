@@ -10,6 +10,7 @@ import { useWeb3React } from '@web3-react/core';
 import { convertStakingData } from 'helpers/staking';
 import { setSelectedPoolData } from 'services/staking';
 import { useFetchOxbTokenBalance } from 'hooks/staking/useFetchOxbTokenBalance';
+import { fetTableDataIntervalTime } from 'consts/stake';
 interface Props {
   title?: string;
 }
@@ -147,7 +148,7 @@ const StakePage: React.FC<Props> = () => {
       handleFetchTableData();
       interval = setInterval(() => {
         handleFetchTableData();
-      }, 10000);
+      }, fetTableDataIntervalTime);
     } else if (!account) {
       dispatch(setSelectedPoolData([]));
       setSelected(-1);
@@ -213,7 +214,8 @@ const StakePage: React.FC<Props> = () => {
       />
 
       <StakeStatusModal
-        title="Claim rewards"
+        type="claim"
+        title={claimType === 'claim_all' ? 'Claim rewards' : 'Claim reward'}
         open={openStatus}
         onClose={closeStatusModal}
         status={status}
