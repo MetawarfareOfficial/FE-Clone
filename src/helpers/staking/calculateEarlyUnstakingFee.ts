@@ -6,7 +6,7 @@ export const calculateEarlyUnstakingFee = (totalStakedValue: number, days: numbe
   let fee = '0';
   if (days < 30) {
     fee = new BigNumber(totalStakedValue).multipliedBy(before30DaysFee).div(100).toString();
-  } else if (days < 60) {
+  } else if (days >= 30 && days < 60) {
     fee = new BigNumber(totalStakedValue).multipliedBy(before60DaysFee).div(100).toString();
   }
   return fee;

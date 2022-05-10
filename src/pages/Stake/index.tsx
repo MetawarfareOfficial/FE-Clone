@@ -13,6 +13,7 @@ import { useFetchOxbTokenBalance } from 'hooks/staking/useFetchOxbTokenBalance';
 import { fetTableDataIntervalTime } from 'consts/stake';
 import BigNumber from 'bignumber.js';
 import get from 'lodash/get';
+import { useToast } from 'hooks/useToast';
 interface Props {
   title?: string;
 }
@@ -24,6 +25,7 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 const StakePage: React.FC<Props> = () => {
   const { claimRewards, claimAllRewards, getPoolInfo, getStakingRecordsLimit } = useInteractiveContract();
   const { account } = useWeb3React();
+  const { createToast } = useToast();
   const [currentTab, setCurrentTab] = useState<'allPool' | 'myPool'>('allPool');
   const [claimType, setClaimType] = useState<'claim_all' | 'claim'>('claim_all');
   const [status, setStatus] = useState<any>(null);
@@ -82,7 +84,7 @@ const StakePage: React.FC<Props> = () => {
 
   const handleFetchTableData = async () => {
     try {
-      setTableDataLoading(true);
+      // setTableDataLoading(true);
       const selectedPoolInfo = await getPoolInfo(account!, String(selected));
       const convertedData = convertStakingData({
         dates: selectedPoolInfo.yourStakingTimes[0].split('#'),
@@ -147,7 +149,14 @@ const StakePage: React.FC<Props> = () => {
   useEffect(() => {
     let interval: NodeJS.Timer;
     if (selected !== -1 && account) {
-      handleFetchTableData();
+      createToast({
+        promise: {
+          callback: handleFetchTableData,
+          pendingMessage: 'Loading...',
+          successMessage: 'Your staking data is fetched successfully',
+        },
+        autoClose: 500,
+      });
       interval = setInterval(() => {
         handleFetchTableData();
       }, fetTableDataIntervalTime);
@@ -155,6 +164,7 @@ const StakePage: React.FC<Props> = () => {
       dispatch(setSelectedPoolData([]));
       setSelected(-1);
     } else if (selected === -1) {
+      setTableDataLoading(true);
       dispatch(setSelectedPoolData([]));
     }
     return () => {
@@ -190,6 +200,7 @@ const StakePage: React.FC<Props> = () => {
         />
       ) : (
         <MyStake
+          tableDataLoading={tableDataLoading}
           handleToggleClaimOne={(index) => {
             setSelectedIndex(String(index));
             setPoolToClaim(String(selected));

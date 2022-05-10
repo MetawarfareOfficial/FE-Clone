@@ -17,8 +17,7 @@ import {
   tooltipClasses,
   Checkbox,
   CheckboxProps,
-  Typography,
-  TypographyProps,
+  TableRowProps,
 } from '@mui/material';
 
 import PaginationCustom from './Pagination';
@@ -234,11 +233,6 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
 
 // const SelectBox = styled(Checkbox)<CheckboxProps>(() => ({}));
 
-const EmptyRecordsText = styled(Typography)<TypographyProps>(() => ({
-  textAlign: 'center',
-  width: '100%',
-}));
-
 const CheckboxCustom = styled(Checkbox)<CheckboxProps>(() => ({
   padding: 0,
   float: 'right',
@@ -265,6 +259,53 @@ const RewardsFlex = styled(Box)<BoxProps>(() => ({
 const ViewHelp = styled(Box)<BoxProps>(() => ({
   float: 'right',
   marginRight: '-60px',
+}));
+
+const TableRowNoData = styled(TableRow)<TableRowProps>(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.05)',
+}));
+const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'unset',
+  padding: '11px 30px',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+  fontFamily: 'Poppins',
+  fontSize: '14px',
+  lineHeight: '25px',
+  fontWeight: '500',
+  border: 'none',
+  maxWidth: '160px',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden !important',
+  textOverflow: 'ellipsis',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '8px 20px',
+  },
+  [theme.breakpoints.down('md')]: {
+    fontSize: '12px',
+    lineHeight: '16px',
+    padding: '6px 12px',
+  },
+}));
+
+const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
+  // minHeight: 'calc(100vh - 50px - 315px)',
+  minHeight: 'calc(100vh - 50px - 600px)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: theme.palette.mode === 'light' ? '#E0E0E0' : '#6B6B6B',
+  fontFamily: 'Roboto',
+  fontWeight: 'bold',
+  fontSize: '36px',
+  lineHeight: '42px',
+
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '30px',
+    lineHeight: '38px',
+  },
 }));
 
 const TableMyStake: React.FC<Props> = ({
@@ -392,7 +433,7 @@ const TableMyStake: React.FC<Props> = ({
           </TableHead>
 
           <TableBody>
-            {data.length > 0 &&
+            {data.length > 0 ? (
               records.map((item: any, i: number) => {
                 const isItemSelected = isSelected(String(item.id));
 
@@ -482,10 +523,16 @@ const TableMyStake: React.FC<Props> = ({
                     </TableCellBody>
                   </TableRow>
                 );
-              })}
+              })
+            ) : (
+              <TableRowNoData>
+                <TableCellContent colSpan={7}>
+                  <EmptyContracts>No Records Found</EmptyContracts>
+                </TableCellContent>
+              </TableRowNoData>
+            )}
           </TableBody>
         </Table>
-        {data.length <= 0 && <EmptyRecordsText>No Records Found</EmptyRecordsText>}
       </TableContainer>
 
       {data.length > pagination.limit && (

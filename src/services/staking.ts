@@ -22,6 +22,7 @@ export interface PoolItem {
   title: string;
   account: string;
   endTime: string;
+  isOxbPool: boolean;
 }
 
 interface States {

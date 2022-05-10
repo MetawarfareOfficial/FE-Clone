@@ -16,6 +16,7 @@ interface Props {
   stakedAmount: string;
   id: number;
   onClaimAll: () => void;
+  isOxbPool: boolean;
 }
 
 interface LineProps {
@@ -214,7 +215,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount, id, onClaimAll }) => {
+const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount, id, onClaimAll, isOxbPool }) => {
   const theme = useTheme();
   const { account } = useWeb3React();
   return (
@@ -223,9 +224,11 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
         <ViewIcon>
           <img alt="" src={OxToken} />
         </ViewIcon>
-        <ViewIcon>
-          <img alt="" src={AvaxToken} />
-        </ViewIcon>
+        {!isOxbPool && (
+          <ViewIcon>
+            <img alt="" src={AvaxToken} />
+          </ViewIcon>
+        )}
         <Title>{title}</Title>
       </BoxHeader>
 

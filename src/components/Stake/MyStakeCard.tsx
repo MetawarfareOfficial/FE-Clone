@@ -288,9 +288,11 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
         <ViewIcon>
           <img alt="" src={OxToken} />
         </ViewIcon>
-        <ViewIcon>
-          <img alt="" src={AvaxToken} />
-        </ViewIcon>
+        {!data.isOxbPool && (
+          <ViewIcon>
+            <img alt="" src={AvaxToken} />
+          </ViewIcon>
+        )}
         <Title>{data.title}</Title>
       </BoxHeader>
 

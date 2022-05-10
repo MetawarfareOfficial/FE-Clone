@@ -37,6 +37,7 @@ interface Props {
   handleToggleClaimAll: () => void;
   handleToggleClaimOne: (index: number) => void;
   handleGetTokenBalances: () => void;
+  tableDataLoading: boolean;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -235,6 +236,7 @@ const MyStake: React.FC<Props> = ({
   handleToggleClaimAll,
   handleToggleClaimOne,
   handleGetTokenBalances,
+  tableDataLoading,
 }) => {
   const history = useHistory();
 
@@ -297,6 +299,7 @@ const MyStake: React.FC<Props> = ({
     if (Number(isOxbPool ? oxbToken.balance : lpToken.balance) > 0) {
       setIsSwapMaxFromToken(true);
       setLpTokenInput(truncateNumber(Number(isOxbPool ? oxbToken.balance : lpToken.balance), 10));
+      setIsFirstTime(false);
     }
   };
 
@@ -592,12 +595,19 @@ const MyStake: React.FC<Props> = ({
 
   const tokenBalance = isOxbPool ? oxbToken.balance : lpToken.balance;
   const isInsufficientError = Number(lpTokenInput) > Number(tokenBalance);
-  const invalidInput = lpTokenInput.trim() === '';
+  const invalidInput = lpTokenInput.trim() === '' || lpTokenInput === '0';
 
   return (
     <Wrapper>
       <MyStakeHeader>
-        <BackButton onClick={onBack}>
+        <BackButton
+          disabled={tableDataLoading}
+          onClick={() => {
+            if (!tableDataLoading) {
+              onBack();
+            }
+          }}
+        >
           <KeyboardArrowLeftIcon />
         </BackButton>
       </MyStakeHeader>
@@ -693,7 +703,7 @@ const MyStake: React.FC<Props> = ({
                     ? 'Please enter a valid amount'
                     : tokenApproved
                     ? isInsufficientError
-                      ? 'Insufficient balance'
+                      ? `Insufficient ${isOxbPool ? '0xB' : 'LP'} balance`
                       : 'Stake'
                     : 'Approve'}
                 </ButtonSubmit>
