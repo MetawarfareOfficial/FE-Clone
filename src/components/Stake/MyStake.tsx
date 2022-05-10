@@ -632,7 +632,7 @@ const MyStake: React.FC<Props> = ({
                     name="to"
                     disabled={false}
                     token={{
-                      name: 'OxB',
+                      name: '0xB',
                       logo: OxImg,
                     }}
                   />
@@ -657,7 +657,7 @@ const MyStake: React.FC<Props> = ({
                   }}
                   variant="text"
                 >
-                  {`Get ${isOxbPool ? 'OxB' : 'LP'} Token ->`}
+                  {`Get ${isOxbPool ? '0xB' : 'LP'} Token ->`}
                 </ButtonGetLpToken>
                 <ButtonSubmit
                   loading={false}

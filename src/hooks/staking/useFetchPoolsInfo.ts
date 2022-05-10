@@ -23,11 +23,13 @@ export const useFetchPoolsInfo = () => {
 
   const handleLoadPools = async () => {
     const lpToUsdcAmount = handleEstimateZapOutLpTokenAmount(SwapTokenId.USDC, '1', liquidityPoolData);
+
     const [OxbPrice, rawPools, usePoolsInfo] = await Promise.all([
       fetchTokensPrice(String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase()),
       getJsonAllPool(),
       account ? getJsonAllPoolByUser(account) : [],
     ]);
+
     const pools = rawPools.map((item) => {
       const userPool = usePoolsInfo.filter((pool) => pool.index === item.index);
       const yourTotalStakedAmount =
@@ -35,9 +37,16 @@ export const useFetchPoolsInfo = () => {
       const yourTotalRewardAmount =
         userPool.length > 0 ? new BigNumber(userPool[0].pendingReward).div(1e18).toString() : '0';
       const yourStakingTime = userPool.length > 0 ? userPool[0].minTimestamp : '0';
+      const isOxbPool =
+        `0x${String(item.lpTokenAddress).toLocaleLowerCase()}` ===
+        String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase();
+
       return {
         id: String(item.index),
-        liquidity: new BigNumber(item.lpAmountInPool).div(1e18).multipliedBy(lpToUsdcAmount).toString(),
+        liquidity: new BigNumber(item.lpAmountInPool)
+          .div(1e18)
+          .multipliedBy(isOxbPool ? get(OxbPrice, '[0].priceUSD', '0') : lpToUsdcAmount)
+          .toString(),
         totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
         apr:
           item.lpAmountInPool !== '0'
@@ -46,9 +55,7 @@ export const useFetchPoolsInfo = () => {
                 oxbPrice: get(OxbPrice, '[0].priceUSD', '0'),
                 totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
                 lpPrice: lpToUsdcAmount,
-                isOxbPool:
-                  `0x${String(item.lpTokenAddress).toLocaleLowerCase()}` ===
-                  String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
+                isOxbPool,
               })
             : '0',
         endTime: new BigNumber(item.duration).toString(),
