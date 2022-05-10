@@ -298,13 +298,7 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data, 
             </Grid>
             <Grid item xs={6}>
               <Detail>
-                <h4>unstaked amount</h4>
-                <h3>{moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}</h3>
-              </Detail>
-            </Grid>
-            <Grid item xs={6}>
-              <Detail>
-                <h4>staking time</h4>
+                <h4>STAKED TIME</h4>
                 <h3>{`${item.stakingTime} days`}</h3>
               </Detail>
             </Grid>

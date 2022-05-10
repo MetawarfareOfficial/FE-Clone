@@ -244,6 +244,7 @@ const MyStake: React.FC<Props> = ({
   const [tokenApproved, setTokenApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   const [lpTokenInput, setLpTokenInput] = useState('');
 
@@ -286,6 +287,9 @@ const MyStake: React.FC<Props> = ({
   const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
     setIsSwapMaxFromToken(false);
     setLpTokenInput(event.value);
+    if (!event.isOnblur) {
+      setIsFirstTime(false);
+    }
   };
 
   const handleMaxBtnClick = async () => {
@@ -673,7 +677,9 @@ const MyStake: React.FC<Props> = ({
                     }
                   }}
                 >
-                  {invalidInput
+                  {isFirstTime
+                    ? 'Enter Amount'
+                    : invalidInput
                     ? 'Please enter a valid amount'
                     : tokenApproved
                     ? isInsufficientError

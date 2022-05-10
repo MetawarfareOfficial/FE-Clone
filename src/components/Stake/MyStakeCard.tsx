@@ -355,7 +355,7 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
                 ? formatForNumberLessThanCondition({
                     value: data.yourTotalRewardAmount,
                     addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
+                    minValueCondition: '0.0001',
                     callback: formatPercent,
                     callBackParams: [4],
                   })
@@ -368,7 +368,7 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
                 ? formatForNumberLessThanCondition({
                     value: data.yourTotalRewardValue,
                     addLessThanSymbol: true,
-                    minValueCondition: '0.000001',
+                    minValueCondition: '0.0001',
                     callback: formatPrice,
                     callBackParams: [4],
                   })
