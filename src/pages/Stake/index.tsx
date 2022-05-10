@@ -8,9 +8,11 @@ import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useFetchLPTokenBalance } from 'hooks/staking/useFetchLPTokenBalance';
 import { useWeb3React } from '@web3-react/core';
 import { convertStakingData } from 'helpers/staking';
-import { setSelectedPoolData } from 'services/staking';
+import { setSelectedPoolData, setStakingRecordsLimit } from 'services/staking';
 import { useFetchOxbTokenBalance } from 'hooks/staking/useFetchOxbTokenBalance';
 import { fetTableDataIntervalTime } from 'consts/stake';
+import BigNumber from 'bignumber.js';
+import get from 'lodash/get';
 interface Props {
   title?: string;
 }
@@ -20,7 +22,7 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 }));
 
 const StakePage: React.FC<Props> = () => {
-  const { claimRewards, claimAllRewards, getPoolInfo } = useInteractiveContract();
+  const { claimRewards, claimAllRewards, getPoolInfo, getStakingRecordsLimit } = useInteractiveContract();
   const { account } = useWeb3React();
   const [currentTab, setCurrentTab] = useState<'allPool' | 'myPool'>('allPool');
   const [claimType, setClaimType] = useState<'claim_all' | 'claim'>('claim_all');
@@ -161,6 +163,17 @@ const StakePage: React.FC<Props> = () => {
       }
     };
   }, [selected, account]);
+
+  const loadStakingRecordLimit = async () => {
+    try {
+      const limit = await getStakingRecordsLimit();
+      dispatch(setStakingRecordsLimit(new BigNumber(get(limit, '_hex', 100)).toString()));
+    } catch {}
+  };
+
+  useEffect(() => {
+    loadStakingRecordLimit();
+  }, []);
 
   return (
     <Wrapper>

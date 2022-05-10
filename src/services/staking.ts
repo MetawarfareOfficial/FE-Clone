@@ -37,6 +37,7 @@ interface States {
   lpBalanceLoaded: boolean;
   totalPools: number[] | null;
   selectedPoolData: StakeItem[];
+  stakingRecordsLimit: number;
 }
 
 const initialState: States = {
@@ -52,6 +53,7 @@ const initialState: States = {
   lpBalanceLoaded: false,
   totalPools: null,
   selectedPoolData: [],
+  stakingRecordsLimit: 100,
 };
 
 export const stakeSlice = createSlice({
@@ -73,10 +75,14 @@ export const stakeSlice = createSlice({
     setSelectedPoolData: (state, action) => {
       state.selectedPoolData = action.payload;
     },
+    setStakingRecordsLimit: (state, action) => {
+      state.stakingRecordsLimit = action.payload;
+    },
   },
 });
 
-export const { setPools, setLpToken, setTotalPools, setSelectedPoolData, setOxbToken } = stakeSlice.actions;
+export const { setPools, setLpToken, setTotalPools, setSelectedPoolData, setOxbToken, setStakingRecordsLimit } =
+  stakeSlice.actions;
 
 const { reducer: stakeReducer } = stakeSlice;
 

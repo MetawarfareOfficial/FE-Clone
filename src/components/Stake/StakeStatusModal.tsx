@@ -36,6 +36,7 @@ interface Props {
   onNextStatus: () => void;
   type: Actions;
   unstakeAmount?: string;
+  errorMessage?: string;
 }
 
 interface DialogTitleCustomProps {
@@ -188,6 +189,7 @@ const StakeStatusModal: React.FC<Props> = ({
   type,
   unstakeAmount = '0',
   onNextStatus,
+  errorMessage = 'Transaction Rejected',
 }) => {
   const theme = useTheme();
 
@@ -223,7 +225,7 @@ const StakeStatusModal: React.FC<Props> = ({
                   : type === 'unstake' || type === 'unstake_all'
                   ? `unstake: ${unstakeAmount}`
                   : 'Transaction Completed'
-                : 'Transaction Rejected'}
+                : errorMessage}
             </h3>
 
             {status === 'success' ? (

@@ -233,11 +233,13 @@ const Line = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, selectedIndex }) => {
-  const selectedPool = useAppSelector((state) => state.stake.selectedPoolData);
+  const selectedPool = useAppSelector((state) => state.stake.selectedPoolData).filter(
+    (item) => item.id === String(selectedIndex),
+  );
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText>{type === 'claim' ? 'Claim Rewards' : 'Claim All'}</HeaderText>
+        <HeaderText>{type === 'claim' ? 'Claim' : 'Claim All'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -259,10 +261,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                   <p>{type === 'claim_all' && 'Total '}Earned Rewards </p>
                   <ButtonReward disabled variant="contained" style={{ margin: 0 }}>
                     {`${formatForNumberLessThanCondition({
-                      value:
-                        type === 'claim_all'
-                          ? data.yourTotalRewardAmount
-                          : get(selectedPool, `[${selectedIndex}].reward`, 0),
+                      value: type === 'claim_all' ? data.yourTotalRewardAmount : get(selectedPool, `[0].reward`, 0),
                       minValueCondition: '0.000001',
                       addLessThanSymbol: true,
                       callback: formatPercent,
@@ -280,9 +279,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
               <strong>
                 {type === 'claim_all'
                   ? moment.unix(Number(get(data, 'yourStakingTime', moment().unix()))).format('MMM DD YYYY')
-                  : moment
-                      .unix(Number(get(selectedPool, `[${selectedIndex}].stakeDate`, moment().unix())))
-                      .format('MMM DD YYYY')}
+                  : moment.unix(Number(get(selectedPool, `[0].stakeDate`, moment().unix()))).format('MMM DD YYYY')}
               </strong>
             </p>
             <p>
@@ -291,7 +288,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                 {type === 'claim_all'
                   ? moment().diff(moment(Number(get(data, 'yourStakingTime', moment().unix())) * 1000), 'day')
                   : moment().diff(
-                      moment(Number(get(selectedPool, `[${selectedIndex}].stakeDate`, moment().unix())) * 1000),
+                      moment(Number(get(selectedPool, `[0].stakeDate`, moment().unix())) * 1000),
                       'day',
                     )}{' '}
                 days
@@ -312,7 +309,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                       callBackParams: [6],
                     })
                   : formatForNumberLessThanCondition({
-                      value: get(selectedPool, `[${selectedIndex}].stakedAmount`, '0'),
+                      value: get(selectedPool, `[0].stakedAmount`, '0'),
                       minValueCondition: '0.000001',
                       addLessThanSymbol: true,
                       callback: formatPercent,
