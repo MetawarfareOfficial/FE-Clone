@@ -294,9 +294,9 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                         ? formatForNumberLessThanCondition({
                             value: item.stakedAmount,
                             addLessThanSymbol: true,
-                            minValueCondition: '0.000001',
+                            minValueCondition: '0.0001',
                             callback: formatPercent,
-                            callBackParams: [2],
+                            callBackParams: [4],
                           })
                         : '0.0'}{' '}
                       0xB
@@ -309,9 +309,9 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                         ? formatForNumberLessThanCondition({
                             value: item.rewards,
                             addLessThanSymbol: true,
-                            minValueCondition: '0.000001',
+                            minValueCondition: '0.0001',
                             callback: formatPercent,
-                            callBackParams: [2],
+                            callBackParams: [4],
                           })
                         : '0.0'}{' '}
                       0xB
