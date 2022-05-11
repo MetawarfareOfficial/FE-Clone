@@ -11,7 +11,6 @@ import { useAppSelector } from 'stores/hooks';
 import get from 'lodash/get';
 
 export const useFetchPoolsInfo = () => {
-  // const [loading, setLoading] = useState(false);
   const { getJsonAllPool, getJsonAllPoolByUser } = useInteractiveContract();
   const { account } = useWeb3React();
   const dispatch = useDispatch();
@@ -38,22 +37,22 @@ export const useFetchPoolsInfo = () => {
         userPool.length > 0 ? new BigNumber(userPool[0].pendingReward).div(1e18).toString() : '0';
       const yourStakingTime = userPool.length > 0 ? userPool[0].minTimestamp : '0';
       const isOxbPool =
-        `0x${String(item.lpTokenAddress).toLocaleLowerCase()}` ===
+        `0x${String(item.stakingTokenAddress).toLocaleLowerCase()}` ===
         String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase();
 
       return {
         id: String(item.index),
-        liquidity: new BigNumber(item.lpAmountInPool)
+        liquidity: new BigNumber(item.stakedAmountInPool)
           .div(1e18)
           .multipliedBy(isOxbPool ? get(OxbPrice, '[0].priceUSD', '0') : lpToUsdcAmount)
           .toString(),
-        totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
+        totalStaked: new BigNumber(item.stakedAmountInPool).div(1e18).toString(),
         apr:
-          item.lpAmountInPool !== '0'
+          item.stakedAmountInPool !== '0'
             ? calculateApr({
                 totalReward: new BigNumber(item.totalDistribute).div(1e18).toString(),
                 oxbPrice: get(OxbPrice, '[0].priceUSD', '0'),
-                totalStaked: new BigNumber(item.lpAmountInPool).div(1e18).toString(),
+                totalStaked: new BigNumber(item.stakedAmountInPool).div(1e18).toString(),
                 lpPrice: lpToUsdcAmount,
                 isOxbPool,
               })
@@ -62,7 +61,7 @@ export const useFetchPoolsInfo = () => {
         yourShare:
           yourTotalStakedAmount !== '0'
             ? new BigNumber(yourTotalStakedAmount)
-                .div(new BigNumber(item.lpAmountInPool).div(1e18))
+                .div(new BigNumber(item.stakedAmountInPool).div(1e18))
                 .multipliedBy(100)
                 .toString()
             : '0',
@@ -72,7 +71,7 @@ export const useFetchPoolsInfo = () => {
           .multipliedBy(get(OxbPrice, '[0].priceUSD', 0))
           .toString(),
         yourStakingTime,
-        lpAddress: `0x${String(item.lpTokenAddress).toLocaleLowerCase()}`,
+        lpAddress: `0x${String(item.stakingTokenAddress).toLocaleLowerCase()}`,
         title: item.name,
         account,
         isOxbPool,
