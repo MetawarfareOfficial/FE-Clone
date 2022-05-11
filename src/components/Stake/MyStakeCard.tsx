@@ -174,7 +174,7 @@ const Line = styled(Box)<LineProps>(({ color, theme, size }) => ({
     },
 
     '&:last-child': {
-      textAlign: size > 600 ? 'right' : 'center',
+      textAlign: size > 600 ? 'center' : 'center',
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -216,7 +216,7 @@ const Line = styled(Box)<LineProps>(({ color, theme, size }) => ({
     },
 
     '&:last-child': {
-      textAlign: size > 600 ? 'right' : 'center',
+      textAlign: size > 600 ? 'center' : 'center',
     },
 
     [theme.breakpoints.down('sm')]: {
