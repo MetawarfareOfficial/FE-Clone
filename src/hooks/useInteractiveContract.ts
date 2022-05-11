@@ -489,7 +489,11 @@ export const useInteractiveContract = () => {
   };
 
   const getStakingRecordsLimit = async () => {
-    return await stakingContractWithoutSigner.lpStakingEntitiesLimit();
+    return await stakingContractWithoutSigner.stakingRecordsLimitPerPool();
+  };
+
+  const getEarlyUnstakeFeeTime = async () => {
+    return await stakingContractWithoutSigner.getTaxLevels();
   };
 
   return {
@@ -540,6 +544,7 @@ export const useInteractiveContract = () => {
     withDrawAll,
     claimAllRewards,
     getStakingRecordsLimit,
+    getEarlyUnstakeFeeTime,
     contractWithSigner,
     provider,
   };
