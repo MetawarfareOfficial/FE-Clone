@@ -18,7 +18,7 @@ const WrapperHeader = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'none',
   alignItems: 'center',
   position: 'fixed',
-  zIndex: '1000',
+  zIndex: '1300',
   padding: '18px 14px',
   boxSizing: 'border-box',
 
@@ -64,12 +64,12 @@ const Header: React.FC<Props> = ({ onChangeMode }) => {
   return (
     <WrapperHeader
       sx={{
-        background: isBackground ? (theme.palette.mode === 'light' ? '#fff' : '#1E1E1E') : 'unset',
+        background: theme.palette.mode === 'light' ? '#fff' : '#1E1E1E',
         boxShadow: isBackground
           ? theme.palette.mode === 'light'
             ? '0px 2px 5px 0px rgba(181,181,181,1)'
             : '0px 2px 5px 0px #1a1919'
-          : 'unset',
+          : '0px 2px 0px rgb(0 0 0 / 6%)',
       }}
     >
       <Link to="/">

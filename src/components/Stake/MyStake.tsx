@@ -65,7 +65,7 @@ const BackButton = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   position: 'absolute',
   left: '3px',
   top: '0px',
-  zIndex: 1500,
+  zIndex: 1000,
 
   '&:hover': {
     outline: 'none',
@@ -529,10 +529,10 @@ const MyStake: React.FC<Props> = ({
           setTokenApproved(true);
           handleGetTokenBalances();
         }
+        setIsSwapMaxFromToken(false);
       } catch (error: any) {
         setStatus('error');
       }
-      setIsSwapMaxFromToken(false);
     }
   };
 

@@ -398,6 +398,7 @@ const TableMyStake: React.FC<Props> = ({
                       Deselect
                     </ButtonStake>
                     <ButtonStake
+                      disabled={selectedRows.length === 1}
                       variant="outlined"
                       onClick={() => {
                         if (selectedRows.length === tableData.length) {
@@ -410,6 +411,7 @@ const TableMyStake: React.FC<Props> = ({
                       Unstake {selectedRows.length === tableData.length && 'All'}
                     </ButtonStake>
                     <ButtonClaim
+                      disabled={selectedRows.length === 1}
                       onClick={() => {
                         onMultipleClaim(selectedRows);
                       }}
@@ -436,7 +438,10 @@ const TableMyStake: React.FC<Props> = ({
             {data.length > 0 ? (
               records.map((item: any, i: number) => {
                 const isItemSelected = isSelected(String(item.id));
-
+                let claimAndUnstakeBtnDisabled = false;
+                if (selectedRows.length > 0 && !isItemSelected) {
+                  claimAndUnstakeBtnDisabled = true;
+                }
                 return (
                   <TableRow key={i} selected={isItemSelected}>
                     <TableCellBody align="left">
@@ -510,6 +515,7 @@ const TableMyStake: React.FC<Props> = ({
                     <TableCellBody align="right">
                       <ButtonStake
                         variant="outlined"
+                        disabled={claimAndUnstakeBtnDisabled}
                         onClick={() => {
                           onUnstake(item.id);
                         }}
@@ -518,6 +524,7 @@ const TableMyStake: React.FC<Props> = ({
                       </ButtonStake>
                       <ButtonClaim
                         variant="contained"
+                        disabled={claimAndUnstakeBtnDisabled}
                         onClick={() => {
                           onClaim(item.id);
                         }}
