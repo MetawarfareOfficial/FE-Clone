@@ -256,8 +256,12 @@ const StakeStatusModal: React.FC<Props> = ({
             )}
 
             {status === 'success' && type === 'unstake_selected' && (
-              <h3>
-                Your stake amount{' '}
+              <h3
+                style={{
+                  marginTop: '8px',
+                }}
+              >
+                Your stake amount:{' '}
                 {formatForNumberLessThanCondition({
                   value: totalStakedAmount,
                   minValueCondition: '0.000001',

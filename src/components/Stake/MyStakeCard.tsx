@@ -7,6 +7,7 @@ import AvaxToken from 'assets/images/avax-token.png';
 import { PoolItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent, formatPrice } from 'helpers/formatPrice';
+import { useWindowSize } from 'hooks/useWindowSize';
 
 interface Props {
   title?: String;
@@ -16,6 +17,7 @@ interface Props {
 
 interface LineProps {
   color: string;
+  size: number;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -84,7 +86,7 @@ const Info = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const ViewValue = styled(Box)<BoxProps>(({ theme }) => ({
-  maxWidth: '560px',
+  maxWidth: '565px',
   margin: '0 auto 28px',
   border: '1px solid rgba(41, 50, 71, 0.09)',
   borderRadius: '11px',
@@ -146,7 +148,7 @@ const ViewValue = styled(Box)<BoxProps>(({ theme }) => ({
   },
 }));
 
-const Line = styled(Box)<LineProps>(({ color, theme }) => ({
+const Line = styled(Box)<LineProps>(({ color, theme, size }) => ({
   width: '100%',
   display: 'flex',
   alignItems: 'center',
@@ -168,15 +170,15 @@ const Line = styled(Box)<LineProps>(({ color, theme }) => ({
     width: '25%',
 
     '&:first-child': {
-      textAlign: 'left',
+      textAlign: size > 600 ? 'left' : 'center',
     },
 
     '&:last-child': {
-      textAlign: 'right',
+      textAlign: size > 600 ? 'right' : 'center',
     },
 
     [theme.breakpoints.down('sm')]: {
-      width: 'auto',
+      width: size > 600 ? 'auto' : '100%',
       minWidth: '60px',
       margin: 'auto',
 
@@ -210,15 +212,15 @@ const Line = styled(Box)<LineProps>(({ color, theme }) => ({
     width: '25%',
 
     '&:first-child': {
-      textAlign: 'left',
+      textAlign: size > 600 ? 'left' : 'center',
     },
 
     '&:last-child': {
-      textAlign: 'right',
+      textAlign: size > 600 ? 'right' : 'center',
     },
 
     [theme.breakpoints.down('sm')]: {
-      width: 'auto',
+      width: size > 600 ? 'auto' : '100%',
       minWidth: '60px',
       margin: 'auto',
       textAlign: 'left',
@@ -281,7 +283,15 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
 
 const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
   const theme = useTheme();
-
+  const [size] = useWindowSize();
+  const rewardValue = formatForNumberLessThanCondition({
+    value: data.yourTotalRewardValue,
+    addLessThanSymbol: true,
+    minValueCondition: '0.0001',
+    callback: formatPrice,
+    callBackParams: [4],
+    insertCharacter: '$',
+  });
   return (
     <Wrapper>
       <BoxHeader>
@@ -296,58 +306,125 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
         <Title>{data.title}</Title>
       </BoxHeader>
 
-      <BoxContent>
-        <Line color={theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)'}>
-          <p>Liquidity</p>
-          <p>APR</p>
-          <p>Your Stake</p>
-          <p>your share</p>
-        </Line>
-        <Line color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
-          <h4>
-            $
-            {formatForNumberLessThanCondition({
-              value: data.liquidity,
-              addLessThanSymbol: true,
-              minValueCondition: '0.000001',
-              callback: formatPercent,
-              callBackParams: [6],
-            })}
-          </h4>
-          <h4>
-            {formatForNumberLessThanCondition({
-              value: data.apr,
-              addLessThanSymbol: true,
-              minValueCondition: '0.01',
-              callback: formatPercent,
-              callBackParams: [2],
-            })}
-            %
-          </h4>
-          <h4>
-            {data.yourTotalStakedAmount !== '0'
-              ? formatForNumberLessThanCondition({
-                  value: data.yourTotalStakedAmount,
-                  addLessThanSymbol: true,
-                  minValueCondition: '0.000001',
-                  callback: formatPercent,
-                  callBackParams: [6],
-                })
-              : '-'}
-          </h4>
-          <h4>
-            {formatForNumberLessThanCondition({
-              value: data.yourShare,
-              addLessThanSymbol: true,
-              minValueCondition: '0.01',
-              callback: formatPercent,
-              callBackParams: [2],
-            })}
-            %
-          </h4>
-        </Line>
-      </BoxContent>
-
+      {size > 600 && (
+        <BoxContent>
+          <Line
+            size={size}
+            color={theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)'}
+          >
+            <p>Liquidity</p>
+            <p>APR</p>
+            <p>Your Stake</p>
+            <p>your share</p>
+          </Line>
+          <Line size={size} color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
+            <h4>
+              $
+              {formatForNumberLessThanCondition({
+                value: data.liquidity,
+                addLessThanSymbol: true,
+                minValueCondition: '0.000001',
+                callback: formatPercent,
+                callBackParams: [6],
+              })}
+            </h4>
+            <h4>
+              {formatForNumberLessThanCondition({
+                value: data.apr,
+                addLessThanSymbol: true,
+                minValueCondition: '0.01',
+                callback: formatPercent,
+                callBackParams: [2],
+              })}
+              %
+            </h4>
+            <h4>
+              {data.yourTotalStakedAmount !== '0'
+                ? formatForNumberLessThanCondition({
+                    value: data.yourTotalStakedAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })
+                : '-'}
+            </h4>
+            <h4>
+              {formatForNumberLessThanCondition({
+                value: data.yourShare,
+                addLessThanSymbol: true,
+                minValueCondition: '0.01',
+                callback: formatPercent,
+                callBackParams: [2],
+              })}
+              %
+            </h4>
+          </Line>
+        </BoxContent>
+      )}
+      {size < 600 && (
+        <BoxContent>
+          <Line
+            size={size}
+            color={theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)'}
+          >
+            <p>Liquidity</p>
+            <p>APR</p>
+          </Line>
+          <Line size={size} color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
+            <h4>
+              $
+              {formatForNumberLessThanCondition({
+                value: data.liquidity,
+                addLessThanSymbol: true,
+                minValueCondition: '0.000001',
+                callback: formatPercent,
+                callBackParams: [6],
+              })}
+            </h4>
+            <h4>
+              {formatForNumberLessThanCondition({
+                value: data.apr,
+                addLessThanSymbol: true,
+                minValueCondition: '0.01',
+                callback: formatPercent,
+                callBackParams: [2],
+              })}
+              %
+            </h4>
+          </Line>
+          <Line
+            size={size}
+            color={theme.palette.mode === 'light' ? 'rgba(41, 50, 71, 0.7)' : 'rgba(255, 255, 255, 0.7)'}
+          >
+            <p>Your Stake</p>
+            <p>your share</p>
+          </Line>
+          <Line size={size} color={theme.palette.mode === 'light' ? '#293247' : '#fff'}>
+            <h4>
+              {data.yourTotalStakedAmount !== '0'
+                ? formatForNumberLessThanCondition({
+                    value: data.yourTotalStakedAmount,
+                    addLessThanSymbol: true,
+                    minValueCondition: '0.000001',
+                    callback: formatPercent,
+                    callBackParams: [6],
+                  })
+                : '-'}
+            </h4>
+            <h4>
+              {formatForNumberLessThanCondition({
+                value: data.yourShare,
+                addLessThanSymbol: true,
+                minValueCondition: '0.01',
+                callback: formatPercent,
+                callBackParams: [2],
+              })}
+              %
+            </h4>
+          </Line>
+        </BoxContent>
+      )}
       <BoxActions>
         <ViewValue>
           <Info>
@@ -365,16 +442,8 @@ const MyStakeCard: React.FC<Props> = ({ onClaimAll, data }) => {
               0xB
             </h4>
             <h4>
-              $
-              {data.yourTotalRewardValue !== '0'
-                ? formatForNumberLessThanCondition({
-                    value: data.yourTotalRewardValue,
-                    addLessThanSymbol: true,
-                    minValueCondition: '0.0001',
-                    callback: formatPrice,
-                    callBackParams: [4],
-                  })
-                : '0.0'}
+              {!rewardValue.includes('<') && '$'}
+              {data.yourTotalRewardValue !== '0' ? rewardValue : '0.0'}
             </h4>
           </Info>
 

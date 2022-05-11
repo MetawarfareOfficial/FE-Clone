@@ -4,12 +4,15 @@ interface Params {
   callback?: any;
   addLessThanSymbol?: boolean;
   callBackParams?: any[];
+  insertCharacter?: string;
 }
 
 export const formatForNumberLessThanCondition = (params: Params) => {
-  const { value, minValueCondition, callback, addLessThanSymbol = true, callBackParams = [] } = params;
+  const { value, minValueCondition, callback, addLessThanSymbol = true, callBackParams = [], insertCharacter } = params;
   if (Number(value) < Number(minValueCondition) && Number(value) !== 0) {
-    return addLessThanSymbol ? '<' + String(minValueCondition) : String(minValueCondition);
+    return addLessThanSymbol
+      ? '<' + (insertCharacter ? insertCharacter : '') + String(minValueCondition)
+      : String(minValueCondition);
   }
   return callback ? callback(value, ...callBackParams) : value;
 };
