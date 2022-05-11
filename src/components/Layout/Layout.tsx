@@ -669,7 +669,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                   </SideAction>
                 </Drawer>
 
-                <MainLayout component="main" open={open}>
+                <MainLayout component="main" id="main" open={open}>
                   <MenusMobile>
                     <div className="scroll-area scroll-area--horizontal">
                       <div className="scroll-area__body">

@@ -47,19 +47,25 @@ const Header: React.FC<Props> = ({ onChangeMode }) => {
   const [isBackground, setIsBackground] = useState(false);
 
   const onScroll = () => {
+    const mainElement = document.getElementById('main');
     const minHeight = width > 480 ? 30 : 10;
-    setIsBackground(window.pageYOffset > minHeight ? true : false);
+    if (mainElement) {
+      setIsBackground(mainElement.scrollTop > minHeight ? true : false);
+    }
   };
 
   useEffect(() => {
-    window.addEventListener('scroll', onScroll);
+    const mainElement = document.getElementById('main');
+    if (mainElement) {
+      mainElement.addEventListener('scroll', onScroll);
+    }
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
+      if (mainElement) {
+        mainElement.removeEventListener('scroll', onScroll);
+      }
     };
   }, []);
-
-  // const handleWallet = () => {};
 
   return (
     <WrapperHeader
