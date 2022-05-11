@@ -102,6 +102,13 @@ export const stakingScAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'getTaxLevels',
+    outputs: [{ internalType: 'string', name: 'res', type: 'string' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'uint32', name: '_poolId', type: 'uint32' },
       { internalType: 'address', name: 'addr', type: 'address' },
@@ -159,13 +166,6 @@ export const stakingScAbi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'lpStakingEntitiesLimit',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       { internalType: 'uint32', name: '_poolId', type: 'uint32' },
       { internalType: 'address', name: 'addr', type: 'address' },
@@ -181,8 +181,8 @@ export const stakingScAbi = [
     name: 'pools',
     outputs: [
       { internalType: 'string', name: 'name', type: 'string' },
-      { internalType: 'contract IERC20', name: 'lpToken', type: 'address' },
-      { internalType: 'uint256', name: 'lpAmountInPool', type: 'uint256' },
+      { internalType: 'contract IERC20', name: 'stakingToken', type: 'address' },
+      { internalType: 'uint256', name: 'stakedAmountInPool', type: 'uint256' },
       { internalType: 'uint256', name: 'totalDistribute', type: 'uint256' },
       { internalType: 'uint256', name: 'startTime', type: 'uint256' },
       { internalType: 'uint256', name: 'duration', type: 'uint256' },
@@ -193,8 +193,8 @@ export const stakingScAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: 'newLimit', type: 'uint256' }],
-    name: 'setLPStakingEntitiesLimit',
+    inputs: [{ internalType: 'uint256[]', name: '_newLevels', type: 'uint256[]' }],
+    name: 'setTaxLevels',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -218,6 +218,20 @@ export const stakingScAbi = [
     name: 'setWithdrawTimeout',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '_newLimit', type: 'uint256' }],
+    name: 'setstakingRecordsLimitPerPool',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'stakingRecordsLimitPerPool',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
     type: 'function',
   },
   {
