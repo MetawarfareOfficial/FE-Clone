@@ -37,6 +37,8 @@ interface Props {
   type: Actions;
   unstakeAmount?: string;
   errorMessage?: string;
+  totalStakedAmount?: string;
+  isOxbPool?: boolean;
 }
 
 interface DialogTitleCustomProps {
@@ -190,6 +192,8 @@ const StakeStatusModal: React.FC<Props> = ({
   unstakeAmount = '0',
   onNextStatus,
   errorMessage = 'Transaction Rejected',
+  totalStakedAmount = '0',
+  isOxbPool,
 }) => {
   const theme = useTheme();
 
@@ -218,15 +222,36 @@ const StakeStatusModal: React.FC<Props> = ({
               )}
             </ViewImage>
 
-            <h3>
-              {status === 'success'
-                ? type === 'claim' || type === 'claim_all'
-                  ? 'Rewards claimed successfully'
-                  : type === 'unstake' || type === 'unstake_all'
-                  ? `unstake: ${unstakeAmount}`
-                  : 'Transaction Completed'
-                : errorMessage}
-            </h3>
+            {status === 'success' ? (
+              type === 'approve' || type === 'stake' ? (
+                <h3>Transaction Completed </h3>
+              ) : (
+                ''
+              )
+            ) : (
+              <h3>{errorMessage}</h3>
+            )}
+
+            {status === 'success' && (
+              <h3
+                style={{
+                  color: '#3864FF',
+                  fontWeight: '500',
+                }}
+              >
+                {type === 'claim' || type === 'claim_all'
+                  ? ' Rewards claimed successfully '
+                  : type === 'unstake' || type === 'unstake_all' || type === 'unstake_selected'
+                  ? `unstake: ${unstakeAmount} ${isOxbPool ? '0xB' : 'LP'}`
+                  : ''}
+              </h3>
+            )}
+
+            {status === 'success' && type === 'unstake_selected' && (
+              <h3>
+                Your stake amount {totalStakedAmount} {isOxbPool ? '0xB' : 'LP'}
+              </h3>
+            )}
 
             {status === 'success' ? (
               type === 'approve' || type === 'stake' ? (

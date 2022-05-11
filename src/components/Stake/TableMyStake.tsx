@@ -454,13 +454,15 @@ const TableMyStake: React.FC<Props> = ({
                     <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
                     <TableCellBody align="center">
                       <RewardsFlex>
-                        {formatForNumberLessThanCondition({
-                          value: item.reward,
-                          addLessThanSymbol: true,
-                          minValueCondition: '0.000001',
-                          callback: formatPercent,
-                          callBackParams: [6],
-                        })}
+                        {Number(item.reward) >= 0
+                          ? formatForNumberLessThanCondition({
+                              value: item.reward,
+                              addLessThanSymbol: true,
+                              minValueCondition: '0.000001',
+                              callback: formatPercent,
+                              callBackParams: [6],
+                            })
+                          : '0.0'}
 
                         <CheckboxCustom
                           color="primary"
