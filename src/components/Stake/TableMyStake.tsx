@@ -443,18 +443,20 @@ const TableMyStake: React.FC<Props> = ({
                       {moment.unix(Number(item.stakeDate)).format('MMM DD YYYY')}
                     </TableCellBody>
                     <TableCellBody align="center">
-                      {formatForNumberLessThanCondition({
-                        value: item.stakedAmount,
-                        addLessThanSymbol: true,
-                        minValueCondition: '0.000001',
-                        callback: formatPercent,
-                        callBackParams: [6],
-                      })}
+                      {String(item.stakedAmount) !== 'NaN'
+                        ? formatForNumberLessThanCondition({
+                            value: item.stakedAmount,
+                            addLessThanSymbol: true,
+                            minValueCondition: '0.000001',
+                            callback: formatPercent,
+                            callBackParams: [6],
+                          })
+                        : '0.0'}
                     </TableCellBody>
                     <TableCellBody align="center">{`${item.stakingTime} Days`}</TableCellBody>
                     <TableCellBody align="center">
                       <RewardsFlex>
-                        {Number(item.reward) >= 0
+                        {Number(item.reward) > 0
                           ? formatForNumberLessThanCondition({
                               value: item.reward,
                               addLessThanSymbol: true,
