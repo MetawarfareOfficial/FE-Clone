@@ -40,10 +40,30 @@ const TabCustom = styled(Box)<BoxProps>(({ theme }) => ({
 const EmptyBox = styled(Box)<BoxProps>(() => ({
   marginTop: '200px',
 }));
+const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
+  // minHeight: 'calc(100vh - 50px - 315px)',
+  minHeight: 'calc(100vh - 50px - 600px)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: theme.palette.mode === 'light' ? '#E0E0E0' : '#6B6B6B',
+  fontFamily: 'Roboto',
+  fontWeight: 'bold',
+  fontSize: '36px',
+  lineHeight: '42px',
 
-const NoRecordsText = styled(Typography)<TypographyProps>(({ theme }) => ({
-  textAlign: 'center',
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '30px',
+    lineHeight: '38px',
+  },
+}));
+const NoRecordsBox = styled(Typography)<TypographyProps>(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '500px',
   color: theme.palette.mode === 'dark' ? '#ffff' : '#121212',
+  width: '100%',
 }));
 
 const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, currentTab }) => {
@@ -130,7 +150,11 @@ const ManagePools: React.FC<Props> = ({ onNext, tabChange, pools, onClaimAll, cu
                     );
                   })
                 ) : (
-                  <NoRecordsText>No Records Found</NoRecordsText>
+                  <NoRecordsBox>
+                    <EmptyContracts>
+                      <p>No Records Found</p>
+                    </EmptyContracts>
+                  </NoRecordsBox>
                 )}
               </Grid>
             ) : (

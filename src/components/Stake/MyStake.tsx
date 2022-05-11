@@ -18,7 +18,7 @@ import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useHistory } from 'react-router-dom';
 import InputToken from './InputToken';
 import OxImg from 'assets/images/coin-0xb.svg';
-import { calculateTotalUnstake } from 'helpers/staking/calculateTotalUnstake';
+import { calculateRemainAmountAfterUnstake, calculateTotalUnstake } from 'helpers/staking/calculateTotalUnstake';
 
 const defaultOptions = {
   loop: true,
@@ -227,7 +227,7 @@ const ButtonSubmit = styled(Button)<
   },
 }));
 
-export type Actions = 'approve' | 'claim' | 'unstake' | 'unstake_all' | 'stake' | 'claim_all';
+export type Actions = 'approve' | 'claim' | 'unstake' | 'unstake_selected' | 'unstake_all' | 'stake' | 'claim_all';
 
 const MyStake: React.FC<Props> = ({
   onBack,
@@ -258,10 +258,13 @@ const MyStake: React.FC<Props> = ({
 
   const [unstakeRow, setUnstakeRow] = useState<string>('0');
   const [unstakeAmount, setUnstakeAmount] = useState<string>('0');
+  const [totalStakedAmountAfterUnstake, setTotalStakedAmountAfterUnstake] = useState('0');
 
   const lpToken = useAppSelector((state) => state.stake.lpToken);
   const oxbToken = useAppSelector((state) => state.stake.oxbToken);
   const stakingRecordsLimit = useAppSelector((state) => state.stake.stakingRecordsLimit);
+
+  const [isReachStakingLimit, setIsReachStakingLimit] = useState(false);
 
   const [isOxbPool, setIsOxbPool] = useState(
     data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
@@ -286,7 +289,6 @@ const MyStake: React.FC<Props> = ({
     type: '',
     id: '',
   });
-
   const handleChange = (event: { value: string; name: string; isOnblur?: boolean }) => {
     setIsSwapMaxFromToken(false);
     setLpTokenInput(event.value);
@@ -378,19 +380,32 @@ const MyStake: React.FC<Props> = ({
   const handleConfirmMultipleUnstake = async () => {
     handleToggleUnStakeAll();
     try {
-      setCurrentAction('unstake');
+      setCurrentAction('unstake_selected');
       handleToggleStatus();
       setStatus('pending');
       const response = await withDrawSelectedEntities(data.id, selectedRows);
       if (response.hash) {
         setCurrenTransactionId({
           id: response.hash,
-          type: 'unstake',
+          type: 'unstake_selected',
         });
         await response.wait();
         setUnstakeAmount(String(calculateTotalUnstake(getClaimModalData(selectedRows, tableData))));
+        setTotalStakedAmountAfterUnstake(
+          calculateRemainAmountAfterUnstake(
+            getClaimModalData(selectedRows, tableData),
+            tableData.map((item) => {
+              return {
+                stakedAmount: item.stakedAmount,
+                stakedTime: item.stakingTime,
+                rewards: item.reward,
+              };
+            }),
+          ),
+        );
+        setIsReachStakingLimit(false);
         setTxCompleted({
-          type: 'unstake',
+          type: 'unstake_selected',
           id: response.hash,
         });
         handleGetTokenBalances();
@@ -433,6 +448,7 @@ const MyStake: React.FC<Props> = ({
             ),
           );
         }
+        setIsReachStakingLimit(false);
         setTxCompleted({
           type: 'unstake',
           id: response.hash,
@@ -488,6 +504,10 @@ const MyStake: React.FC<Props> = ({
   };
 
   const handleStakeLp = async () => {
+    if (tableData.length >= stakingRecordsLimit) {
+      setIsReachStakingLimit(true);
+      return;
+    }
     if (lpTokenInput && lpTokenInput !== '' && Number(lpTokenInput) !== 0) {
       try {
         setCurrentAction('stake');
@@ -527,7 +547,7 @@ const MyStake: React.FC<Props> = ({
       if (txCompleted.type !== 'approve') {
         handleResetInputValue();
       }
-      if (txCompleted.type === 'unstake' || txCompleted.type === 'claim') {
+      if (txCompleted.type === 'unstake' || txCompleted.type === 'claim' || txCompleted.type === 'unstake_selected') {
         setSelectedRows([]);
       }
       setTxCompleted({
@@ -662,7 +682,7 @@ const MyStake: React.FC<Props> = ({
                 )}
 
                 <ButtonGetLpToken
-                  isError={tableData.length >= stakingRecordsLimit}
+                  isError={isReachStakingLimit}
                   onClick={() => {
                     if (isOxbPool) {
                       history.push('/swap');
@@ -674,21 +694,19 @@ const MyStake: React.FC<Props> = ({
                 >
                   {`Get ${isOxbPool ? '0xB' : 'LP'} Token ->`}
                 </ButtonGetLpToken>
-                {tableData.length >= stakingRecordsLimit && (
-                  <ErrorText>You have reached maximum staked time for this pool</ErrorText>
-                )}
+                {isReachStakingLimit && <ErrorText>You have reached maximum staked time for this pool</ErrorText>}
                 <ButtonSubmit
                   loading={false}
                   fullWidth
                   unEnable={
                     !invalidInput
                       ? tokenApproved
-                        ? invalidInput || isInsufficientError || tableData.length >= stakingRecordsLimit
+                        ? invalidInput || isInsufficientError || isReachStakingLimit
                         : false
                       : true
                   }
                   onClick={() => {
-                    if (!invalidInput && tableData.length < stakingRecordsLimit) {
+                    if (!invalidInput) {
                       if (tokenApproved && !isInsufficientError) {
                         handleStakeLp();
                       } else if (!tokenApproved) {
@@ -760,6 +778,8 @@ const MyStake: React.FC<Props> = ({
         type={currentAction}
         status={status}
         unstakeAmount={unstakeAmount}
+        totalStakedAmount={totalStakedAmountAfterUnstake}
+        isOxbPool={isOxbPool}
         onNextStatus={() => {
           window.open(`${process.env.REACT_APP_EXPLORER_URLS}/tx/${currentTransactionId.id}`, '_blank');
         }}
