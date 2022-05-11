@@ -615,7 +615,7 @@ const MyStake: React.FC<Props> = ({
 
   const tokenBalance = isOxbPool ? oxbToken.balance : lpToken.balance;
   const isInsufficientError = Number(lpTokenInput) > Number(tokenBalance);
-  const invalidInput = lpTokenInput.trim() === '' || lpTokenInput === '0';
+  const invalidInput = lpTokenInput.trim() === '' || Number(lpTokenInput) === 0;
 
   return (
     <Wrapper>

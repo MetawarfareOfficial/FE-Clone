@@ -239,7 +239,7 @@ const StakePage: React.FC<Props> = () => {
 
       <StakeStatusModal
         type="claim"
-        title={claimType === 'claim_all' ? 'Claim all' : 'Claim reward'}
+        title={claimType === 'claim_all' ? 'Claim all' : 'Claim rewards'}
         open={openStatus}
         onClose={closeStatusModal}
         status={status}
