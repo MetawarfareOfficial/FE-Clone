@@ -27,6 +27,8 @@ import SuccessDarkGif from 'assets/images/swap-success-dark.gif';
 import ErrorGif from 'assets/images/swap-failed-white.gif';
 import ErrorDarkGif from 'assets/images/swap-failed-dark.gif';
 import { Actions } from './MyStake';
+import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
+import { formatPercent } from 'helpers/formatPrice';
 
 interface Props {
   title: string;
@@ -242,14 +244,28 @@ const StakeStatusModal: React.FC<Props> = ({
                 {type === 'claim' || type === 'claim_all'
                   ? ' Rewards claimed successfully '
                   : type === 'unstake' || type === 'unstake_all' || type === 'unstake_selected'
-                  ? `unstake: ${unstakeAmount} ${isOxbPool ? '0xB' : 'LP'}`
+                  ? `unstake: ${formatForNumberLessThanCondition({
+                      value: unstakeAmount,
+                      minValueCondition: '0.000001',
+                      addLessThanSymbol: true,
+                      callback: formatPercent,
+                      callBackParams: [6],
+                    })} ${isOxbPool ? '0xB' : 'LP'}`
                   : ''}
               </h3>
             )}
 
             {status === 'success' && type === 'unstake_selected' && (
               <h3>
-                Your stake amount {totalStakedAmount} {isOxbPool ? '0xB' : 'LP'}
+                Your stake amount{' '}
+                {formatForNumberLessThanCondition({
+                  value: totalStakedAmount,
+                  minValueCondition: '0.000001',
+                  addLessThanSymbol: true,
+                  callBackParams: [6],
+                  callback: formatPercent,
+                })}{' '}
+                {isOxbPool ? '0xB' : 'LP'}
               </h3>
             )}
 
