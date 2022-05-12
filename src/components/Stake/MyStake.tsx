@@ -592,6 +592,9 @@ const MyStake: React.FC<Props> = ({
       case 'unstake_all':
         title = 'Unstake All';
         break;
+      case 'unstake_selected':
+        title = 'Unstake';
+        break;
       default:
         break;
     }

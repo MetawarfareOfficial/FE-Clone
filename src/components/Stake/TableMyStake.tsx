@@ -74,7 +74,7 @@ const ButtonSelectAll = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ButtonStake = styled(Button)<ButtonProps>(() => ({
+const ButtonStake = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -93,6 +93,11 @@ const ButtonStake = styled(Button)<ButtonProps>(() => ({
     background: '#3864FF',
     borderColor: '#3864FF',
     color: '#fff',
+  },
+  '&:disabled': {
+    background: 'rgba(0, 0, 0, 0.26)',
+    border: '1px solid rgba(56, 100, 255, 0.26)',
+    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : '#fff',
   },
 }));
 
@@ -114,8 +119,9 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   marginLeft: '24px',
 
   '&:disabled': {
-    background: 'rgba(56, 100, 255, 0.16)',
-    color: '#fff',
+    background: 'rgba(0, 0, 0, 0.26)',
+    border: '1px solid rgba(56, 100, 255, 0.26)',
+    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : '#fff',
   },
 
   '&:hover': {

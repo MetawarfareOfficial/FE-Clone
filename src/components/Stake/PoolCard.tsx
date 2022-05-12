@@ -6,8 +6,14 @@ import OxToken from 'assets/images/0x-token.png';
 import AvaxToken from 'assets/images/avax-token.png';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
-import { useWeb3React } from '@web3-react/core';
-
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
+import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
+import { useToast } from 'hooks/useToast';
+import { errorMessage } from 'messages/errorMessages';
+import { addEthereumChain } from 'helpers';
+import { injected } from 'connectors';
+import { setIsOpenSelectWalletModal } from 'services/account';
+import { useAppDispatch } from 'stores/hooks';
 interface Props {
   title: String;
   onNext: (value: number) => void;
@@ -187,7 +193,7 @@ const ButtonStake = styled(Button)<ButtonProps>(() => ({
   },
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(() => ({
+const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '600',
@@ -204,7 +210,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
 
   '&:disabled': {
     background: 'rgba(56, 100, 255, 0.16)',
-    color: '#fff',
+    color: theme.palette.mode === 'dark' ? '#171717' : '#FFFFFF',
   },
 
   '&:hover': {
@@ -217,7 +223,33 @@ const ButtonClaim = styled(Button)<ButtonProps>(() => ({
 
 const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount, id, onClaimAll, isOxbPool }) => {
   const theme = useTheme();
-  const { account } = useWeb3React();
+  const { account, error, connector, activate } = useWeb3React();
+  const { createToast } = useToast();
+  const dispatch = useAppDispatch();
+
+  const handleConnectWallet = async () => {
+    if (error instanceof UnsupportedChainIdError) {
+      try {
+        if (connector instanceof WalletConnectConnector) {
+          createToast({
+            message: errorMessage.META_MASK_WRONG_NETWORK.message,
+            type: 'error',
+            toastId: 1,
+          });
+        } else {
+          await addEthereumChain();
+          await activate(injected);
+        }
+      } catch (ex: any) {
+        createToast({
+          message: ex.message,
+          type: 'error',
+        });
+      }
+    } else {
+      dispatch(setIsOpenSelectWalletModal(true));
+    }
+  };
   return (
     <Wrapper>
       <BoxHeader>
@@ -280,26 +312,32 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
 
       <BoxActions>
         <Grid container spacing={{ lg: '39px', md: '20px', xs: '47px' }}>
-          <Grid item xs={6}>
-            {account && (
-              <ButtonStake
-                variant="outlined"
-                fullWidth
-                onClick={() => {
-                  onNext(id);
-                }}
-              >
-                Stake
+          {account ? (
+            <>
+              <Grid item xs={6}>
+                <ButtonStake
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => {
+                    onNext(id);
+                  }}
+                >
+                  Stake
+                </ButtonStake>
+              </Grid>
+              <Grid item xs={6}>
+                <ButtonClaim disabled={Number(stakedAmount) <= 0} variant="contained" fullWidth onClick={onClaimAll}>
+                  Claim
+                </ButtonClaim>
+              </Grid>
+            </>
+          ) : (
+            <Grid item xs={12}>
+              <ButtonStake onClick={handleConnectWallet} variant="outlined" fullWidth>
+                Connect Wallet
               </ButtonStake>
-            )}
-          </Grid>
-          <Grid item xs={6}>
-            {Number(stakedAmount) > 0 && (
-              <ButtonClaim variant="contained" fullWidth onClick={onClaimAll}>
-                Claim
-              </ButtonClaim>
-            )}
-          </Grid>
+            </Grid>
+          )}
         </Grid>
       </BoxActions>
     </Wrapper>

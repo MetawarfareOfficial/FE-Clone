@@ -14,18 +14,20 @@ export const convertStakingData = ({ dates, stakedAmounts, rewards }: Params) =>
       zipWith(dates, stakedAmounts, rewards, (date, stakedAmount, reward) => {
         return {
           stakeDate: date,
-          stakedAmount: new BigNumber(stakedAmount !== '' ? stakedAmount : '0').div(1e18).toString(),
+          stakedAmount: stakedAmount ? new BigNumber(stakedAmount).div(1e18).toString() : stakedAmount,
           stakingTime: moment()
             .diff(moment(Number(date) * 1000), 'days')
             .toString(),
-          reward: new BigNumber(reward !== '' ? reward : '0').div(1e18).toString(),
+          reward: reward ? new BigNumber(reward).div(1e18).toString() : reward,
         };
-      }).map((item, index) => {
-        return {
-          ...item,
-          id: String(index),
-        };
-      }),
+      })
+        .filter((item) => item.reward && item.stakeDate && item.stakedAmount)
+        .map((item, index) => {
+          return {
+            ...item,
+            id: String(index),
+          };
+        }),
       (item) => Number(item.stakeDate),
     );
   }
