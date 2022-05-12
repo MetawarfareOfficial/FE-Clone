@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
-import { PoolItem } from 'services/staking';
+import { PoolItem, StakeItem } from 'services/staking';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import moment from 'moment';
@@ -236,10 +236,33 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
   const selectedPool = useAppSelector((state) => state.stake.selectedPoolData).filter(
     (item) => item.id === String(selectedIndex),
   );
+  const getEarnedReward = (type: string, PoolData: PoolItem, selectedRecords: StakeItem[]) => {
+    if (type === 'claim_all') {
+      if (Number(PoolData.yourTotalRewardAmount) > 0) {
+        return formatForNumberLessThanCondition({
+          value: PoolData.yourTotalRewardAmount,
+          minValueCondition: '0.000001',
+          addLessThanSymbol: true,
+          callback: formatPercent,
+          callBackParams: [6],
+        });
+      } else return '0.0';
+    } else {
+      if (Number(get(selectedRecords, `[0].reward`, 0)) > 0) {
+        return formatForNumberLessThanCondition({
+          value: get(selectedRecords, `[0].reward`, 0),
+          minValueCondition: '0.000001',
+          addLessThanSymbol: true,
+          callback: formatPercent,
+          callBackParams: [6],
+        });
+      } else return '0.0';
+    }
+  };
   return (
     <Wrapper className="swapDialog" open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
-        <HeaderText>{type === 'claim' ? 'Claim' : 'Claim All'}</HeaderText>
+        <HeaderText>{type === 'claim' ? 'Claim Rewards' : 'Claim All'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
@@ -260,14 +283,7 @@ const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, sel
                 <Box>
                   <p>{type === 'claim_all' && 'Total '}Earned Rewards </p>
                   <ButtonReward disabled variant="contained" style={{ margin: 0 }}>
-                    {`${formatForNumberLessThanCondition({
-                      value: type === 'claim_all' ? data.yourTotalRewardAmount : get(selectedPool, `[0].reward`, 0),
-                      minValueCondition: '0.000001',
-                      addLessThanSymbol: true,
-                      callback: formatPercent,
-                      callBackParams: [6],
-                    })} `}
-                    0xB
+                    {getEarnedReward(type, data, selectedPool)} 0xB
                   </ButtonReward>
                 </Box>
               }
