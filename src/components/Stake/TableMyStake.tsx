@@ -299,7 +299,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#E0E0E0' : '#6B6B6B',
   fontFamily: 'Roboto',
   fontWeight: 'bold',
-  fontSize: '36px',
+  fontSize: '24px',
   lineHeight: '42px',
 
   [theme.breakpoints.down('lg')]: {
