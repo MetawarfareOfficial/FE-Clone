@@ -333,7 +333,14 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
             </>
           ) : (
             <Grid item xs={12}>
-              <ButtonStake onClick={handleConnectWallet} variant="outlined" fullWidth>
+              <ButtonStake
+                sx={{
+                  fontSize: '14px',
+                }}
+                onClick={handleConnectWallet}
+                variant="outlined"
+                fullWidth
+              >
                 Connect Wallet
               </ButtonStake>
             </Grid>

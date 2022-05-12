@@ -74,7 +74,7 @@ const ButtonSelectAll = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ButtonStake = styled(Button)<ButtonProps>(({ theme }) => ({
+const ButtonStake = styled(Button)<ButtonProps>(() => ({
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '500',
@@ -94,11 +94,11 @@ const ButtonStake = styled(Button)<ButtonProps>(({ theme }) => ({
     borderColor: '#3864FF',
     color: '#fff',
   },
-  '&:disabled': {
-    background: 'rgba(0, 0, 0, 0.26)',
-    border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : '#fff',
-  },
+  // '&:disabled': {
+  //   background: 'rgba(0, 0, 0, 0.26)',
+  //   border: '1px solid rgba(56, 100, 255, 0.26)',
+  //   color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : '#fff',
+  // },
 }));
 
 const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -119,9 +119,10 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   marginLeft: '24px',
 
   '&:disabled': {
-    background: 'rgba(0, 0, 0, 0.26)',
-    border: '1px solid rgba(56, 100, 255, 0.26)',
-    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : '#fff',
+    background: 'unset',
+    // background: 'rgba(0, 0, 0, 0.26)',
+    border: theme.palette.mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(0, 0, 0, 0.12)',
+    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.26)',
   },
 
   '&:hover': {
