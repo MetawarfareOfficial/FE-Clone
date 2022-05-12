@@ -112,6 +112,7 @@ export const useInteractiveContract = () => {
         gasLimit: increasedGasLimit,
       });
     } catch (err: any) {
+      alert(err)
       if (err.code === 4001) throw err;
       throw new Error('Oop! Something went wrong');
     }
