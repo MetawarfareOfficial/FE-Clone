@@ -109,7 +109,7 @@ export const useInteractiveContract = () => {
       //   .toString()
       //   .split('.')[0];
       alert('zoday2');
-      return await contract.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
+      return await contractWithSigner.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
     } catch (err: any) {
       alert('error');
       alert(err);
