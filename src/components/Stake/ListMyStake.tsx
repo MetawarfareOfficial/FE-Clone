@@ -233,7 +233,7 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data, 
   const theme = useTheme();
   const { account } = useWeb3React();
 
-  const [records, setRecords] = useState(data.slice(0, 5));
+  const [records, setRecords] = useState(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
   const [pagination, setPagination] = useState({
     limit: 5,
     index: 0,
@@ -259,7 +259,11 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data, 
 
   useEffect(() => {
     if (account) {
-      setRecords(data.slice(0, 5));
+      const start = pagination.index * pagination.limit;
+      const end = start + pagination.limit;
+      setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+    } else {
+      setRecords([]);
     }
   }, [account, data]);
 

@@ -260,8 +260,9 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   minWidth: '122px',
 
   '&:disabled': {
-    background: theme.palette.mode === 'light' ? '#BCCBE2' : '#4F4F4F',
-    color: theme.palette.mode === 'light' ? '#fff' : '#82828',
+    background: 'rgba(0, 0, 0, 0.26)',
+    border: '1px solid rgba(56, 100, 255, 0.26)',
+    color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : '#fff',
   },
 
   '&:hover': {
