@@ -396,7 +396,7 @@ interface SetExchangeParams {
 const SwapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const [windowSize] = useWindowSize();
-  const { error, connector, activate } = useWeb3React();
+  const { error, connector, activate, library } = useWeb3React();
   const { getSwappableTokens, account, handleSwapToken, loadEstimateToken, approveToken } = useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
   const { createToast } = useToast();
@@ -759,7 +759,12 @@ const SwapPage: React.FC<Props> = () => {
       setCurrentAction('approve');
       handleToggleStatus();
       setSwapStatus('pending');
-      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_CONTRACT_ADDRESS));
+      const response = await approveToken(
+        tokenIn[0].address,
+        String(process.env.REACT_APP_CONTRACT_ADDRESS),
+        library,
+        account!,
+      );
       if (response.hash) {
         setCurrenTransactionId({
           id: response.hash,

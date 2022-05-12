@@ -343,7 +343,7 @@ const TooltipCustom = styled(({ className, ...props }: TooltipCustomProps) => (
 const ZapPage: React.FC<Props> = () => {
   const theme = useTheme();
   const [windowSize] = useWindowSize();
-  const { error, connector, activate, account } = useWeb3React();
+  const { error, connector, activate, account, library } = useWeb3React();
   const { handleZapInNativeToken, handleZapInToken, handleZapOut } = useInteractiveContract();
   const { createToast } = useToast();
 
@@ -667,7 +667,12 @@ const ZapPage: React.FC<Props> = () => {
       setCurrentAction('approve');
       handleToggleStatus();
       setZapStatus('pending');
-      const response = await approveToken(tokenIn[0].address, String(process.env.REACT_APP_ZAP_MANAGER));
+      const response = await approveToken(
+        tokenIn[0].address,
+        String(process.env.REACT_APP_ZAP_MANAGER),
+        library,
+        account!,
+      );
       if (response.hash) {
         setCurrenTransactionId({
           id: response.hash,

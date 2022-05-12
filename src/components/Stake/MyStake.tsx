@@ -19,6 +19,7 @@ import { useHistory } from 'react-router-dom';
 import InputToken from './InputToken';
 import OxImg from 'assets/images/coin-0xb.svg';
 import { calculateRemainAmountAfterUnstake, calculateTotalUnstake } from 'helpers/staking/calculateTotalUnstake';
+import { useWeb3React } from '@web3-react/core';
 
 const defaultOptions = {
   loop: true,
@@ -242,6 +243,7 @@ const MyStake: React.FC<Props> = ({
 
   const [width] = useWindowSize();
   const { approveToken } = useSwapToken(false);
+  const { library, account } = useWeb3React();
   const { stakeLp, claimRewards, withDrawSelectedEntities, withDrawAll } = useInteractiveContract();
   const [tokenApproved, setTokenApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
@@ -484,6 +486,8 @@ const MyStake: React.FC<Props> = ({
       const response = await approveToken(
         isOxbPool ? String(process.env.REACT_APP_CONTRACT_ADDRESS) : String(process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS),
         String(process.env.REACT_APP_STAKING_MANAGER),
+        library,
+        account!,
       );
       if (response.hash) {
         setCurrenTransactionId({
