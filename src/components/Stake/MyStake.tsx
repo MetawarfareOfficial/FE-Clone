@@ -486,8 +486,6 @@ const MyStake: React.FC<Props> = ({
       const response = await approveToken(
         isOxbPool ? String(process.env.REACT_APP_CONTRACT_ADDRESS) : String(process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS),
         String(process.env.REACT_APP_STAKING_MANAGER),
-        library,
-        account!,
       );
       if (response.hash) {
         setCurrenTransactionId({
