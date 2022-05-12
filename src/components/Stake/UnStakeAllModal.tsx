@@ -262,7 +262,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
       aria-describedby="alert-dialog-slide-description"
     >
       <Header>
-        <HeaderText>{type === 'claim' ? 'Claim' : 'Unstake'}</HeaderText>
+        <HeaderText>{type === 'claim' ? 'Claim Rewards' : 'Unstake'}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <CloseImg />
