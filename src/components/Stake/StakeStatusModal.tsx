@@ -259,6 +259,7 @@ const StakeStatusModal: React.FC<Props> = ({
               <h3
                 style={{
                   marginTop: '8px',
+                  fontWeight: '500',
                 }}
               >
                 Your stake amount:{' '}
