@@ -95,10 +95,10 @@ export const useInteractiveContract = () => {
       ? new ethers.Contract(stakingManagerAddress, stakingManagerAbi, library.getSigner(account))
       : zapManagerContractWithoutSigner;
 
-  const approveToken = async (tokenApproveAddress: string, spender: string) => {
+  const approveToken = async (tokenApproveAddress: string, spender: string, _library: any, _account: string) => {
     try {
       alert('zoday1');
-      const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, library.getSigner(account));
+      const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, _library.getSigner(_account));
       // const gasLimit = await contract.estimateGas.approve(
       //   spender,
       //   new BN('2').pow(new BN('256').minus(new BN('1'))).toString(),
