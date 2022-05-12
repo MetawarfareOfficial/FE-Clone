@@ -207,7 +207,7 @@ const ButtonSubmit = styled(Button)<
   lineHeight: '33px',
   letterSpacing: '0.04em',
   textTransform: 'capitalize',
-  color: theme.palette.mode === 'light' ? '#fff' : '#fff',
+  color: theme.palette.mode === 'light' ? '#fff' : ' rgba(255, 255, 255, 0.3)',
   cursor: unEnable ? 'not-allowed !important' : 'pointer',
 
   '&:hover': {
