@@ -95,24 +95,22 @@ export const useInteractiveContract = () => {
       ? new ethers.Contract(stakingManagerAddress, stakingManagerAbi, library.getSigner(account))
       : zapManagerContractWithoutSigner;
 
-  const approveToken = async (tokenApproveAddress: string, spender: string, _library: any, _account: string) => {
+  const approveToken = async (tokenApproveAddress: string, spender: string) => {
     try {
-      alert('zoday1');
-      const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, _library.getSigner(_account));
-      // const gasLimit = await contract.estimateGas.approve(
-      //   spender,
-      //   new BN('2').pow(new BN('256').minus(new BN('1'))).toString(),
-      // );
-      // // increase gas limit to 20 %
-      // const increasedGasLimit = new BN(gasLimit._hex)
-      //   .plus(new BN(gasLimit._hex).multipliedBy(20).div(100))
-      //   .toString()
-      //   .split('.')[0];
-      alert('zoday2');
-      return await contractWithSigner.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString());
+      const contract = new ethers.Contract(tokenApproveAddress, UsdcAbi, library.getSigner(account));
+      const gasLimit = await contract.estimateGas.approve(
+        spender,
+        new BN('2').pow(new BN('256').minus(new BN('1'))).toString(),
+      );
+      // increase gas limit to 20 %
+      const increasedGasLimit = new BN(gasLimit._hex)
+        .plus(new BN(gasLimit._hex).multipliedBy(20).div(100))
+        .toString()
+        .split('.')[0];
+      return await contract.approve(spender, new BN('2').pow(new BN('256').minus(new BN('1'))).toString(), {
+        gasLimit: increasedGasLimit,
+      });
     } catch (err: any) {
-      alert('error');
-      alert(err);
       if (err.code === 4001) throw err;
       throw new Error('Oop! Something went wrong');
     }
