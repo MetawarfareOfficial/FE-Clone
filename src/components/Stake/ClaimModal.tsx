@@ -233,9 +233,8 @@ const Line = styled(Box)<BoxProps>(({ theme }) => ({
 }));
 
 const ClaimModal: React.FC<Props> = ({ open, type, onClose, onConfirm, data, selectedIndex }) => {
-  const selectedPool = useAppSelector((state) => state.stake.selectedPoolData).filter(
-    (item) => item.id === String(selectedIndex),
-  );
+  const pools = useAppSelector((state) => state.stake.selectedPoolData);
+  const selectedPool = pools.data.filter((item) => item.id === String(selectedIndex));
   const getEarnedReward = (type: string, PoolData: PoolItem, selectedRecords: StakeItem[]) => {
     if (type === 'claim_all') {
       if (Number(PoolData.yourTotalRewardAmount) > 0) {

@@ -91,7 +91,12 @@ const StakePage: React.FC<Props> = () => {
         stakedAmounts: selectedPoolInfo.yourStakedAmounts[0].split('#'),
         rewards: selectedPoolInfo.yourRewardAmounts[0].split('#'),
       });
-      dispatch(setSelectedPoolData(convertedData));
+      dispatch(
+        setSelectedPoolData({
+          id: String(selected),
+          data: convertedData,
+        }),
+      );
     } catch {}
     setTableDataLoading(false);
   };
@@ -161,11 +166,21 @@ const StakePage: React.FC<Props> = () => {
         handleFetchTableData();
       }, fetTableDataIntervalTime);
     } else if (!account) {
-      dispatch(setSelectedPoolData([]));
+      dispatch(
+        setSelectedPoolData({
+          id: '',
+          data: [],
+        }),
+      );
       setSelected(-1);
     } else if (selected === -1) {
       setTableDataLoading(true);
-      dispatch(setSelectedPoolData([]));
+      dispatch(
+        setSelectedPoolData({
+          id: '',
+          data: [],
+        }),
+      );
     }
     return () => {
       if (interval) {
@@ -211,7 +226,7 @@ const StakePage: React.FC<Props> = () => {
             handleToggleClaimAll();
           }}
           data={selectedPool}
-          tableData={selectedPoolTableData}
+          tableData={String(selected) === selectedPoolTableData.id ? selectedPoolTableData.data : []}
           onBack={() => setSelected(-1)}
           handleGetTokenBalances={
             selectedPool.lpAddress.toLocaleLowerCase() ===

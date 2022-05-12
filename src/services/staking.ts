@@ -37,7 +37,10 @@ interface States {
   };
   lpBalanceLoaded: boolean;
   totalPools: number[] | null;
-  selectedPoolData: StakeItem[];
+  selectedPoolData: {
+    id: string;
+    data: StakeItem[];
+  };
   stakingRecordsLimit: number;
 }
 
@@ -53,7 +56,10 @@ const initialState: States = {
   },
   lpBalanceLoaded: false,
   totalPools: null,
-  selectedPoolData: [],
+  selectedPoolData: {
+    id: '',
+    data: [],
+  },
   stakingRecordsLimit: 100,
 };
 
