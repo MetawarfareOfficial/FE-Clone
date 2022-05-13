@@ -42,6 +42,7 @@ interface States {
     data: StakeItem[];
   };
   stakingRecordsLimit: number;
+  stakingFeeTimeLevels: string[];
 }
 
 const initialState: States = {
@@ -61,6 +62,7 @@ const initialState: States = {
     data: [],
   },
   stakingRecordsLimit: 100,
+  stakingFeeTimeLevels: ['0', '2592000', '51840000', '0'],
 };
 
 export const stakeSlice = createSlice({
@@ -85,11 +87,21 @@ export const stakeSlice = createSlice({
     setStakingRecordsLimit: (state, action) => {
       state.stakingRecordsLimit = action.payload;
     },
+    setStakingFeeTimeLevels: (state, action) => {
+      state.stakingFeeTimeLevels = action.payload;
+    },
   },
 });
 
-export const { setPools, setLpToken, setTotalPools, setSelectedPoolData, setOxbToken, setStakingRecordsLimit } =
-  stakeSlice.actions;
+export const {
+  setPools,
+  setLpToken,
+  setTotalPools,
+  setSelectedPoolData,
+  setOxbToken,
+  setStakingRecordsLimit,
+  setStakingFeeTimeLevels,
+} = stakeSlice.actions;
 
 const { reducer: stakeReducer } = stakeSlice;
 

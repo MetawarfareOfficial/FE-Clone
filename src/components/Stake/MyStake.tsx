@@ -243,7 +243,6 @@ const MyStake: React.FC<Props> = ({
 
   const [width] = useWindowSize();
   const { approveToken } = useSwapToken(false);
-  const { library, account } = useWeb3React();
   const { stakeLp, claimRewards, withDrawSelectedEntities, withDrawAll } = useInteractiveContract();
   const [tokenApproved, setTokenApproved] = useState(false);
   const [isSwapMaxFromTokens, setIsSwapMaxFromToken] = useState(false);
@@ -265,6 +264,7 @@ const MyStake: React.FC<Props> = ({
   const lpToken = useAppSelector((state) => state.stake.lpToken);
   const oxbToken = useAppSelector((state) => state.stake.oxbToken);
   const stakingRecordsLimit = useAppSelector((state) => state.stake.stakingRecordsLimit);
+  const stakingFeeTimeLevels = useAppSelector((state) => state.stake.stakingFeeTimeLevels);
 
   const [isReachStakingLimit, setIsReachStakingLimit] = useState(false);
 
@@ -336,6 +336,7 @@ const MyStake: React.FC<Props> = ({
           stakedAmount: item.stakedAmount,
           stakedTime: item.stakingTime,
           rewards: item.reward,
+          stakedTimeStamp: item.stakeDate,
         };
       });
     return stakingRecords;
@@ -392,7 +393,9 @@ const MyStake: React.FC<Props> = ({
           type: 'unstake_selected',
         });
         await response.wait();
-        setUnstakeAmount(String(calculateTotalUnstake(getClaimModalData(selectedRows, tableData))));
+        setUnstakeAmount(
+          String(calculateTotalUnstake(getClaimModalData(selectedRows, tableData), stakingFeeTimeLevels)),
+        );
         setTotalStakedAmountAfterUnstake(
           calculateRemainAmountAfterUnstake(
             getClaimModalData(selectedRows, tableData),
@@ -401,6 +404,7 @@ const MyStake: React.FC<Props> = ({
                 stakedAmount: item.stakedAmount,
                 stakedTime: item.stakingTime,
                 rewards: item.reward,
+                stakedTimeStamp: item.stakeDate,
               };
             }),
           ),
@@ -437,7 +441,9 @@ const MyStake: React.FC<Props> = ({
         });
         await response.wait();
         if (type === 'one') {
-          setUnstakeAmount(String(calculateTotalUnstake(getClaimModalData([unstakeRow], tableData))));
+          setUnstakeAmount(
+            String(calculateTotalUnstake(getClaimModalData([unstakeRow], tableData), stakingFeeTimeLevels)),
+          );
         } else {
           setUnstakeAmount(
             String(
@@ -446,6 +452,7 @@ const MyStake: React.FC<Props> = ({
                   tableData.map((item) => item.id),
                   tableData,
                 ),
+                stakingFeeTimeLevels,
               ),
             ),
           );
@@ -474,6 +481,7 @@ const MyStake: React.FC<Props> = ({
       stakedAmount: record.stakedAmount,
       stakedTime: record.stakingTime,
       rewards: record.reward,
+      stakedTimeStamp: record.stakeDate,
     }));
   };
 
