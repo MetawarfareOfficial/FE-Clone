@@ -240,7 +240,7 @@ const MyStake: React.FC<Props> = ({
   tableDataLoading,
 }) => {
   const history = useHistory();
-
+  const { account } = useWeb3React();
   const [width] = useWindowSize();
   const { approveToken } = useSwapToken(false);
   const { stakeLp, claimRewards, withDrawSelectedEntities, withDrawAll } = useInteractiveContract();
@@ -620,6 +620,10 @@ const MyStake: React.FC<Props> = ({
       data.lpAddress.toLocaleLowerCase() === String(process.env.REACT_APP_CONTRACT_ADDRESS).toLocaleLowerCase(),
     );
   }, [data]);
+
+  useEffect(() => {
+    setIsReachStakingLimit(false);
+  }, [account]);
 
   useEffect(() => {
     const allRowIds = tableData.map((item) => item.id);
