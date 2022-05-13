@@ -363,9 +363,20 @@ const TableMyStake: React.FC<Props> = ({
 
   useEffect(() => {
     if (account) {
-      const start = pagination.index * pagination.limit;
-      const end = start + pagination.limit;
-      setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+      const totalPageCount = Math.ceil(data.length / pagination.limit);
+      if (totalPageCount !== 0 && pagination.index > totalPageCount - 1) {
+        setPagination({
+          ...pagination,
+          index: totalPageCount - 1,
+        });
+        const start = (totalPageCount - 1) * pagination.limit;
+        const end = start + pagination.limit;
+        setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+      } else {
+        const start = pagination.index * pagination.limit;
+        const end = start + pagination.limit;
+        setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+      }
     } else {
       setRecords([]);
     }
