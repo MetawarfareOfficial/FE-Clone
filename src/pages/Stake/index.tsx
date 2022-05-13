@@ -8,7 +8,7 @@ import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useFetchLPTokenBalance } from 'hooks/staking/useFetchLPTokenBalance';
 import { useWeb3React } from '@web3-react/core';
 import { convertStakingData } from 'helpers/staking';
-import { setSelectedPoolData, setStakingRecordsLimit } from 'services/staking';
+import { setSelectedPoolData, setStakingFeeTimeLevels, setStakingRecordsLimit } from 'services/staking';
 import { useFetchOxbTokenBalance } from 'hooks/staking/useFetchOxbTokenBalance';
 import { fetTableDataIntervalTime } from 'consts/stake';
 import BigNumber from 'bignumber.js';
@@ -23,7 +23,8 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 }));
 
 const StakePage: React.FC<Props> = () => {
-  const { claimRewards, claimAllRewards, getPoolInfo, getStakingRecordsLimit } = useInteractiveContract();
+  const { claimRewards, claimAllRewards, getPoolInfo, getStakingRecordsLimit, getEarlyUnstakeFeeTime } =
+    useInteractiveContract();
   const { account } = useWeb3React();
   const { createToast } = useToast();
   const [currentTab, setCurrentTab] = useState<'allPool' | 'myPool'>('allPool');
@@ -196,8 +197,16 @@ const StakePage: React.FC<Props> = () => {
     } catch {}
   };
 
+  const loadEarlyStakingFeeTime = async () => {
+    try {
+      const stakingFeeTime = await getEarlyUnstakeFeeTime();
+      dispatch(setStakingFeeTimeLevels(stakingFeeTime.split('#').filter((item: string) => item !== '')));
+    } catch {}
+  };
+
   useEffect(() => {
     loadStakingRecordLimit();
+    loadEarlyStakingFeeTime();
   }, []);
 
   return (

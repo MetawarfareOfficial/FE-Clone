@@ -22,11 +22,13 @@ import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessTha
 import { formatPercent } from 'helpers/formatPrice';
 import get from 'lodash/get';
 import { useWindowSize } from 'hooks/useWindowSize';
+import { useAppSelector } from 'stores/hooks';
 
 interface DataItem {
   stakedAmount: string;
   stakedTime: string;
   rewards: string;
+  stakedTimeStamp: string;
 }
 interface Props {
   open: boolean;
@@ -215,9 +217,14 @@ const Divider = styled(Box)<BoxProps>(() => ({
 }));
 const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, isOxbPool }) => {
   const [size] = useWindowSize();
+  const stakingFeeTimes = useAppSelector((state) => state.stake.stakingFeeTimeLevels);
+
   const handleCalculateUnstakeFee = (records: DataItem[]) => {
     return records.reduce((acc, item) => {
-      return acc + Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTime)));
+      return (
+        acc +
+        Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTimeStamp), stakingFeeTimes))
+      );
     }, 0);
   };
 

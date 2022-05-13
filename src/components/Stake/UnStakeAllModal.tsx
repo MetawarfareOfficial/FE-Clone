@@ -27,11 +27,14 @@ import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatPercent } from 'helpers/formatPrice';
 import { calculateEarlyUnstakingFee } from 'helpers/staking';
+import { useAppSelector } from 'stores/hooks';
+import moment from 'moment';
 
 interface DataItem {
   stakedAmount: string;
   stakedTime: string;
   rewards: string;
+  stakedTimeStamp: string;
 }
 interface Props {
   isOxbPool: boolean;
@@ -234,9 +237,15 @@ const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
 }));
 
 const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleConfirm, isOxbPool }) => {
+  const stakingFeeTimes = useAppSelector((state) => state.stake.stakingFeeTimeLevels);
+  const level2TaxTime = Number(stakingFeeTimes[2]);
+
   const handleCalculateUnstakeFee = (records: DataItem[]) => {
     return records.reduce((acc, item) => {
-      return acc + Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTime)));
+      return (
+        acc +
+        Number(calculateEarlyUnstakingFee(Number(item.stakedAmount), Number(item.stakedTimeStamp), stakingFeeTimes))
+      );
     }, 0);
   };
 
@@ -287,6 +296,9 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
             </TableHead>
             <TableBody>
               {data.map((item, index) => {
+                const currentTime = moment().unix();
+                const timeDiff = currentTime - Number(item.stakedTimeStamp);
+
                 return (
                   <TableRow key={index}>
                     <TableCell align="center">
@@ -301,7 +313,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
                         : '0.0'}{' '}
                       {isOxbPool ? '0xB' : 'LP'}
                     </TableCell>
-                    {Number(item.stakedTime) < 60 ? (
+                    {timeDiff < level2TaxTime ? (
                       <TableCell size="small" className="textRed" align="center">
                         {item.stakedTime} days
                       </TableCell>
