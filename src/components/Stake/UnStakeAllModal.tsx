@@ -21,6 +21,7 @@ import {
   TableRow,
   TableHead,
   TableBody,
+  TableContainerProps,
 } from '@mui/material';
 
 import { ReactComponent as CloseImg } from 'assets/images/charm_cross.svg';
@@ -193,11 +194,6 @@ const ButtonConfirm = styled(Button)<ButtonProps>(() => ({
 }));
 
 const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
-  marginBottom: '35px',
-  marginLeft: '-20px',
-  marginRight: '-20px',
-  width: 'calc(100% + 20px)',
-
   thead: {
     tr: {
       th: {
@@ -234,6 +230,28 @@ const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
       },
     },
   },
+}));
+
+const CustomTableContainer = styled(TableContainer)<TableContainerProps>(() => ({
+  overflowX: 'auto',
+  maxHeight: '269px',
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    height: '4px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'none',
+    webkitBoxShadow: 'none',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#3864FF',
+    outline: 'none',
+    borderRadius: '10px',
+  },
+  marginBottom: '35px',
+  marginLeft: '-20px',
+  marginRight: '-20px',
+  width: 'calc(100% + 20px)',
 }));
 
 const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleConfirm, isOxbPool }) => {
@@ -279,12 +297,8 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
       </Header>
 
       <Content>
-        <TableContainer
-          sx={{
-            overflowX: 'unset',
-          }}
-        >
-          <TableCustom size="small">
+        <CustomTableContainer>
+          <TableCustom stickyHeader size="small">
             <TableHead>
               <TableRow>
                 <TableCell align="center">Stake Amount</TableCell>
@@ -339,8 +353,7 @@ const UnStakeAllModal: React.FC<Props> = ({ open, onClose, type, data, handleCon
               })}
             </TableBody>
           </TableCustom>
-        </TableContainer>
-
+        </CustomTableContainer>
         {type === 'unstake' && (
           <>
             <Line>
