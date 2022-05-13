@@ -62,7 +62,7 @@ const initialState: States = {
     data: [],
   },
   stakingRecordsLimit: 100,
-  stakingFeeTimeLevels: ['0', '2592000', '51840000', '0'],
+  stakingFeeTimeLevels: ['0', '0', '2592000', '51840000'],
 };
 
 export const stakeSlice = createSlice({
