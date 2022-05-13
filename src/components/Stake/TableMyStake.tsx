@@ -385,9 +385,11 @@ const TableMyStake: React.FC<Props> = ({
           index: 0,
         });
         setRecords([]);
+        setSelectedRows([]);
       }
     } else {
       setRecords([]);
+      setSelectedRows([]);
     }
     setCurrentAccount(account);
   }, [account, data]);
