@@ -234,7 +234,7 @@ const TableCustom = styled(Table)<TableProps>(({ theme }) => ({
 
 const CustomTableContainer = styled(TableContainer)<TableContainerProps>(() => ({
   overflowX: 'auto',
-  maxHeight: '269px',
+  maxHeight: '255px',
   '&::-webkit-scrollbar': {
     width: '4px',
     height: '4px',
