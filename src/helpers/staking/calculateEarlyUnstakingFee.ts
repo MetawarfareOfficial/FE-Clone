@@ -6,8 +6,8 @@ export const calculateEarlyUnstakingFee = (totalStakedValue: number, startTime: 
   const before60DaysFee = 2.5;
   const currentTime = moment().unix();
   const timeDiff = currentTime - startTime;
-  const level1TaxTime = Number(stakingFeeTimes[1]);
-  const level2TaxTime = Number(stakingFeeTimes[2]);
+  const level1TaxTime = Number(stakingFeeTimes[2]);
+  const level2TaxTime = Number(stakingFeeTimes[3]);
   let fee = '0';
   if (timeDiff < level1TaxTime) {
     fee = new BigNumber(totalStakedValue).multipliedBy(before30DaysFee).div(100).toString();
