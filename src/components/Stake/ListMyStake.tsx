@@ -234,6 +234,8 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data, 
   const { account } = useWeb3React();
 
   const [records, setRecords] = useState(data.filter((item) => item.stakeDate !== '0').slice(0, 5));
+  const [currentAccount, setCurrentAccount] = useState(account);
+
   const [pagination, setPagination] = useState({
     limit: 5,
     index: 0,
@@ -259,12 +261,32 @@ const ListMyStake: React.FC<Props> = ({ onClaim, onUnstake, onUnStakeAll, data, 
 
   useEffect(() => {
     if (account) {
-      const start = pagination.index * pagination.limit;
-      const end = start + pagination.limit;
-      setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+      if (account === currentAccount) {
+        const totalPageCount = Math.ceil(data.length / pagination.limit);
+        if (totalPageCount !== 0 && pagination.index > totalPageCount - 1) {
+          setPagination({
+            ...pagination,
+            index: totalPageCount - 1,
+          });
+          const start = (totalPageCount - 1) * pagination.limit;
+          const end = start + pagination.limit;
+          setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+        } else {
+          const start = pagination.index * pagination.limit;
+          const end = start + pagination.limit;
+          setRecords(data.filter((item) => item.stakeDate !== '0').slice(start, end));
+        }
+      } else {
+        setPagination({
+          ...pagination,
+          index: 0,
+        });
+        setRecords([]);
+      }
     } else {
       setRecords([]);
     }
+    setCurrentAccount(account);
   }, [account, data]);
 
   return (
