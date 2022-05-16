@@ -301,7 +301,7 @@ const PoolCard: React.FC<Props> = ({ onNext, title, liquidity, apr, stakedAmount
                   callback: formatPercent,
                   callBackParams: [6],
                 })}{' '}
-                LP
+                {isOxbPool ? '0xB' : 'LP'}
               </>
             ) : (
               '-'

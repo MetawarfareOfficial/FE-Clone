@@ -269,7 +269,7 @@ const UnStakeModal: React.FC<Props> = ({ open, onClose, data, type, onConfirm, i
                   callBackParams: [6],
                   callback: formatPercent,
                 })}{' '}
-                LP
+                {isOxbPool ? '0xB' : 'LP'}
               </h4>
             </div>
             <div className="boxItem">
