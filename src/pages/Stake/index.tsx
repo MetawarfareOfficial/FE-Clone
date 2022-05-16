@@ -44,6 +44,7 @@ const StakePage: React.FC<Props> = () => {
   const selectedPool = pools.filter((item) => item.id === String(selected))[0];
 
   const selectedPoolTableData = useAppSelector((state) => state.stake.selectedPoolData);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const { handleGetTokenBalances } = useFetchLPTokenBalance();
   const { handleGetTokenBalances: getOxbBalance } = useFetchOxbTokenBalance();
@@ -149,6 +150,7 @@ const StakePage: React.FC<Props> = () => {
         id: '',
         type: '',
       });
+      setSelectedRows([]);
     }
   }, [currentTransactionId, txCompleted]);
 
@@ -224,6 +226,8 @@ const StakePage: React.FC<Props> = () => {
         />
       ) : (
         <MyStake
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
           tableDataLoading={tableDataLoading}
           handleToggleClaimOne={(index) => {
             setSelectedIndex(String(index));

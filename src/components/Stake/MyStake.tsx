@@ -39,6 +39,8 @@ interface Props {
   handleToggleClaimOne: (index: number) => void;
   handleGetTokenBalances: () => void;
   tableDataLoading: boolean;
+  selectedRows: string[];
+  setSelectedRows: (value: string[]) => void;
 }
 
 const Wrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -238,6 +240,8 @@ const MyStake: React.FC<Props> = ({
   handleToggleClaimOne,
   handleGetTokenBalances,
   tableDataLoading,
+  selectedRows,
+  setSelectedRows,
 }) => {
   const history = useHistory();
   const { account } = useWeb3React();
@@ -255,7 +259,7 @@ const MyStake: React.FC<Props> = ({
   const [currentStakingType, setCurrentStakingType] = useState<'unstake' | 'claim'>('claim');
 
   const [currentAction, setCurrentAction] = useState<Actions>('stake');
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  // const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const [unstakeRow, setUnstakeRow] = useState<string>('0');
   const [unstakeAmount, setUnstakeAmount] = useState<string>('0');
