@@ -469,9 +469,20 @@ export const useInteractiveContract = () => {
   };
 
   const stakeLp = async (poolId: string, amount: string) => {
+    const estimatedGas = await stakingManagerContractWithSigner.estimateGas.deposit(
+      poolId,
+      new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
+    );
+    const increasedGasLimit = new BN(estimatedGas._hex)
+      .plus(new BN(estimatedGas._hex).multipliedBy(20).div(100))
+      .toString()
+      .split('.')[0];
     return await stakingManagerContractWithSigner.deposit(
       poolId,
       new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
+      {
+        gasLimit: increasedGasLimit,
+      },
     );
   };
 
