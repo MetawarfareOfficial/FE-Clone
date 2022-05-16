@@ -57,7 +57,8 @@ export const zipDataMyContract = (param: ContractResponse) => {
     param.initZeroXBlockPerDays,
     param.currentZeroXBlockPerDays,
     param.rewards,
-    (a, b, c, d, e, f) =>
+    param.claimedRewards,
+    (a, b, c, d, e, f, g) =>
       ({
         mintDate: a,
         name: b,
@@ -65,6 +66,7 @@ export const zipDataMyContract = (param: ContractResponse) => {
         initial: d,
         current: e,
         rewards: f,
+        claimedRewards: g,
       } as MineContract),
   );
 };

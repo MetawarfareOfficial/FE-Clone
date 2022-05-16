@@ -403,7 +403,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setTransactionHasCompleted('');
     }
   }, [claimingTransactionHash, transactionHashCompleted]);
-
   return (
     <Box>
       <TableWrapper>
@@ -415,6 +414,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               <TableCellHeader align="left">Type</TableCellHeader>
               <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
+              <TableCellHeader align="center">Claimed rewards</TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
               <TableCellHeader align="right">
                 <ButtonClaimAll
@@ -440,6 +440,13 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                     <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
                     <TableCellContent align="center">{item.initial}</TableCellContent>
                     <TableCellContent align="center">{item.current}</TableCellContent>
+                    <TableCellContent align="center">
+                      {formatForNumberLessThanCondition({
+                        value: bigNumber2NumberV3(item.claimedRewards, 1e18),
+                        minValueCondition: 0.001,
+                        callback: formatAndTruncateNumber,
+                      })}
+                    </TableCellContent>
                     <TableCellContent align="center">
                       {formatForNumberLessThanCondition({
                         value: bigNumber2NumberV3(item.rewards, 1e18),

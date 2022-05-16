@@ -14,4 +14,5 @@ export interface ContractResponse {
   initZeroXBlockPerDays: Array<string>;
   currentZeroXBlockPerDays: Array<string>;
   rewards: Array<string>;
+  claimedRewards: string[];
 }
