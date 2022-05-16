@@ -235,6 +235,17 @@ export const useInteractiveContract = () => {
     }
   };
 
+  const getClaimedRewardOfUser = async (): Promise<{
+    total: BigNumber;
+    list: string;
+  }> => {
+    try {
+      return rewardManagerContractWithSigner.functions._getClaimedAmountOf(account);
+    } catch (e) {
+      throw new Error('Oop! Something went wrong');
+    }
+  };
+
   const getRewardOfNodes = async (): Promise<[string]> => {
     try {
       return rewardManagerContractWithSigner.functions._getContsRewardAvailable(account);
@@ -555,6 +566,7 @@ export const useInteractiveContract = () => {
     claimAllRewards,
     getStakingRecordsLimit,
     getEarlyUnstakeFeeTime,
+    getClaimedRewardOfUser,
     contractWithSigner,
     provider,
   };

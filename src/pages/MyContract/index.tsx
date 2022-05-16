@@ -47,6 +47,7 @@ const MyContract: React.FC<Props> = () => {
     getInitAPROfNodes,
     getPriceAllNode,
     getNodesCurrentAPR,
+    getClaimedRewardOfUser,
   } = useInteractiveContract();
   const { createToast } = useToast();
   const [width] = useWindowSize();
@@ -66,16 +67,18 @@ const MyContract: React.FC<Props> = () => {
         throw new Error('user address is undefined');
       }
 
-      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentAPRs] = await Promise.all([
-        getTimeCreatedOfNodes(),
-        getNameOfNodes(),
-        getRewardOfNodes(),
-        getTypeOfNodes(),
-        getRewardAmount(),
-        getInitAPROfNodes(),
-        getPriceAllNode(),
-        getNodesCurrentAPR(),
-      ]);
+      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentAPRs, claimedRewards] =
+        await Promise.all([
+          getTimeCreatedOfNodes(),
+          getNameOfNodes(),
+          getRewardOfNodes(),
+          getTypeOfNodes(),
+          getRewardAmount(),
+          getInitAPROfNodes(),
+          getPriceAllNode(),
+          getNodesCurrentAPR(),
+          getClaimedRewardOfUser(),
+        ]);
 
       if (!mintDates[0].includes('#') && mintDates[0] === '') {
         return;
@@ -95,6 +98,7 @@ const MyContract: React.FC<Props> = () => {
         initZeroXBlockPerDays: parseDataInitApy(types[0], initApy[0], _prices),
         currentZeroXBlockPerDays: parseDataCurrentApr(types[0], parseDataMyContract(currentAPRs[0]), _prices),
         rewards: parseDataMyContract(rewards[0]),
+        claimedRewards: parseDataMyContract(claimedRewards.list),
       } as ContractResponse);
 
       dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
