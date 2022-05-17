@@ -17,6 +17,7 @@ interface Props {
   rewards: number;
   current: number;
   nodeIndex: number;
+  claimedReward: number;
   onClaimClick: (arg1: number, arg2: string) => void;
 }
 
@@ -78,6 +79,7 @@ const ContractDetail: React.FC<Props> = ({
   rewards,
   current,
   nodeIndex,
+  claimedReward,
   onClaimClick,
 }) => {
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
@@ -142,6 +144,34 @@ const ContractDetail: React.FC<Props> = ({
             <Title>Current 0xB/day</Title>
             <Tooltip title={current}>
               <Text>{current}</Text>
+            </Tooltip>
+          </Box>
+        </Grid>
+        <Grid item xs={4}>
+          <Box>
+            <Title>Claimed 0xB</Title>
+            <Tooltip
+              title={formatForNumberLessThanCondition({
+                value: bigNumber2NumberV3(String(claimedReward), 1e18),
+                minValueCondition: 0.001,
+                callback: formatAndTruncateNumber,
+              })}
+            >
+              <Text>
+                {formatForNumberLessThanCondition({
+                  value: bigNumber2NumberV3(String(claimedReward), 1e18),
+                  minValueCondition: 0.001,
+                  callback: formatAndTruncateNumber,
+                })}
+              </Text>
+            </Tooltip>
+          </Box>
+        </Grid>
+        <Grid item xs={4}>
+          <Box>
+            <Title>Due Days</Title>
+            <Tooltip title={20}>
+              <Text>{20}</Text>
             </Tooltip>
           </Box>
         </Grid>

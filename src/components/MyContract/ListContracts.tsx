@@ -286,6 +286,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
                 rewards={item.rewards}
                 current={item.current}
                 nodeIndex={data.length - i - 1}
+                claimedReward={item.claimedRewards}
                 onClaimClick={handleClickClaimNodeByNode}
               />
             ))

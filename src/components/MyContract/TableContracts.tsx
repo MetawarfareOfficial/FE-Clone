@@ -62,7 +62,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
 
 const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? '#DBECFD' : '#37393A',
-  padding: '15px 30px',
+  padding: '15px 15px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Roboto',
   fontSize: '16px',
@@ -84,7 +84,7 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
 
 const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'unset',
-  padding: '11px 30px',
+  padding: '11px 15px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
   fontSize: '14px',
@@ -150,7 +150,11 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
+const ButtonClaim = styled(Button)<
+  ButtonProps & {
+    fullWidth?: boolean;
+  }
+>(({ theme, fullWidth }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -159,7 +163,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'unset',
   borderRadius: '10px',
   boxShadow: 'none',
-  width: '98px',
+  width: fullWidth ? '218px' : '98px',
   height: '38px',
   color: theme.palette.primary[theme.palette.mode],
   border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
@@ -173,7 +177,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
     fontSize: '12px',
     lineHeight: '16px',
     padding: '6px 8px',
-    width: '84px',
+    width: fullWidth ? '188px' : '84px',
     height: '32px',
   },
 }));
@@ -414,8 +418,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               <TableCellHeader align="left">Type</TableCellHeader>
               <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
               <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
-              <TableCellHeader align="center">Claimed rewards</TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
+              <TableCellHeader align="center">Claimed rewards</TableCellHeader>
+              <TableCellHeader align="center">Due days</TableCellHeader>
               <TableCellHeader align="right">
                 <ButtonClaimAll
                   size="small"
@@ -425,6 +430,19 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   disabled={!(currentUserAddress && data.length !== 0 && !isClaimingReward)}
                 >
                   Claim all
+                </ButtonClaimAll>
+                <ButtonClaimAll
+                  sx={{
+                    marginLeft: '20px',
+                    padding: '8px 6px',
+                  }}
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {}}
+                  disabled={!(currentUserAddress && data.length !== 0 && !isClaimingReward)}
+                >
+                  Pay all fees
                 </ButtonClaimAll>
               </TableCellHeader>
             </TableRow>
@@ -442,30 +460,66 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                     <TableCellContent align="center">{item.current}</TableCellContent>
                     <TableCellContent align="center">
                       {formatForNumberLessThanCondition({
-                        value: bigNumber2NumberV3(item.claimedRewards, 1e18),
+                        value: bigNumber2NumberV3(item.rewards, 1e18),
                         minValueCondition: 0.001,
                         callback: formatAndTruncateNumber,
                       })}
                     </TableCellContent>
                     <TableCellContent align="center">
                       {formatForNumberLessThanCondition({
-                        value: bigNumber2NumberV3(item.rewards, 1e18),
+                        value: bigNumber2NumberV3(item.claimedRewards, 1e18),
                         minValueCondition: 0.001,
                         callback: formatAndTruncateNumber,
                       })}
                     </TableCellContent>
-                    <TableCellContent align="right">
-                      <ButtonClaim
-                        size="small"
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => {
-                          handleClickClaimNodeByNode(data.length - i - 1, item.type);
-                        }}
-                        disabled={isClaimingReward}
-                      >
-                        Claim
-                      </ButtonClaim>
+                    <TableCellContent align="center">20</TableCellContent>
+                    <TableCellContent
+                      sx={{
+                        textOverflow: 'unset',
+                      }}
+                      align="right"
+                    >
+                      {item.type !== '0' ? (
+                        <>
+                          <ButtonClaim
+                            size="small"
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => {
+                              handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                            }}
+                            disabled={isClaimingReward}
+                          >
+                            Claim
+                          </ButtonClaim>
+                          <ButtonClaim
+                            sx={{
+                              marginLeft: '20px',
+                              // minWidth: '106px'
+                            }}
+                            size="small"
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => {}}
+                            disabled={isClaimingReward}
+                          >
+                            Pay Fee
+                          </ButtonClaim>
+                        </>
+                      ) : (
+                        <ButtonClaim
+                          size="small"
+                          variant="outlined"
+                          color="primary"
+                          fullWidth
+                          onClick={() => {
+                            handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                          }}
+                          disabled={isClaimingReward}
+                        >
+                          Claim
+                        </ButtonClaim>
+                      )}
                     </TableCellContent>
                   </TableRowCustom>
                 ))
