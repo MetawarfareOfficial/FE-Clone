@@ -20,6 +20,7 @@ import {
   stakingScAbi as stakingManagerAvaxAbi,
 } from 'abis/avalanche';
 import values from 'lodash/values';
+import { callFuncWithNewGasLimit } from 'helpers/callFuncWithNewGasLimit';
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 const rewardManagerAddress = process.env.REACT_APP_CONTS_REWARD_MANAGER || '';
 const zapManagerAddress = process.env.REACT_APP_ZAP_MANAGER || '';
@@ -134,7 +135,12 @@ export const useInteractiveContract = () => {
 
   const createMultipleNodesWithTokens = async (names: string[], cType: string): Promise<Record<string, any>> => {
     try {
-      return contractWithSigner.functions.mintConts(names, cType.toString());
+      return await callFuncWithNewGasLimit({
+        contract: contractWithSigner,
+        func: 'mintConts',
+        params: [names, cType.toString()],
+        options: {},
+      });
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -240,7 +246,7 @@ export const useInteractiveContract = () => {
     list: string;
   }> => {
     try {
-      return rewardManagerContractWithSigner.functions._getClaimedAmountOf(account);
+      return await rewardManagerContractWithSigner.functions._getClaimedAmountOf(account);
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
@@ -348,25 +354,45 @@ export const useInteractiveContract = () => {
   const swap0xbToExactToken = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
     const _amountOut = amountOut.split('.')[0];
     const _amountInMax = amountInMax.split('.')[0];
-    return contractWithSigner.functions.swap0xBForExactToken(token, _amountOut, _amountInMax, deadline);
+    return await callFuncWithNewGasLimit({
+      contract: contractWithSigner,
+      func: 'swap0xBForExactToken',
+      params: [token, _amountOut, _amountInMax, deadline],
+      options: {},
+    });
   };
 
   const swapExact0xbToToken = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
     const _amountIn = amountIn.split('.')[0];
     const _amountOutMin = amountOutMin.split('.')[0];
-    return contractWithSigner.functions.swapExact0xBForToken(token, _amountIn, _amountOutMin, deadline);
+    return await callFuncWithNewGasLimit({
+      contract: contractWithSigner,
+      func: 'swapExact0xBForToken',
+      params: [token, _amountIn, _amountOutMin, deadline],
+      options: {},
+    });
   };
 
   const swapExactTokenTo0xb = async (token: string, amountIn: string, amountOutMin: string, deadline: string) => {
     const _amountIn = amountIn.split('.')[0];
     const _amountOutMin = amountOutMin.split('.')[0];
-    return contractWithSigner.swapExactTokenFor0xB(token, _amountIn, _amountOutMin, deadline);
+    return await callFuncWithNewGasLimit({
+      contract: contractWithSigner,
+      func: 'swapExactTokenFor0xB',
+      params: [token, _amountIn, _amountOutMin, deadline],
+      options: {},
+    });
   };
 
   const swapTokenToExact0xb = async (token: string, amountOut: string, amountInMax: string, deadline: string) => {
     const _amountOut = amountOut.split('.')[0];
     const _amountInMax = amountInMax.split('.')[0];
-    return contractWithSigner.swapTokenForExact0xB(token, _amountOut, _amountInMax, deadline);
+    return await callFuncWithNewGasLimit({
+      contract: contractWithSigner,
+      func: 'swapTokenForExact0xB',
+      params: [token, _amountOut, _amountInMax, deadline],
+      options: {},
+    });
   };
 
   const swapAVAXForExact0xB = async (
@@ -377,14 +403,24 @@ export const useInteractiveContract = () => {
   ) => {
     const _amountOut = amountOut.split('.')[0];
     const _amountInMax = amountInMax.split('.')[0];
-    return contractWithSigner.swapAVAXForExact0xB(_amountOut, _amountInMax, deadline, {
-      value: ethers.utils.parseEther(payableAvaxAmount),
+    return await callFuncWithNewGasLimit({
+      contract: contractWithSigner,
+      func: 'swapAVAXForExact0xB',
+      params: [_amountOut, _amountInMax, deadline],
+      options: {
+        value: ethers.utils.parseEther(payableAvaxAmount),
+      },
     });
   };
   const swapExactAVAXFor0xB = async (payableAvaxAmount: string, amountOutMin: string, deadline: string) => {
     const _amountOutMin = amountOutMin.split('.')[0];
-    return contractWithSigner.swapExactAVAXFor0xB(_amountOutMin, deadline, {
-      value: ethers.utils.parseEther(payableAvaxAmount),
+    return await callFuncWithNewGasLimit({
+      contract: contractWithSigner,
+      func: 'swapExactAVAXFor0xB',
+      params: [_amountOutMin, deadline],
+      options: {
+        value: ethers.utils.parseEther(payableAvaxAmount),
+      },
     });
   };
 
@@ -420,37 +456,49 @@ export const useInteractiveContract = () => {
   };
 
   const handleZapInNativeToken = async (amountIn: string, receiver: string) => {
-    return zapManagerContractWithSigner.zapIn(
-      process.env.REACT_APP_ZAP_TYPE,
-      process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
-      receiver,
-      {
+    return await callFuncWithNewGasLimit({
+      contract: zapManagerContractWithSigner,
+      func: 'zapIn',
+      params: [process.env.REACT_APP_ZAP_TYPE, process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS, receiver],
+      options: {
         value: ethers.utils.parseEther(amountIn),
       },
-    );
+    });
   };
 
   const handleZapInToken = async (tokenIn: string, amountIn: string, receiver: string, decimal: string) => {
-    return zapManagerContractWithSigner.zapInToken({
-      protocolType: process.env.REACT_APP_ZAP_TYPE,
-      from: tokenIn,
-      amount: new BN(amountIn).multipliedBy(Number(`1e${decimal}`)).toString(),
-      to: process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
-      receiver,
+    return await callFuncWithNewGasLimit({
+      contract: zapManagerContractWithSigner,
+      func: 'zapInToken',
+      params: [
+        {
+          protocolType: process.env.REACT_APP_ZAP_TYPE,
+          from: tokenIn,
+          amount: new BN(amountIn).multipliedBy(Number(`1e${decimal}`)).toString(),
+          to: process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+          receiver,
+        },
+      ],
+      options: {},
     });
   };
 
   const handleZapOut = async (tokenOut: string, amountIn: string, receiver: string, decimal: string) => {
-    return zapManagerContractWithSigner.zapOut(
-      process.env.REACT_APP_ZAP_TYPE,
-      process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
-      new BN(amountIn)
-        .multipliedBy(Number(`1e${decimal}`))
-        .minus('0')
-        .toString(),
-      tokenOut,
-      receiver,
-    );
+    return await callFuncWithNewGasLimit({
+      contract: zapManagerContractWithSigner,
+      func: 'zapOut',
+      params: [
+        process.env.REACT_APP_ZAP_TYPE,
+        process.env.REACT_APP_JOE_LP_TOKEN_ADDRESS,
+        new BN(amountIn)
+          .multipliedBy(Number(`1e${decimal}`))
+          .minus('0')
+          .toString(),
+        tokenOut,
+        receiver,
+      ],
+      options: {},
+    });
   };
 
   const getPoolInfo = async (account: string, index: string) => {
@@ -480,21 +528,12 @@ export const useInteractiveContract = () => {
   };
 
   const stakeLp = async (poolId: string, amount: string) => {
-    const estimatedGas = await stakingManagerContractWithSigner.estimateGas.deposit(
-      poolId,
-      new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
-    );
-    const increasedGasLimit = new BN(estimatedGas._hex)
-      .plus(new BN(estimatedGas._hex).multipliedBy(20).div(100))
-      .toString()
-      .split('.')[0];
-    return await stakingManagerContractWithSigner.deposit(
-      poolId,
-      new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString(),
-      {
-        gasLimit: increasedGasLimit,
-      },
-    );
+    return await callFuncWithNewGasLimit({
+      contract: stakingManagerContractWithSigner,
+      func: 'deposit',
+      params: [poolId, new BN(amount).multipliedBy(`1e${process.env.REACT_APP_JOE_LP_TOKEN_DECIMAL}`).toString()],
+      options: {},
+    });
   };
 
   const getTotalStakingPools = async () => {
