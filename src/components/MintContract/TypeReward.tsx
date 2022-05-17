@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useWindowSize } from 'hooks/useWindowSize';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Paper, PaperProps, Box, BoxProps, Typography, TypographyProps, Button, ButtonProps } from '@mui/material';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 
@@ -32,6 +32,8 @@ import { infoMessage } from 'messages/infoMessages';
 import { useFetchAccountBalance } from 'hooks/useFetchAccountBalance';
 import { formatNumberWithComas } from 'helpers/formatPrice';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
+import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
+import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 
 interface Props {
   id: any;
@@ -45,6 +47,7 @@ interface Props {
   // dataChart: Array<any>;
   loading: boolean;
   isCreatingContracts?: boolean;
+  help?: boolean;
 }
 
 const Wrapper = styled(Paper)<PaperProps>(({ theme }) => ({
@@ -291,6 +294,15 @@ const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
   zIndex: 1200,
 }));
 
+const ViewHelp = styled(Box)<BoxProps>(() => ({
+  marginRight: '10px',
+}));
+
+const BoxRight = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
 const STATUS = ['success', 'error', 'pending', 'permission denied'];
 
 const TypeReward: React.FC<Props> = ({
@@ -304,9 +316,11 @@ const TypeReward: React.FC<Props> = ({
   colorChart,
   loading,
   isCreatingContracts = false,
+  help = false,
 }) => {
   const dispatch = useAppDispatch();
   const [width] = useWindowSize();
+  const theme = useTheme();
 
   const zeroXBlockBalance = useAppSelector((state) => state.user.zeroXBlockBalance);
   const nodes = useAppSelector((state: any) => state.contract.nodes);
@@ -555,9 +569,37 @@ const TypeReward: React.FC<Props> = ({
           </TooltipCustom>
         </ViewInfo>
 
-        <ButtonMint disabled={isCreatingContracts} variant="outlined" color="primary" onClick={handleToggle}>
-          Mint
-        </ButtonMint>
+        <BoxRight>
+          {help && (
+            <TooltipCustom
+              title={
+                <div>
+                  <p style={{ margin: 0 }}>This contract is applied Monthly subscription fee</p>
+                </div>
+              }
+              arrow
+              placement="bottom-end"
+            >
+              {theme.palette.mode === 'light' ? (
+                <ViewHelp>
+                  <WarnIcon width={16} />
+                </ViewHelp>
+              ) : (
+                <ViewHelp
+                  sx={{
+                    marginTop: '5px',
+                  }}
+                >
+                  <WarnDarkIcon width={16} />
+                </ViewHelp>
+              )}
+            </TooltipCustom>
+          )}
+
+          <ButtonMint disabled={isCreatingContracts} variant="outlined" color="primary" onClick={handleToggle}>
+            Mint
+          </ButtonMint>
+        </BoxRight>
       </BoxContent>
 
       {open && (

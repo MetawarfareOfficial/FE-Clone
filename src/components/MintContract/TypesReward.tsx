@@ -85,6 +85,7 @@ const TypesReward: React.FC<Props> = () => {
         earn={computeEarnedTokenPerDay(dataPrice.cube, dataApy.cube)}
         loading={isCreatingCubeContracts}
         isCreatingContracts={isCreatingContracts}
+        help={true}
       />
       <TypeReward
         id={2}
@@ -100,6 +101,7 @@ const TypesReward: React.FC<Props> = () => {
         earn={computeEarnedTokenPerDay(dataPrice.tesseract, dataApy.tesseract)}
         loading={isCreatingTesseractContracts}
         isCreatingContracts={isCreatingContracts}
+        help={true}
       />
     </Wrapper>
   );
