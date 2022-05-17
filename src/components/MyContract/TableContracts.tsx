@@ -153,7 +153,11 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
+const ButtonClaim = styled(Button)<
+  ButtonProps & {
+    fullWidth?: boolean;
+  }
+>(({ theme, fullWidth }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
@@ -162,7 +166,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'unset',
   borderRadius: '10px',
   boxShadow: 'none',
-  width: '98px',
+  width: fullWidth ? '218px' : '98px',
   height: '38px',
   color: theme.palette.primary[theme.palette.mode],
   border: `1px solid ${theme.palette.primary[theme.palette.mode]}`,
@@ -176,7 +180,7 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
     fontSize: '12px',
     lineHeight: '16px',
     padding: '6px 8px',
-    width: '84px',
+    width: fullWidth ? '188px' : '84px',
     height: '32px',
   },
 }));
