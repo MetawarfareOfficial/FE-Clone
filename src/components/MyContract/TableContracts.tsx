@@ -22,6 +22,7 @@ import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatCType } from 'helpers/formatCType';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import MintStatusModal from 'components/Base/MintStatusModal';
+import MyContractsPayFeeModal from 'components/Base/MyContractsPayFeeModal';
 import {
   SquareIcon,
   CubeIcon,
@@ -305,6 +306,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const [claimingTransactionHash, setClaimingTransactionHash] = useState('');
   const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
   const [transactionError, setTransactionError] = useState('');
+  const [openPayFee, setOpenPayFee] = useState(false);
 
   const handleToggleStatus = () => {
     if (openStatus && !isMetamaskConfirmPopupOpening) {
@@ -348,6 +350,18 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     else if (cType === '2') return ClaimingType.Tesseract;
     else return null;
   };
+
+  const handlePayFee = (nodeIndex: number, cType: string) => {
+    setClaimingType(convertCType(cType));
+    processModal(`${formatCType(cType)} Contract`);
+    setOpenPayFee(true);
+  };
+
+  const handleTogglePayFee = () => {
+    setOpenPayFee(!openPayFee);
+  };
+
+  const handleSubmitPayFee = () => {};
 
   const handleClickClaimAll = async () => {
     let txHash = '';
@@ -578,6 +592,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                               color="primary"
                               disabled={isClaimingReward}
                               sx={{ marginLeft: '19px' }}
+                              onClick={() => handlePayFee(data.length - i - 1, item.type)}
                             >
                               Pay Fee
                             </ButtonClaim>
@@ -603,7 +618,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                 ))
             ) : (
               <TableRowNoData>
-                <TableCellContent colSpan={8}>
+                <TableCellContent colSpan={9}>
                   <EmptyContracts>
                     {currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}
                   </EmptyContracts>
@@ -630,6 +645,17 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               : 'Insufficient Tokens'
           }
           onClose={handleToggleStatus}
+        />
+
+        <MyContractsPayFeeModal
+          icon={getIconByMode(claimingType, theme.palette.mode)}
+          name={claimType}
+          maxMint={15}
+          // valueRequire={value}
+          contracts={['Name']}
+          open={openPayFee}
+          onClose={handleTogglePayFee}
+          onSubmit={handleSubmitPayFee}
         />
       </TableWrapper>
     </Box>
