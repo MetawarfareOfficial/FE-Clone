@@ -496,8 +496,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                 .filter((r) => r.mintDate !== '')
                 .map((item, i) => (
                   <TableRowCustom key={i}>
-                    <TableCellContent sx={{ paddingLeft: '30px' }}>{formatTimestampV2(item.mintDate)}</TableCellContent>
-                    <TableCellContent align="left" sx={{ maxWidth: 80 }}>
+                    <TableCellContent sx={{ paddingLeft: '30px', maxWidth: '60px' }}>
+                      {formatTimestampV2(item.mintDate)}
+                    </TableCellContent>
+                    <TableCellContent sx={{ maxWidth: 160 }} align="left">
                       {item.name}
                     </TableCellContent>
                     <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
@@ -524,7 +526,12 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                     <TableCellContent align="center" sx={{ color: i === 2 ? '#FF0E0E' : 'auto' }}>
                       {i !== 4 ? 20 : '-'}
                     </TableCellContent>
-                    <TableCellContent align="right">
+                    <TableCellContent
+                      sx={{
+                        minWidth: '260px',
+                      }}
+                      align="left"
+                    >
                       <BoxActions>
                         {i === 2 && (
                           <TooltipCustom
