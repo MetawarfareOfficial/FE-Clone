@@ -16,6 +16,7 @@ import {
   Button,
   ButtonProps,
 } from '@mui/material';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { formatTimestampV2 } from 'helpers/formatTimestamp';
 import { formatCType } from 'helpers/formatCType';
@@ -36,6 +37,8 @@ import { infoMessage } from 'messages/infoMessages';
 import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessThanCondition';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
+import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
+import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 
 interface Props {
   title?: string;
@@ -62,7 +65,7 @@ const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
 
 const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? '#DBECFD' : '#37393A',
-  padding: '15px 15px',
+  padding: '15px 10px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Roboto',
   fontSize: '16px',
@@ -84,14 +87,14 @@ const TableCellHeader = styled(TableCell)<TableCellProps>(({ theme }) => ({
 
 const TableCellContent = styled(TableCell)<TableCellProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? '#fff' : 'unset',
-  padding: '11px 15px',
+  padding: '11px 10px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   fontFamily: 'Poppins',
   fontSize: '14px',
   lineHeight: '25px',
   fontWeight: '500',
   border: 'none',
-  maxWidth: '160px',
+  // maxWidth: '100px',
   whiteSpace: 'nowrap',
   overflow: 'hidden !important',
   textOverflow: 'ellipsis',
@@ -112,8 +115,8 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   fontSize: '14px',
   lineHeight: '21px',
   fontFamily: 'Poppins',
-  fontWeight: 'bold',
-  padding: '8px 10px',
+  fontWeight: '700',
+  padding: '8px 4px',
   textTransform: 'unset',
   borderRadius: '10px',
   boxShadow: 'none',
@@ -241,6 +244,43 @@ const TableRowCustom = styled(TableRow)<TableRowProps>(({ theme }) => ({
 
 const TableRowNoData = styled(TableRow)<TableRowProps>(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? 'unset' : 'rgba(255, 255, 255, 0.03)',
+}));
+
+const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
+    top: '5px !important',
+
+    ['&::before']: {
+      boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+      backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    },
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+    fontFamily: 'Poppins',
+    fontWeight: 'normal',
+    fontSize: '12px',
+    lineHeight: '22px',
+    borderRadius: '7px',
+    padding: '2px 10px',
+  },
+  zIndex: 1200,
+}));
+
+const ViewHelp = styled(Box)<BoxProps>(() => ({
+  marginRight: '10px',
+  display: 'flex',
+}));
+
+const BoxActions = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'right',
 }));
 
 enum ClaimingType {
@@ -413,14 +453,20 @@ const TableContracts: React.FC<Props> = ({ data }) => {
         <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCellHeader>Mint Date</TableCellHeader>
+              <TableCellHeader sx={{ paddingLeft: '30px' }}>Mint Date</TableCellHeader>
               <TableCellHeader align="left">Name</TableCellHeader>
               <TableCellHeader align="left">Type</TableCellHeader>
-              <TableCellHeader align="center">Initial 0xB/day </TableCellHeader>
-              <TableCellHeader align="center">Current 0xB/day</TableCellHeader>
+              <TableCellHeader align="center" sx={{ maxWidth: '60px' }}>
+                Initial 0xB/day{' '}
+              </TableCellHeader>
+              <TableCellHeader align="center" sx={{ maxWidth: '60px' }}>
+                Current 0xB/day
+              </TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
-              <TableCellHeader align="center">Claimed rewards</TableCellHeader>
-              <TableCellHeader align="center">Due days</TableCellHeader>
+              <TableCellHeader align="center" sx={{ maxWidth: '60px' }}>
+                Claimed 0xB
+              </TableCellHeader>
+              <TableCellHeader align="center">Due Days</TableCellHeader>
               <TableCellHeader align="right">
                 <ButtonClaimAll
                   size="small"
@@ -432,17 +478,14 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   Claim all
                 </ButtonClaimAll>
                 <ButtonClaimAll
-                  sx={{
-                    marginLeft: '20px',
-                    padding: '8px 6px',
-                  }}
                   size="small"
                   variant="contained"
                   color="primary"
-                  onClick={() => {}}
+                  onClick={handleClickClaimAll}
                   disabled={!(currentUserAddress && data.length !== 0 && !isClaimingReward)}
+                  sx={{ marginLeft: '19px' }}
                 >
-                  Pay all fees
+                  Pay All Fees
                 </ButtonClaimAll>
               </TableCellHeader>
             </TableRow>
@@ -453,11 +496,17 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                 .filter((r) => r.mintDate !== '')
                 .map((item, i) => (
                   <TableRowCustom key={i}>
-                    <TableCellContent>{formatTimestampV2(item.mintDate)}</TableCellContent>
-                    <TableCellContent align="left">{item.name}</TableCellContent>
+                    <TableCellContent sx={{ paddingLeft: '30px' }}>{formatTimestampV2(item.mintDate)}</TableCellContent>
+                    <TableCellContent align="left" sx={{ maxWidth: 80 }}>
+                      {item.name}
+                    </TableCellContent>
                     <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
-                    <TableCellContent align="center">{item.initial}</TableCellContent>
-                    <TableCellContent align="center">{item.current}</TableCellContent>
+                    <TableCellContent align="center" sx={{ maxWidth: '60px' }}>
+                      {item.initial}
+                    </TableCellContent>
+                    <TableCellContent align="center" sx={{ maxWidth: '60px' }}>
+                      {item.current}
+                    </TableCellContent>
                     <TableCellContent align="center">
                       {formatForNumberLessThanCondition({
                         value: bigNumber2NumberV3(item.rewards, 1e18),
@@ -465,67 +514,89 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                         callback: formatAndTruncateNumber,
                       })}
                     </TableCellContent>
-                    <TableCellContent align="center">
+                    <TableCellContent align="center" sx={{ maxWidth: '60px' }}>
                       {formatForNumberLessThanCondition({
                         value: bigNumber2NumberV3(item.claimedRewards, 1e18),
                         minValueCondition: 0.001,
                         callback: formatAndTruncateNumber,
                       })}
                     </TableCellContent>
-                    <TableCellContent align="center">20</TableCellContent>
-                    <TableCellContent
-                      sx={{
-                        textOverflow: 'unset',
-                      }}
-                      align="right"
-                    >
-                      {item.type !== '0' ? (
-                        <>
+                    <TableCellContent align="center" sx={{ color: i === 2 ? '#FF0E0E' : 'auto' }}>
+                      {i !== 4 ? 20 : '-'}
+                    </TableCellContent>
+                    <TableCellContent align="right">
+                      <BoxActions>
+                        {i === 2 && (
+                          <TooltipCustom
+                            title={
+                              <div>
+                                <p style={{ margin: 0 }}>This contract will be removed after due day</p>
+                              </div>
+                            }
+                            arrow
+                            placement="top-end"
+                          >
+                            {theme.palette.mode === 'light' ? (
+                              <ViewHelp>
+                                <WarnIcon width={16} />
+                              </ViewHelp>
+                            ) : (
+                              <ViewHelp
+                                sx={{
+                                  marginTop: '5px',
+                                }}
+                              >
+                                <WarnDarkIcon width={16} />
+                              </ViewHelp>
+                            )}
+                          </TooltipCustom>
+                        )}
+
+                        {i !== 4 ? (
+                          <>
+                            <ButtonClaim
+                              size="small"
+                              variant="outlined"
+                              color="primary"
+                              onClick={() => {
+                                handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                              }}
+                              disabled={isClaimingReward}
+                            >
+                              Claim
+                            </ButtonClaim>
+                            <ButtonClaim
+                              size="small"
+                              variant="outlined"
+                              color="primary"
+                              disabled={isClaimingReward}
+                              sx={{ marginLeft: '19px' }}
+                            >
+                              Pay Fee
+                            </ButtonClaim>
+                          </>
+                        ) : (
                           <ButtonClaim
                             size="small"
+                            fullWidth
                             variant="outlined"
                             color="primary"
                             onClick={() => {
                               handleClickClaimNodeByNode(data.length - i - 1, item.type);
                             }}
                             disabled={isClaimingReward}
+                            sx={{ width: 215 }}
                           >
                             Claim
                           </ButtonClaim>
-                          <ButtonClaim
-                            sx={{
-                              marginLeft: '20px',
-                              // minWidth: '106px'
-                            }}
-                            size="small"
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => {}}
-                            disabled={isClaimingReward}
-                          >
-                            Pay Fee
-                          </ButtonClaim>
-                        </>
-                      ) : (
-                        <ButtonClaim
-                          size="small"
-                          variant="outlined"
-                          color="primary"
-                          fullWidth
-                          onClick={() => {
-                            handleClickClaimNodeByNode(data.length - i - 1, item.type);
-                          }}
-                          disabled={isClaimingReward}
-                        >
-                          Claim
-                        </ButtonClaim>
-                      )}
+                        )}
+                      </BoxActions>
                     </TableCellContent>
                   </TableRowCustom>
                 ))
             ) : (
               <TableRowNoData>
-                <TableCellContent colSpan={7}>
+                <TableCellContent colSpan={8}>
                   <EmptyContracts>
                     {currentUserAddress ? 'No contracts yet!' : 'You need to connect wallet!'}
                   </EmptyContracts>
