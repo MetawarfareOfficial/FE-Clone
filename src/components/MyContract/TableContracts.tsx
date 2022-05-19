@@ -15,6 +15,7 @@ import {
   TableContainerProps,
   Button,
   ButtonProps,
+  TableProps,
 } from '@mui/material';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
@@ -40,10 +41,19 @@ import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
+export interface ContractItem {
+  claimedRewards: string;
+  current: string;
+  initial: string;
+  mintDate: string;
+  name: string;
+  rewards: string;
+  type: string;
+}
 
 interface Props {
   title?: string;
-  data: Array<any>;
+  data: ContractItem[];
 }
 
 const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
@@ -284,7 +294,19 @@ const BoxActions = styled(Box)<BoxProps>(() => ({
   justifyContent: 'right',
 }));
 
-enum ClaimingType {
+const CustomTable = styled(Table)<TableProps>(({ theme }) => ({
+  tableLayout: 'fixed',
+  '&>thead>tr>th:last-child': {
+    width: '260px',
+  },
+  [theme.breakpoints.down('lg')]: {
+    '&>thead>tr>th:last-child': {
+      width: '220px',
+    },
+  },
+}));
+
+export enum ClaimingType {
   AllContracts = 'allContract',
   Cube = 'cube',
   Square = 'square',
@@ -307,6 +329,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
   const [transactionError, setTransactionError] = useState('');
   const [openPayFee, setOpenPayFee] = useState(false);
+  const [isPayAllFee, setIsPayAllFee] = useState(false);
+  const [currentSelectedContracts, setCurrentSelectedContracts] = useState<ContractItem[]>([]);
 
   const handleToggleStatus = () => {
     if (openStatus && !isMetamaskConfirmPopupOpening) {
@@ -351,12 +375,16 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     else return null;
   };
 
-  const handlePayFee = (nodeIndex: number, cType: string) => {
-    setClaimingType(convertCType(cType));
-    processModal(`${formatCType(cType)} Contract`);
+  const handlePayFee = (item: ContractItem) => {
+    setCurrentSelectedContracts([item]);
+    setIsPayAllFee(false);
     setOpenPayFee(true);
   };
-
+  const handlePayAllFees = () => {
+    setCurrentSelectedContracts([...data]);
+    setIsPayAllFee(true);
+    setOpenPayFee(true);
+  };
   const handleTogglePayFee = () => {
     setOpenPayFee(!openPayFee);
   };
@@ -464,24 +492,35 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   return (
     <Box>
       <TableWrapper>
-        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+        <CustomTable stickyHeader aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCellHeader sx={{ paddingLeft: '30px' }}>Mint Date</TableCellHeader>
-              <TableCellHeader align="left">Name</TableCellHeader>
-              <TableCellHeader align="left">Type</TableCellHeader>
-              <TableCellHeader align="center" sx={{ maxWidth: '60px' }}>
+              <TableCellHeader sx={{ paddingLeft: '30px', width: '50%' }}>Mint Date</TableCellHeader>
+              <TableCellHeader align="left" sx={{ width: '100%' }}>
+                Name
+              </TableCellHeader>
+              <TableCellHeader align="left" sx={{ width: '50%' }}>
+                Type
+              </TableCellHeader>
+              <TableCellHeader align="center" sx={{ width: '50%' }}>
                 Initial 0xB/day{' '}
               </TableCellHeader>
-              <TableCellHeader align="center" sx={{ maxWidth: '60px' }}>
+              <TableCellHeader align="center" sx={{ width: '50%' }}>
                 Current 0xB/day
               </TableCellHeader>
               <TableCellHeader align="center">Rewards</TableCellHeader>
-              <TableCellHeader align="center" sx={{ maxWidth: '60px' }}>
+              <TableCellHeader align="center" sx={{ width: '50%' }}>
                 Claimed 0xB
               </TableCellHeader>
-              <TableCellHeader align="center">Due Days</TableCellHeader>
-              <TableCellHeader align="right">
+              <TableCellHeader align="center" sx={{ width: '50%' }}>
+                Due Days
+              </TableCellHeader>
+              <TableCellHeader
+                sx={{
+                  width: '260px',
+                }}
+                align="right"
+              >
                 <ButtonClaimAll
                   size="small"
                   variant="contained"
@@ -495,7 +534,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   size="small"
                   variant="contained"
                   color="primary"
-                  onClick={handleClickClaimAll}
+                  onClick={handlePayAllFees}
                   disabled={!(currentUserAddress && data.length !== 0 && !isClaimingReward)}
                   sx={{ marginLeft: '19px' }}
                 >
@@ -510,19 +549,11 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                 .filter((r) => r.mintDate !== '')
                 .map((item, i) => (
                   <TableRowCustom key={i}>
-                    <TableCellContent sx={{ paddingLeft: '30px', maxWidth: '60px' }}>
-                      {formatTimestampV2(item.mintDate)}
-                    </TableCellContent>
-                    <TableCellContent sx={{ maxWidth: 160 }} align="left">
-                      {item.name}
-                    </TableCellContent>
+                    <TableCellContent sx={{ paddingLeft: '30px' }}>{formatTimestampV2(item.mintDate)}</TableCellContent>
+                    <TableCellContent align="left">{item.name}</TableCellContent>
                     <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
-                    <TableCellContent align="center" sx={{ maxWidth: '60px' }}>
-                      {item.initial}
-                    </TableCellContent>
-                    <TableCellContent align="center" sx={{ maxWidth: '60px' }}>
-                      {item.current}
-                    </TableCellContent>
+                    <TableCellContent align="center">{item.initial}</TableCellContent>
+                    <TableCellContent align="center">{item.current}</TableCellContent>
                     <TableCellContent align="center">
                       {formatForNumberLessThanCondition({
                         value: bigNumber2NumberV3(item.rewards, 1e18),
@@ -530,7 +561,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                         callback: formatAndTruncateNumber,
                       })}
                     </TableCellContent>
-                    <TableCellContent align="center" sx={{ maxWidth: '60px' }}>
+                    <TableCellContent align="center">
                       {formatForNumberLessThanCondition({
                         value: bigNumber2NumberV3(item.claimedRewards, 1e18),
                         minValueCondition: 0.001,
@@ -540,12 +571,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                     <TableCellContent align="center" sx={{ color: i === 2 ? '#FF0E0E' : 'auto' }}>
                       {i !== 4 ? 20 : '-'}
                     </TableCellContent>
-                    <TableCellContent
-                      sx={{
-                        minWidth: '260px',
-                      }}
-                      align="left"
-                    >
+                    <TableCellContent align="left">
                       <BoxActions>
                         {i === 2 && (
                           <TooltipCustom
@@ -592,7 +618,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                               color="primary"
                               disabled={isClaimingReward}
                               sx={{ marginLeft: '19px' }}
-                              onClick={() => handlePayFee(data.length - i - 1, item.type)}
+                              onClick={() => handlePayFee(item)}
                             >
                               Pay Fee
                             </ButtonClaim>
@@ -626,7 +652,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               </TableRowNoData>
             )}
           </CustomTableBody>
-        </Table>
+        </CustomTable>
 
         <MintStatusModal
           icon={getIconByMode(claimingType, theme.palette.mode)}
@@ -648,11 +674,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
         />
 
         <MyContractsPayFeeModal
-          icon={getIconByMode(claimingType, theme.palette.mode)}
-          name={claimType}
-          maxMint={15}
-          // valueRequire={value}
-          contracts={['Name']}
+          type={isPayAllFee ? 'pay_all' : 'pay_one'}
+          contracts={currentSelectedContracts}
           open={openPayFee}
           onClose={handleTogglePayFee}
           onSubmit={handleSubmitPayFee}
