@@ -1,58 +1,41 @@
-import React, { useState } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-
 import {
   Box,
   BoxProps,
-  Typography,
-  TypographyProps,
+  ButtonProps,
   Dialog,
+  DialogContent,
+  DialogContentProps,
   DialogProps,
   DialogTitle,
   DialogTitleProps,
-  DialogContent,
-  DialogContentProps,
-  Button,
-  ButtonProps,
   IconButton,
   IconButtonProps,
-  OutlinedInput,
-  OutlinedInputProps,
-  InputAdornment,
+  Typography,
+  TypographyProps,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-
-import SquareDarkIcon from 'assets/images/square-dark.gif';
+import { styled, useTheme } from '@mui/material/styles';
+import { AllContract, AllDarkContract, CubeIcon, SquareIcon, TessIcon } from 'assets/images';
 import CubeDarkIcon from 'assets/images/cube-dark.gif';
-import TessDarkIcon from 'assets/images/tess-dark.gif';
-
-import CloseImg from 'assets/images/ic-times.svg';
 import CloseDarkImg from 'assets/images/ic-close-dark.svg';
-import { customToast, deleteArrayElementByIndex, generateContractName } from 'helpers';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import { errorMessage } from 'messages/errorMessages';
-import { infoMessage } from 'messages/infoMessages';
-import { setIsOverMaxMintNodes } from 'services/contract';
-import { LIMIT_MAX_MINT } from 'consts/typeReward';
-
+import CloseImg from 'assets/images/ic-times.svg';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
+import SquareDarkIcon from 'assets/images/square-dark.gif';
+import TessDarkIcon from 'assets/images/tess-dark.gif';
+import { ClaimingType, ContractItem } from 'components/MyContract/TableContracts';
+import { customToast } from 'helpers';
+import { errorMessage } from 'messages/errorMessages';
+import React from 'react';
+import InputFeeItem from './InputFeeItem';
 
 interface Props {
   open: boolean;
-  icon: string;
-  name: string;
-  maxMint: number;
-  // valueRequire: number;
-  contracts: Array<any>;
+  // icon: string;
+  // name: string;
+  type: 'pay_all' | 'pay_one';
+  contracts: Array<ContractItem>;
   onClose: () => void;
   onSubmit: (values: any, name: string) => void;
-}
-
-interface Contract {
-  name: string;
-  error: string | null;
 }
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
@@ -104,7 +87,6 @@ const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   textTransform: 'uppercase',
   fontWeight: '600',
-  maxWidth: '105px',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
@@ -137,28 +119,11 @@ const CloseIcon = styled(IconButton)<IconButtonProps>(({ theme }) => ({
   },
 }));
 
-const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
+const Header = styled(DialogTitle)<DialogTitleProps>(({}) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: '20px 21px',
+  // padding: '20px 21px',
   marginBottom: '20px',
-
-  [theme.breakpoints.down('lg')]: {
-    padding: '16px 21px',
-  },
-  [theme.breakpoints.down('lg')]: {
-    padding: '20px 21px',
-  },
-}));
-
-const TextSub = styled(Typography)<TypographyProps>(() => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: '500',
-  fontSize: '17px',
-  lineHeight: '26px',
-  letterSpacing: '0.035em',
-  color: '#293247',
 }));
 
 const PaymentDueDate = styled(Typography)<TypographyProps>(() => ({
@@ -269,122 +234,6 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   },
 }));
 
-const ButtonMax = styled(Button)<ButtonProps>(() => ({
-  width: '79px',
-  height: '50px',
-  boxSizing: 'border-box',
-  border: '1px solid #3864FF',
-  borderRadius: '14px',
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: 'bold',
-  fontSize: '14px',
-  lineHeight: '21px',
-  textTransform: 'capitalize',
-  marginLeft: 'auto',
-  padding: '6px',
-
-  '&:hover': {
-    opacity: 0.7,
-    cursor: 'pointer',
-  },
-}));
-
-const BoxActions = styled(Box)<BoxProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  marginTop: '30px',
-  paddingRight: '8px',
-}));
-
-const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }) => ({
-  padding: 0,
-  border: '1px solid #3864FF',
-  borderLeft: 'none',
-  borderRight: 'none',
-  borderRadius: '14px',
-  lineHeight: '24px',
-  fontSize: '16px',
-  height: '50px',
-
-  fieldset: {
-    border: 'none',
-  },
-
-  input: {
-    width: '81px',
-    height: '50px',
-    textAlign: 'center',
-
-    fontFamily: 'Poppins',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    lineHeight: '21px',
-    display: 'inline-flex',
-    alignItems: 'center',
-    color: theme.palette.mode === 'light' ? '#3864FF' : '#fff',
-
-    '&::-webkit-inner-spin-button': {
-      WebkitAppearance: 'none',
-      margin: 0,
-    },
-  },
-
-  '.MuiOutlinedInput-root': {},
-
-  '.MuiInputAdornment-positionStart': {
-    border: `1px solid  ${theme.palette.primary.main}`,
-    boxSizing: 'border-box',
-    borderRadius: '14px',
-    width: '50px',
-    height: '50px',
-    fontSize: '18px',
-    maxWidth: '50px',
-    maxHeight: '50px',
-    margin: 0,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    '&:hover': {
-      opacity: 0.7,
-      cursor: 'pointer',
-    },
-
-    button: {
-      color: `${theme.palette.primary.main}`,
-      padding: 0,
-    },
-  },
-
-  '.MuiInputAdornment-positionEnd': {
-    border: `1px solid  ${theme.palette.primary.main}`,
-    backgroundColor: theme.palette.primary.main,
-    color: '#fff',
-    boxSizing: 'border-box',
-    borderRadius: '14px',
-    width: '50px',
-    height: '50px',
-    fontSize: '18px',
-    maxWidth: '50px',
-    maxHeight: '50px',
-    margin: 0,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    '&:hover': {
-      opacity: 0.7,
-      cursor: 'pointer',
-    },
-
-    button: {
-      color: '#fff',
-      padding: 0,
-    },
-  },
-}));
-
 const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   width: '100%',
   marginTop: '21px',
@@ -424,84 +273,36 @@ const ViewHelp = styled(Box)<BoxProps>(() => ({
   display: 'flex',
 }));
 
-const BoxError = styled(Box)<BoxProps>(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  marginTop: '21px',
-  fontSize: '12px',
-}));
-
 const MyContractsPayFeeModal: React.FC<Props> = ({
   open,
-  icon,
-  name,
-  maxMint = 10,
+  // icon,
+  // name,
   onClose,
-  onSubmit,
+  type,
+  contracts,
   // valueRequire,
 }) => {
-  const dispatch = useAppDispatch();
   const theme = useTheme();
 
-  const isCreatingSquareContracts = useAppSelector((state) => state.contract.isCreatingSquareContracts);
-  const isCreatingCubeContracts = useAppSelector((state) => state.contract.isCreatingCubeContracts);
-  const isCreatingTesseractContracts = useAppSelector((state) => state.contract.isCreatingTesseractContracts);
-
-  const isInsuffBalances = useAppSelector((state) => state.contract.insuffBalance);
-  const isLimitNodes = useAppSelector((state) => state.contract.isLimitOwnedNodes);
-  const isOverMaxMintNodes = useAppSelector((state) => state.contract.isOverMaxMintNodes);
-  const nodes = useAppSelector((state: any) => state.contract.nodes);
-
-  const [contracts, setContracts] = useState<Contract[]>([]);
-  const [valueInput] = useState<number | string>(contracts.length);
-
-  const isCreatingContracts = isCreatingSquareContracts || isCreatingCubeContracts || isCreatingTesseractContracts;
-  const handleAddContract = (numberContracts = 1) => {
-    if (contracts.length >= maxMint) {
-      return;
+  const getIconByMode = (type: ClaimingType | null, mode: string) => {
+    if (type) {
+      // TODO: return in if still need else statement?
+      if (type === ClaimingType.AllContracts) return mode === 'light' ? AllContract : AllDarkContract;
+      else if (type === ClaimingType.Square) return mode === 'light' ? SquareIcon : SquareDarkIcon;
+      else if (type === ClaimingType.Cube) return mode === 'light' ? CubeIcon : CubeDarkIcon;
+      else if (type === ClaimingType.Tesseract) return mode === 'light' ? TessIcon : TessDarkIcon;
     }
-
-    const newContracts = [];
-    for (let i = 0; i < numberContracts; i++) {
-      newContracts.push({
-        name: generateContractName(),
-        error: null,
-      });
-    }
-    setContracts([...contracts, ...newContracts]);
+    return '';
   };
-
-  const handleDeleteContract = () => {
-    if (isOverMaxMintNodes) {
-      dispatch(setIsOverMaxMintNodes(false));
-    }
-
-    // prevent from deleting contract if contracts length = 1
-    if (contracts.length >= 2) {
-      const newContract = [...contracts];
-      newContract.splice(-1);
-      setContracts(newContract);
-    }
+  const convertCType = (cType: string) => {
+    if (cType === '') return ClaimingType.AllContracts;
+    else if (cType === '0') return ClaimingType.Square;
+    else if (cType === '1') return ClaimingType.Cube;
+    else if (cType === '2') return ClaimingType.Tesseract;
+    else return null;
   };
-
-  const handleAddManyContracts = (value: number) => {
-    const numberOfContracts = value <= maxMint ? value : maxMint;
-
-    let newContracts = [...contracts];
-    if (contracts.length < numberOfContracts) {
-      for (let i = contracts.length; i < numberOfContracts; i++) {
-        newContracts.push({
-          name: generateContractName(),
-          error: null,
-        });
-      }
-    } else {
-      for (let i = contracts.length; i > numberOfContracts; i--) {
-        newContracts = deleteArrayElementByIndex(newContracts, newContracts.length - 1);
-      }
-    }
-    setContracts([...newContracts]);
-  };
+  const icon = contracts.length > 0 ? getIconByMode(convertCType(contracts[0].type), theme.palette.mode) : '';
+  const name = contracts.length > 0 ? `${convertCType(contracts[0].type)} Contract` : '';
 
   const handleBackdropClick = () => {
     customToast({ message: errorMessage.FINISH_MINT_CONTRACT.message, type: 'error', toastId: 3 });
@@ -515,24 +316,32 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       onBackdropClick={handleBackdropClick}
     >
       <Header>
-        <ViewIcon>
-          <img
-            alt=""
-            src={
-              theme.palette.mode === 'light'
-                ? icon
-                : name === 'Square Contract'
-                ? SquareDarkIcon
-                : name === 'Cube Contract'
-                ? CubeDarkIcon
-                : name === 'Tesseract Contract'
-                ? TessDarkIcon
-                : ''
-            }
-          />
-        </ViewIcon>
+        {type === 'pay_one' && (
+          <ViewIcon>
+            <img
+              alt=""
+              src={
+                theme.palette.mode === 'light'
+                  ? icon
+                  : name === 'Square Contract'
+                  ? SquareDarkIcon
+                  : name === 'Cube Contract'
+                  ? CubeDarkIcon
+                  : name === 'Tesseract Contract'
+                  ? TessDarkIcon
+                  : ''
+              }
+            />
+          </ViewIcon>
+        )}
 
-        <HeaderText>{name}</HeaderText>
+        <HeaderText
+          sx={{
+            maxWidth: type === 'pay_one' ? '105px' : '170px',
+          }}
+        >
+          {type === 'pay_one' ? name : 'Monthly Subscription Fee'}
+        </HeaderText>
 
         <CloseIcon onClick={onClose}>
           <img alt="" src={theme.palette.mode === 'light' ? CloseImg : CloseDarkImg} />
@@ -540,62 +349,24 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       </Header>
 
       <Content>
-        <TextSub>Subscription fee</TextSub>
-
-        <BoxActions>
-          <OutlinedInputCustom
-            type="text"
-            value={valueInput + ' month'}
-            inputProps={{ 'aria-label': 'weight' }}
-            startAdornment={
-              <InputAdornment position="start" onClick={() => handleDeleteContract()}>
-                <IconButton>
-                  <RemoveIcon />
-                </IconButton>
-              </InputAdornment>
-            }
-            endAdornment={
-              <InputAdornment
-                position="end"
-                onClick={() => {
-                  handleAddContract(1);
-                  dispatch(setIsOverMaxMintNodes(false));
-                }}
-              >
-                <IconButton>
-                  <AddIcon />
-                </IconButton>
-              </InputAdornment>
-            }
-            aria-describedby="outlined-weight-helper-text"
-          />
-
-          <ButtonMax
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              handleAddManyContracts(maxMint);
-              dispatch(setIsOverMaxMintNodes(false));
-            }}
-          >
-            4 USDC
-          </ButtonMax>
-        </BoxActions>
-
-        <BoxError color={'#F62D33'} style={{ display: valueInput !== '' ? 'block' : 'none' }}>
-          {isInsuffBalances
-            ? infoMessage.INSUFFICIENT_TOKEN.message
-            : isLimitNodes
-            ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
-            : isOverMaxMintNodes
-            ? nodes + contracts.length >= LIMIT_MAX_MINT
-              ? infoMessage.LIMIT_NODES.message.replace('#number', String(LIMIT_MAX_MINT))
-              : `${infoMessage.OVER_NODES.message
-                  .replace('#number', String(maxMint))
-                  .replace('#transaction', maxMint < 10 ? 'this' : 'one')
-                  .replace('#plusal', maxMint > 1 ? 'contracts' : 'contract')}`
-            : ''}
-        </BoxError>
+        {type === 'pay_one' ? (
+          <InputFeeItem onChange={() => {}} icon={icon} widthIcon={false} name={'Square Contract'} />
+        ) : (
+          <>
+            <InputFeeItem
+              onChange={() => {}}
+              icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
+              widthIcon={true}
+              name={'Cube Contract'}
+            />
+            <InputFeeItem
+              onChange={() => {}}
+              icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
+              widthIcon={true}
+              name={'Tesseract Contract'}
+            />
+          </>
+        )}
 
         <PaymentDueDate>
           Payment due date: <span>20 May 2022</span>
@@ -617,20 +388,10 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
         </Box>
 
         <ButtonMint
-          disabled={
-            contracts.filter(
-              (item) => item.error && item.error !== errorMessage.CONTRACT_NAME_MORE_THAN_THIRTY_TWO.message,
-            ).length > 0 ||
-            contracts.length === 0 ||
-            valueInput === '' ||
-            isCreatingContracts ||
-            isInsuffBalances ||
-            isLimitNodes
-          }
           variant="contained"
           color="primary"
           onClick={() => {
-            onSubmit(contracts, name);
+            // onSubmit(contracts, name);
           }}
         >
           Pay
