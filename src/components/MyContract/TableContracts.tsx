@@ -508,7 +508,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               <TableCellHeader align="center" sx={{ width: '50%' }}>
                 Current 0xB/day
               </TableCellHeader>
-              <TableCellHeader align="center">Rewards</TableCellHeader>
+              <TableCellHeader align="center" sx={{ width: '50%' }}>
+                Rewards
+              </TableCellHeader>
               <TableCellHeader align="center" sx={{ width: '50%' }}>
                 Claimed 0xB
               </TableCellHeader>

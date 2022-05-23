@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 
-import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
+import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps, Grid } from '@mui/material';
 import { useAppSelector } from 'stores/hooks';
 
 // import bgBorder from 'assets/images/bg-box-gradient.png';
@@ -57,11 +57,14 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#fff' : `rgba(255, 255, 255, 0.03)`,
   // theme.palette.mode === 'light' ? '#fff' : `url(${bgBorder}) no-repeat center center`,
   backgroundSize: '107%',
-
+  minHeight: '120px',
   [theme.breakpoints.down('lg')]: {
     padding: '20px',
     fontSize: '12px',
     lineHeight: '18px',
+  },
+  [theme.breakpoints.down('xl')]: {
+    minHeight: '140px',
   },
   [theme.breakpoints.down('lg')]: {
     padding: '40px 42px 35px',
@@ -80,11 +83,22 @@ const ClaimRewards: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Title>Claim Rewards Tax</Title>
-      <Pool>
-        {`Every time a user claims rewards, a ${cashOutFee}% tax will be applied and redirected 
-        to the 0xBlock Dev/Mktg Wallet as 100% USDC`}
-      </Pool>
+      <Grid justifyContent={'center'} container spacing={8}>
+        <Grid item lg={6} md={8}>
+          <Title>Claim Rewards Tax</Title>
+          <Pool>
+            {`Every time user claims rewards, ${cashOutFee}% tax will be deducted and 
+            redirected to the 0xBlock Liquidity Pool as 50% 0xB and 50% AVAX`}
+          </Pool>
+        </Grid>
+        <Grid item lg={6} md={8}>
+          <Title>Monthly Subscription Fee</Title>
+          <Pool>
+            Monthly subscription fee applies for CUBE CONTRACT (3 USDC) and TESSERACT CONTRACT (4 USDC). If monthly
+            payment is more than 30 days overdue, the minted CUBE and TESSERACT contracts will be removed.
+          </Pool>
+        </Grid>
+      </Grid>
     </Wrapper>
   );
 };

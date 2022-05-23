@@ -4,6 +4,8 @@ import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { ContractPrice } from 'interfaces/ContractPrice';
 import { formatPrice, truncateNumber } from './formatPrice';
+import sortBy from 'lodash/sortBy';
+
 import BigNumber from 'bignumber.js';
 
 export const parseDataMyContract = (data: string) => {
@@ -50,23 +52,31 @@ export const parseDataCurrentApr = (types: string, currentAprPerContract: string
 };
 
 export const zipDataMyContract = (param: ContractResponse) => {
-  return zipWith(
-    param.mintDates,
-    param.names,
-    param.types,
-    param.initZeroXBlockPerDays,
-    param.currentZeroXBlockPerDays,
-    param.rewards,
-    param.claimedRewards,
-    (a, b, c, d, e, f, g) =>
-      ({
-        mintDate: a,
-        name: b,
-        type: c,
-        initial: d,
-        current: e,
-        rewards: f,
-        claimedRewards: g,
-      } as MineContract),
+  return sortBy(
+    zipWith(
+      param.mintDates,
+      param.names,
+      param.types,
+      param.initZeroXBlockPerDays,
+      param.currentZeroXBlockPerDays,
+      param.rewards,
+      param.claimedRewards,
+      (a, b, c, d, e, f, g) =>
+        ({
+          mintDate: a,
+          name: b,
+          type: c,
+          initial: d,
+          current: e,
+          rewards: f,
+          claimedRewards: g,
+        } as MineContract),
+    ).map((item, index) => {
+      return {
+        ...item,
+        index,
+      };
+    }),
+    (item) => Number(item.mintDate),
   );
 };
