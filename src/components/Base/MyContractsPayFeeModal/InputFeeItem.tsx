@@ -210,10 +210,14 @@ const Wrapper = styled(Box)<
   BoxProps & {
     showBorder: boolean;
   }
->(({ showBorder }) => ({
+>(({ showBorder, theme }) => ({
   marginBottom: showBorder ? '30px' : 'unset',
   padding: showBorder ? '0  20px 20px 20px' : 'unset',
-  border: showBorder ? '1px solid rgba(41, 50, 71, 0.09)' : 'unset',
+  border: showBorder
+    ? theme.palette.mode === 'light'
+      ? '1px solid rgba(41, 50, 71, 0.09)'
+      : '1px solid rgba(255, 255, 255, .09)'
+    : 'unset',
   borderRadius: showBorder ? '11px' : 'unset',
 }));
 
@@ -247,6 +251,7 @@ const InputFeeItem: React.FC<Props> = ({ widthIcon, icon, name }) => {
         <HeaderText
           sx={{
             maxWidth: '105px',
+            color: '#fff',
           }}
         >
           {name}

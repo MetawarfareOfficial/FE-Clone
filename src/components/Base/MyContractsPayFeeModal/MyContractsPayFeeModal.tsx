@@ -147,7 +147,7 @@ const BoxFeeDetail = styled(Box)<
   BoxProps & {
     type: PopupType;
   }
->(({ type }) => ({
+>(({ type, theme }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -161,21 +161,26 @@ const BoxFeeDetail = styled(Box)<
   fontWeight: '400',
   fontSize: '14px',
   lineHeight: '21px',
-  color: '#293247',
+  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
 }));
 
 const SubscriptionFeeBox = styled(Box)<
   BoxProps & {
     type: 'pay_one' | 'pay_all';
   }
->(({ type }) => ({
-  border: type === 'pay_one' ? '1px solid rgba(41, 50, 71, 0.09)' : 'unset',
+>(({ type, theme }) => ({
+  border:
+    type === 'pay_one'
+      ? theme.palette.mode === 'light'
+        ? '1px solid rgba(41, 50, 71, 0.09)'
+        : '1px solid rgba(255, 255, 255, 0.09)'
+      : 'unset',
   borderRadius: '11px',
   padding: '20px',
 }));
 
-const Divider = styled(Box)<BoxProps>(() => ({
-  border: '1px solid rgba(41, 50, 71, 0.09)',
+const Divider = styled(Box)<BoxProps>(({ theme }) => ({
+  border: theme.palette.mode === 'light' ? '1px solid rgba(41, 50, 71, 0.09)' : '1px solid rgba(255, 255, 255, 0.09)',
   margin: '46px 0',
 }));
 
@@ -201,7 +206,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   },
 
   '.MuiTypography-root': {
-    color: '#293247',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
     fontFamily: 'Poppins',
     fontSize: '14px',
     lineHeight: '21px',
@@ -292,14 +297,14 @@ const ViewHelp = styled(Box)<BoxProps>(() => ({
   display: 'flex',
 }));
 
-const PendingFeeBox = styled(Box)<BoxProps>(() => ({
+const PendingFeeBox = styled(Box)<BoxProps>(({ theme }) => ({
   boxSizing: 'border-box',
   display: 'flex',
   width: '100%',
   justifyContent: 'space-between',
   height: '80px',
   // maxWidth: '374px',
-  border: '1px solid rgba(15, 13, 13, 0.28)',
+  border: theme.palette.mode === 'light' ? '1px solid rgba(15, 13, 13, 0.28)' : '1px solid rgba(255, 255, 255, 0.09)',
   borderRadius: '17px',
   padding: '10px 20px',
 }));
@@ -375,20 +380,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       <Header>
         {type === 'pay_one' && (
           <ViewIcon>
-            <img
-              alt=""
-              src={
-                theme.palette.mode === 'light'
-                  ? icon
-                  : name === 'Square Contract'
-                  ? SquareDarkIcon
-                  : name === 'Cube Contract'
-                  ? CubeDarkIcon
-                  : name === 'Tesseract Contract'
-                  ? TessDarkIcon
-                  : ''
-              }
-            />
+            <img alt="" src={icon} />
           </ViewIcon>
         )}
 
