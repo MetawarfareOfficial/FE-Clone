@@ -28,11 +28,12 @@ import { errorMessage } from 'messages/errorMessages';
 import React from 'react';
 import InputFeeItem from './InputFeeItem';
 
+type PopupType = 'pay_all' | 'pay_one';
 interface Props {
   open: boolean;
   // icon: string;
   // name: string;
-  type: 'pay_all' | 'pay_one';
+  type: PopupType;
   contracts: Array<ContractItem>;
   onClose: () => void;
   onSubmit: (values: any, name: string) => void;
@@ -142,15 +143,19 @@ const PaymentDueDate = styled(Typography)<TypographyProps>(() => ({
   },
 }));
 
-const BoxFeeDetail = styled(Box)<BoxProps>(() => ({
+const BoxFeeDetail = styled(Box)<
+  BoxProps & {
+    type: PopupType;
+  }
+>(({ type }) => ({
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '14px 20px 14px 23px',
+  padding: type !== 'pay_one' ? '14px 20px 14px 23px' : '14px 11px 14px 11px',
   boxSizing: 'border-box',
   border: '1px solid #3864FF',
   borderRadius: '14px',
-  margin: '0 auto 40px',
+  margin: type !== 'pay_one' ? '0 auto 40px' : 'unset',
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontWeight: '400',
@@ -159,10 +164,24 @@ const BoxFeeDetail = styled(Box)<BoxProps>(() => ({
   color: '#293247',
 }));
 
-const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
-  padding: '20px 13px 20px 21px',
-  // marginBottom: '21px',
+const SubscriptionFeeBox = styled(Box)<
+  BoxProps & {
+    type: 'pay_one' | 'pay_all';
+  }
+>(({ type }) => ({
+  border: type === 'pay_one' ? '1px solid rgba(41, 50, 71, 0.09)' : 'unset',
+  borderRadius: '11px',
+  padding: '20px',
+}));
 
+const Divider = styled(Box)<BoxProps>(() => ({
+  border: '1px solid rgba(41, 50, 71, 0.09)',
+  margin: '46px 0',
+}));
+
+const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
+  padding: '20px',
+  // marginBottom: '21px',
   'p.MuiDialogContentText-root': {
     color: theme.palette.mode === 'light' ? '#828282' : 'rgba(255, 255, 255, 0.29)',
     fontFamily: 'Poppins',
@@ -273,6 +292,44 @@ const ViewHelp = styled(Box)<BoxProps>(() => ({
   display: 'flex',
 }));
 
+const PendingFeeBox = styled(Box)<BoxProps>(() => ({
+  boxSizing: 'border-box',
+  display: 'flex',
+  width: '100%',
+  justifyContent: 'space-between',
+  height: '80px',
+  // maxWidth: '374px',
+  border: '1px solid rgba(15, 13, 13, 0.28)',
+  borderRadius: '17px',
+  padding: '10px 20px',
+}));
+
+const PayPendingFeeButton = styled('button')<ButtonProps>(() => ({
+  border: ' 1px solid rgba(255, 0, 0, 0.26)',
+  borderRadius: '11px',
+  background: '#FF0000',
+  width: '181px',
+  height: '58px',
+  fontSize: '18px',
+  color: '#fff',
+  fontWeight: '500',
+  '&:hover': {
+    opacity: 0.7,
+    cursor: 'pointer',
+  },
+}));
+const Text = styled(Typography)<TypographyProps>(() => ({
+  margin: '3px',
+  textAlign: 'center',
+  fontWeight: '500',
+  fontSize: '17px',
+}));
+const PendingFeeAmountBox = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+}));
+
 const MyContractsPayFeeModal: React.FC<Props> = ({
   open,
   // icon,
@@ -349,44 +406,63 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       </Header>
 
       <Content>
-        {type === 'pay_one' ? (
-          <InputFeeItem onChange={() => {}} icon={icon} widthIcon={false} name={'Square Contract'} />
-        ) : (
+        {type === 'pay_one' && (
           <>
-            <InputFeeItem
-              onChange={() => {}}
-              icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
-              widthIcon={true}
-              name={'Cube Contract'}
-            />
-            <InputFeeItem
-              onChange={() => {}}
-              icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
-              widthIcon={true}
-              name={'Tesseract Contract'}
-            />
+            <PendingFeeBox>
+              <PendingFeeAmountBox>
+                <Text>Pending fee</Text>
+                <Text
+                  style={{
+                    color: '#FF0000',
+                  }}
+                >
+                  4 USD
+                </Text>
+              </PendingFeeAmountBox>
+              <PayPendingFeeButton>Pay</PayPendingFeeButton>
+            </PendingFeeBox>
+            <Divider />
           </>
         )}
+        <SubscriptionFeeBox type={type}>
+          {type === 'pay_one' ? (
+            <InputFeeItem onChange={() => {}} icon={icon} widthIcon={false} name={'Square Contract'} />
+          ) : (
+            <>
+              <InputFeeItem
+                onChange={() => {}}
+                icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
+                widthIcon={true}
+                name={'Cube Contract'}
+              />
+              <InputFeeItem
+                onChange={() => {}}
+                icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
+                widthIcon={true}
+                name={'Tesseract Contract'}
+              />
+            </>
+          )}
 
-        <PaymentDueDate>
-          Payment due date: <span>20 May 2022</span>
-        </PaymentDueDate>
+          <PaymentDueDate>
+            Payment due date: <span>20 May 2022</span>
+          </PaymentDueDate>
 
-        <Box sx={{ textAlign: 'center' }}>
-          <BoxFeeDetail>
-            {theme.palette.mode === 'light' ? (
-              <ViewHelp>
-                <WarnIcon width={22} />
-              </ViewHelp>
-            ) : (
-              <ViewHelp>
-                <WarnDarkIcon width={22} />
-              </ViewHelp>
-            )}{' '}
-            Fee is decresed 0.1% for each new contract
-          </BoxFeeDetail>
-        </Box>
-
+          <Box sx={{ textAlign: 'center' }}>
+            <BoxFeeDetail type={type}>
+              {theme.palette.mode === 'light' ? (
+                <ViewHelp>
+                  <WarnIcon width={22} />
+                </ViewHelp>
+              ) : (
+                <ViewHelp>
+                  <WarnDarkIcon width={22} />
+                </ViewHelp>
+              )}{' '}
+              Fee is decresed 0.1% for each new contract
+            </BoxFeeDetail>
+          </Box>
+        </SubscriptionFeeBox>
         <ButtonMint
           variant="contained"
           color="primary"
@@ -394,7 +470,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
             // onSubmit(contracts, name);
           }}
         >
-          Pay
+          Pay Both
         </ButtonMint>
       </Content>
     </Wrapper>

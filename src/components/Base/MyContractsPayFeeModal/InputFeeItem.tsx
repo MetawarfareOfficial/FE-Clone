@@ -23,7 +23,7 @@ import React, { useState } from 'react';
 interface Props {
   widthIcon: boolean;
   icon: string;
-  name: string;
+  name?: string;
   onChange: (value: number) => void;
 }
 
@@ -80,15 +80,15 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
   },
 }));
 
-const TextSub = styled(Typography)<TypographyProps>(() => ({
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: '500',
-  fontSize: '17px',
-  lineHeight: '26px',
-  letterSpacing: '0.035em',
-  color: '#293247',
-}));
+// const TextSub = styled(Typography)<TypographyProps>(() => ({
+//   fontFamily: 'Poppins',
+//   fontStyle: 'normal',
+//   fontWeight: '500',
+//   fontSize: '17px',
+//   lineHeight: '26px',
+//   letterSpacing: '0.035em',
+//   color: '#293247',
+// }));
 
 const ButtonMax = styled(Button)<ButtonProps>(() => ({
   width: '79px',
@@ -227,35 +227,31 @@ const InputFeeItem: React.FC<Props> = ({ widthIcon, icon, name }) => {
 
   return (
     <Wrapper showBorder={widthIcon}>
-      {widthIcon ? (
-        <Header>
-          <ViewIcon>
-            <img
-              alt=""
-              src={
-                theme.palette.mode === 'light'
-                  ? icon
-                  : name === 'Square Contract'
-                  ? SquareDarkIcon
-                  : name === 'Cube Contract'
-                  ? CubeDarkIcon
-                  : name === 'Tesseract Contract'
-                  ? TessDarkIcon
-                  : ''
-              }
-            />
-          </ViewIcon>
-          <HeaderText
-            sx={{
-              maxWidth: '105px',
-            }}
-          >
-            {name}
-          </HeaderText>
-        </Header>
-      ) : (
-        <TextSub>Subscription fee</TextSub>
-      )}
+      <Header>
+        <ViewIcon>
+          <img
+            alt=""
+            src={
+              theme.palette.mode === 'light'
+                ? icon
+                : name === 'Square Contract'
+                ? SquareDarkIcon
+                : name === 'Cube Contract'
+                ? CubeDarkIcon
+                : name === 'Tesseract Contract'
+                ? TessDarkIcon
+                : ''
+            }
+          />
+        </ViewIcon>
+        <HeaderText
+          sx={{
+            maxWidth: '105px',
+          }}
+        >
+          {name}
+        </HeaderText>
+      </Header>
 
       <BoxActions>
         <OutlinedInputCustom
