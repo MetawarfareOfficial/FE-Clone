@@ -556,6 +556,14 @@ export const useInteractiveContract = () => {
     return await stakingContractWithoutSigner.getTaxLevels();
   };
 
+  const getMyContractDataByUserAddress = async (account: string) => {
+    return await rewardManagerContractWithoutSigner.getFullDataCont(account);
+  };
+
+  const payMonthlyFee = async (indexes: number[], times: string[]) => {
+    return await rewardManagerContractWithSigner.extendContract(times, indexes);
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -606,6 +614,8 @@ export const useInteractiveContract = () => {
     getStakingRecordsLimit,
     getEarlyUnstakeFeeTime,
     getClaimedRewardOfUser,
+    getMyContractDataByUserAddress,
+    payMonthlyFee,
     contractWithSigner,
     provider,
   };

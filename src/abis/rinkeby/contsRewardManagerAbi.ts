@@ -2,221 +2,84 @@ export const contsRewardManagerAbi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'implementation',
-        type: 'address',
-      },
-    ],
-    name: 'Upgraded',
-    type: 'event',
-  },
-  {
-    stateMutability: 'payable',
-    type: 'fallback',
-  },
-  {
-    inputs: [],
-    name: 'admin',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'implementation',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'newImplementation',
-        type: 'address',
-      },
-    ],
-    name: 'upgradeTo',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'newImplementation',
-        type: 'address',
-      },
-      {
-        internalType: 'bytes',
-        name: 'data',
-        type: 'bytes',
-      },
-    ],
-    name: 'upgradeToAndCall',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    stateMutability: 'payable',
-    type: 'receive',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'delta',
-        type: 'uint256',
-      },
+      { indexed: false, internalType: 'enum ContType', name: '_cType', type: 'uint8' },
+      { indexed: false, internalType: 'uint256', name: 'delta', type: 'uint256' },
     ],
     name: 'BreakevenChanged',
     type: 'event',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: '_brokeevenContract',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
+    inputs: [],
+    name: 'ONE_MONTH',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'THREE_MONTH',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'TWO_MONTH',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
     ],
+    name: '_brokeevenContract',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_cashoutAllContsReward',
     outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
     ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_contIndex',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
     ],
     name: '_cashoutContReward',
     outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-      {
-        internalType: 'enum ContType',
-        name: '',
-        type: 'uint8',
-      },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+      { internalType: 'enum ContType', name: '', type: 'uint8' },
     ],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'newInterval',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'newInterval', type: 'uint256' }],
     name: '_changeAutoReduceAPRInterval',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'newRate',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'newRate', type: 'uint256' }],
     name: '_changeAutoReduceAPRRate',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'newTime',
-        type: 'uint256',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: 'newTime', type: 'uint256' }],
     name: '_changeCashoutTimeout',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -224,16 +87,8 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-      {
-        internalType: 'uint256',
-        name: 'newPrice',
-        type: 'uint256',
-      },
+      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
+      { internalType: 'uint256', name: 'newPrice', type: 'uint256' },
     ],
     name: '_changeContPrice',
     outputs: [],
@@ -242,16 +97,8 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-      {
-        internalType: 'int256',
-        name: 'reducedPercentage',
-        type: 'int256',
-      },
+      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
+      { internalType: 'int256', name: 'reducedPercentage', type: 'int256' },
     ],
     name: '_changeRewardAPRPerCont',
     outputs: [],
@@ -259,279 +106,109 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getClaimedAmountOf',
     outputs: [
-      {
-        internalType: 'uint256',
-        name: 'total',
-        type: 'uint256',
-      },
-      {
-        internalType: 'string',
-        name: 'list',
-        type: 'string',
-      },
+      { internalType: 'uint256', name: 'total', type: 'uint256' },
+      { internalType: 'string', name: 'list', type: 'string' },
     ],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_contIndex',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
     ],
     name: '_getClaimedAmountOfIndex',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: 'rewardCont',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: 'rewardCont', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContNumberOf',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsCreationTime',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsCurrentAPR',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsInitialAPR',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsLastUpdateTime',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsNames',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsRewardAvailable',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getContsTypes',
-    outputs: [
-      {
-        internalType: 'string',
-        name: '',
-        type: 'string',
-      },
-    ],
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_getRewardAmountOf',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_contIndex',
-        type: 'uint256',
-      },
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'uint256', name: '_contIndex', type: 'uint256' },
     ],
     name: '_getRewardAmountOfIndex',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: '_isContOwner',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-      {
-        internalType: 'uint256',
-        name: '_initialPrice',
-        type: 'uint256',
-      },
+      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
+      { internalType: 'uint256', name: '_initialPrice', type: 'uint256' },
     ],
     name: '_resetAllAPRChange',
     outputs: [],
@@ -539,106 +216,86 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-    ],
+    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
     name: '_undoRewardAPRChange',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
+    inputs: [
+      { internalType: 'address', name: '', type: 'address' },
+      { internalType: 'uint256', name: '', type: 'uint256' },
+    ],
+    name: 'additionalDataContract',
+    outputs: [
+      { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
+      { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'admin0XB',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'autoReduceAPRInterval',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'autoReduceAPRRate',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'cashoutTimeout',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '',
-        type: 'uint8',
-      },
-    ],
+    inputs: [{ internalType: 'uint256', name: '_decreaseFeePercent', type: 'uint256' }],
+    name: 'changeDecreaseFeePercent',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '_feeToken', type: 'address' }],
+    name: 'changeFeeToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bool', name: '_status', type: 'bool' }],
+    name: 'changeMonthFeeState',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'enum ContType', name: '', type: 'uint8' }],
     name: 'contPrice',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        internalType: 'string[]',
-        name: 'contNames',
-        type: 'string[]',
-      },
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'string[]', name: 'contNames', type: 'string[]' },
+      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
     ],
     name: 'createConts',
     outputs: [],
@@ -646,19 +303,65 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-    ],
+    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
     name: 'currentRewardAPRPerNewCont',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'decreaseFeePercent',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'defaultExpireIn',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256[]', name: 'time', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: 'indexes', type: 'uint256[]' },
+    ],
+    name: 'extendContract',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'enum ContType', name: '', type: 'uint8' }],
+    name: 'feeInMonth',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'feeToken',
+    outputs: [{ internalType: 'contract IERC20', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'user', type: 'address' },
+      { internalType: 'uint256', name: 'index', type: 'uint256' },
+    ],
+    name: 'getExpireIn',
     outputs: [
       {
-        internalType: 'uint256',
+        components: [
+          { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
+          { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+        ],
+        internalType: 'struct CONTRewardManagement.AdditionalDataEntity',
         name: '',
-        type: 'uint256',
+        type: 'tuple',
       },
     ],
     stateMutability: 'view',
@@ -666,45 +369,61 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'uint256[]', name: 'time', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: 'indexes', type: 'uint256[]' },
+    ],
+    name: 'getExtendContractFee',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
+    name: 'getFullDataCont',
+    outputs: [
       {
-        internalType: 'enum ContType',
+        components: [
+          { internalType: 'string', name: 'name', type: 'string' },
+          { internalType: 'uint256', name: 'creationTime', type: 'uint256' },
+          { internalType: 'uint256', name: 'lastUpdateTime', type: 'uint256' },
+          { internalType: 'uint256', name: 'initialAPR', type: 'uint256' },
+          { internalType: 'uint256', name: 'buyPrice', type: 'uint256' },
+          { internalType: 'enum ContType', name: 'cType', type: 'uint8' },
+          { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
+          { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+        ],
+        internalType: 'struct CONTRewardManagement.FullDataEntity[]',
         name: '',
-        type: 'uint8',
+        type: 'tuple[]',
       },
     ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
+    ],
+    name: 'getNumberOfConts',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'enum ContType', name: '', type: 'uint8' }],
     name: 'initRewardAPRPerCont',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [
-      {
-        internalType: 'uint256[]',
-        name: '_contPrices',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: '_rewardAPRs',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'uint256',
-        name: '_cashoutTimeout',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_autoReduceAPRRate',
-        type: 'uint256',
-      },
+      { internalType: 'uint256[]', name: '_contPrices', type: 'uint256[]' },
+      { internalType: 'uint256[]', name: '_rewardAPRs', type: 'uint256[]' },
+      { internalType: 'uint256', name: '_cashoutTimeout', type: 'uint256' },
+      { internalType: 'uint256', name: '_autoReduceAPRRate', type: 'uint256' },
     ],
     name: 'initialize',
     outputs: [],
@@ -713,26 +432,61 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: 'newAdmin',
-        type: 'address',
-      },
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'uint256', name: 'index', type: 'uint256' },
     ],
+    name: 'isExpiredCont',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'isMonthFeeActive',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'maxIndexMonthFeeLogs',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'monthFeeLogs',
+    outputs: [
+      { internalType: 'uint256', name: 'currentTime', type: 'uint256' },
+      { internalType: 'bool', name: 'state', type: 'bool' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newAdmin', type: 'address' }],
     name: 'setAdmin',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'token_',
-        type: 'address',
-      },
-    ],
+    inputs: [{ internalType: 'address', name: 'token_', type: 'address' }],
     name: 'setToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: '_feeToken', type: 'address' },
+      { internalType: 'uint256', name: '_decreaseFeePercent', type: 'uint256' },
+      { internalType: 'uint256', name: '_tesseractFee', type: 'uint256' },
+      { internalType: 'uint256', name: '_cubeFee', type: 'uint256' },
+      { internalType: 'uint256', name: '_defaultExpireIn', type: 'uint256' },
+    ],
+    name: 'setupDataForMonthFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -740,67 +494,29 @@ export const contsRewardManagerAbi = [
   {
     inputs: [],
     name: 'token',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
     name: 'totalContsCreated',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'enum ContType',
-        name: '_cType',
-        type: 'uint8',
-      },
-    ],
+    inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
     name: 'totalContsPerContType',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'initialLogic',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'initialAdmin',
-        type: 'address',
-      },
-      {
-        internalType: 'bytes',
-        name: '_data',
-        type: 'bytes',
-      },
-    ],
-    stateMutability: 'payable',
-    type: 'constructor',
+    inputs: [{ internalType: 'address', name: '_user', type: 'address' }],
+    name: 'withdrawFeeToken',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
 ];

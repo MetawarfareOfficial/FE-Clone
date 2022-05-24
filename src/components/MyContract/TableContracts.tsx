@@ -41,6 +41,10 @@ import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
+import { MineContract } from 'interfaces/MyContract';
+import { useWeb3React } from '@web3-react/core';
+import { checkPendingContract } from 'helpers/myContract';
+import { calculateDueDate } from 'helpers/myContract/calculateDueDate';
 export interface ContractItem {
   claimedRewards: string;
   current: string;
@@ -53,7 +57,7 @@ export interface ContractItem {
 
 interface Props {
   title?: string;
-  data: ContractItem[];
+  data: MineContract[];
 }
 
 const EmptyContracts = styled(Box)<BoxProps>(({ theme }) => ({
@@ -315,22 +319,28 @@ export enum ClaimingType {
 
 const TableContracts: React.FC<Props> = ({ data }) => {
   const dispatch = useAppDispatch();
+  const { account } = useWeb3React();
   const theme = useTheme();
-  const { claimAllNodes, getClaimPermit, claimNodeByNode } = useInteractiveContract();
+  const { claimAllNodes, getClaimPermit, claimNodeByNode, payMonthlyFee, approveToken } = useInteractiveContract();
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
+  const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
+  const monthlyFeeFeatureReleaseTime = useAppSelector((state) => state.contract.monthlyFeeFeatureReleaseTime);
 
   const [openStatus, setOpenStatus] = useState(false);
+  const [openPayFeeModalStatus, setOpenPayFeeModalStatus] = useState(false);
+
   const [status, setStatus] = useState<any>(STATUS[2]);
   const [claimType, setClaimType] = useState<string>('');
-  const [claimingType, setClaimingType] = useState<ClaimingType | null>(null);
+  const [claimingType, setClaimingType] = useState<ClaimingType | null | 'approve' | 'payFee'>(null);
   const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
   const [claimingTransactionHash, setClaimingTransactionHash] = useState('');
   const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
   const [transactionError, setTransactionError] = useState('');
   const [openPayFee, setOpenPayFee] = useState(false);
   const [isPayAllFee, setIsPayAllFee] = useState(false);
-  const [currentSelectedContracts, setCurrentSelectedContracts] = useState<ContractItem[]>([]);
+  const [currentSelectedContracts, setCurrentSelectedContracts] = useState<MineContract[]>([]);
+  const [isClaiming, setIsClaiming] = useState(true);
 
   const handleToggleStatus = () => {
     if (openStatus && !isMetamaskConfirmPopupOpening) {
@@ -356,7 +366,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     setClaimType(type);
   };
 
-  const getIconByMode = (type: ClaimingType | null, mode: string) => {
+  const getIconByMode = (type: ClaimingType | null | 'approve' | 'payFee', mode: string) => {
     if (type) {
       // TODO: return in if still need else statement?
       if (type === ClaimingType.AllContracts) return mode === 'light' ? AllContract : AllDarkContract;
@@ -375,7 +385,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     else return null;
   };
 
-  const handlePayFee = (item: ContractItem) => {
+  const handlePayFee = (item: MineContract) => {
     setCurrentSelectedContracts([item]);
     setIsPayAllFee(false);
     setOpenPayFee(true);
@@ -389,9 +399,70 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     setOpenPayFee(!openPayFee);
   };
 
-  const handleSubmitPayFee = () => {};
+  const handleSubmitPayFee = async (contracts: MineContract[], times: string[]) => {
+    setIsClaiming(false);
+    let txHash = '';
+    try {
+      processModal(contracts.length <= 1 ? `${convertCType(contracts[0].type)} CONTRACTS` : 'Monthly Subscription Fee');
+      setClaimingType(contracts.length > 1 ? 'payFee' : convertCType(contracts[0].type));
+      dispatch(setIsClaimingReward());
+
+      setIsMetamaskConfirmPopupOpening(true);
+      const contractIndexes = contracts.map((item) => item.index);
+      const response: Record<string, any> = await payMonthlyFee(contractIndexes, times);
+      setIsMetamaskConfirmPopupOpening(false);
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
+      }
+    } catch (err: any) {
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        if (!openPayFeeModalStatus) setOpenPayFeeModalStatus(true);
+        setStatus(STATUS[1]);
+        dispatch(unSetIsClaimingReward());
+      }
+    }
+  };
+
+  const handleApproveUSDC = async () => {
+    let txHash = '';
+    setIsClaiming(false);
+    try {
+      processModal('Approving');
+      setClaimingType('approve');
+      dispatch(setIsClaimingReward());
+
+      setIsMetamaskConfirmPopupOpening(true);
+      const response = await approveToken(
+        String(process.env.REACT_APP_USDC_TOKEN_ADDRESS),
+        String(process.env.REACT_APP_CONTS_REWARD_MANAGER),
+      );
+      setIsMetamaskConfirmPopupOpening(false);
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
+      }
+    } catch (err: any) {
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        if (!openPayFeeModalStatus) setOpenPayFeeModalStatus(true);
+        setStatus(STATUS[1]);
+        dispatch(unSetIsClaimingReward());
+      }
+    }
+  };
 
   const handleClickClaimAll = async () => {
+    setIsClaiming(true);
     let txHash = '';
     try {
       processModal('ALL CONTRACTS');
@@ -425,7 +496,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       }
     }
   };
+
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
+    setIsClaiming(true);
     let txHash = '';
     try {
       processModal(`${formatCType(cType)} Contract`);
@@ -465,6 +538,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setIsMetamaskConfirmPopupOpening(false);
       if (!openStatus) setOpenStatus(true);
       setStatus(STATUS[1]);
+      if (openPayFee) handleTogglePayFee();
       dispatch(unSetIsClaimingReward());
       setTransactionError('');
     }
@@ -489,6 +563,11 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setTransactionHasCompleted('');
     }
   }, [claimingTransactionHash, transactionHashCompleted]);
+
+  useEffect(() => {
+    setOpenPayFee(false);
+  }, [account]);
+
   return (
     <Box>
       <TableWrapper>
@@ -549,101 +628,114 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             {data.length > 0 ? (
               data
                 .filter((r) => r.mintDate !== '')
-                .map((item, i) => (
-                  <TableRowCustom key={i}>
-                    <TableCellContent sx={{ paddingLeft: '30px' }}>{formatTimestampV2(item.mintDate)}</TableCellContent>
-                    <TableCellContent align="left">{item.name}</TableCellContent>
-                    <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
-                    <TableCellContent align="center">{item.initial}</TableCellContent>
-                    <TableCellContent align="center">{item.current}</TableCellContent>
-                    <TableCellContent align="center">
-                      {formatForNumberLessThanCondition({
-                        value: bigNumber2NumberV3(item.rewards, 1e18),
-                        minValueCondition: 0.001,
-                        callback: formatAndTruncateNumber,
-                      })}
-                    </TableCellContent>
-                    <TableCellContent align="center">
-                      {formatForNumberLessThanCondition({
-                        value: bigNumber2NumberV3(item.claimedRewards, 1e18),
-                        minValueCondition: 0.001,
-                        callback: formatAndTruncateNumber,
-                      })}
-                    </TableCellContent>
-                    <TableCellContent align="center" sx={{ color: i === 2 ? '#FF0E0E' : 'auto' }}>
-                      {i !== 4 ? 20 : '-'}
-                    </TableCellContent>
-                    <TableCellContent align="left">
-                      <BoxActions>
-                        {i === 2 && (
-                          <TooltipCustom
-                            title={
-                              <div>
-                                <p style={{ margin: 0 }}>This contract will be removed after due day</p>
-                              </div>
-                            }
-                            arrow
-                            placement="top-end"
-                          >
-                            {theme.palette.mode === 'light' ? (
-                              <ViewHelp>
-                                <WarnIcon width={16} />
-                              </ViewHelp>
-                            ) : (
-                              <ViewHelp
-                                sx={{
-                                  marginTop: '5px',
-                                }}
-                              >
-                                <WarnDarkIcon width={16} />
-                              </ViewHelp>
-                            )}
-                          </TooltipCustom>
-                        )}
+                .map((item, i) => {
+                  const isPendingFee = checkPendingContract(
+                    Number(item.expireIn),
+                    Number(monthlyFeeTimes.one),
+                    Number(monthlyFeeFeatureReleaseTime),
+                  );
+                  const dueDate = calculateDueDate(Number(item.expireIn));
+                  return (
+                    <TableRowCustom key={i}>
+                      <TableCellContent sx={{ paddingLeft: '30px' }}>
+                        {formatTimestampV2(item.mintDate)}
+                      </TableCellContent>
+                      <TableCellContent align="left">{item.name}</TableCellContent>
+                      <TableCellContent align="left">{formatCType(item.type)}</TableCellContent>
+                      <TableCellContent align="center">{item.initial}</TableCellContent>
+                      <TableCellContent align="center">{item.current}</TableCellContent>
+                      <TableCellContent align="center">
+                        {formatForNumberLessThanCondition({
+                          value: bigNumber2NumberV3(item.rewards, 1e18),
+                          minValueCondition: 0.001,
+                          callback: formatAndTruncateNumber,
+                        })}
+                      </TableCellContent>
+                      <TableCellContent align="center">
+                        {formatForNumberLessThanCondition({
+                          value: bigNumber2NumberV3(item.claimedRewards, 1e18),
+                          minValueCondition: 0.001,
+                          callback: formatAndTruncateNumber,
+                        })}
+                      </TableCellContent>
+                      <TableCellContent
+                        align="center"
+                        sx={{ color: item.type !== '0' && isPendingFee ? '#FF0E0E' : 'auto' }}
+                      >
+                        {item.type !== '0' ? dueDate : '-'}
+                      </TableCellContent>
+                      <TableCellContent align="left">
+                        <BoxActions>
+                          {item.type !== '0' && isPendingFee && (
+                            <TooltipCustom
+                              title={
+                                <div>
+                                  <p style={{ margin: 0 }}>This contract will be removed after due day</p>
+                                </div>
+                              }
+                              arrow
+                              placement="top-end"
+                            >
+                              {theme.palette.mode === 'light' ? (
+                                <ViewHelp>
+                                  <WarnIcon width={16} />
+                                </ViewHelp>
+                              ) : (
+                                <ViewHelp
+                                  sx={{
+                                    marginTop: '5px',
+                                  }}
+                                >
+                                  <WarnDarkIcon width={16} />
+                                </ViewHelp>
+                              )}
+                            </TooltipCustom>
+                          )}
 
-                        {i !== 4 ? (
-                          <>
+                          {item.type !== '0' ? (
+                            <>
+                              <ButtonClaim
+                                size="small"
+                                variant="outlined"
+                                color="primary"
+                                onClick={() => {
+                                  handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                                }}
+                                disabled={isClaimingReward}
+                              >
+                                Claim
+                              </ButtonClaim>
+                              <ButtonClaim
+                                size="small"
+                                variant="outlined"
+                                color="primary"
+                                disabled={isClaimingReward}
+                                sx={{ marginLeft: '19px' }}
+                                onClick={() => handlePayFee(item)}
+                              >
+                                Pay Fee
+                              </ButtonClaim>
+                            </>
+                          ) : (
                             <ButtonClaim
                               size="small"
+                              fullWidth
                               variant="outlined"
                               color="primary"
                               onClick={() => {
                                 handleClickClaimNodeByNode(data.length - i - 1, item.type);
                               }}
                               disabled={isClaimingReward}
+                              sx={{ width: 215 }}
                             >
                               Claim
                             </ButtonClaim>
-                            <ButtonClaim
-                              size="small"
-                              variant="outlined"
-                              color="primary"
-                              disabled={isClaimingReward}
-                              sx={{ marginLeft: '19px' }}
-                              onClick={() => handlePayFee(item)}
-                            >
-                              Pay Fee
-                            </ButtonClaim>
-                          </>
-                        ) : (
-                          <ButtonClaim
-                            size="small"
-                            fullWidth
-                            variant="outlined"
-                            color="primary"
-                            onClick={() => {
-                              handleClickClaimNodeByNode(data.length - i - 1, item.type);
-                            }}
-                            disabled={isClaimingReward}
-                            sx={{ width: 215 }}
-                          >
-                            Claim
-                          </ButtonClaim>
-                        )}
-                      </BoxActions>
-                    </TableCellContent>
-                  </TableRowCustom>
-                ))
+                          )}
+                        </BoxActions>
+                      </TableCellContent>
+                    </TableRowCustom>
+                  );
+                })
             ) : (
               <TableRowNoData>
                 <TableCellContent colSpan={9}>
@@ -662,26 +754,41 @@ const TableContracts: React.FC<Props> = ({ data }) => {
           open={openStatus}
           status={status}
           text={
-            status === 'success'
-              ? infoMessage.REWARD_CLAIM_OK.message
+            isClaiming
+              ? status === 'success'
+                ? infoMessage.REWARD_CLAIM_OK.message
+                : status === 'error'
+                ? infoMessage.REWARD_CLAIM_FAILED.message
+                : status === 'pending'
+                ? infoMessage.PROCESSING.message
+                : status === 'permission denied'
+                ? infoMessage.PERMISSION_DENIED.message
+                : 'Insufficient Tokens'
+              : status === 'success'
+              ? claimType === 'Approving'
+                ? 'Transaction Completed'
+                : 'Payment Successful'
               : status === 'error'
-              ? infoMessage.REWARD_CLAIM_FAILED.message
+              ? claimType === 'Approving'
+                ? 'Transaction Rejected'
+                : 'Payment Failed'
               : status === 'pending'
               ? infoMessage.PROCESSING.message
-              : status === 'permission denied'
-              ? infoMessage.PERMISSION_DENIED.message
-              : 'Insufficient Tokens'
+              : infoMessage.PERMISSION_DENIED.message
           }
           onClose={handleToggleStatus}
         />
 
-        <MyContractsPayFeeModal
-          type={isPayAllFee ? 'pay_all' : 'pay_one'}
-          contracts={currentSelectedContracts}
-          open={openPayFee}
-          onClose={handleTogglePayFee}
-          onSubmit={handleSubmitPayFee}
-        />
+        {openPayFee && (
+          <MyContractsPayFeeModal
+            type={isPayAllFee ? 'pay_all' : 'pay_one'}
+            contracts={currentSelectedContracts}
+            open={openPayFee}
+            onClose={handleTogglePayFee}
+            onSubmit={handleSubmitPayFee}
+            onApproveToken={handleApproveUSDC}
+          />
+        )}
       </TableWrapper>
     </Box>
   );

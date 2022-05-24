@@ -22,26 +22,35 @@ import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 import SquareDarkIcon from 'assets/images/square-dark.gif';
 import TessDarkIcon from 'assets/images/tess-dark.gif';
-import { ClaimingType, ContractItem } from 'components/MyContract/TableContracts';
+import { ClaimingType } from 'components/MyContract/TableContracts';
 import { customToast } from 'helpers';
+import {
+  calculateMonthlyFee,
+  calculatePendingFee,
+  checkPendingContract,
+  getNearestDateEntity,
+} from 'helpers/myContract';
+import { MineContract } from 'interfaces/MyContract';
 import { errorMessage } from 'messages/errorMessages';
-import React from 'react';
+import moment from 'moment';
+import React, { useState } from 'react';
+import { useAppSelector } from 'stores/hooks';
 import InputFeeItem from './InputFeeItem';
-
-type PopupType = 'pay_all' | 'pay_one';
+export type PopupType = 'pay_all' | 'pay_one';
 interface Props {
   open: boolean;
   // icon: string;
   // name: string;
   type: PopupType;
-  contracts: Array<ContractItem>;
+  contracts: Array<MineContract>;
   onClose: () => void;
-  onSubmit: (values: any, name: string) => void;
+  onSubmit: (values: any, times: string[]) => void;
+  onApproveToken: () => void;
 }
 
 const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   background: 'rgba(12, 12, 12, 0.12)',
-  zIndex: 1700,
+  zIndex: 1500,
 
   '.MuiDialog-container': {
     background: theme.palette.mode === 'light' ? 'rgba(12, 12, 12, 0.12)' : 'rgba(28, 28, 28, 0.36)',
@@ -335,16 +344,18 @@ const PendingFeeAmountBox = styled(Box)<BoxProps>(() => ({
   flexDirection: 'column',
 }));
 
-const MyContractsPayFeeModal: React.FC<Props> = ({
-  open,
-  // icon,
-  // name,
-  onClose,
-  type,
-  contracts,
-  // valueRequire,
-}) => {
+const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contracts, onSubmit, onApproveToken }) => {
   const theme = useTheme();
+
+  const usdcTokenInfo = useAppSelector((state) => state.contract.usdcToken);
+  // const isUsdcTokenLoaded = useAppSelector((state) => state.contract.isUsdcTokenLoaded);
+  const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
+  const monthlyFeeFeatureReleaseTime = useAppSelector((state) => state.contract.monthlyFeeFeatureReleaseTime);
+
+  const [cubeMonths, setCubeMonths] = useState(1);
+  const [tessMonths, setTessMonths] = useState(1);
+  const [contMonths, setContMonths] = useState(1);
+  const [isFirstTime, setIsFirstTime] = useState(true);
 
   const getIconByMode = (type: ClaimingType | null, mode: string) => {
     if (type) {
@@ -369,6 +380,65 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const handleBackdropClick = () => {
     customToast({ message: errorMessage.FINISH_MINT_CONTRACT.message, type: 'error', toastId: 3 });
   };
+
+  const getContTime = (contracts: MineContract[], months: number) => {
+    return contracts.map((item) => {
+      const isPendingFee = checkPendingContract(
+        Number(item.expireIn),
+        Number(monthlyFeeTimes.one),
+        Number(monthlyFeeFeatureReleaseTime),
+      );
+      let returnMonth = monthlyFeeTimes.one;
+      if (months === 1) {
+        returnMonth = monthlyFeeTimes.one;
+      } else if (months === 2) {
+        returnMonth = monthlyFeeTimes.two;
+      } else {
+        returnMonth = monthlyFeeTimes.three;
+      }
+      return isPendingFee ? String(Number(returnMonth) + Number(monthlyFeeTimes.one)) : returnMonth;
+    });
+  };
+
+  const cubeContracts = contracts.filter((item) => item.type === '1');
+  const tesseractContracts = contracts.filter((item) => item.type === '2');
+
+  const cubeMonthlyFee = 3;
+  const tessMonthlyFee = 4;
+
+  const oneContractPayFee = calculateMonthlyFee(
+    contracts,
+    contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
+    type,
+  );
+
+  const totalUsdcHaveToPay =
+    type === 'pay_all'
+      ? calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type) * cubeMonths +
+        calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type) * tessMonths
+      : oneContractPayFee * contMonths;
+
+  const cubeContractsPendingFee = calculatePendingFee(
+    cubeContracts,
+    cubeMonthlyFee,
+    Number(monthlyFeeTimes.one),
+    Number(monthlyFeeFeatureReleaseTime),
+  );
+
+  const tessContractsPendingFee = calculatePendingFee(
+    tesseractContracts,
+    tessMonthlyFee,
+    Number(monthlyFeeTimes.one),
+    Number(monthlyFeeFeatureReleaseTime),
+  );
+
+  const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
+  const isPendingFee = checkPendingContract(
+    Number(contracts[0].expireIn),
+    Number(monthlyFeeTimes.one),
+    Number(monthlyFeeFeatureReleaseTime),
+  );
+  const nearestExpiredTimeCont = getNearestDateEntity(contracts) || contracts[0];
 
   return (
     <Wrapper
@@ -398,7 +468,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       </Header>
 
       <Content>
-        {type === 'pay_one' && (
+        {type === 'pay_one' && isPendingFee && (
           <>
             <PendingFeeBox>
               <PendingFeeAmountBox>
@@ -408,27 +478,43 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                     color: '#FF0000',
                   }}
                 >
-                  4 USD
+                  {oneContractPayFee} USD
                 </Text>
               </PendingFeeAmountBox>
-              <PayPendingFeeButton>Pay</PayPendingFeeButton>
+              <PayPendingFeeButton onClick={() => {}}>Pay</PayPendingFeeButton>
             </PendingFeeBox>
             <Divider />
           </>
         )}
         <SubscriptionFeeBox type={type}>
           {type === 'pay_one' ? (
-            <InputFeeItem onChange={() => {}} icon={icon} widthIcon={false} name={'Square Contract'} />
+            <InputFeeItem
+              months={contMonths}
+              setMonths={setContMonths}
+              defaultPayFee={oneContractPayFee}
+              onChange={() => {}}
+              icon={icon}
+              widthIcon={false}
+              name={name}
+            />
           ) : (
             <>
               <InputFeeItem
+                months={cubeMonths}
+                setMonths={setCubeMonths}
+                pendingFee={cubeContractsPendingFee}
+                defaultPayFee={calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type)}
                 onChange={() => {}}
                 icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
                 widthIcon={true}
                 name={'Cube Contract'}
               />
               <InputFeeItem
+                months={tessMonths}
+                setMonths={setTessMonths}
+                pendingFee={tessContractsPendingFee}
                 onChange={() => {}}
+                defaultPayFee={calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type)}
                 icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
                 widthIcon={true}
                 name={'Tesseract Contract'}
@@ -437,7 +523,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
           )}
 
           <PaymentDueDate>
-            Payment due date: <span>20 May 2022</span>
+            Payment due date: <span>{moment.unix(Number(nearestExpiredTimeCont.expireIn)).format('DD MMM YYYY')}</span>
           </PaymentDueDate>
 
           <Box sx={{ textAlign: 'center' }}>
@@ -459,10 +545,45 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
           variant="contained"
           color="primary"
           onClick={() => {
-            // onSubmit(contracts, name);
+            if (isFirstTime) {
+              if (isTokenAmountOverAllowance) {
+                setIsFirstTime(false);
+              } else {
+                const selectedContracts =
+                  type === 'pay_all' ? [...cubeContracts, ...tesseractContracts] : [...contracts];
+                const cubeTimes = getContTime(cubeContracts, cubeMonths);
+                const tessTimes = getContTime(tesseractContracts, tessMonths);
+                const times = [...cubeTimes, ...tessTimes];
+                onSubmit(selectedContracts, times);
+                setIsFirstTime(false);
+              }
+            } else {
+              if (isTokenAmountOverAllowance) {
+                onApproveToken();
+              } else {
+                const selectedContracts =
+                  type === 'pay_all' ? [...cubeContracts, ...tesseractContracts] : [...contracts];
+                const cubeTimes = getContTime(cubeContracts, cubeMonths);
+                const tessTimes = getContTime(tesseractContracts, tessMonths);
+                const times = [...cubeTimes, ...tessTimes];
+                onSubmit(selectedContracts, times);
+              }
+            }
           }}
         >
-          Pay Both
+          {isFirstTime
+            ? type === 'pay_all'
+              ? 'Pay'
+              : isPendingFee
+              ? 'Pay Both'
+              : 'Pay'
+            : isTokenAmountOverAllowance
+            ? 'Approve USDC'
+            : type === 'pay_all'
+            ? 'Pay'
+            : isPendingFee
+            ? 'Pay Both'
+            : 'Pay'}
         </ButtonMint>
       </Content>
     </Wrapper>
