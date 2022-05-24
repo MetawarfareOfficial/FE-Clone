@@ -1,4 +1,4 @@
-import { ContractResponse, MineContract } from 'interfaces/MyContract';
+import { ContractResponse } from 'interfaces/MyContract';
 import { zipWith } from 'lodash';
 import { computeEarnedTokenPerDay } from 'helpers/computeEarnedTokenPerDay';
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
@@ -50,33 +50,60 @@ export const parseDataCurrentApr = (types: string, currentAprPerContract: string
   }
   return [];
 };
+export const parseDataCurrentAprV2 = (type: string, currentApr: string, price: number) => {
+  if (type === '0') {
+    return calculateEarnCurrent0xbPerDay(price, currentApr);
+  }
+};
 
 export const zipDataMyContract = (param: ContractResponse) => {
-  return sortBy(
-    zipWith(
-      param.mintDates,
-      param.names,
-      param.types,
-      param.initZeroXBlockPerDays,
-      param.currentZeroXBlockPerDays,
-      param.rewards,
-      param.claimedRewards,
-      (a, b, c, d, e, f, g) =>
-        ({
-          mintDate: a,
-          name: b,
-          type: c,
-          initial: d,
-          current: e,
-          rewards: f,
-          claimedRewards: g,
-        } as MineContract),
-    ).map((item, index) => {
+  const contracts = zipWith(
+    param.currentZeroXBlockPerDays,
+    param.rewards,
+    param.claimedRewards,
+    param.contractData,
+    (currentZeroXBlockPerDay, reward, claimedReward, contractData) => ({
+      mintDate: contractData.mintDate,
+      name: contractData.name,
+      type: String(contractData.type),
+      initial: computeEarnedTokenPerDay(Number(contractData.price), contractData.initApy),
+      current: calculateEarnCurrent0xbPerDay(Number(contractData.price), currentZeroXBlockPerDay),
+      rewards: reward,
+      claimedRewards: claimedReward,
+      expireIn: contractData.expireIn,
+    }),
+  ).map((item, index) => {
+    return {
+      ...item,
+      index,
+    };
+  });
+
+  const squareContracts = contracts
+    .filter((item) => item.type === '0')
+    .map((item, index) => {
       return {
         ...item,
-        index,
+        reduceMonthlyFeePercent: index,
       };
-    }),
+    });
+  const cubeContracts = sortBy(
+    contracts.filter((item) => item.type === '1'),
     (item) => Number(item.mintDate),
-  );
+  ).map((item, index) => {
+    return {
+      ...item,
+      reduceMonthlyFeePercent: index,
+    };
+  });
+  const tesseractContracts = sortBy(
+    contracts.filter((item) => item.type === '2'),
+    (item) => Number(item.mintDate),
+  ).map((item, index) => {
+    return {
+      ...item,
+      reduceMonthlyFeePercent: index,
+    };
+  });
+  return sortBy([...squareContracts, ...cubeContracts, ...tesseractContracts], (item) => Number(item.mintDate));
 };

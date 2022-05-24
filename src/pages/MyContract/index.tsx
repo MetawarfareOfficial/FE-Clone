@@ -2,13 +2,11 @@ import { Box } from '@mui/material';
 import { ListContracts, Stats, TableContracts } from 'components/MyContract';
 import { DELAY_TIME } from 'consts/myContract';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
+import { convertMyContractData } from 'helpers/myContract/convertMyContractData';
 
-import {
-  parseDataCurrentApr,
-  parseDataInitApy,
-  parseDataMyContract,
-  zipDataMyContract,
-} from 'helpers/zipDataMyContract';
+import { parseDataMyContract, zipDataMyContract } from 'helpers/zipDataMyContract';
+import { useGetUsdcTokenInfo } from 'hooks/myContract';
+import { useGetMonthlyFeeTime } from 'hooks/myContract/useGetMonthlyFeeTime';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import useInterval from 'hooks/useInterval';
 import { useToast } from 'hooks/useToast';
@@ -39,15 +37,11 @@ const MyContract: React.FC<Props> = () => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const {
-    getTimeCreatedOfNodes,
-    getNameOfNodes,
     getRewardOfNodes,
-    getTypeOfNodes,
     getRewardAmount,
-    getInitAPROfNodes,
-    getPriceAllNode,
     getNodesCurrentAPR,
     getClaimedRewardOfUser,
+    getMyContractDataByUserAddress,
   } = useInteractiveContract();
   const { createToast } = useToast();
   const [width] = useWindowSize();
@@ -67,41 +61,24 @@ const MyContract: React.FC<Props> = () => {
         throw new Error('user address is undefined');
       }
 
-      const [mintDates, names, rewards, types, rewardAmount, initApy, prices, currentAPRs, claimedRewards] =
-        await Promise.all([
-          getTimeCreatedOfNodes(),
-          getNameOfNodes(),
-          getRewardOfNodes(),
-          getTypeOfNodes(),
-          getRewardAmount(),
-          getInitAPROfNodes(),
-          getPriceAllNode(),
-          getNodesCurrentAPR(),
-          getClaimedRewardOfUser(),
-        ]);
-
-      if (!mintDates[0].includes('#') && mintDates[0] === '') {
+      const [rewards, rewardAmount, currentAPRs, claimedRewards] = await Promise.all([
+        getRewardOfNodes(),
+        getRewardAmount(),
+        getNodesCurrentAPR(),
+        getClaimedRewardOfUser(),
+      ]);
+      const rawMyContracts = await getMyContractDataByUserAddress(currentUserAddress);
+      const myContracts = convertMyContractData(rawMyContracts);
+      if (!rewards[0].includes('#') && rewards[0] === '') {
         return;
       }
 
-      const dataPrices = _.flatten(prices);
-      const _prices = {
-        square: bigNumber2NumberV2(dataPrices[0]),
-        cube: bigNumber2NumberV2(dataPrices[1]),
-        tesseract: bigNumber2NumberV2(dataPrices[2]),
-      };
-
       const dataCt = zipDataMyContract({
-        mintDates: parseDataMyContract(mintDates[0]),
-        names: parseDataMyContract(names[0]),
-        types: parseDataMyContract(types[0]),
-        initZeroXBlockPerDays: parseDataInitApy(types[0], initApy[0], _prices),
-        currentZeroXBlockPerDays: parseDataCurrentApr(types[0], parseDataMyContract(currentAPRs[0]), _prices),
+        contractData: myContracts,
+        currentZeroXBlockPerDays: currentAPRs[0].split('#'),
         rewards: parseDataMyContract(rewards[0]),
         claimedRewards: parseDataMyContract(claimedRewards.list),
       } as ContractResponse);
-
-      dataCt.sort((a, b) => (a.mintDate < b.mintDate ? 1 : -1));
       const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e18);
       dispatch(setDataMyContracts(dataCt));
       dispatch(setRewardAmount(dataRw));
@@ -155,6 +132,9 @@ const MyContract: React.FC<Props> = () => {
   useInterval(() => {
     fetchUserContractsData();
   }, DELAY_TIME);
+
+  useGetUsdcTokenInfo();
+  useGetMonthlyFeeTime();
 
   return (
     <Box>

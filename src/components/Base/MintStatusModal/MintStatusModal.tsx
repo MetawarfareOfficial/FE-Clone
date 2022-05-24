@@ -203,9 +203,11 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
   return (
     <Wrapper open={open} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header denied={text === infoMessage.PERMISSION_DENIED.message}>
-        <ViewIcon denied={text === infoMessage.PERMISSION_DENIED.message}>
-          <img alt="" src={icon} />
-        </ViewIcon>
+        {icon && (
+          <ViewIcon denied={text === infoMessage.PERMISSION_DENIED.message}>
+            <img alt="" src={icon} />
+          </ViewIcon>
+        )}
         <HeaderText>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>

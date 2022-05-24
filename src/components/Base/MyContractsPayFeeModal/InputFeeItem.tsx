@@ -14,16 +14,18 @@ import {
   Typography,
   TypographyProps,
 } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
-import CubeDarkIcon from 'assets/images/cube-dark.gif';
-import SquareDarkIcon from 'assets/images/square-dark.gif';
-import TessDarkIcon from 'assets/images/tess-dark.gif';
-import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { formatPercent } from 'helpers/formatPrice';
+import React from 'react';
 
 interface Props {
   widthIcon: boolean;
   icon: string;
   name?: string;
+  defaultPayFee?: number;
+  pendingFee?: number;
+  months: number;
+  setMonths: (value: number) => void;
   onChange: (value: number) => void;
 }
 
@@ -221,32 +223,20 @@ const Wrapper = styled(Box)<
   borderRadius: showBorder ? '11px' : 'unset',
 }));
 
-const InputFeeItem: React.FC<Props> = ({ widthIcon, icon, name }) => {
-  const theme = useTheme();
-  const [inputValue, setInputValue] = useState<number>(1);
-  // eslint-disable-next-line
-  const handleOnChange = (value: number) => {
-    // console.log(value);
-  };
-
+const InputFeeItem: React.FC<Props> = ({
+  widthIcon,
+  icon,
+  name,
+  defaultPayFee = 0,
+  months,
+  setMonths,
+  pendingFee = 0,
+}) => {
   return (
     <Wrapper showBorder={widthIcon}>
       <Header>
         <ViewIcon>
-          <img
-            alt=""
-            src={
-              theme.palette.mode === 'light'
-                ? icon
-                : name === 'Square Contract'
-                ? SquareDarkIcon
-                : name === 'Cube Contract'
-                ? CubeDarkIcon
-                : name === 'Tesseract Contract'
-                ? TessDarkIcon
-                : ''
-            }
-          />
+          <img alt="" src={icon} />
         </ViewIcon>
         <HeaderText
           sx={{
@@ -261,15 +251,14 @@ const InputFeeItem: React.FC<Props> = ({ widthIcon, icon, name }) => {
       <BoxActions>
         <OutlinedInputCustom
           type="text"
-          value={inputValue + ' month'}
+          value={months + ' month'}
           inputProps={{ 'aria-label': 'weight' }}
           startAdornment={
             <InputAdornment
               position="start"
               onClick={() => {
-                if (inputValue > 1) {
-                  setInputValue(inputValue - 1);
-                  handleOnChange(inputValue - 1);
+                if (months > 1) {
+                  setMonths(months - 1);
                 }
               }}
             >
@@ -282,9 +271,8 @@ const InputFeeItem: React.FC<Props> = ({ widthIcon, icon, name }) => {
             <InputAdornment
               position="end"
               onClick={() => {
-                if (inputValue < 3) {
-                  setInputValue(inputValue + 1);
-                  handleOnChange(inputValue + 1);
+                if (months < 3) {
+                  setMonths(months + 1);
                 }
               }}
             >
@@ -297,7 +285,7 @@ const InputFeeItem: React.FC<Props> = ({ widthIcon, icon, name }) => {
         />
 
         <ButtonMax variant="outlined" color="primary" onClick={() => {}}>
-          4 USDC
+          {formatPercent(String(defaultPayFee * months + pendingFee), 2)} USDC
         </ButtonMax>
       </BoxActions>
     </Wrapper>

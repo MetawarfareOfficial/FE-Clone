@@ -16,6 +16,17 @@ const initialState = {
   isCloseMintContractModal: false,
   isOverMaxMintNodes: false,
   tokenDistribution: { developmentFee: 0, liquidityPoolFee: 0, rewardsFee: 0, treasuryFee: 0, cashOutFee: 0 },
+  usdcToken: {
+    balance: '0',
+    allowance: '0',
+  },
+  isUsdcTokenLoaded: false,
+  monthlyFeeTimes: {
+    one: '2592000',
+    two: '5184000',
+    three: '7776000',
+  },
+  monthlyFeeFeatureReleaseTime: '',
 };
 
 const dataContractSlice = createSlice({
@@ -108,6 +119,18 @@ const dataContractSlice = createSlice({
         cashOutFee: 0,
       };
     },
+    setUsdcToken: (state, action) => {
+      state.usdcToken = action.payload;
+    },
+    setUsdcTokenLoaded: (state, action) => {
+      state.isUsdcTokenLoaded = action.payload;
+    },
+    setMonthlyFeeTime: (state, action) => {
+      state.monthlyFeeTimes = action.payload;
+    },
+    setMonthlyFeeReleaseTime: (state, action) => {
+      state.monthlyFeeFeatureReleaseTime = action.payload;
+    },
   },
 });
 
@@ -136,6 +159,10 @@ export const {
   setIsOverMaxMintNodes,
   setTokenDistribution,
   unSetTokenDistribution,
+  setUsdcToken,
+  setUsdcTokenLoaded,
+  setMonthlyFeeTime,
+  setMonthlyFeeReleaseTime,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;
