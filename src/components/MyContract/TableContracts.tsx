@@ -401,9 +401,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const handleSubmitPayFee = async (contracts: MineContract[], times: string[]) => {
     setIsClaiming(false);
+    if (openPayFee) handleTogglePayFee();
     let txHash = '';
     try {
-      processModal(contracts.length <= 1 ? `${convertCType(contracts[0].type)} CONTRACTS` : 'Monthly Subscription Fee');
+      processModal(contracts.length <= 1 ? `${convertCType(contracts[0].type)} CONTRACT` : 'Monthly Subscription Fee');
       setClaimingType(contracts.length > 1 ? 'payFee' : convertCType(contracts[0].type));
       dispatch(setIsClaimingReward());
 
@@ -432,6 +433,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const handleApproveUSDC = async () => {
     let txHash = '';
     setIsClaiming(false);
+    if (openPayFee) handleTogglePayFee();
     try {
       processModal('Approving');
       setClaimingType('approve');
@@ -538,7 +540,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       setIsMetamaskConfirmPopupOpening(false);
       if (!openStatus) setOpenStatus(true);
       setStatus(STATUS[1]);
-      if (openPayFee) handleTogglePayFee();
       dispatch(unSetIsClaimingReward());
       setTransactionError('');
     }

@@ -52,11 +52,8 @@ const ViewIcon = styled(Box)<BoxProps>(({ theme }) => ({
 
 const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
-  fontSize: '18px',
   lineHeight: '27px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-  textTransform: 'uppercase',
-  fontWeight: '600',
 
   [theme.breakpoints.down('lg')]: {
     fontSize: '16px',
@@ -235,13 +232,17 @@ const InputFeeItem: React.FC<Props> = ({
   return (
     <Wrapper showBorder={widthIcon}>
       <Header>
-        <ViewIcon>
-          <img alt="" src={icon} />
-        </ViewIcon>
+        {widthIcon && (
+          <ViewIcon>
+            <img alt="" src={icon} />
+          </ViewIcon>
+        )}
         <HeaderText
           sx={{
-            maxWidth: '105px',
+            maxWidth: widthIcon ? '105px' : 'unset',
             color: '#fff',
+            fontWeight: widthIcon ? '600' : '500',
+            textTransform: widthIcon ? 'uppercase' : 'unset',
           }}
         >
           {name}
