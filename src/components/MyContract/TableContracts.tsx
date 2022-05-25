@@ -635,7 +635,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                     Number(monthlyFeeTimes.one),
                     Number(monthlyFeeFeatureReleaseTime),
                   );
-                  const dueDate = calculateDueDate(Number(item.expireIn));
+                  const dueDate = calculateDueDate(Number(item.expireIn), Number(monthlyFeeTimes.one));
                   return (
                     <TableRowCustom key={i}>
                       <TableCellContent sx={{ paddingLeft: '30px' }}>
