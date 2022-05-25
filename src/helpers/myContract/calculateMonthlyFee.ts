@@ -6,14 +6,18 @@ const calculateMonthlyFeePercent = (percent: number) => {
   return percent / 10;
 };
 
-export const calculateMonthlyFee = (contracts: MineContract[], contractFee: number, type: PopupType) => {
+export const calculateMonthlyFee = (
+  contracts: MineContract[],
+  contractFee: number,
+  type: PopupType,
+  totalContract: number,
+) => {
   if (type === 'pay_all') {
     return contracts.reduce((acc, item) => {
-      return acc + (contractFee - (contractFee * calculateMonthlyFeePercent(item.reduceMonthlyFeePercent)) / 100);
+      return acc + (contractFee - (contractFee * calculateMonthlyFeePercent(totalContract)) / 100);
     }, 0);
   } else {
-    const contract = contracts[0];
-    return contractFee - (contractFee * calculateMonthlyFeePercent(contract.reduceMonthlyFeePercent)) / 100;
+    return contractFee - (contractFee * calculateMonthlyFeePercent(totalContract - 1)) / 100;
   }
 };
 
@@ -22,11 +26,12 @@ export const calculatePendingFee = (
   contractFee: number,
   oneMonthTime: number,
   releaseTime: number,
+  totalContract: number,
 ) => {
   return contracts.reduce((acc, item) => {
     const isPendingFee = checkPendingContract(Number(item.expireIn), Number(oneMonthTime), Number(releaseTime));
     if (isPendingFee) {
-      acc + (contractFee - (contractFee * calculateMonthlyFeePercent(item.reduceMonthlyFeePercent)) / 100);
+      acc + (contractFee - (contractFee * calculateMonthlyFeePercent(totalContract - 1)) / 100);
     }
     return acc;
   }, 0);

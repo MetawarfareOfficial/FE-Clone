@@ -785,6 +785,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
             type={isPayAllFee ? 'pay_all' : 'pay_one'}
             contracts={currentSelectedContracts}
             open={openPayFee}
+            allContracts={data}
             onClose={handleTogglePayFee}
             onSubmit={handleSubmitPayFee}
             onApproveToken={handleApproveUSDC}

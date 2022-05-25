@@ -43,6 +43,7 @@ interface Props {
   // name: string;
   type: PopupType;
   contracts: Array<MineContract>;
+  allContracts: Array<MineContract>;
   onClose: () => void;
   onSubmit: (values: any, times: string[]) => void;
   onApproveToken: () => void;
@@ -344,7 +345,15 @@ const PendingFeeAmountBox = styled(Box)<BoxProps>(() => ({
   flexDirection: 'column',
 }));
 
-const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contracts, onSubmit, onApproveToken }) => {
+const MyContractsPayFeeModal: React.FC<Props> = ({
+  open,
+  onClose,
+  type,
+  contracts,
+  onSubmit,
+  onApproveToken,
+  allContracts,
+}) => {
   const theme = useTheme();
 
   const usdcTokenInfo = useAppSelector((state) => state.contract.usdcToken);
@@ -410,12 +419,25 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
     contracts,
     contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
     type,
+    allContracts.filter((item) => item.type === contracts[0].type).length,
   );
 
   const totalUsdcHaveToPay =
     type === 'pay_all'
-      ? calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type) * cubeMonths +
-        calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type) * tessMonths
+      ? calculateMonthlyFee(
+          cubeContracts,
+          cubeMonthlyFee,
+          type,
+          allContracts.filter((item) => item.type === '1').length,
+        ) *
+          cubeMonths +
+        calculateMonthlyFee(
+          tesseractContracts,
+          tessMonthlyFee,
+          type,
+          allContracts.filter((item) => item.type === '2').length,
+        ) *
+          tessMonths
       : oneContractPayFee * contMonths;
 
   const cubeContractsPendingFee = calculatePendingFee(
@@ -423,6 +445,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
     cubeMonthlyFee,
     Number(monthlyFeeTimes.one),
     Number(monthlyFeeFeatureReleaseTime),
+    allContracts.filter((item) => item.type === '1').length,
   );
 
   const tessContractsPendingFee = calculatePendingFee(
@@ -430,6 +453,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
     tessMonthlyFee,
     Number(monthlyFeeTimes.one),
     Number(monthlyFeeFeatureReleaseTime),
+    allContracts.filter((item) => item.type === '2').length,
   );
 
   const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
@@ -526,7 +550,12 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                 months={cubeMonths}
                 setMonths={setCubeMonths}
                 pendingFee={cubeContractsPendingFee}
-                defaultPayFee={calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type)}
+                defaultPayFee={calculateMonthlyFee(
+                  cubeContracts,
+                  cubeMonthlyFee,
+                  type,
+                  allContracts.filter((item) => item.type === '1').length,
+                )}
                 onChange={() => {}}
                 icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
                 widthIcon={true}
@@ -537,7 +566,12 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                 setMonths={setTessMonths}
                 pendingFee={tessContractsPendingFee}
                 onChange={() => {}}
-                defaultPayFee={calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type)}
+                defaultPayFee={calculateMonthlyFee(
+                  tesseractContracts,
+                  tessMonthlyFee,
+                  type,
+                  allContracts.filter((item) => item.type === '2').length,
+                )}
                 icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
                 widthIcon={true}
                 name={'Tesseract Contract'}
