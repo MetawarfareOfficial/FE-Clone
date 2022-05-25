@@ -464,6 +464,9 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   );
   const nearestExpiredTimeCont = getNearestDateEntity(contracts) || contracts[0];
 
+  const nearestContMonth =
+    type === 'pay_all' ? (nearestExpiredTimeCont.type === '1' ? cubeMonths : tessMonths) : contMonths;
+
   return (
     <Wrapper
       open={open}
@@ -546,41 +549,50 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
             />
           ) : (
             <>
-              <InputFeeItem
-                months={cubeMonths}
-                setMonths={setCubeMonths}
-                pendingFee={cubeContractsPendingFee}
-                defaultPayFee={calculateMonthlyFee(
-                  cubeContracts,
-                  cubeMonthlyFee,
-                  type,
-                  allContracts.filter((item) => item.type === '1').length,
-                )}
-                onChange={() => {}}
-                icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
-                widthIcon={true}
-                name={'Cube Contract'}
-              />
-              <InputFeeItem
-                months={tessMonths}
-                setMonths={setTessMonths}
-                pendingFee={tessContractsPendingFee}
-                onChange={() => {}}
-                defaultPayFee={calculateMonthlyFee(
-                  tesseractContracts,
-                  tessMonthlyFee,
-                  type,
-                  allContracts.filter((item) => item.type === '2').length,
-                )}
-                icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
-                widthIcon={true}
-                name={'Tesseract Contract'}
-              />
+              {cubeContracts.length > 0 && (
+                <InputFeeItem
+                  months={cubeMonths}
+                  setMonths={setCubeMonths}
+                  pendingFee={cubeContractsPendingFee}
+                  defaultPayFee={calculateMonthlyFee(
+                    cubeContracts,
+                    cubeMonthlyFee,
+                    type,
+                    allContracts.filter((item) => item.type === '1').length,
+                  )}
+                  onChange={() => {}}
+                  icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
+                  widthIcon={true}
+                  name={'Cube Contract'}
+                />
+              )}
+              {tesseractContracts.length > 0 && (
+                <InputFeeItem
+                  months={tessMonths}
+                  setMonths={setTessMonths}
+                  pendingFee={tessContractsPendingFee}
+                  onChange={() => {}}
+                  defaultPayFee={calculateMonthlyFee(
+                    tesseractContracts,
+                    tessMonthlyFee,
+                    type,
+                    allContracts.filter((item) => item.type === '2').length,
+                  )}
+                  icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
+                  widthIcon={true}
+                  name={'Tesseract Contract'}
+                />
+              )}
             </>
           )}
 
           <PaymentDueDate>
-            Payment due date: <span>{moment.unix(Number(nearestExpiredTimeCont.expireIn)).format('DD MMM YYYY')}</span>
+            Payment due date:{' '}
+            <span>
+              {moment
+                .unix(Number(nearestExpiredTimeCont.expireIn) + nearestContMonth * Number(monthlyFeeTimes.one))
+                .format('DD MMM YYYY')}
+            </span>
           </PaymentDueDate>
 
           <Box sx={{ textAlign: 'center' }}>
