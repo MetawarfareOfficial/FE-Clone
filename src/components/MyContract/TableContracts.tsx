@@ -700,7 +700,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                                 variant="outlined"
                                 color="primary"
                                 onClick={() => {
-                                  handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                                  handleClickClaimNodeByNode(item.index, item.type);
                                 }}
                                 disabled={isClaimingReward}
                               >
@@ -724,7 +724,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                               variant="outlined"
                               color="primary"
                               onClick={() => {
-                                handleClickClaimNodeByNode(data.length - i - 1, item.type);
+                                handleClickClaimNodeByNode(item.index, item.type);
                               }}
                               disabled={isClaimingReward}
                               sx={{ width: 215 }}
