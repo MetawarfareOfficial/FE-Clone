@@ -590,7 +590,10 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
             Payment due date:{' '}
             <span>
               {moment
-                .unix(Number(nearestExpiredTimeCont.expireIn) + nearestContMonth * Number(monthlyFeeTimes.one))
+                .unix(
+                  Number(Number(nearestExpiredTimeCont.expireIn) - Number(monthlyFeeTimes.one)) +
+                    nearestContMonth * Number(monthlyFeeTimes.one),
+                )
                 .format('DD MMM YYYY')}
             </span>
           </PaymentDueDate>
