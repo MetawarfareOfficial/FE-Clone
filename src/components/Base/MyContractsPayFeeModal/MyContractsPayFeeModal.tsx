@@ -185,7 +185,7 @@ const SubscriptionFeeBox = styled(Box)<
         : '1px solid rgba(255, 255, 255, 0.09)'
       : 'unset',
   borderRadius: '11px',
-  padding: '20px',
+  padding: type === 'pay_one' ? '20px' : 'unset',
 }));
 
 const Divider = styled(Box)<BoxProps>(({ theme }) => ({
@@ -481,7 +481,32 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                   {oneContractPayFee} USD
                 </Text>
               </PendingFeeAmountBox>
-              <PayPendingFeeButton onClick={() => {}}>Pay</PayPendingFeeButton>
+              <PayPendingFeeButton
+                onClick={() => {
+                  if (isFirstTime) {
+                    if (isTokenAmountOverAllowance) {
+                      setIsFirstTime(false);
+                    } else {
+                      const selectedContracts = [...contracts];
+                      const oneContTime = getContTime(contracts, contMonths);
+                      const times = [...oneContTime];
+                      onSubmit(selectedContracts, times);
+                      setIsFirstTime(false);
+                    }
+                  } else {
+                    if (isTokenAmountOverAllowance) {
+                      onApproveToken();
+                    } else {
+                      const selectedContracts = [...contracts];
+                      const oneContTime = getContTime(contracts, contMonths);
+                      const times = [...oneContTime];
+                      onSubmit(selectedContracts, times);
+                    }
+                  }
+                }}
+              >
+                Pay
+              </PayPendingFeeButton>
             </PendingFeeBox>
             <Divider />
           </>
@@ -495,7 +520,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
               onChange={() => {}}
               icon={icon}
               widthIcon={false}
-              name={name}
+              name={'Subscription fee'}
             />
           ) : (
             <>
@@ -553,7 +578,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                   type === 'pay_all' ? [...cubeContracts, ...tesseractContracts] : [...contracts];
                 const cubeTimes = getContTime(cubeContracts, cubeMonths);
                 const tessTimes = getContTime(tesseractContracts, tessMonths);
-                const times = [...cubeTimes, ...tessTimes];
+                const oneContTime = getContTime(contracts, contMonths);
+                const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes] : [...oneContTime];
                 onSubmit(selectedContracts, times);
                 setIsFirstTime(false);
               }
@@ -565,7 +591,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                   type === 'pay_all' ? [...cubeContracts, ...tesseractContracts] : [...contracts];
                 const cubeTimes = getContTime(cubeContracts, cubeMonths);
                 const tessTimes = getContTime(tesseractContracts, tessMonths);
-                const times = [...cubeTimes, ...tessTimes];
+                const oneContTime = getContTime(contracts, contMonths);
+                const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes] : [...oneContTime];
                 onSubmit(selectedContracts, times);
               }
             }
