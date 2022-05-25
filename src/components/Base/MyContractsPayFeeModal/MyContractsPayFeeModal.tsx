@@ -488,8 +488,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                       setIsFirstTime(false);
                     } else {
                       const selectedContracts = [...contracts];
-                      const oneContTime = getContTime(contracts, contMonths);
-                      const times = [...oneContTime];
+                      const times = [monthlyFeeTimes.one];
                       onSubmit(selectedContracts, times);
                       setIsFirstTime(false);
                     }
@@ -498,8 +497,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({ open, onClose, type, contract
                       onApproveToken();
                     } else {
                       const selectedContracts = [...contracts];
-                      const oneContTime = getContTime(contracts, contMonths);
-                      const times = [...oneContTime];
+                      const times = [monthlyFeeTimes.one];
                       onSubmit(selectedContracts, times);
                     }
                   }
