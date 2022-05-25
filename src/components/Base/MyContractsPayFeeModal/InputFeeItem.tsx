@@ -90,7 +90,7 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
 // }));
 
 const ButtonMax = styled(Button)<ButtonProps>(() => ({
-  width: '79px',
+  width: '100px',
   height: '50px',
   boxSizing: 'border-box',
   border: '1px solid #3864FF',
@@ -286,7 +286,7 @@ const InputFeeItem: React.FC<Props> = ({
         />
 
         <ButtonMax variant="outlined" color="primary" onClick={() => {}}>
-          {formatPercent(String(defaultPayFee * months + pendingFee), 2)} USDC
+          {formatPercent(String(defaultPayFee * months + pendingFee), 3)} USDC
         </ButtonMax>
       </BoxActions>
     </Wrapper>
