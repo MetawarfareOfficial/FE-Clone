@@ -6,7 +6,7 @@ export const calculateDueDate = (expiredTime: number, _oneMonthTime: number) => 
   const remainHours = moment(expiredTime * 1000).diff(now, 'h');
   const remainDays = Math.ceil(remainHours / 24);
   const oneMonthTime = Math.ceil(_oneMonthTime / oneDaySecond);
-  if (remainDays >= oneMonthTime) {
+  if (remainDays > oneMonthTime) {
     return remainDays - oneMonthTime;
   }
   return remainDays;
