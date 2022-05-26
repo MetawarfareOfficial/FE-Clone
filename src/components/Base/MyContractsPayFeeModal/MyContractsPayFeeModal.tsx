@@ -18,8 +18,6 @@ import { AllContract, AllDarkContract, CubeIcon, SquareIcon, TessIcon } from 'as
 import CubeDarkIcon from 'assets/images/cube-dark.gif';
 import CloseDarkImg from 'assets/images/ic-close-dark.svg';
 import CloseImg from 'assets/images/ic-times.svg';
-import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
-import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 import SquareDarkIcon from 'assets/images/square-dark.gif';
 import TessDarkIcon from 'assets/images/tess-dark.gif';
 import { ClaimingType } from 'components/MyContract/TableContracts';
@@ -146,33 +144,33 @@ const PaymentDueDate = styled(Typography)<TypographyProps>(() => ({
   textAlign: 'center',
   letterSpacing: '0.035em',
   color: '#293247',
-  margin: '50px auto',
+  marginTop: '20px',
 
   span: {
     color: '#3864FF',
   },
 }));
 
-const BoxFeeDetail = styled(Box)<
-  BoxProps & {
-    type: PopupType;
-  }
->(({ type, theme }) => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: type !== 'pay_one' ? '14px 20px 14px 23px' : '14px 11px 14px 11px',
-  boxSizing: 'border-box',
-  border: '1px solid #3864FF',
-  borderRadius: '14px',
-  margin: type !== 'pay_one' ? '0 auto 40px' : 'unset',
-  fontFamily: 'Poppins',
-  fontStyle: 'normal',
-  fontWeight: '400',
-  fontSize: '14px',
-  lineHeight: '21px',
-  color: theme.palette.mode === 'light' ? '#293247' : '#fff',
-}));
+// const BoxFeeDetail = styled(Box)<
+//   BoxProps & {
+//     type: PopupType;
+//   }
+// >(({ type, theme }) => ({
+//   display: 'inline-flex',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   padding: type !== 'pay_one' ? '14px 20px 14px 23px' : '14px 11px 14px 11px',
+//   boxSizing: 'border-box',
+//   border: '1px solid #3864FF',
+//   borderRadius: '14px',
+//   margin: type !== 'pay_one' ? '0 auto 40px' : 'unset',
+//   fontFamily: 'Poppins',
+//   fontStyle: 'normal',
+//   fontWeight: '400',
+//   fontSize: '14px',
+//   lineHeight: '21px',
+//   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+// }));
 
 const SubscriptionFeeBox = styled(Box)<
   BoxProps & {
@@ -186,7 +184,7 @@ const SubscriptionFeeBox = styled(Box)<
         : '1px solid rgba(255, 255, 255, 0.09)'
       : 'unset',
   borderRadius: '11px',
-  padding: type === 'pay_one' ? '20px' : 'unset',
+  padding: type === 'pay_one' ? '0 20px 20px 20px' : 'unset',
 }));
 
 const Divider = styled(Box)<BoxProps>(({ theme }) => ({
@@ -270,7 +268,7 @@ const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
 
 const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   width: '100%',
-  marginTop: '21px',
+  marginTop: '30px',
   padding: '10px 29px',
   height: '60px',
   textAlign: 'center',
@@ -302,17 +300,18 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   },
 }));
 
-const ViewHelp = styled(Box)<BoxProps>(() => ({
-  marginRight: '10px',
-  display: 'flex',
-}));
+// const ViewHelp = styled(Box)<BoxProps>(() => ({
+//   marginRight: '10px',
+//   display: 'flex',
+// }));
 
 const PendingFeeBox = styled(Box)<BoxProps>(({ theme }) => ({
   boxSizing: 'border-box',
   display: 'flex',
   width: '100%',
   justifyContent: 'space-between',
-  height: '80px',
+  flexDirection: 'column',
+  height: '120px',
   // maxWidth: '374px',
   border: theme.palette.mode === 'light' ? '1px solid rgba(15, 13, 13, 0.28)' : '1px solid rgba(255, 255, 255, 0.09)',
   borderRadius: '17px',
@@ -352,7 +351,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   contracts,
   onSubmit,
   onApproveToken,
-  allContracts,
+  // allContracts,
 }) => {
   const theme = useTheme();
 
@@ -360,6 +359,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   // const isUsdcTokenLoaded = useAppSelector((state) => state.contract.isUsdcTokenLoaded);
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
   const monthlyFeeFeatureReleaseTime = useAppSelector((state) => state.contract.monthlyFeeFeatureReleaseTime);
+  const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
   const [cubeMonths, setCubeMonths] = useState(1);
   const [tessMonths, setTessMonths] = useState(1);
@@ -412,14 +412,14 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const cubeContracts = contracts.filter((item) => item.type === '1');
   const tesseractContracts = contracts.filter((item) => item.type === '2');
 
-  const cubeMonthlyFee = 3;
-  const tessMonthlyFee = 4;
+  const cubeMonthlyFee = Number(monthlyFees.cube);
+  const tessMonthlyFee = Number(monthlyFees.tesseract);
 
   const oneContractPayFee = calculateMonthlyFee(
     contracts,
     contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
     type,
-    allContracts.filter((item) => item.type === contracts[0].type).length,
+    // allContracts.filter((item) => item.type === contracts[0].type).length,
   );
 
   const totalUsdcHaveToPay =
@@ -428,14 +428,14 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
           cubeContracts,
           cubeMonthlyFee,
           type,
-          allContracts.filter((item) => item.type === '1').length,
+          // allContracts.filter((item) => item.type === '1').length,
         ) *
           cubeMonths +
         calculateMonthlyFee(
           tesseractContracts,
           tessMonthlyFee,
           type,
-          allContracts.filter((item) => item.type === '2').length,
+          // allContracts.filter((item) => item.type === '2').length,
         ) *
           tessMonths
       : oneContractPayFee * contMonths;
@@ -445,7 +445,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     cubeMonthlyFee,
     Number(monthlyFeeTimes.one),
     Number(monthlyFeeFeatureReleaseTime),
-    allContracts.filter((item) => item.type === '1').length,
+    // allContracts.filter((item) => item.type === '1').length,
   );
 
   const tessContractsPendingFee = calculatePendingFee(
@@ -453,7 +453,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     tessMonthlyFee,
     Number(monthlyFeeTimes.one),
     Number(monthlyFeeFeatureReleaseTime),
-    allContracts.filter((item) => item.type === '2').length,
+    // allContracts.filter((item) => item.type === '2').length,
   );
 
   const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
@@ -498,40 +498,59 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
         {type === 'pay_one' && isPendingFee && (
           <>
             <PendingFeeBox>
-              <PendingFeeAmountBox>
-                <Text>Pending fee</Text>
-                <Text
-                  style={{
-                    color: '#FF0000',
-                  }}
-                >
-                  {oneContractPayFee} USD
-                </Text>
-              </PendingFeeAmountBox>
-              <PayPendingFeeButton
-                onClick={() => {
-                  if (isFirstTime) {
-                    if (isTokenAmountOverAllowance) {
-                      setIsFirstTime(false);
-                    } else {
-                      const selectedContracts = [...contracts];
-                      const times = [monthlyFeeTimes.one];
-                      onSubmit(selectedContracts, times);
-                      setIsFirstTime(false);
-                    }
-                  } else {
-                    if (isTokenAmountOverAllowance) {
-                      onApproveToken();
-                    } else {
-                      const selectedContracts = [...contracts];
-                      const times = [monthlyFeeTimes.one];
-                      onSubmit(selectedContracts, times);
-                    }
-                  }
+              <div
+                style={{
+                  display: 'flex',
+                  width: '100%',
+                  justifyContent: 'space-between',
                 }}
               >
-                Pay
-              </PayPendingFeeButton>
+                <PendingFeeAmountBox>
+                  <Text>Pending fee</Text>
+                  <Text
+                    style={{
+                      color: '#FF0000',
+                    }}
+                  >
+                    {oneContractPayFee} USD
+                  </Text>
+                </PendingFeeAmountBox>
+                <PayPendingFeeButton
+                  onClick={() => {
+                    if (isFirstTime) {
+                      if (isTokenAmountOverAllowance) {
+                        setIsFirstTime(false);
+                      } else {
+                        const selectedContracts = [...contracts];
+                        const times = [monthlyFeeTimes.one];
+                        onSubmit(selectedContracts, times);
+                        setIsFirstTime(false);
+                      }
+                    } else {
+                      if (isTokenAmountOverAllowance) {
+                        onApproveToken();
+                      } else {
+                        const selectedContracts = [...contracts];
+                        const times = [monthlyFeeTimes.one];
+                        onSubmit(selectedContracts, times);
+                      }
+                    }
+                  }}
+                >
+                  Pay
+                </PayPendingFeeButton>
+              </div>
+              <PaymentDueDate>
+                Payment due date:{' '}
+                <span>
+                  {moment
+                    .unix(
+                      Number(Number(nearestExpiredTimeCont.expireIn) - Number(monthlyFeeTimes.one)) +
+                        nearestContMonth * Number(monthlyFeeTimes.one),
+                    )
+                    .format('HH DD MMM YYYY')}
+                </span>
+              </PaymentDueDate>
             </PendingFeeBox>
             <Divider />
           </>
@@ -558,7 +577,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                     cubeContracts,
                     cubeMonthlyFee,
                     type,
-                    allContracts.filter((item) => item.type === '1').length,
+                    // allContracts.filter((item) => item.type === '1').length,
                   )}
                   onChange={() => {}}
                   icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
@@ -576,7 +595,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                     tesseractContracts,
                     tessMonthlyFee,
                     type,
-                    allContracts.filter((item) => item.type === '2').length,
+                    // allContracts.filter((item) => item.type === '2').length,
                   )}
                   icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
                   widthIcon={true}
@@ -590,15 +609,12 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
             Payment due date:{' '}
             <span>
               {moment
-                .unix(
-                  Number(Number(nearestExpiredTimeCont.expireIn) - Number(monthlyFeeTimes.one)) +
-                    nearestContMonth * Number(monthlyFeeTimes.one),
-                )
-                .format('DD MMM YYYY')}
+                .unix(Number(nearestExpiredTimeCont.expireIn) + nearestContMonth * Number(monthlyFeeTimes.one))
+                .format('HH DD MMM YYYY')}
             </span>
           </PaymentDueDate>
 
-          <Box sx={{ textAlign: 'center' }}>
+          {/* <Box sx={{ textAlign: 'center' }}>
             <BoxFeeDetail type={type}>
               {theme.palette.mode === 'light' ? (
                 <ViewHelp>
@@ -611,7 +627,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
               )}{' '}
               Fee is decresed 0.1% for each new contract
             </BoxFeeDetail>
-          </Box>
+          </Box> */}
         </SubscriptionFeeBox>
         <ButtonMint
           variant="contained"

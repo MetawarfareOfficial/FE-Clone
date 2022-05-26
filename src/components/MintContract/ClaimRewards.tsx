@@ -80,6 +80,7 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
 
 const ClaimRewards: React.FC<Props> = () => {
   const cashOutFee = useAppSelector((state) => state.contract.tokenDistribution.cashOutFee);
+  const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
   return (
     <Wrapper>
@@ -94,8 +95,9 @@ const ClaimRewards: React.FC<Props> = () => {
         <Grid item lg={6} md={8}>
           <Title>Monthly Subscription Fee</Title>
           <Pool>
-            Monthly subscription fee applies for CUBE CONTRACT (3 USDC) and TESSERACT CONTRACT (4 USDC). If monthly
-            payment is more than 30 days overdue, the minted CUBE and TESSERACT contracts will be removed.
+            Monthly subscription fee applies for CUBE CONTRACT ({monthlyFees.cube} USDC) and TESSERACT CONTRACT (
+            {monthlyFees.tesseract} USDC). If monthly payment is more than 30 days overdue, the minted CUBE and
+            TESSERACT contracts will be removed
           </Pool>
         </Grid>
       </Grid>
