@@ -564,6 +564,13 @@ export const useInteractiveContract = () => {
     return await rewardManagerContractWithSigner.extendContract(times, indexes);
   };
 
+  const getMonthlyFees = async () => {
+    const squareFee = rewardManagerContractWithoutSigner.feeInMonth(contractType.square);
+    const cubeFee = rewardManagerContractWithoutSigner.feeInMonth(contractType.cube);
+    const tessFee = rewardManagerContractWithoutSigner.feeInMonth(contractType.tesseract);
+    return await Promise.all([squareFee, cubeFee, tessFee]);
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -616,6 +623,7 @@ export const useInteractiveContract = () => {
     getClaimedRewardOfUser,
     getMyContractDataByUserAddress,
     payMonthlyFee,
+    getMonthlyFees,
     contractWithSigner,
     provider,
   };
