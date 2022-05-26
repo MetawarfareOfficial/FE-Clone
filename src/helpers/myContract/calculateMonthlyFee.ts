@@ -2,16 +2,8 @@ import { PopupType } from 'components/Base/MyContractsPayFeeModal/MyContractsPay
 import { MineContract } from 'interfaces/MyContract';
 import { checkPendingContract } from './checkPendingContract';
 
-// const calculateMonthlyFeePercent = (percent: number) => {
-//   return percent / 10;
-// };
 
-export const calculateMonthlyFee = (
-  contracts: MineContract[],
-  contractFee: number,
-  type: PopupType,
-  // totalContract: number,
-) => {
+export const calculateMonthlyFee = (contracts: MineContract[], contractFee: number, type: PopupType) => {
   if (type === 'pay_all') {
     return contracts.reduce((acc) => {
       return acc + contractFee;
@@ -21,15 +13,9 @@ export const calculateMonthlyFee = (
   }
 };
 
-export const calculatePendingFee = (
-  contracts: MineContract[],
-  contractFee: number,
-  oneMonthTime: number,
-  releaseTime: number,
-  // totalContract: number,
-) => {
+export const calculatePendingFee = (contracts: MineContract[], contractFee: number, oneMonthTime: number) => {
   return contracts.reduce((acc, item) => {
-    const isPendingFee = checkPendingContract(Number(item.expireIn), Number(oneMonthTime), Number(releaseTime));
+    const isPendingFee = checkPendingContract(Number(item.expireIn), Number(oneMonthTime));
     if (isPendingFee) {
       acc + contractFee;
     }

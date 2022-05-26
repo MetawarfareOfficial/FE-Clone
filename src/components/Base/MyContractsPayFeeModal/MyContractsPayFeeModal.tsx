@@ -392,11 +392,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
 
   const getContTime = (contracts: MineContract[], months: number) => {
     return contracts.map((item) => {
-      const isPendingFee = checkPendingContract(
-        Number(item.expireIn),
-        Number(monthlyFeeTimes.one),
-        Number(monthlyFeeFeatureReleaseTime),
-      );
+      const isPendingFee = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one));
       let returnMonth = monthlyFeeTimes.one;
       if (months === 1) {
         returnMonth = monthlyFeeTimes.one;
@@ -424,44 +420,16 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
 
   const totalUsdcHaveToPay =
     type === 'pay_all'
-      ? calculateMonthlyFee(
-          cubeContracts,
-          cubeMonthlyFee,
-          type,
-          // allContracts.filter((item) => item.type === '1').length,
-        ) *
-          cubeMonths +
-        calculateMonthlyFee(
-          tesseractContracts,
-          tessMonthlyFee,
-          type,
-          // allContracts.filter((item) => item.type === '2').length,
-        ) *
-          tessMonths
+      ? calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type) * cubeMonths +
+        calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type) * tessMonths
       : oneContractPayFee * contMonths;
 
-  const cubeContractsPendingFee = calculatePendingFee(
-    cubeContracts,
-    cubeMonthlyFee,
-    Number(monthlyFeeTimes.one),
-    Number(monthlyFeeFeatureReleaseTime),
-    // allContracts.filter((item) => item.type === '1').length,
-  );
+  const cubeContractsPendingFee = calculatePendingFee(cubeContracts, cubeMonthlyFee, Number(monthlyFeeTimes.one));
 
-  const tessContractsPendingFee = calculatePendingFee(
-    tesseractContracts,
-    tessMonthlyFee,
-    Number(monthlyFeeTimes.one),
-    Number(monthlyFeeFeatureReleaseTime),
-    // allContracts.filter((item) => item.type === '2').length,
-  );
+  const tessContractsPendingFee = calculatePendingFee(tesseractContracts, tessMonthlyFee, Number(monthlyFeeTimes.one));
 
   const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
-  const isPendingFee = checkPendingContract(
-    Number(contracts[0].expireIn),
-    Number(monthlyFeeTimes.one),
-    Number(monthlyFeeFeatureReleaseTime),
-  );
+  const isPendingFee = checkPendingContract(Number(contracts[0].expireIn), Number(monthlyFeeTimes.one));
   const nearestExpiredTimeCont = getNearestDateEntity(contracts) || contracts[0];
 
   const nearestContMonth =

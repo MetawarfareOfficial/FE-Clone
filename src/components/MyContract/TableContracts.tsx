@@ -630,11 +630,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               data
                 .filter((r) => r.mintDate !== '')
                 .map((item, i) => {
-                  const isPendingFee = checkPendingContract(
-                    Number(item.expireIn),
-                    Number(monthlyFeeTimes.one),
-                    Number(monthlyFeeFeatureReleaseTime),
-                  );
+                  const isPendingFee = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one));
                   const dueDate = calculateDueDate(Number(item.expireIn), Number(monthlyFeeTimes.one));
                   return (
                     <TableRowCustom key={i}>
