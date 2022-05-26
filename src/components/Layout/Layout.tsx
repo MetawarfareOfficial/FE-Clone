@@ -52,6 +52,7 @@ import { useWindowClose } from 'hooks/useWindowClose';
 import { useLoadPairInfo } from 'hooks/swap/useLoadPairInfo';
 import { useLoadLiquidityPoolData } from 'hooks/zap';
 import { useFetchPoolsInfo, useFetchTotalStakingPool } from 'hooks/staking';
+import { useFetchMonthlyFees } from 'hooks/myContract/useFetchMonthlyFees';
 // import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 interface Props {
@@ -557,6 +558,7 @@ const Layout: React.FC<Props> = ({ children }) => {
   useLoadPairInfo();
   useLoadLiquidityPoolData();
   useFetchPoolsInfo();
+  useFetchMonthlyFees();
 
   if (location.pathname === '/private-dashboard') {
     return <Box sx={{ overflow: 'hidden' }}>{children}</Box>;

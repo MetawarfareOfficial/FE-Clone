@@ -3,8 +3,6 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import {
   Box,
   BoxProps,
-  Button,
-  ButtonProps,
   DialogTitle,
   DialogTitleProps,
   IconButton,
@@ -69,7 +67,7 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '20px 21px 20px 0',
-  marginBottom: '20px',
+  marginBottom: '15px',
 
   [theme.breakpoints.down('lg')]: {
     padding: '16px 21px',
@@ -89,8 +87,8 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
 //   color: '#293247',
 // }));
 
-const ButtonMax = styled(Button)<ButtonProps>(() => ({
-  width: '100px',
+const ButtonMax = styled(Box)<BoxProps>(() => ({
+  width: '80px',
   height: '50px',
   boxSizing: 'border-box',
   border: '1px solid #3864FF',
@@ -103,11 +101,13 @@ const ButtonMax = styled(Button)<ButtonProps>(() => ({
   textTransform: 'capitalize',
   marginLeft: 'auto',
   padding: '6px',
-
-  '&:hover': {
-    opacity: 0.7,
-    cursor: 'pointer',
-  },
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  // '&:hover': {
+  //   opacity: 1,
+  //   cursor: 'pointer',
+  // },
 }));
 
 const BoxActions = styled(Box)<BoxProps>(() => ({
@@ -243,6 +243,7 @@ const InputFeeItem: React.FC<Props> = ({
             color: '#fff',
             fontWeight: widthIcon ? '600' : '500',
             textTransform: widthIcon ? 'uppercase' : 'unset',
+            fontSize: widthIcon ? '14px' : '17px !important',
           }}
         >
           {name}
@@ -285,8 +286,8 @@ const InputFeeItem: React.FC<Props> = ({
           aria-describedby="outlined-weight-helper-text"
         />
 
-        <ButtonMax variant="outlined" color="primary" onClick={() => {}}>
-          {formatPercent(String(defaultPayFee * months + pendingFee), 3)} USDC
+        <ButtonMax color="primary" onClick={() => {}}>
+          {formatPercent(String(defaultPayFee * months + pendingFee), 2)} USDC
         </ButtonMax>
       </BoxActions>
     </Wrapper>

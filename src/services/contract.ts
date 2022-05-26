@@ -27,6 +27,11 @@ const initialState = {
     three: '7776000',
   },
   monthlyFeeFeatureReleaseTime: '',
+  monthlyFees: {
+    square: '0',
+    cube: '3',
+    tesseract: '4',
+  },
 };
 
 const dataContractSlice = createSlice({
@@ -131,6 +136,9 @@ const dataContractSlice = createSlice({
     setMonthlyFeeReleaseTime: (state, action) => {
       state.monthlyFeeFeatureReleaseTime = action.payload;
     },
+    setMonthlyFees: (state, action) => {
+      state.monthlyFees = action.payload;
+    },
   },
 });
 
@@ -163,6 +171,7 @@ export const {
   setUsdcTokenLoaded,
   setMonthlyFeeTime,
   setMonthlyFeeReleaseTime,
+  setMonthlyFees,
 } = dataContractSlice.actions;
 const { reducer: dataContractReducer } = dataContractSlice;
 export default dataContractReducer;
