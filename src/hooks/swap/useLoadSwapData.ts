@@ -30,6 +30,7 @@ interface loadEstimateTokenParams {
 export const useLoadSwapData = () => {
   const { account } = useWeb3React();
   const pairsData = useAppSelector((state) => state.swap.pairsData);
+  const sellTax = useAppSelector((state) => state.swap.sell0xbTax);
 
   const pairInfoLoaded = useAppSelector((state) => state.swap.pairInfoLoaded);
   const dispatch = useAppDispatch();
@@ -87,14 +88,21 @@ export const useLoadSwapData = () => {
         pairsData,
       });
       if (isExactInput) {
+        // add sell 0xb tax
+        let valueIn = amount;
+        if (tokenIn === SwapTokenId.OXB) {
+          valueIn = new BigNumber(valueIn).minus(new BigNumber(valueIn).multipliedBy(sellTax).div(100)).toString();
+        }
+        valueIn = isSubtractFee
+          ? new BigNumber(valueIn)
+              .minus(new BigNumber(valueIn).multipliedBy(0.1).div(100))
+              .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
+              .toString()
+              .split('.')[0]
+          : new BigNumber(valueIn).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
+
         if (isEqual(tokenInRouter, tokenOutRouter)) {
-          const valueIn = isSubtractFee
-            ? new BigNumber(amount)
-                .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
-                .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
-                .toString()
-                .split('.')[0]
-            : new BigNumber(amount).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
+          // check  0xb/avax router
           const trade = new Trade(
             tokenInRouter,
             new TokenAmount(tokenData[tokenIn], valueIn),
@@ -117,13 +125,6 @@ export const useLoadSwapData = () => {
             isExactInput: isExactInput,
           });
         } else {
-          const valueIn = isSubtractFee
-            ? new BigNumber(amount)
-                .minus(new BigNumber(amount).multipliedBy(0.1).div(100))
-                .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
-                .toString()
-                .split('.')[0]
-            : new BigNumber(amount).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
           const tradeTokenInToWavax = new Trade(
             tokenInRouter,
             new TokenAmount(tokenData[tokenIn], valueIn),

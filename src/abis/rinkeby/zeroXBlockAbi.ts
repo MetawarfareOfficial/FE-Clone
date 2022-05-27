@@ -1,13 +1,6 @@
 export const zeroXBlockAbi = [
-  {
-    anonymous: false,
-    inputs: [
-      { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
-      { indexed: false, internalType: 'uint256', name: 'tokens', type: 'uint256' },
-    ],
-    name: 'AddLiquidity',
-    type: 'event',
-  },
+  { inputs: [{ internalType: 'address', name: '_address', type: 'address' }], name: 'InvalidAddress', type: 'error' },
+  { inputs: [{ internalType: 'uint256', name: '_sellTax', type: 'uint256' }], name: 'InvalidSellTax', type: 'error' },
   {
     anonymous: false,
     inputs: [
@@ -90,6 +83,9 @@ export const zeroXBlockAbi = [
     inputs: [
       { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'squareAmount', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'cubeAmount', type: 'uint256' },
+      { indexed: false, internalType: 'uint256', name: 'tessAmount', type: 'uint256' },
     ],
     name: 'RewardCashoutAll',
     type: 'event',
@@ -100,6 +96,7 @@ export const zeroXBlockAbi = [
       { indexed: false, internalType: 'address', name: 'sender', type: 'address' },
       { indexed: false, internalType: 'uint256', name: 'index', type: 'uint256' },
       { indexed: false, internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { indexed: false, internalType: 'enum ContType', name: 'cType', type: 'uint8' },
     ],
     name: 'RewardCashoutOne',
     type: 'event',
@@ -130,6 +127,13 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: '_isSellTaxWhitelisted',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
     name: '_lastBuyOnLaunch',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -139,6 +143,13 @@ export const zeroXBlockAbi = [
     inputs: [],
     name: '_liqRouter',
     outputs: [{ internalType: 'contract LiquidityRouter', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'addr', type: 'address' }],
+    name: '_walletName',
+    outputs: [{ internalType: 'string', name: '', type: 'string' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -170,15 +181,15 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'balanceOf',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    inputs: [{ internalType: 'address', name: '', type: 'address' }],
+    name: 'automatedMarketMakerPairs',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'enum ContType', name: '_ct', type: 'uint8' }],
-    name: 'breakevenPerType',
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'balanceOf',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
@@ -207,6 +218,13 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'bool', name: 'newVal', type: 'bool' }],
+    name: 'changeEnableAutoSwapCashout',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'bool', name: 'newVal', type: 'bool' }],
     name: 'changeEnableAutoSwapDevFund',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -215,6 +233,27 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'bool', name: 'newVal', type: 'bool' }],
     name: 'changeEnableAutoSwapTreasury',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'newVal', type: 'uint256' }],
+    name: 'changeSellTaxRate',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newVal', type: 'address' }],
+    name: 'changeSellTaxTargetAddress',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'newVal', type: 'address' }],
+    name: 'changeUniswapV2PairAddress',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -247,6 +286,13 @@ export const zeroXBlockAbi = [
     inputs: [],
     name: 'developmentFundPool',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'enableAutoSwapCashout',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -404,16 +450,6 @@ export const zeroXBlockAbi = [
   },
   { inputs: [], name: 'renounceOwnership', outputs: [], stateMutability: 'nonpayable', type: 'function' },
   {
-    inputs: [
-      { internalType: 'address', name: 'userAddr', type: 'address' },
-      { internalType: 'uint256', name: 'tokens', type: 'uint256' },
-    ],
-    name: 'rescueMissentToken',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'rewardsFee',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -423,6 +459,20 @@ export const zeroXBlockAbi = [
   {
     inputs: [],
     name: 'rewardsPool',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'sellTax',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'sellTaxTargetAddress',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function',
@@ -438,8 +488,8 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'bool', name: '_enable', type: 'bool' }],
-    name: 'setEnableAntiBot',
+    inputs: [{ internalType: 'address', name: 'crm', type: 'address' }],
+    name: 'setContManagement',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -468,6 +518,16 @@ export const zeroXBlockAbi = [
   {
     inputs: [{ internalType: 'address', name: 'newAddress', type: 'address' }],
     name: 'setUSDCAddress',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'account', type: 'address' },
+      { internalType: 'bool', name: 'value', type: 'bool' },
+    ],
+    name: 'setWhitelistStatus',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -556,20 +616,6 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'enum ContType', name: '_ct', type: 'uint8' }],
-    name: 'tokenReceivedPerType',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'enum ContType', name: '_ct', type: 'uint8' }],
-    name: 'totalContsPerType',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'totalFees',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -654,6 +700,20 @@ export const zeroXBlockAbi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'uniswapV2Pair',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'uniswapV2Router',
+    outputs: [{ internalType: 'contract IJoeRouter02', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
     name: 'updateCashoutFee',
     outputs: [],
@@ -711,14 +771,14 @@ export const zeroXBlockAbi = [
   },
   {
     inputs: [{ internalType: 'uint256', name: 'value', type: 'uint256' }],
-    name: 'updateSwapFee',
+    name: 'updateTreasuryFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
   },
   {
     inputs: [{ internalType: 'address payable', name: 'wall', type: 'address' }],
-    name: 'updateSwapTaxPool',
+    name: 'updateTreasuryWallet',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

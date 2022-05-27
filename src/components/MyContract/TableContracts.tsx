@@ -325,7 +325,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
-  const monthlyFeeFeatureReleaseTime = useAppSelector((state) => state.contract.monthlyFeeFeatureReleaseTime);
 
   const [openStatus, setOpenStatus] = useState(false);
   const [openPayFeeModalStatus, setOpenPayFeeModalStatus] = useState(false);
@@ -630,7 +629,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
               data
                 .filter((r) => r.mintDate !== '')
                 .map((item, i) => {
-                  const isPendingFee = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one));
+                  const isPendingFee = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one), true);
                   const dueDate = calculateDueDate(Number(item.expireIn), Number(monthlyFeeTimes.one));
                   return (
                     <TableRowCustom key={i}>
@@ -667,7 +666,11 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                             <TooltipCustom
                               title={
                                 <div>
-                                  <p style={{ margin: 0 }}>This contract will be removed after due day</p>
+                                  <p style={{ margin: 0 }}>
+                                    {' '}
+                                    If the monthly fee is unpaid after the due days, this contract will not be able to
+                                    claim rewards{' '}
+                                  </p>
                                 </div>
                               }
                               arrow
@@ -698,7 +701,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                                 onClick={() => {
                                   handleClickClaimNodeByNode(item.index, item.type);
                                 }}
-                                disabled={isClaimingReward}
+                                disabled={isClaimingReward || dueDate === 0}
                               >
                                 Claim
                               </ButtonClaim>

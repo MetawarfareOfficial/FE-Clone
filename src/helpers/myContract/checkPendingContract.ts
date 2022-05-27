@@ -1,13 +1,28 @@
 import moment from 'moment';
 
-export const checkPendingContract = (expiredTime: number, oneMonthTime: number) => {
+export const checkPendingContract = (
+  expiredTime: number,
+  oneMonthTime: number,
+  checkLast10days = false,
+  getTotalPendingMonths = false,
+) => {
   const now = moment().unix();
 
-  const previous30Days = Number(expiredTime) - Number(oneMonthTime);
+  const last10Days = Number(expiredTime) - Number(oneMonthTime) / 3;
 
-  // const previous30DaysForOldContract = Number(expiredTime) - Number(oneMonthTime) / 3;
+  if (getTotalPendingMonths) {
+    if (now >= expiredTime) {
+      return Math.floor((now - expiredTime) / oneMonthTime);
+    } else return 0;
+  }
 
-  if (now >= previous30Days) {
+  if (!checkLast10days) {
+    if (now >= expiredTime) {
+      return true;
+    } else return false;
+  }
+
+  if (now >= last10Days) {
     return true;
   } else return false;
 };

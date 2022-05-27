@@ -571,6 +571,11 @@ export const useInteractiveContract = () => {
     return await Promise.all([squareFee, cubeFee, tessFee]);
   };
 
+  const getSell0xbTax = async () => {
+    const sellTax = contractWithoutSigner.sellTax();
+    return await sellTax;
+  };
+
   return {
     approveToken,
     publicDistributeRewards,
@@ -624,6 +629,7 @@ export const useInteractiveContract = () => {
     getMyContractDataByUserAddress,
     payMonthlyFee,
     getMonthlyFees,
+    getSell0xbTax,
     contractWithSigner,
     provider,
   };

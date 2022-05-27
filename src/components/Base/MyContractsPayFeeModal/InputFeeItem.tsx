@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { formatPercent } from 'helpers/formatPrice';
+import moment from 'moment';
 import React from 'react';
 
 interface Props {
@@ -23,6 +24,7 @@ interface Props {
   defaultPayFee?: number;
   pendingFee?: number;
   months: number;
+  paymentDueDate?: number;
   setMonths: (value: number) => void;
   onChange: (value: number) => void;
 }
@@ -88,7 +90,7 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
 // }));
 
 const ButtonMax = styled(Box)<BoxProps>(() => ({
-  width: '80px',
+  width: '100px',
   height: '50px',
   boxSizing: 'border-box',
   border: '1px solid #3864FF',
@@ -204,7 +206,21 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
     },
   },
 }));
+const PaymentDueDate = styled(Typography)<TypographyProps>(() => ({
+  fontFamily: 'Poppins',
+  fontStyle: 'normal',
+  fontWeight: '500',
+  fontSize: '17px',
+  lineHeight: '26px',
+  textAlign: 'center',
+  letterSpacing: '0.035em',
+  color: '#293247',
+  marginTop: '20px',
 
+  span: {
+    color: '#3864FF',
+  },
+}));
 const Wrapper = styled(Box)<
   BoxProps & {
     showBorder: boolean;
@@ -228,6 +244,7 @@ const InputFeeItem: React.FC<Props> = ({
   months,
   setMonths,
   pendingFee = 0,
+  paymentDueDate = 0,
 }) => {
   return (
     <Wrapper showBorder={widthIcon}>
@@ -290,6 +307,11 @@ const InputFeeItem: React.FC<Props> = ({
           {formatPercent(String(defaultPayFee * months + pendingFee), 2)} USDC
         </ButtonMax>
       </BoxActions>
+      {widthIcon && (
+        <PaymentDueDate>
+          Payment due date: <span>{moment.unix(paymentDueDate).format('HH DD MMM YYYY')}</span>
+        </PaymentDueDate>
+      )}
     </Wrapper>
   );
 };
