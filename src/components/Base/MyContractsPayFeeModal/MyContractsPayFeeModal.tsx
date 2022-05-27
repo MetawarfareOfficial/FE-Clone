@@ -358,7 +358,6 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const usdcTokenInfo = useAppSelector((state) => state.contract.usdcToken);
   // const isUsdcTokenLoaded = useAppSelector((state) => state.contract.isUsdcTokenLoaded);
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
-  const monthlyFeeFeatureReleaseTime = useAppSelector((state) => state.contract.monthlyFeeFeatureReleaseTime);
   const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
   const [cubeMonths, setCubeMonths] = useState(1);
@@ -392,7 +391,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
 
   const getContTime = (contracts: MineContract[], months: number) => {
     return contracts.map((item) => {
-      const isPendingFee = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one));
+      const totalPendingMonth = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one), false, true);
       let returnMonth = monthlyFeeTimes.one;
       if (months === 1) {
         returnMonth = monthlyFeeTimes.one;
@@ -401,7 +400,9 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       } else {
         returnMonth = monthlyFeeTimes.three;
       }
-      return isPendingFee ? String(Number(returnMonth) + Number(monthlyFeeTimes.one)) : returnMonth;
+      return Number(totalPendingMonth) > 0
+        ? String(Number(returnMonth) + Number(monthlyFeeTimes.one) * Number(totalPendingMonth))
+        : returnMonth;
     });
   };
 
@@ -415,7 +416,6 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     contracts,
     contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
     type,
-    // allContracts.filter((item) => item.type === contracts[0].type).length,
   );
 
   const totalUsdcHaveToPay =
@@ -429,8 +429,28 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const tessContractsPendingFee = calculatePendingFee(tesseractContracts, tessMonthlyFee, Number(monthlyFeeTimes.one));
 
   const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
-  const isPendingFee = checkPendingContract(Number(contracts[0].expireIn), Number(monthlyFeeTimes.one));
+  const totalPendingMonths = checkPendingContract(
+    Number(contracts[0].expireIn),
+    Number(monthlyFeeTimes.one),
+    false,
+    true,
+  );
+
   const nearestExpiredTimeCont = getNearestDateEntity(contracts) || contracts[0];
+  const nearestExpiredTimeCubeCont = getNearestDateEntity(contracts, '1') || contracts[0];
+  const nearestExpiredTimeTessCont = getNearestDateEntity(contracts, '2') || contracts[0];
+  const nearestExpiredCubeContractPendingMonth = checkPendingContract(
+    Number(nearestExpiredTimeCubeCont.expireIn),
+    Number(monthlyFeeTimes.one),
+    false,
+    true,
+  );
+  const nearestExpiredTessContractPendingMonth = checkPendingContract(
+    Number(nearestExpiredTimeTessCont.expireIn),
+    Number(monthlyFeeTimes.one),
+    false,
+    true,
+  );
 
   const nearestContMonth =
     type === 'pay_all' ? (nearestExpiredTimeCont.type === '1' ? cubeMonths : tessMonths) : contMonths;
@@ -463,7 +483,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
       </Header>
 
       <Content>
-        {type === 'pay_one' && isPendingFee && (
+        {type === 'pay_one' && totalPendingMonths > 0 && (
           <>
             <PendingFeeBox>
               <div
@@ -480,7 +500,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                       color: '#FF0000',
                     }}
                   >
-                    {oneContractPayFee} USD
+                    {oneContractPayFee * Number(totalPendingMonths)} USD
                   </Text>
                 </PendingFeeAmountBox>
                 <PayPendingFeeButton
@@ -490,7 +510,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                         setIsFirstTime(false);
                       } else {
                         const selectedContracts = [...contracts];
-                        const times = [monthlyFeeTimes.one];
+                        const times = [String(Number(monthlyFeeTimes.one) * Number(totalPendingMonths))];
                         onSubmit(selectedContracts, times);
                         setIsFirstTime(false);
                       }
@@ -499,7 +519,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                         onApproveToken();
                       } else {
                         const selectedContracts = [...contracts];
-                        const times = [monthlyFeeTimes.one];
+                        const times = [String(Number(monthlyFeeTimes.one) * Number(totalPendingMonths))];
                         onSubmit(selectedContracts, times);
                       }
                     }
@@ -541,16 +561,16 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                   months={cubeMonths}
                   setMonths={setCubeMonths}
                   pendingFee={cubeContractsPendingFee}
-                  defaultPayFee={calculateMonthlyFee(
-                    cubeContracts,
-                    cubeMonthlyFee,
-                    type,
-                    // allContracts.filter((item) => item.type === '1').length,
-                  )}
+                  defaultPayFee={calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type)}
                   onChange={() => {}}
                   icon={theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon}
                   widthIcon={true}
                   name={'Cube Contract'}
+                  paymentDueDate={
+                    Number(nearestExpiredTimeCubeCont.expireIn) +
+                    Number(nearestExpiredCubeContractPendingMonth) * Number(monthlyFeeTimes.one) +
+                    cubeMonths * Number(monthlyFeeTimes.one)
+                  }
                 />
               )}
               {tesseractContracts.length > 0 && (
@@ -559,43 +579,30 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                   setMonths={setTessMonths}
                   pendingFee={tessContractsPendingFee}
                   onChange={() => {}}
-                  defaultPayFee={calculateMonthlyFee(
-                    tesseractContracts,
-                    tessMonthlyFee,
-                    type,
-                    // allContracts.filter((item) => item.type === '2').length,
-                  )}
+                  defaultPayFee={calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type)}
                   icon={theme.palette.mode === 'light' ? TessIcon : TessDarkIcon}
                   widthIcon={true}
                   name={'Tesseract Contract'}
+                  paymentDueDate={
+                    Number(nearestExpiredTimeTessCont.expireIn) +
+                    Number(nearestExpiredTessContractPendingMonth) * Number(monthlyFeeTimes.one) +
+                    tessMonths * Number(monthlyFeeTimes.one)
+                  }
                 />
               )}
             </>
           )}
 
-          <PaymentDueDate>
-            Payment due date:{' '}
-            <span>
-              {moment
-                .unix(Number(nearestExpiredTimeCont.expireIn) + nearestContMonth * Number(monthlyFeeTimes.one))
-                .format('HH DD MMM YYYY')}
-            </span>
-          </PaymentDueDate>
-
-          {/* <Box sx={{ textAlign: 'center' }}>
-            <BoxFeeDetail type={type}>
-              {theme.palette.mode === 'light' ? (
-                <ViewHelp>
-                  <WarnIcon width={22} />
-                </ViewHelp>
-              ) : (
-                <ViewHelp>
-                  <WarnDarkIcon width={22} />
-                </ViewHelp>
-              )}{' '}
-              Fee is decresed 0.1% for each new contract
-            </BoxFeeDetail>
-          </Box> */}
+          {type === 'pay_one' && (
+            <PaymentDueDate>
+              Payment due date:{' '}
+              <span>
+                {moment
+                  .unix(Number(nearestExpiredTimeCont.expireIn) + nearestContMonth * Number(monthlyFeeTimes.one))
+                  .format('HH DD MMM YYYY')}
+              </span>
+            </PaymentDueDate>
+          )}
         </SubscriptionFeeBox>
         <ButtonMint
           variant="contained"
@@ -632,14 +639,14 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
           {isFirstTime
             ? type === 'pay_all'
               ? 'Pay'
-              : isPendingFee
+              : totalPendingMonths > 0
               ? 'Pay Both'
               : 'Pay'
             : isTokenAmountOverAllowance
             ? 'Approve USDC'
             : type === 'pay_all'
             ? 'Pay'
-            : isPendingFee
+            : totalPendingMonths > 0
             ? 'Pay Both'
             : 'Pay'}
         </ButtonMint>

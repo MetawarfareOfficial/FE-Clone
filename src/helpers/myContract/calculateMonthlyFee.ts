@@ -2,7 +2,6 @@ import { PopupType } from 'components/Base/MyContractsPayFeeModal/MyContractsPay
 import { MineContract } from 'interfaces/MyContract';
 import { checkPendingContract } from './checkPendingContract';
 
-
 export const calculateMonthlyFee = (contracts: MineContract[], contractFee: number, type: PopupType) => {
   if (type === 'pay_all') {
     return contracts.reduce((acc) => {

@@ -50,6 +50,7 @@ import { setIsOpenSelectWalletModal } from 'services/account';
 import { handleDisableToken, setIsInsufficientError, setSelectedName } from 'services/swap';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { useLoadTokensBalance } from 'hooks/zap';
+import { useLoadSell0xbTax } from 'hooks/swap/useLoadSell0xbTax';
 
 interface Props {
   title?: string;
@@ -400,6 +401,8 @@ const SwapPage: React.FC<Props> = () => {
   const { getSwappableTokens, account, handleSwapToken, loadEstimateToken, approveToken } = useSwapToken();
   const { handleConvertRecentTransactionData, checkSwapSetting, calculateSwapTokenRate } = useSwapHelpers();
   const { createToast } = useToast();
+
+  useLoadSell0xbTax();
 
   const {
     open: minReceiveTooltipOpen,
@@ -1028,6 +1031,7 @@ const SwapPage: React.FC<Props> = () => {
       : exchangeTo.value === null || Number(exchangeTo.value) === 0;
 
   const isInvalidSwap = isInvalidInput || isInsufficientError || isInsufficientLiquidityError;
+  const isSwap0xb = exchangeFrom.id === SwapTokenId.OXB;
 
   return (
     <Wrapper>
@@ -1133,7 +1137,7 @@ const SwapPage: React.FC<Props> = () => {
                 </ExchangeHeader>
 
                 <InputSwap
-                  disabled={!pairInfoLoaded}
+                  disabled={!pairInfoLoaded || isSwap0xb}
                   tokens={tokenList}
                   value={exchangeTo.value}
                   selected={exchangeTo.id}

@@ -5,7 +5,7 @@ import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { useToast } from 'hooks/useToast';
 import get from 'lodash/get';
 import { useEffect } from 'react';
-import { setMonthlyFeeReleaseTime, setMonthlyFeeTime } from 'services/contract';
+import { setMonthlyFeeTime } from 'services/contract';
 import { useAppDispatch } from 'stores/hooks';
 
 const rewardManagerAbi = process.env.REACT_APP_NODE_ENV === 'dev' ? rewardRinkebyAbi : rewardAvaxAbi;
@@ -44,20 +44,20 @@ export const useGetMonthlyFeeTime = () => {
           ],
         };
       });
-      const getDeployV2TimeParam = {
-        reference: 'releaseTime',
-        contractAddress: String(process.env.REACT_APP_CONTS_REWARD_MANAGER),
-        abi: rewardManagerAbi,
-        calls: [
-          {
-            reference: 'value',
-            methodName: 'monthFeeLogs',
-            methodParameters: [0],
-          },
-        ],
-      };
+      // const getDeployV2TimeParam = {
+      //   reference: 'releaseTime',
+      //   contractAddress: String(process.env.REACT_APP_CONTS_REWARD_MANAGER),
+      //   abi: rewardManagerAbi,
+      //   calls: [
+      //     {
+      //       reference: 'value',
+      //       methodName: 'monthFeeLogs',
+      //       methodParameters: [0],
+      //     },
+      //   ],
+      // };
 
-      const response = await multipleCall([...multiCallParams, getDeployV2TimeParam]);
+      const response = await multipleCall([...multiCallParams]);
 
       const monthlyTimes = times.map((item) => {
         const time = get(response, `[${item.id}].callsReturnContext[0].returnValues[0]`, 0) as any;
@@ -70,8 +70,8 @@ export const useGetMonthlyFeeTime = () => {
           three: monthlyTimes[2],
         }),
       );
-      const deployTime = get(response, `releaseTime.callsReturnContext[0].returnValues[0]`, 0) as any;
-      dispatch(setMonthlyFeeReleaseTime(new BigNumber(deployTime.hex ? deployTime.hex : deployTime)));
+      // const deployTime = get(response, `releaseTime.callsReturnContext[0].returnValues[0]`, 0) as any;
+      // dispatch(setMonthlyFeeReleaseTime(new BigNumber(deployTime.hex ? deployTime.hex : deployTime)));
     } catch (error) {
       createToast({
         type: 'error',

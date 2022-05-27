@@ -84,6 +84,7 @@ const initialState = {
   isLoadEstimateToken: false,
   isInsufficientLiquidityError: false,
   pairInfoLoaded: false,
+  sell0xbTax: '0',
 };
 
 export const swapSlice = createSlice({
@@ -141,6 +142,9 @@ export const swapSlice = createSlice({
     setPairInfoLoaded: (state, action: PayloadAction<any>) => {
       state.pairInfoLoaded = action.payload;
     },
+    setSell0xbTax: (state, action) => {
+      state.sell0xbTax = action.payload;
+    },
   },
 });
 
@@ -155,6 +159,7 @@ export const {
   setIsLoadEstimateToken,
   setIsInsufficientLiquidityError,
   setPairInfoLoaded,
+  setSell0xbTax,
 } = swapSlice.actions;
 
 const { reducer: swapReducer } = swapSlice;
