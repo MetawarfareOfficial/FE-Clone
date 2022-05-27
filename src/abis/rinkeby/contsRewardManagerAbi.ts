@@ -10,6 +10,20 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [],
+    name: 'FOUR_MONTH',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'MAXUINT256',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'ONE_MONTH',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
@@ -206,16 +220,6 @@ export const contsRewardManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
-      { internalType: 'uint256', name: '_initialPrice', type: 'uint256' },
-    ],
-    name: '_resetAllAPRChange',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
     inputs: [{ internalType: 'enum ContType', name: '_cType', type: 'uint8' }],
     name: '_undoRewardAPRChange',
     outputs: [],
@@ -231,6 +235,7 @@ export const contsRewardManagerAbi = [
     outputs: [
       { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
       { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+      { internalType: 'bool', name: 'isFeeContract', type: 'bool' },
     ],
     stateMutability: 'view',
     type: 'function',
@@ -261,13 +266,6 @@ export const contsRewardManagerAbi = [
     name: 'cashoutTimeout',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'uint256', name: '_decreaseFeePercent', type: 'uint256' }],
-    name: 'changeDecreaseFeePercent',
-    outputs: [],
-    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -358,6 +356,7 @@ export const contsRewardManagerAbi = [
         components: [
           { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
           { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+          { internalType: 'bool', name: 'isFeeContract', type: 'bool' },
         ],
         internalType: 'struct CONTRewardManagement.AdditionalDataEntity',
         name: '',
@@ -380,6 +379,35 @@ export const contsRewardManagerAbi = [
   },
   {
     inputs: [{ internalType: 'address', name: 'user', type: 'address' }],
+    name: 'getFullDataAllCont',
+    outputs: [
+      {
+        components: [
+          { internalType: 'string', name: 'name', type: 'string' },
+          { internalType: 'uint256', name: 'creationTime', type: 'uint256' },
+          { internalType: 'uint256', name: 'lastUpdateTime', type: 'uint256' },
+          { internalType: 'uint256', name: 'initialAPR', type: 'uint256' },
+          { internalType: 'uint256', name: 'buyPrice', type: 'uint256' },
+          { internalType: 'enum ContType', name: 'cType', type: 'uint8' },
+          { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
+          { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+          { internalType: 'bool', name: 'isFeeContract', type: 'bool' },
+          { internalType: 'uint256', name: 'reward', type: 'uint256' },
+          { internalType: 'uint256', name: 'claimed', type: 'uint256' },
+        ],
+        internalType: 'struct CONTRewardManagement.FullDataEntity[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'user', type: 'address' },
+      { internalType: 'uint256', name: 'index', type: 'uint256' },
+    ],
     name: 'getFullDataCont',
     outputs: [
       {
@@ -392,22 +420,15 @@ export const contsRewardManagerAbi = [
           { internalType: 'enum ContType', name: 'cType', type: 'uint8' },
           { internalType: 'uint256', name: 'expireIn', type: 'uint256' },
           { internalType: 'uint256', name: 'lastUpdated', type: 'uint256' },
+          { internalType: 'bool', name: 'isFeeContract', type: 'bool' },
+          { internalType: 'uint256', name: 'reward', type: 'uint256' },
+          { internalType: 'uint256', name: 'claimed', type: 'uint256' },
         ],
-        internalType: 'struct CONTRewardManagement.FullDataEntity[]',
+        internalType: 'struct CONTRewardManagement.FullDataEntity',
         name: '',
-        type: 'tuple[]',
+        type: 'tuple',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'address', name: 'account', type: 'address' },
-      { internalType: 'enum ContType', name: '_cType', type: 'uint8' },
-    ],
-    name: 'getNumberOfConts',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -436,6 +457,16 @@ export const contsRewardManagerAbi = [
       { internalType: 'uint256', name: 'index', type: 'uint256' },
     ],
     name: 'isExpiredCont',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'address', name: 'user', type: 'address' },
+      { internalType: 'uint256', name: 'index', type: 'uint256' },
+    ],
+    name: 'isFeeContract',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
@@ -481,7 +512,6 @@ export const contsRewardManagerAbi = [
   {
     inputs: [
       { internalType: 'address', name: '_feeToken', type: 'address' },
-      { internalType: 'uint256', name: '_decreaseFeePercent', type: 'uint256' },
       { internalType: 'uint256', name: '_tesseractFee', type: 'uint256' },
       { internalType: 'uint256', name: '_cubeFee', type: 'uint256' },
       { internalType: 'uint256', name: '_defaultExpireIn', type: 'uint256' },

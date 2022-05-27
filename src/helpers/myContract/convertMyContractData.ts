@@ -10,6 +10,8 @@ export const convertMyContractData = (data: GetMyContractResponse[]) => {
       expireIn: new BigNumber(item.expireIn._hex).toString(),
       initApy: new BigNumber(item.initialAPR._hex).div(1e6).toString(),
       name: item.name,
+      claimedReward: new BigNumber(item.claimed._hex).toString(),
+      reward: new BigNumber(item.reward._hex).toString(),
     };
   });
 };

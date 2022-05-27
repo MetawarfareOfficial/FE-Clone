@@ -59,17 +59,15 @@ export const parseDataCurrentAprV2 = (type: string, currentApr: string, price: n
 export const zipDataMyContract = (param: ContractResponse) => {
   const contracts = zipWith(
     param.currentZeroXBlockPerDays,
-    param.rewards,
-    param.claimedRewards,
     param.contractData,
-    (currentZeroXBlockPerDay, reward, claimedReward, contractData) => ({
+    (currentZeroXBlockPerDay, contractData) => ({
       mintDate: contractData.mintDate,
       name: contractData.name,
       type: String(contractData.type),
       initial: computeEarnedTokenPerDay(Number(contractData.price), contractData.initApy),
       current: calculateEarnCurrent0xbPerDay(Number(contractData.price), currentZeroXBlockPerDay),
-      rewards: reward,
-      claimedRewards: claimedReward,
+      rewards: contractData.reward,
+      claimedRewards: contractData.claimedReward,
       expireIn: contractData.expireIn,
     }),
   ).map((item, index) => {

@@ -9,6 +9,8 @@ export interface GetMyContractResponse {
   lastUpdateTime: BigNumber;
   lastUpdated: BigNumber;
   name: string;
+  reward: BigNumber;
+  claimed: BigNumber;
 }
 export interface MyContract {
   price: string;
@@ -17,4 +19,6 @@ export interface MyContract {
   expireIn: string;
   initApy: string;
   name: string;
+  claimedReward: string;
+  reward: string;
 }
