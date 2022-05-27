@@ -12,7 +12,8 @@ export const checkPendingContract = (
 
   if (getTotalPendingMonths) {
     if (now >= expiredTime) {
-      return Math.floor((now - expiredTime) / oneMonthTime);
+      const times = Math.floor((now - expiredTime) / oneMonthTime);
+      return times > 0 ? times : 1;
     } else return 0;
   }
 

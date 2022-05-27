@@ -429,6 +429,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const tessContractsPendingFee = calculatePendingFee(tesseractContracts, tessMonthlyFee, Number(monthlyFeeTimes.one));
 
   const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
+  const isTokenAmountOverBalance = Number(usdcTokenInfo.balance) < totalUsdcHaveToPay;
+
   const totalPendingMonths = checkPendingContract(
     Number(contracts[0].expireIn),
     Number(monthlyFeeTimes.one),
@@ -504,9 +506,10 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                   </Text>
                 </PendingFeeAmountBox>
                 <PayPendingFeeButton
+                  disabled={!isFirstTime && isTokenAmountOverBalance}
                   onClick={() => {
                     if (isFirstTime) {
-                      if (isTokenAmountOverAllowance) {
+                      if (isTokenAmountOverAllowance || isTokenAmountOverBalance) {
                         setIsFirstTime(false);
                       } else {
                         const selectedContracts = [...contracts];
@@ -525,7 +528,13 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                     }
                   }}
                 >
-                  Pay
+                  {isFirstTime
+                    ? 'Pay'
+                    : isTokenAmountOverAllowance
+                    ? 'Approve USDC'
+                    : isTokenAmountOverBalance
+                    ? 'Insufficient Tokens'
+                    : 'Pay'}
                 </PayPendingFeeButton>
               </div>
               <PaymentDueDate>
@@ -607,9 +616,10 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
         <ButtonMint
           variant="contained"
           color="primary"
+          disabled={!isFirstTime && isTokenAmountOverBalance}
           onClick={() => {
             if (isFirstTime) {
-              if (isTokenAmountOverAllowance) {
+              if (isTokenAmountOverAllowance || isTokenAmountOverBalance) {
                 setIsFirstTime(false);
               } else {
                 const selectedContracts =
@@ -644,6 +654,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
               : 'Pay'
             : isTokenAmountOverAllowance
             ? 'Approve USDC'
+            : isTokenAmountOverBalance
+            ? 'Insufficient Tokens'
             : type === 'pay_all'
             ? 'Pay'
             : totalPendingMonths > 0
