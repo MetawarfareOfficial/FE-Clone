@@ -4,7 +4,7 @@ import { DELAY_TIME } from 'consts/myContract';
 import { bigNumber2NumberV2 } from 'helpers/formatNumber';
 import { convertMyContractData } from 'helpers/myContract/convertMyContractData';
 
-import { parseDataMyContract, zipDataMyContract } from 'helpers/zipDataMyContract';
+import { zipDataMyContract } from 'helpers/zipDataMyContract';
 import { useGetUsdcTokenInfo } from 'hooks/myContract';
 import { useGetMonthlyFeeTime } from 'hooks/myContract/useGetMonthlyFeeTime';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
@@ -36,13 +36,7 @@ const MyContract: React.FC<Props> = () => {
   };
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
-  const {
-    getRewardOfNodes,
-    getRewardAmount,
-    getNodesCurrentAPR,
-    getClaimedRewardOfUser,
-    getMyContractDataByUserAddress,
-  } = useInteractiveContract();
+  const { getRewardAmount, getNodesCurrentAPR, getMyContractDataByUserAddress } = useInteractiveContract();
   const { createToast } = useToast();
   const [width] = useWindowSize();
   const [countMyContract, setCountMyContract] = useState(defaultData);
@@ -61,23 +55,13 @@ const MyContract: React.FC<Props> = () => {
         throw new Error('user address is undefined');
       }
 
-      const [rewards, rewardAmount, currentAPRs, claimedRewards] = await Promise.all([
-        getRewardOfNodes(),
-        getRewardAmount(),
-        getNodesCurrentAPR(),
-        getClaimedRewardOfUser(),
-      ]);
+      const [rewardAmount, currentAPRs] = await Promise.all([getRewardAmount(), getNodesCurrentAPR()]);
       const rawMyContracts = await getMyContractDataByUserAddress(currentUserAddress);
       const myContracts = convertMyContractData(rawMyContracts);
-      if (!rewards[0].includes('#') && rewards[0] === '') {
-        return;
-      }
 
       const dataCt = zipDataMyContract({
         contractData: myContracts,
         currentZeroXBlockPerDays: currentAPRs[0].split('#'),
-        rewards: parseDataMyContract(rewards[0]),
-        claimedRewards: parseDataMyContract(claimedRewards.list),
       } as ContractResponse);
       const dataRw = bigNumber2NumberV2(rewardAmount[0], 1e18);
       dispatch(setDataMyContracts(dataCt));

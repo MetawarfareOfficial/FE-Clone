@@ -14,12 +14,6 @@ export interface MineContract {
 }
 
 export interface ContractResponse {
-  // mintDates: Array<string>;
-  // names: Array<string>;
-  // types: Array<string>;
-  // initZeroXBlockPerDays: Array<string>;
   contractData: MyContract[];
   currentZeroXBlockPerDays: Array<string>;
-  rewards: Array<string>;
-  claimedRewards: string[];
 }

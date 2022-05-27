@@ -1,7 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 
-import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps, Grid } from '@mui/material';
+import { Box, BoxProps, Typography, TypographyProps, Paper, PaperProps } from '@mui/material';
 import { useAppSelector } from 'stores/hooks';
 
 // import bgBorder from 'assets/images/bg-box-gradient.png';
@@ -57,14 +57,11 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
   background: theme.palette.mode === 'light' ? '#fff' : `rgba(255, 255, 255, 0.03)`,
   // theme.palette.mode === 'light' ? '#fff' : `url(${bgBorder}) no-repeat center center`,
   backgroundSize: '107%',
-  minHeight: '120px',
+
   [theme.breakpoints.down('lg')]: {
     padding: '20px',
     fontSize: '12px',
     lineHeight: '18px',
-  },
-  [theme.breakpoints.down('xl')]: {
-    minHeight: '140px',
   },
   [theme.breakpoints.down('lg')]: {
     padding: '40px 42px 35px',
@@ -79,28 +76,16 @@ const Pool = styled(Paper)<PaperProps>(({ theme }) => ({
 }));
 
 const ClaimRewards: React.FC<Props> = () => {
-  const cashOutFee = useAppSelector((state) => state.contract.tokenDistribution.cashOutFee);
   const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
   return (
     <Wrapper>
-      <Grid justifyContent={'center'} container spacing={8}>
-        <Grid item lg={6} md={8}>
-          <Title>Claim Rewards Tax</Title>
-          <Pool>
-            {`Every time user claims rewards, ${cashOutFee}% tax will be deducted and 
-            redirected to the 0xBlock Liquidity Pool as 50% 0xB and 50% AVAX`}
-          </Pool>
-        </Grid>
-        <Grid item lg={6} md={8}>
-          <Title>Monthly Subscription Fee</Title>
-          <Pool>
-            Monthly subscription fee applies for CUBE CONTRACT ({monthlyFees.cube} USDC) and TESSERACT CONTRACT (
-            {monthlyFees.tesseract} USDC). If monthly payment is more than 30 days overdue, the minted CUBE and
-            TESSERACT contracts will be removed
-          </Pool>
-        </Grid>
-      </Grid>
+      <Title>Claim Rewards Tax</Title>
+      <Pool>
+        {`Monthly subscription fee applies for CUBE CONTRACT (${monthlyFees.cube} 
+        USDC) and TESSERACT CONTRACT (${monthlyFees.tesseract} USDC). 
+        If monthly payment is not paid in the 30 days, the unpaid contracts will not be able to claim rewards`}
+      </Pool>
     </Wrapper>
   );
 };

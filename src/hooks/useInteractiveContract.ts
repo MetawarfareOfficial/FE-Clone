@@ -557,7 +557,7 @@ export const useInteractiveContract = () => {
   };
 
   const getMyContractDataByUserAddress = async (account: string) => {
-    return await rewardManagerContractWithoutSigner.getFullDataCont(account);
+    return await rewardManagerContractWithoutSigner.getFullDataAllCont(account);
   };
 
   const payMonthlyFee = async (indexes: number[], times: string[]) => {

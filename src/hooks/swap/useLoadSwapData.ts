@@ -88,19 +88,20 @@ export const useLoadSwapData = () => {
         pairsData,
       });
       if (isExactInput) {
-        // add sell 0xb tax
         let valueIn = amount;
-        if (tokenIn === SwapTokenId.OXB) {
-          valueIn = new BigNumber(valueIn).minus(new BigNumber(valueIn).multipliedBy(sellTax).div(100)).toString();
-        }
         valueIn = isSubtractFee
-          ? new BigNumber(valueIn)
+          ? // add swap fee
+            new BigNumber(valueIn)
               .minus(new BigNumber(valueIn).multipliedBy(0.1).div(100))
               .multipliedBy(`1e${tokenData[tokenIn].decimals}`)
               .toString()
-              .split('.')[0]
-          : new BigNumber(valueIn).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString().split('.')[0];
-
+          : new BigNumber(valueIn).multipliedBy(`1e${tokenData[tokenIn].decimals}`).toString();
+        // add sell 0xb tax
+        if (tokenIn === SwapTokenId.OXB) {
+          valueIn = new BigNumber(valueIn).minus(new BigNumber(valueIn).multipliedBy(sellTax).div(100)).toString();
+        }
+        // remove dot
+        valueIn = valueIn.split('.')[0];
         if (isEqual(tokenInRouter, tokenOutRouter)) {
           // check  0xb/avax router
           const trade = new Trade(
@@ -123,6 +124,7 @@ export const useLoadSwapData = () => {
             tokenIn,
             tokenOut,
             isExactInput: isExactInput,
+            sellTax,
           });
         } else {
           const tradeTokenInToWavax = new Trade(
@@ -152,6 +154,7 @@ export const useLoadSwapData = () => {
             tokenIn,
             tokenOut,
             isExactInput,
+            sellTax,
           });
         }
       } else {

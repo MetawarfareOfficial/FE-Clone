@@ -16,6 +16,7 @@ interface Params {
   tokenIn: SwapTokenId;
   tokenOut: SwapTokenId;
   isExactInput: boolean;
+  sellTax?: string;
 }
 export const convertTraderJoeRouterData = ({
   estimateTokenAmount,
@@ -28,6 +29,7 @@ export const convertTraderJoeRouterData = ({
   tokenIn,
   tokenOut,
   isExactInput,
+  sellTax = '0',
 }: Params) => {
   const token = isExactInput ? tokenOut : tokenIn;
   const _tradingFee = isExactInput
@@ -57,7 +59,7 @@ export const convertTraderJoeRouterData = ({
           callBackParams: [6, 0],
         })
       : null,
-    tradingFee: calculateTradingFee(_tradingFee, tokenData[tokenIn], isExactInput),
+    tradingFee: calculateTradingFee(_tradingFee, tokenData[tokenIn], isExactInput, sellTax),
     priceImpact,
   };
 };
