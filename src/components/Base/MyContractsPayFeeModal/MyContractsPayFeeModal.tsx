@@ -465,8 +465,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     true,
   );
 
-  const nearestContMonth =
-    type === 'pay_all' ? (nearestExpiredTimeCont.type === '1' ? cubeMonths : tessMonths) : contMonths;
+  // const nearestContMonth =
+  //   type === 'pay_all' ? (nearestExpiredTimeCont.type === '1' ? cubeMonths : tessMonths) : contMonths;
 
   return (
     <Wrapper
@@ -513,7 +513,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                       color: '#FF0000',
                     }}
                   >
-                    {oneContractPayFee * Number(totalPendingMonths)} USD
+                    {oneContractPayFee * Number(totalPendingMonths)} USDC
                   </Text>
                 </PendingFeeAmountBox>
                 <PayPendingFeeButton
@@ -550,14 +550,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
               </div>
               <PaymentDueDate>
                 Payment due date:{' '}
-                <span>
-                  {moment
-                    .unix(
-                      Number(Number(nearestExpiredTimeCont.expireIn) - Number(monthlyFeeTimes.one)) +
-                        nearestContMonth * Number(monthlyFeeTimes.one),
-                    )
-                    .format('HH DD MMM YYYY')}
-                </span>
+                <span>{moment.unix(Number(Number(nearestExpiredTimeCont.expireIn))).format('HH DD MMM YYYY')}</span>
               </PaymentDueDate>
             </PendingFeeBox>
             <Divider />
