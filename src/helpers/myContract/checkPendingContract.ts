@@ -9,10 +9,9 @@ export const checkPendingContract = (
   const now = moment().unix();
 
   const last10Days = Number(expiredTime) - Number(oneMonthTime) / 3;
-
   if (getTotalPendingMonths) {
     if (now >= expiredTime) {
-      const times = Math.floor((now - expiredTime) / oneMonthTime);
+      const times = Math.ceil((now - expiredTime) / oneMonthTime);
       return times > 0 ? times : 1;
     } else return 0;
   }
