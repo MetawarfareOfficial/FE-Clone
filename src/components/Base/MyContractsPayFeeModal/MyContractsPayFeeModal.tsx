@@ -428,8 +428,10 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
 
   const tessContractsPendingFee = calculatePendingFee(tesseractContracts, tessMonthlyFee, Number(monthlyFeeTimes.one));
 
-  const isTokenAmountOverAllowance = Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay;
-  const isTokenAmountOverBalance = Number(usdcTokenInfo.balance) < totalUsdcHaveToPay;
+  const isTokenAmountOverAllowance =
+    Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay + cubeContractsPendingFee + tessContractsPendingFee;
+  const isTokenAmountOverBalance =
+    Number(usdcTokenInfo.balance) < totalUsdcHaveToPay + cubeContractsPendingFee + tessContractsPendingFee;
 
   const totalPendingMonths = checkPendingContract(
     Number(contracts[0].expireIn),

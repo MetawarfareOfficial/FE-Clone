@@ -9,9 +9,15 @@ import {
   InputAdornment,
   OutlinedInput,
   OutlinedInputProps,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
   Typography,
   TypographyProps,
+  useTheme,
 } from '@mui/material';
+import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
+import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 import { styled } from '@mui/material/styles';
 import { formatPercent } from 'helpers/formatPrice';
 import moment from 'moment';
@@ -235,6 +241,36 @@ const Wrapper = styled(Box)<
     : 'unset',
   borderRadius: showBorder ? '11px' : 'unset',
 }));
+const ViewHelp = styled(Box)<BoxProps>(() => ({
+  marginLeft: '40px',
+  display: 'flex',
+}));
+
+const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.mode === 'light' ? '#e4e4e4' : '#000',
+    top: '5px !important',
+
+    ['&::before']: {
+      boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+      backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    },
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#3E3E3E',
+    boxShadow: '0px 1px 7px rgba(0, 0, 0, 0.08)',
+    color: theme.palette.mode === 'light' ? '#293247' : '#fff',
+    fontFamily: 'Poppins',
+    fontWeight: 'normal',
+    fontSize: '12px',
+    lineHeight: '22px',
+    borderRadius: '7px',
+    padding: '2px 10px',
+  },
+  zIndex: 2000,
+}));
 
 const InputFeeItem: React.FC<Props> = ({
   widthIcon,
@@ -246,6 +282,8 @@ const InputFeeItem: React.FC<Props> = ({
   pendingFee = 0,
   paymentDueDate = 0,
 }) => {
+  const theme = useTheme();
+
   return (
     <Wrapper showBorder={widthIcon}>
       <Header>
@@ -302,7 +340,31 @@ const InputFeeItem: React.FC<Props> = ({
           }
           aria-describedby="outlined-weight-helper-text"
         />
-
+        {widthIcon && (
+          <TooltipCustom
+            title={
+              <div>
+                <p style={{ margin: 0 }}> This amount is included unpaid fees </p>
+              </div>
+            }
+            arrow
+            placement="top-end"
+          >
+            {theme.palette.mode === 'light' ? (
+              <ViewHelp>
+                <WarnIcon width={16} />
+              </ViewHelp>
+            ) : (
+              <ViewHelp
+                sx={{
+                  marginTop: '5px',
+                }}
+              >
+                <WarnDarkIcon width={16} />
+              </ViewHelp>
+            )}
+          </TooltipCustom>
+        )}
         <ButtonMax color="primary" onClick={() => {}}>
           {formatPercent(String(defaultPayFee * months + pendingFee), 2)} USDC
         </ButtonMax>
