@@ -14,9 +14,9 @@ export const calculateMonthlyFee = (contracts: MineContract[], contractFee: numb
 
 export const calculatePendingFee = (contracts: MineContract[], contractFee: number, oneMonthTime: number) => {
   return contracts.reduce((acc, item) => {
-    const isPendingFee = checkPendingContract(Number(item.expireIn), Number(oneMonthTime));
-    if (isPendingFee) {
-      acc + contractFee;
+    const totalPendingMonths = checkPendingContract(Number(item.expireIn), Number(oneMonthTime), false, true);
+    if (totalPendingMonths > 0) {
+      return acc + contractFee * Number(totalPendingMonths);
     }
     return acc;
   }, 0);
