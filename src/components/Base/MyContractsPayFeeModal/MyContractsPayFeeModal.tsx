@@ -21,7 +21,6 @@ import CloseImg from 'assets/images/ic-times.svg';
 import SquareDarkIcon from 'assets/images/square-dark.gif';
 import TessDarkIcon from 'assets/images/tess-dark.gif';
 import { ClaimingType } from 'components/MyContract/TableContracts';
-import { customToast } from 'helpers';
 import {
   calculateMonthlyFee,
   calculatePendingFee,
@@ -29,7 +28,6 @@ import {
   getNearestDateEntity,
 } from 'helpers/myContract';
 import { MineContract } from 'interfaces/MyContract';
-import { errorMessage } from 'messages/errorMessages';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useAppSelector } from 'stores/hooks';
@@ -385,10 +383,6 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const icon = contracts.length > 0 ? getIconByMode(convertCType(contracts[0].type), theme.palette.mode) : '';
   const name = contracts.length > 0 ? `${convertCType(contracts[0].type)} Contract` : '';
 
-  const handleBackdropClick = () => {
-    customToast({ message: errorMessage.FINISH_MINT_CONTRACT.message, type: 'error', toastId: 3 });
-  };
-
   const getContTime = (contracts: MineContract[], months: number) => {
     return contracts.map((item) => {
       const totalPendingMonth = checkPendingContract(Number(item.expireIn), Number(monthlyFeeTimes.one), false, true);
@@ -465,16 +459,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     true,
   );
 
-  // const nearestContMonth =
-  //   type === 'pay_all' ? (nearestExpiredTimeCont.type === '1' ? cubeMonths : tessMonths) : contMonths;
-
   return (
-    <Wrapper
-      open={open}
-      keepMounted
-      aria-describedby="alert-dialog-slide-description"
-      onBackdropClick={handleBackdropClick}
-    >
+    <Wrapper open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
         {type === 'pay_one' && (
           <ViewIcon>
