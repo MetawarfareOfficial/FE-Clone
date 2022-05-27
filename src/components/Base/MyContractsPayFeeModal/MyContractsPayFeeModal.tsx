@@ -440,7 +440,16 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
 
   const nearestExpiredTimeCont = getNearestDateEntity(contracts) || contracts[0];
   const nearestExpiredTimeCubeCont = getNearestDateEntity(contracts, '1') || contracts[0];
+
   const nearestExpiredTimeTessCont = getNearestDateEntity(contracts, '2') || contracts[0];
+
+  const nearestExpiredContractPendingMonth = checkPendingContract(
+    Number(nearestExpiredTimeCont.expireIn),
+    Number(monthlyFeeTimes.one),
+    false,
+    true,
+  );
+
   const nearestExpiredCubeContractPendingMonth = checkPendingContract(
     Number(nearestExpiredTimeCubeCont.expireIn),
     Number(monthlyFeeTimes.one),
@@ -607,7 +616,11 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
               Payment due date:{' '}
               <span>
                 {moment
-                  .unix(Number(nearestExpiredTimeCont.expireIn) + nearestContMonth * Number(monthlyFeeTimes.one))
+                  .unix(
+                    Number(nearestExpiredTimeCont.expireIn) +
+                      Number(nearestExpiredContractPendingMonth) * Number(monthlyFeeTimes.one) +
+                      contMonths * Number(monthlyFeeTimes.one),
+                  )
                   .format('HH DD MMM YYYY')}
               </span>
             </PaymentDueDate>
