@@ -506,7 +506,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                   </Text>
                 </PendingFeeAmountBox>
                 <PayPendingFeeButton
-                  disabled={!isFirstTime && isTokenAmountOverBalance}
+                  disabled={!isFirstTime && !isTokenAmountOverAllowance && isTokenAmountOverBalance}
                   onClick={() => {
                     if (isFirstTime) {
                       if (isTokenAmountOverAllowance || isTokenAmountOverBalance) {
@@ -616,7 +616,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
         <ButtonMint
           variant="contained"
           color="primary"
-          disabled={!isFirstTime && isTokenAmountOverBalance}
+          disabled={!isFirstTime && !isTokenAmountOverAllowance && isTokenAmountOverBalance}
           onClick={() => {
             if (isFirstTime) {
               if (isTokenAmountOverAllowance || isTokenAmountOverBalance) {
