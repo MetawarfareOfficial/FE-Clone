@@ -43,7 +43,7 @@ import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 import { MineContract } from 'interfaces/MyContract';
 import { useWeb3React } from '@web3-react/core';
-import { checkPendingContract } from 'helpers/myContract';
+import { checkPendingContract, checkAllContractIsPendingMonthlyFee } from 'helpers/myContract';
 import { calculateDueDate } from 'helpers/myContract/calculateDueDate';
 export interface ContractItem {
   claimedRewards: string;
@@ -607,7 +607,10 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                   variant="contained"
                   color="primary"
                   onClick={handleClickClaimAll}
-                  disabled={!(currentUserAddress && data.length !== 0 && !isClaimingReward)}
+                  disabled={
+                    !(currentUserAddress && data.length !== 0 && !isClaimingReward) ||
+                    checkAllContractIsPendingMonthlyFee(data, Number(monthlyFeeTimes.one))
+                  }
                 >
                   Claim all
                 </ButtonClaimAll>
