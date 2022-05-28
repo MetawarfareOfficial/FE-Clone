@@ -95,7 +95,11 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
 //   color: '#293247',
 // }));
 
-const ButtonMax = styled(Box)<BoxProps>(() => ({
+const ButtonMax = styled(Box)<
+  BoxProps & {
+    type: 'pay_one' | 'pay_all';
+  }
+>(({ theme, type }) => ({
   width: '100px',
   height: '50px',
   boxSizing: 'border-box',
@@ -112,10 +116,10 @@ const ButtonMax = styled(Box)<BoxProps>(() => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  // '&:hover': {
-  //   opacity: 1,
-  //   cursor: 'pointer',
-  // },
+  [theme.breakpoints.down('xss')]: {
+    marginLeft: type === 'pay_all' ? '10px' : 'auto',
+    // marginRight: '10px'
+  },
 }));
 
 const BoxActions = styled(Box)<BoxProps>(() => ({
@@ -241,9 +245,17 @@ const Wrapper = styled(Box)<
     : 'unset',
   borderRadius: showBorder ? '11px' : 'unset',
 }));
-const ViewHelp = styled(Box)<BoxProps>(() => ({
+
+const ViewHelp = styled(Box)<BoxProps>(({ theme }) => ({
   marginLeft: '40px',
   display: 'flex',
+  [theme.breakpoints.down('sm')]: {
+    marginLeft: '60px',
+  },
+  [theme.breakpoints.down('xss')]: {
+    marginLeft: 'auto',
+    // marginRight: '10px'
+  },
 }));
 
 const TooltipCustom = styled(({ className, ...props }: TooltipProps) => (
@@ -365,7 +377,7 @@ const InputFeeItem: React.FC<Props> = ({
             )}
           </TooltipCustom>
         )}
-        <ButtonMax color="primary" onClick={() => {}}>
+        <ButtonMax type={widthIcon ? 'pay_all' : 'pay_one'} color="primary" onClick={() => {}}>
           {formatPercent(String(defaultPayFee * months + pendingFee), 2)} USDC
         </ButtonMax>
       </BoxActions>

@@ -28,15 +28,19 @@ import PendingGif from 'assets/images/pending-white.gif';
 import PendingDarkGif from 'assets/images/pending.gif';
 import { useLocation } from 'react-router-dom';
 import { infoMessage } from 'messages/infoMessages';
+import moment from 'moment';
 
+type ModalMode = 'claim_status' | 'pay_fee_status';
 interface Props {
   status: 'success' | 'error' | 'pending';
   open: boolean;
   text: string;
   icon?: string;
   name: string;
+  mode: ModalMode;
   onClose: () => void;
   onBackToMint?: () => void;
+  nextDueDate?: number;
 }
 
 interface TypographyCustomProps {
@@ -56,7 +60,11 @@ interface BoxCustomProps {
   denied: boolean;
 }
 
-const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
+const Wrapper = styled(Dialog)<
+  DialogProps & {
+    mode: ModalMode;
+  }
+>(({ theme, mode }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
   zIndex: 1700,
 
@@ -66,7 +74,7 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
   },
 
   '.MuiPaper-root': {
-    width: '317px',
+    minWidth: mode === 'claim_status' ? '317px' : '505px',
     boxShadow: '0px 10px 36px rgba(38, 29, 77, 0.1)',
     borderRadius: '24px',
     padding: '0',
@@ -74,6 +82,9 @@ const Wrapper = styled(Dialog)<DialogProps>(({ theme }) => ({
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
     border: theme.palette.mode === 'light' ? 'unset' : '1px solid #6F6F6F',
+    [theme.breakpoints.down('sm')]: {
+      minWidth: mode === 'claim_status' ? '317px' : '317px',
+    },
   },
 }));
 
@@ -86,9 +97,13 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ViewIcon = styled(Box)<BoxCustomProps>(({ denied }) => ({
-  width: '55px',
-  height: '55px',
+const ViewIcon = styled(Box)<
+  BoxCustomProps & {
+    mode: ModalMode;
+  }
+>(({ denied, mode }) => ({
+  width: mode === 'claim_status' ? '55px' : '77px',
+  height: mode === 'claim_status' ? '55px' : '77px',
   marginRight: '10px',
   borderRadius: '7px',
   overflow: 'hidden',
@@ -99,14 +114,21 @@ const ViewIcon = styled(Box)<BoxCustomProps>(({ denied }) => ({
   },
 }));
 
-const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
+const HeaderText = styled(Typography)<
+  TypographyProps & {
+    mode: ModalMode;
+  }
+>(({ theme, mode }) => ({
   fontFamily: 'Poppins',
-  fontSize: '18px',
+  fontSize: mode === 'claim_status' ? '18px' : '20px',
   lineHeight: '27px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   textTransform: 'uppercase',
   fontWeight: '600',
-  maxWidth: '105px',
+  maxWidth: mode === 'claim_status' ? '105px' : '190px',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '18px',
+  },
 }));
 
 const CloseIcon = styled(IconButton)<IconButtonProps>(() => ({
@@ -128,8 +150,14 @@ const Header = styled(DialogTitle)<DialogTitleCustomProps>(({ denied }) => ({
   marginBottom: denied ? '0' : '20px',
 }));
 
-const Content = styled(DialogContent)<DialogContentCustomProps>(({ denied }) => ({
-  padding: denied ? '0px 0px 20px 0px' : '20px 13px 20px 21px',
+const Content = styled(DialogContent)<
+  DialogContentCustomProps & {
+    mode: ModalMode;
+  }
+>(({ denied, mode, theme }) => ({
+  padding: denied
+    ? `0px 0px ${mode === 'claim_status' ? '20px' : '53px'} 0px`
+    : `20px 13px ${mode === 'claim_status' ? '20px' : '53px'} 21px`,
 
   '.MuiDialogContentText-root': {
     color: '#828282',
@@ -139,26 +167,41 @@ const Content = styled(DialogContent)<DialogContentCustomProps>(({ denied }) => 
     marginBottom: '8px',
     textTransform: 'capitalize',
   },
+  [theme.breakpoints.down('sm')]: {
+    padding: denied ? `0px 0px 20px 0px` : `20px 13px 20px 21px`,
+  },
 }));
 
-const ViewImage = styled(Box)<BoxProps>(() => ({
-  width: '84px',
-  height: '84px',
+const ViewImage = styled(Box)<
+  BoxProps & {
+    mode: ModalMode;
+  }
+>(({ mode, theme }) => ({
+  width: mode === 'claim_status' ? '84px' : '240px',
+  height: mode === 'claim_status' ? '84px' : '240px',
   margin: '10px auto 0',
 
   img: {
     width: '100%',
   },
+  [theme.breakpoints.down('sm')]: {
+    width: '84px',
+    height: '84px',
+  },
 }));
 
-const StatusText = styled(Typography)<TypographyCustomProps>(({ claimFailed, permissionDenied }) => ({
-  maxWidth: permissionDenied ? '250px' : '221px',
+const StatusText = styled(Typography)<
+  TypographyCustomProps & {
+    mode: ModalMode;
+  }
+>(({ claimFailed, permissionDenied, mode }) => ({
+  maxWidth: permissionDenied ? '250px' : mode === 'claim_status' ? '221px' : 'unset',
   fontFamily: 'Poppins',
   fontWeight: 'bold',
-  fontSize: '18px',
+  fontSize: mode === 'claim_status' ? '18px' : '20px',
   lineHeight: '27px',
   textAlign: 'center',
-  margin: '23px auto 0',
+  margin: mode === 'claim_status' ? '23px auto 0' : '52px auto 0',
   whiteSpace: claimFailed ? 'nowrap' : 'unset',
 }));
 
@@ -196,27 +239,43 @@ const ButtonMint = styled('button')<ButtonProps>(({ theme, disabled }) => ({
   },
 }));
 
-const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onClose, onBackToMint }) => {
+const MintStatusModal: React.FC<Props> = ({
+  status,
+  text,
+  open,
+  icon,
+  name,
+  onClose,
+  onBackToMint,
+  mode,
+  nextDueDate,
+}) => {
   const theme = useTheme();
   const location = useLocation();
 
   return (
-    <Wrapper open={open} TransitionComponent={Transition} keepMounted aria-describedby="alert-dialog-slide-description">
+    <Wrapper
+      mode={mode}
+      open={open}
+      TransitionComponent={Transition}
+      keepMounted
+      aria-describedby="alert-dialog-slide-description"
+    >
       <Header denied={text === infoMessage.PERMISSION_DENIED.message}>
         {icon && (
-          <ViewIcon denied={text === infoMessage.PERMISSION_DENIED.message}>
+          <ViewIcon mode={mode} denied={text === infoMessage.PERMISSION_DENIED.message}>
             <img alt="" src={icon} />
           </ViewIcon>
         )}
-        <HeaderText>{name}</HeaderText>
+        <HeaderText mode={mode}>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <img alt="" src={theme.palette.mode === 'light' ? CloseImg : CloseDarkImg} />
         </CloseIcon>
       </Header>
 
-      <Content denied={text === infoMessage.PERMISSION_DENIED.message}>
-        <ViewImage>
+      <Content mode={mode} denied={text === infoMessage.PERMISSION_DENIED.message}>
+        <ViewImage mode={mode}>
           {status === 'success' ? (
             <img alt="" src={theme.palette.mode === 'light' ? SuccessGif : SuccessDarkGif} />
           ) : ['error', 'permission denied'].includes(status) ? (
@@ -227,10 +286,15 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
         </ViewImage>
 
         <StatusText
+          mode={mode}
           color={{
             color:
               status === 'success'
-                ? '#119F19'
+                ? mode === 'claim_status'
+                  ? '#119F19'
+                  : theme.palette.mode === 'light'
+                  ? '#293247'
+                  : '#fff'
                 : ['error', 'permission denied'].includes(status)
                 ? theme.palette.mode === 'light'
                   ? '#F62D33'
@@ -244,7 +308,21 @@ const MintStatusModal: React.FC<Props> = ({ status, text, open, icon, name, onCl
         >
           {text}
         </StatusText>
-
+        {mode === 'pay_fee_status' && status === 'success' && name !== 'Approving' && (
+          <StatusText
+            mode={mode}
+            style={{
+              color: '#0052FF',
+              fontWeight: '400',
+              maxWidth: 'unset',
+              margin: '7px auto 0',
+            }}
+            claimFailed={true}
+            permissionDenied={true}
+          >
+            {`Next payment date: ${moment.unix(nextDueDate || 0).format('DD MMM YYYY')}`}
+          </StatusText>
+        )}
         {status === 'error' && location.pathname === '/mint-contracts' && (
           <ButtonMint variant="contained" color="primary" onClick={onBackToMint}>
             Back to mint

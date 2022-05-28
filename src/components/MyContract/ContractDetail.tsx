@@ -18,6 +18,8 @@ interface Props {
   current: number;
   nodeIndex: number;
   claimedReward: number;
+  dueDays?: number;
+  onPayFeeClick: () => void;
   onClaimClick: (arg1: number, arg2: string) => void;
 }
 
@@ -71,6 +73,11 @@ const ButtonClaim = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
+const ActionBox = styled(Box)<BoxProps>(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+}));
+
 const ContractDetail: React.FC<Props> = ({
   mintDate,
   type,
@@ -80,10 +87,11 @@ const ContractDetail: React.FC<Props> = ({
   current,
   nodeIndex,
   claimedReward,
+  dueDays,
+  onPayFeeClick,
   onClaimClick,
 }) => {
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
-
   return (
     <Wrapper>
       <Grid container spacing="19px">
@@ -171,24 +179,59 @@ const ContractDetail: React.FC<Props> = ({
           <Box>
             <Title>Due Days</Title>
             <Tooltip title={20}>
-              <Text>{20}</Text>
+              <Text>{dueDays || dueDays === 0 ? dueDays : '-'}</Text>
             </Tooltip>
           </Box>
         </Grid>
       </Grid>
 
-      <ButtonClaim
-        size="small"
-        variant="outlined"
-        color="primary"
-        fullWidth
-        disabled={isClaimingReward}
-        onClick={() => {
-          onClaimClick(nodeIndex, type);
-        }}
-      >
-        Claim
-      </ButtonClaim>
+      {dueDays || dueDays === 0 ? (
+        <ActionBox>
+          <ButtonClaim
+            sx={{
+              maxWidth: '46%',
+            }}
+            size="small"
+            variant="outlined"
+            color="primary"
+            fullWidth
+            disabled={isClaimingReward}
+            onClick={() => {
+              onClaimClick(nodeIndex, type);
+            }}
+          >
+            Claim
+          </ButtonClaim>
+          <ButtonClaim
+            sx={{
+              maxWidth: '46%',
+            }}
+            size="small"
+            variant="outlined"
+            color="primary"
+            fullWidth
+            disabled={isClaimingReward}
+            onClick={() => {
+              onPayFeeClick();
+            }}
+          >
+            Pay Fee
+          </ButtonClaim>
+        </ActionBox>
+      ) : (
+        <ButtonClaim
+          size="small"
+          variant="outlined"
+          color="primary"
+          fullWidth
+          disabled={isClaimingReward}
+          onClick={() => {
+            onClaimClick(nodeIndex, type);
+          }}
+        >
+          Claim
+        </ButtonClaim>
+      )}
     </Wrapper>
   );
 };

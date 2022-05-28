@@ -23,6 +23,7 @@ import TessDarkIcon from 'assets/images/tess-dark.gif';
 import { ClaimingType } from 'components/MyContract/TableContracts';
 import {
   calculateMonthlyFee,
+  calculateNextDueDateTime,
   calculatePendingFee,
   checkPendingContract,
   getNearestDateEntity,
@@ -41,7 +42,7 @@ interface Props {
   contracts: Array<MineContract>;
   allContracts: Array<MineContract>;
   onClose: () => void;
-  onSubmit: (values: any, times: string[]) => void;
+  onSubmit: (values: any, times: string[], nextDueDateTime: number) => void;
   onApproveToken: () => void;
 }
 
@@ -183,6 +184,12 @@ const SubscriptionFeeBox = styled(Box)<
       : 'unset',
   borderRadius: '11px',
   padding: type === 'pay_one' ? '0 20px 20px 20px' : 'unset',
+  [theme.breakpoints.down('sm')]: {
+    padding: type === 'pay_one' ? '0 10px 10px 10px' : 'unset',
+    '&>.MuiBox-root': {
+      padding: type === 'pay_one' ? 'unset' : '0 10px 10px 10px',
+    },
+  },
 }));
 
 const Divider = styled(Box)<BoxProps>(({ theme }) => ({
@@ -193,6 +200,9 @@ const Divider = styled(Box)<BoxProps>(({ theme }) => ({
 const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   padding: '20px',
   // marginBottom: '21px',
+  [theme.breakpoints.down('xss')]: {
+    padding: '15px',
+  },
   'p.MuiDialogContentText-root': {
     color: theme.palette.mode === 'light' ? '#828282' : 'rgba(255, 255, 255, 0.29)',
     fontFamily: 'Poppins',
@@ -458,7 +468,9 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     false,
     true,
   );
-
+  const oneDaySecond = 60 * 60 * 24;
+  const showHourFormat = Number(monthlyFeeTimes.one) < oneDaySecond;
+  const timeFormat = showHourFormat ? 'HH DD MMM YYYY' : 'DD MMM YYYY';
   return (
     <Wrapper open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
@@ -511,7 +523,15 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                       } else {
                         const selectedContracts = [...contracts];
                         const times = [String(Number(monthlyFeeTimes.one) * Number(totalPendingMonths))];
-                        onSubmit(selectedContracts, times);
+                        onSubmit(
+                          selectedContracts,
+                          times,
+                          calculateNextDueDateTime(
+                            Number(nearestExpiredTimeCont.expireIn),
+                            Number(nearestExpiredContractPendingMonth),
+                            Number(monthlyFeeTimes.one),
+                          ),
+                        );
                         setIsFirstTime(false);
                       }
                     } else {
@@ -520,7 +540,15 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                       } else {
                         const selectedContracts = [...contracts];
                         const times = [String(Number(monthlyFeeTimes.one) * Number(totalPendingMonths))];
-                        onSubmit(selectedContracts, times);
+                        onSubmit(
+                          selectedContracts,
+                          times,
+                          calculateNextDueDateTime(
+                            Number(nearestExpiredTimeCont.expireIn),
+                            Number(nearestExpiredContractPendingMonth),
+                            Number(monthlyFeeTimes.one),
+                          ),
+                        );
                       }
                     }
                   }}
@@ -536,7 +564,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
               </div>
               <PaymentDueDate>
                 Payment due date:{' '}
-                <span>{moment.unix(Number(Number(nearestExpiredTimeCont.expireIn))).format('HH DD MMM YYYY')}</span>
+                <span>{moment.unix(Number(Number(nearestExpiredTimeCont.expireIn))).format(timeFormat)}</span>
               </PaymentDueDate>
             </PendingFeeBox>
             <Divider />
@@ -602,7 +630,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                       Number(nearestExpiredContractPendingMonth) * Number(monthlyFeeTimes.one) +
                       contMonths * Number(monthlyFeeTimes.one),
                   )
-                  .format('HH DD MMM YYYY')}
+                  .format(timeFormat)}
               </span>
             </PaymentDueDate>
           )}
@@ -622,7 +650,19 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                 const tessTimes = getContTime(tesseractContracts, tessMonths);
                 const oneContTime = getContTime(contracts, contMonths);
                 const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes] : [...oneContTime];
-                onSubmit(selectedContracts, times);
+                const totalMonth =
+                  nearestExpiredTimeCont.type === '1'
+                    ? Number(nearestExpiredContractPendingMonth) + cubeMonths
+                    : Number(nearestExpiredContractPendingMonth) + tessMonths;
+                onSubmit(
+                  selectedContracts,
+                  times,
+                  calculateNextDueDateTime(
+                    Number(nearestExpiredTimeCont.expireIn),
+                    totalMonth,
+                    Number(monthlyFeeTimes.one),
+                  ),
+                );
                 setIsFirstTime(false);
               }
             } else {
@@ -635,7 +675,20 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                 const tessTimes = getContTime(tesseractContracts, tessMonths);
                 const oneContTime = getContTime(contracts, contMonths);
                 const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes] : [...oneContTime];
-                onSubmit(selectedContracts, times);
+                const totalMonth =
+                  nearestExpiredTimeCont.type === '1'
+                    ? Number(nearestExpiredContractPendingMonth) + cubeMonths
+                    : Number(nearestExpiredContractPendingMonth) + tessMonths;
+
+                onSubmit(
+                  selectedContracts,
+                  times,
+                  calculateNextDueDateTime(
+                    Number(nearestExpiredTimeCont.expireIn),
+                    totalMonth,
+                    Number(monthlyFeeTimes.one),
+                  ),
+                );
               }
             }
           }}

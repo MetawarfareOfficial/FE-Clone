@@ -11,6 +11,9 @@ export const checkAllContractIsPendingMonthlyFee = (contracts: MineContract[], o
         result = false;
         break;
       }
+    } else {
+      result = false;
+      break;
     }
   }
 

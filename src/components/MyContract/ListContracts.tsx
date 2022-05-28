@@ -4,16 +4,6 @@ import { Box, BoxProps, Button, ButtonProps } from '@mui/material';
 
 import ContractDetail from './ContractDetail';
 import { useAppDispatch, useAppSelector } from 'stores/hooks';
-import {
-  SquareIcon,
-  CubeIcon,
-  TessIcon,
-  AllContract,
-  SquareDarkIcon,
-  CubeDarkIcon,
-  TessDarkIcon,
-  AllDarkContract,
-} from 'assets/images';
 
 import { setIsClaimingReward, unSetIsClaimingReward } from 'services/contract';
 import { formatCType } from 'helpers/formatCType';
@@ -22,6 +12,11 @@ import MintStatusModal from 'components/Base/MintStatusModal';
 import { useToast } from 'hooks/useToast';
 import { useInteractiveContract } from 'hooks/useInteractiveContract';
 import { infoMessage } from 'messages/infoMessages';
+import { calculateDueDate } from 'helpers/myContract/calculateDueDate';
+import MyContractsPayFeeModal from 'components/Base/MyContractsPayFeeModal';
+import { MineContract } from 'interfaces/MyContract';
+import { convertCType, getIconByMode } from 'helpers/myContract';
+import { ClaimingType, ClaimingTypeV2 } from './TableContracts';
 
 interface Props {
   data: Array<any>;
@@ -34,7 +29,9 @@ const Wrapper = styled(Box)<BoxProps>(() => ({
 }));
 
 const Actions = styled(Box)<BoxProps>(() => ({
-  textAlign: 'right',
+  display: 'flex',
+  justifyContent: 'space-between',
+  // textAlign: 'right',
   width: '100%',
   marginBottom: '14px',
 }));
@@ -48,7 +45,7 @@ const ButtonClaimAll = styled(Button)<ButtonProps>(({ theme }) => ({
   textTransform: 'unset',
   borderRadius: '10px',
   boxShadow: 'none',
-  width: '99px',
+  width: '110px',
   height: '38px',
   boxSizing: 'border-box',
   background:
@@ -94,16 +91,41 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
-  const { getClaimPermit, claimNodeByNode, claimAllNodes } = useInteractiveContract();
+  const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
+
+  const { getClaimPermit, claimNodeByNode, claimAllNodes, payMonthlyFee, approveToken } = useInteractiveContract();
   const { createToast } = useToast();
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
   const [claimType, setClaimType] = useState<string>('');
-  const [icon, setIcon] = useState<string>('');
+
   const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
   const [claimingTransactionHash, setClaimingTransactionHash] = useState('');
   const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
   const [transactionError, setTransactionError] = useState('');
+
+  const [openPayFee, setOpenPayFee] = useState(false);
+  const [isPayAllFee, setIsPayAllFee] = useState(false);
+  const [openPayFeeModalStatus, setOpenPayFeeModalStatus] = useState(false);
+
+  const [currentSelectedContracts, setCurrentSelectedContracts] = useState<MineContract[]>([]);
+  const [isClaiming, setIsClaiming] = useState(true);
+  const [nextDueDate, setNextDueDate] = useState<number>();
+  const [claimingType, setClaimingType] = useState<ClaimingTypeV2>(null);
+
+  const handlePayFee = (item: MineContract) => {
+    setCurrentSelectedContracts([item]);
+    setIsPayAllFee(false);
+    setOpenPayFee(true);
+  };
+  const handlePayAllFees = () => {
+    setCurrentSelectedContracts([...data]);
+    setIsPayAllFee(true);
+    setOpenPayFee(true);
+  };
+  const handleTogglePayFee = () => {
+    setOpenPayFee(!openPayFee);
+  };
 
   const handleToggleStatus = () => {
     if (openStatus && !isMetamaskConfirmPopupOpening) {
@@ -127,41 +149,17 @@ const ListContracts: React.FC<Props> = ({ data }) => {
     setClaimType(type);
   };
 
-  const processIcon = (cType: string) => {
-    if (cType === '') {
-      setIcon(theme.palette.mode === 'light' ? AllContract : AllDarkContract);
-      return;
-    }
-
-    if (cType === '0') {
-      setIcon(theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon);
-      return;
-    }
-
-    if (cType === '1') {
-      setIcon(theme.palette.mode === 'light' ? CubeIcon : CubeDarkIcon);
-      return;
-    }
-
-    if (cType === '3') {
-      setIcon('');
-      return;
-    }
-
-    setIcon(theme.palette.mode === 'light' ? TessIcon : TessDarkIcon);
-  };
-
   const handleClickClaimAll = async () => {
     let txHash = '';
     try {
       processModal('ALL CONTRACTS');
-      processIcon('');
+      setClaimingType(ClaimingType.AllContracts);
       dispatch(setIsClaimingReward());
 
       const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
         processModal('');
-        processIcon('3');
+        setClaimingType(null);
         setStatus(STATUS[3]);
         return;
       }
@@ -186,17 +184,82 @@ const ListContracts: React.FC<Props> = ({ data }) => {
     }
   };
 
+  const handleSubmitPayFee = async (contracts: MineContract[], times: string[], nextDueDate: number) => {
+    setIsClaiming(false);
+    setNextDueDate(nextDueDate);
+    if (openPayFee) handleTogglePayFee();
+    let txHash = '';
+    try {
+      processModal(contracts.length <= 1 ? `${convertCType(contracts[0].type)} CONTRACT` : 'Monthly Subscription Fee');
+      setClaimingType(contracts.length > 1 ? 'payFee' : convertCType(contracts[0].type));
+      dispatch(setIsClaimingReward());
+
+      setIsMetamaskConfirmPopupOpening(true);
+      const contractIndexes = contracts.map((item) => item.index);
+      const response: Record<string, any> = await payMonthlyFee(contractIndexes, times);
+      setIsMetamaskConfirmPopupOpening(false);
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
+      }
+    } catch (err: any) {
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        if (!openPayFeeModalStatus) setOpenPayFeeModalStatus(true);
+        setStatus(STATUS[1]);
+        dispatch(unSetIsClaimingReward());
+      }
+    }
+  };
+
+  const handleApproveUSDC = async () => {
+    let txHash = '';
+    setIsClaiming(false);
+    if (openPayFee) handleTogglePayFee();
+    try {
+      processModal('Approving');
+      setClaimingType('approve');
+      dispatch(setIsClaimingReward());
+
+      setIsMetamaskConfirmPopupOpening(true);
+      const response = await approveToken(
+        String(process.env.REACT_APP_USDC_TOKEN_ADDRESS),
+        String(process.env.REACT_APP_CONTS_REWARD_MANAGER),
+      );
+      setIsMetamaskConfirmPopupOpening(false);
+      if (response.hash) {
+        txHash = response.hash;
+        setClaimingTransactionHash(response.hash);
+        await response.wait();
+        handleTransactionCompleted(response.hash);
+      }
+    } catch (err: any) {
+      if (txHash !== '') {
+        handleTransactionError(txHash);
+      } else {
+        setIsMetamaskConfirmPopupOpening(false);
+        if (!openPayFeeModalStatus) setOpenPayFeeModalStatus(true);
+        setStatus(STATUS[1]);
+        dispatch(unSetIsClaimingReward());
+      }
+    }
+  };
+
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
     let txHash = '';
     try {
       processModal(formatCType(cType));
-      processIcon(cType);
+      setClaimingType(convertCType(cType));
       dispatch(setIsClaimingReward());
 
       const claimPermit = await getClaimPermit();
       if (!claimPermit[0]) {
         processModal('');
-        processIcon('3');
+        setClaimingType(null);
         setStatus(STATUS[3]);
         return;
       }
@@ -270,6 +333,15 @@ const ListContracts: React.FC<Props> = ({ data }) => {
         >
           Claim all
         </ButtonClaimAll>
+        <ButtonClaimAll
+          size="small"
+          variant="contained"
+          color="primary"
+          disabled={data.length === 0 || isClaimingReward}
+          onClick={handlePayAllFees}
+        >
+          Pay All Fees
+        </ButtonClaimAll>
       </Actions>
 
       <Box>
@@ -285,9 +357,15 @@ const ListContracts: React.FC<Props> = ({ data }) => {
                 name={item.name}
                 rewards={item.rewards}
                 current={item.current}
-                nodeIndex={data.length - i - 1}
+                nodeIndex={item.index}
                 claimedReward={item.claimedRewards}
+                dueDays={
+                  item.type !== '0' ? calculateDueDate(Number(item.expireIn), Number(monthlyFeeTimes.one)) : undefined
+                }
                 onClaimClick={handleClickClaimNodeByNode}
+                onPayFeeClick={() => {
+                  handlePayFee(item);
+                }}
               />
             ))
         ) : (
@@ -296,23 +374,49 @@ const ListContracts: React.FC<Props> = ({ data }) => {
       </Box>
 
       <MintStatusModal
-        icon={icon}
+        icon={getIconByMode(claimingType, theme.palette.mode)}
         name={claimType}
         open={openStatus}
         status={status}
+        mode={isClaiming ? 'claim_status' : 'pay_fee_status'}
+        nextDueDate={nextDueDate}
         text={
-          status === 'success'
-            ? infoMessage.REWARD_CLAIM_OK.message
+          isClaiming
+            ? status === 'success'
+              ? infoMessage.REWARD_CLAIM_OK.message
+              : status === 'error'
+              ? infoMessage.REWARD_CLAIM_FAILED.message
+              : status === 'pending'
+              ? infoMessage.PROCESSING.message
+              : status === 'permission denied'
+              ? infoMessage.PERMISSION_DENIED.message
+              : 'Insufficient Tokens'
+            : status === 'success'
+            ? claimType === 'Approving'
+              ? 'Transaction Completed'
+              : 'Payment Successful'
             : status === 'error'
-            ? infoMessage.REWARD_CLAIM_FAILED.message
+            ? claimType === 'Approving'
+              ? 'Transaction Rejected'
+              : 'Payment Failed'
             : status === 'pending'
             ? infoMessage.PROCESSING.message
-            : status === 'permission denied'
-            ? infoMessage.PERMISSION_DENIED.message
-            : 'Insufficient Tokens'
+            : infoMessage.PERMISSION_DENIED.message
         }
         onClose={handleToggleStatus}
       />
+
+      {openPayFee && (
+        <MyContractsPayFeeModal
+          type={isPayAllFee ? 'pay_all' : 'pay_one'}
+          contracts={currentSelectedContracts}
+          open={openPayFee}
+          allContracts={data}
+          onClose={handleTogglePayFee}
+          onSubmit={handleSubmitPayFee}
+          onApproveToken={handleApproveUSDC}
+        />
+      )}
     </Wrapper>
   );
 };
