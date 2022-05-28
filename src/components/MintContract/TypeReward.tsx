@@ -620,6 +620,7 @@ const TypeReward: React.FC<Props> = ({
         name={status === STATUS[3] ? '' : name}
         open={openStatus}
         status={status}
+        mode={'claim_status'}
         text={
           status === 'success'
             ? 'Contract minted successfully'

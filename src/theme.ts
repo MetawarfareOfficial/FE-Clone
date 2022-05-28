@@ -1,6 +1,15 @@
 import React from 'react';
 // import { createTheme } from '@mui/material/styles';
-
+declare module '@mui/material/styles' {
+  interface BreakpointOverrides {
+    xs: true;
+    xss: true;
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+  }
+}
 export const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 export const themeConfig = {

@@ -44,6 +44,16 @@ const App: React.FC<any> = () => {
           ...themeConfig.palette,
           mode: mode,
         },
+        breakpoints: {
+          values: {
+            xs: 0,
+            xss: 450,
+            sm: 600,
+            md: 900,
+            lg: 1200,
+            xl: 1536,
+          },
+        },
       }),
     [mode],
   );

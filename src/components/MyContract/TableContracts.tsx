@@ -43,7 +43,7 @@ import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 import { MineContract } from 'interfaces/MyContract';
 import { useWeb3React } from '@web3-react/core';
-import { checkPendingContract, checkAllContractIsPendingMonthlyFee } from 'helpers/myContract';
+import { checkPendingContract, checkAllContractIsPendingMonthlyFee, convertCType } from 'helpers/myContract';
 import { calculateDueDate } from 'helpers/myContract/calculateDueDate';
 export interface ContractItem {
   claimedRewards: string;
@@ -317,6 +317,8 @@ export enum ClaimingType {
   Tesseract = 'tesseract',
 }
 
+export type ClaimingTypeV2 = ClaimingType | null | 'approve' | 'payFee';
+
 const TableContracts: React.FC<Props> = ({ data }) => {
   const dispatch = useAppDispatch();
   const { account } = useWeb3React();
@@ -331,7 +333,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
 
   const [status, setStatus] = useState<any>(STATUS[2]);
   const [claimType, setClaimType] = useState<string>('');
-  const [claimingType, setClaimingType] = useState<ClaimingType | null | 'approve' | 'payFee'>(null);
+  const [claimingType, setClaimingType] = useState<ClaimingTypeV2>(null);
   const [isMetamaskConfirmPopupOpening, setIsMetamaskConfirmPopupOpening] = useState(false);
   const [claimingTransactionHash, setClaimingTransactionHash] = useState('');
   const [transactionHashCompleted, setTransactionHasCompleted] = useState('');
@@ -340,6 +342,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const [isPayAllFee, setIsPayAllFee] = useState(false);
   const [currentSelectedContracts, setCurrentSelectedContracts] = useState<MineContract[]>([]);
   const [isClaiming, setIsClaiming] = useState(true);
+  const [nextDueDate, setNextDueDate] = useState<number>();
 
   const handleToggleStatus = () => {
     if (openStatus && !isMetamaskConfirmPopupOpening) {
@@ -365,7 +368,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     setClaimType(type);
   };
 
-  const getIconByMode = (type: ClaimingType | null | 'approve' | 'payFee', mode: string) => {
+  const getIconByMode = (type: ClaimingTypeV2, mode: string) => {
     if (type) {
       // TODO: return in if still need else statement?
       if (type === ClaimingType.AllContracts) return mode === 'light' ? AllContract : AllDarkContract;
@@ -374,14 +377,6 @@ const TableContracts: React.FC<Props> = ({ data }) => {
       else if (type === ClaimingType.Tesseract) return mode === 'light' ? TessIcon : TessDarkIcon;
     }
     return '';
-  };
-
-  const convertCType = (cType: string) => {
-    if (cType === '') return ClaimingType.AllContracts;
-    else if (cType === '0') return ClaimingType.Square;
-    else if (cType === '1') return ClaimingType.Cube;
-    else if (cType === '2') return ClaimingType.Tesseract;
-    else return null;
   };
 
   const handlePayFee = (item: MineContract) => {
@@ -398,8 +393,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     setOpenPayFee(!openPayFee);
   };
 
-  const handleSubmitPayFee = async (contracts: MineContract[], times: string[]) => {
+  const handleSubmitPayFee = async (contracts: MineContract[], times: string[], nextDueDate: number) => {
     setIsClaiming(false);
+    setNextDueDate(nextDueDate);
     if (openPayFee) handleTogglePayFee();
     let txHash = '';
     try {
@@ -752,7 +748,9 @@ const TableContracts: React.FC<Props> = ({ data }) => {
         </CustomTable>
 
         <MintStatusModal
+          nextDueDate={nextDueDate}
           icon={getIconByMode(claimingType, theme.palette.mode)}
+          mode={isClaiming ? 'claim_status' : 'pay_fee_status'}
           name={claimType}
           open={openStatus}
           status={status}
