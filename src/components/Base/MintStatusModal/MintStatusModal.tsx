@@ -181,7 +181,7 @@ const StatusText = styled(Typography)<
   maxWidth: permissionDenied ? '250px' : mode === 'claim_status' ? '221px' : 'unset',
   fontFamily: 'Poppins',
   fontWeight: 'bold',
-  fontSize: mode === 'claim_status' ? '18px' : '20px',
+  fontSize: '18px',
   lineHeight: '27px',
   textAlign: 'center',
   margin: mode === 'claim_status' ? '23px auto 0' : '52px auto 0',
