@@ -8,6 +8,7 @@ import { formatForNumberLessThanCondition } from 'helpers/formatForNumberLessTha
 import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { useAppSelector } from 'stores/hooks';
 import { formatAndTruncateNumber } from 'helpers/formatAndTruncateNumber';
+import { checkPendingContract, getNoFeeContractType } from 'helpers/myContract';
 
 interface Props {
   mintDate: string;
@@ -18,6 +19,7 @@ interface Props {
   current: number;
   nodeIndex: number;
   claimedReward: number;
+  expireIn: number;
   dueDays?: number;
   onPayFeeClick: () => void;
   onClaimClick: (arg1: number, arg2: string) => void;
@@ -88,10 +90,17 @@ const ContractDetail: React.FC<Props> = ({
   nodeIndex,
   claimedReward,
   dueDays,
+  expireIn,
   onPayFeeClick,
   onClaimClick,
 }) => {
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
+  const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
+  const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
+
+  const isPendingFee = checkPendingContract(expireIn, Number(monthlyFeeTimes.one), true);
+  const noPayFeeContract = getNoFeeContractType(monthlyFees);
+
   return (
     <Wrapper>
       <Grid container spacing="19px">
@@ -179,7 +188,14 @@ const ContractDetail: React.FC<Props> = ({
           <Box>
             <Title>Due Days</Title>
             <Tooltip title={20}>
-              <Text>{dueDays || dueDays === 0 ? dueDays : '-'}</Text>
+              <Text
+                sx={{
+                  color:
+                    !noPayFeeContract.map((item) => item.cType).includes(type) && isPendingFee ? '#FF0E0E' : 'auto',
+                }}
+              >
+                {dueDays || dueDays === 0 ? dueDays : '-'}
+              </Text>
             </Tooltip>
           </Box>
         </Grid>

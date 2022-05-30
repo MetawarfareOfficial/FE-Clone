@@ -663,9 +663,14 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                       </TableCellContent>
                       <TableCellContent
                         align="center"
-                        sx={{ color: item.type !== '0' && isPendingFee ? '#FF0E0E' : 'auto' }}
+                        sx={{
+                          color:
+                            !noPayFeeContract.map((item) => item.cType).includes(item.type) && isPendingFee
+                              ? '#FF0E0E'
+                              : 'auto',
+                        }}
                       >
-                        {item.type !== '0' ? dueDate : '-'}
+                        {!noPayFeeContract.map((item) => item.cType).includes(item.type) ? dueDate : '-'}
                       </TableCellContent>
                       <TableCellContent align="left">
                         <BoxActions>

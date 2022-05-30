@@ -425,11 +425,25 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const tessMonthlyFee = Number(monthlyFees.tesseract);
   const squareMonthlyFee = Number(monthlyFees.square);
 
+  const payFees = [
+    {
+      cType: '0',
+      fee: Number(monthlyFees.square),
+    },
+    {
+      cType: '1',
+      fee: Number(monthlyFees.cube),
+    },
+    {
+      cType: '2',
+      fee: Number(monthlyFees.tesseract),
+    },
+  ];
   const oneContractPayFee = calculateMonthlyFee(
     contracts,
     // contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
     get(
-      noPayFeeContract.filter((item) => item.cType === contracts[0].type),
+      payFees.filter((item) => item.cType === contracts[0].type),
       '[0].fee',
       0,
     ),

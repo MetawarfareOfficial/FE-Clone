@@ -22,6 +22,7 @@ import { styled } from '@mui/material/styles';
 import { formatPercent } from 'helpers/formatPrice';
 import moment from 'moment';
 import React from 'react';
+import { useTooltip } from 'hooks/swap';
 
 interface Props {
   widthIcon: boolean;
@@ -295,6 +296,7 @@ const InputFeeItem: React.FC<Props> = ({
   paymentDueDate = 0,
 }) => {
   const theme = useTheme();
+  const { open, handleCloseTooltip, handleOpenTooltip } = useTooltip();
 
   return (
     <Wrapper showBorder={widthIcon}>
@@ -354,6 +356,9 @@ const InputFeeItem: React.FC<Props> = ({
         />
         {widthIcon && (
           <TooltipCustom
+            open={open}
+            onMouseEnter={handleOpenTooltip}
+            onMouseLeave={handleCloseTooltip}
             title={
               <div>
                 <p style={{ margin: 0 }}> This amount is included unpaid fees </p>
