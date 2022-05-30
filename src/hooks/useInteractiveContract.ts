@@ -156,7 +156,12 @@ export const useInteractiveContract = () => {
 
   const claimNodeByNode = async (nodeIndex: number) => {
     try {
-      return contractWithSigner.functions.cashoutReward(nodeIndex);
+      return await callFuncWithNewGasLimit({
+        contract: contractWithSigner,
+        func: 'cashoutReward',
+        params: [nodeIndex],
+        options: {},
+      });
     } catch (e) {
       throw new Error('Oop! Something went wrong');
     }
