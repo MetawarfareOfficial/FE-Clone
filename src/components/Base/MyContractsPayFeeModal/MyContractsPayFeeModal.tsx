@@ -202,6 +202,19 @@ const Divider = styled(Box)<BoxProps>(({ theme }) => ({
 
 const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   padding: '20px',
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    height: '4px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'none',
+    webkitBoxShadow: 'none',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#3864FF',
+    outline: 'none',
+    borderRadius: '10px',
+  },
   // marginBottom: '21px',
   [theme.breakpoints.down('xss')]: {
     padding: '15px',
@@ -477,12 +490,13 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     true,
   );
 
-  const nearestExpiredTimeCont = getNearestDateEntity(contracts) || contracts[0];
-  const nearestExpiredTimeCubeCont = getNearestDateEntity(contracts, '1') || contracts[0];
+  const nearestExpiredTimeCont = getNearestDateEntity(contracts, '', Number(monthlyFeeTimes.one)) || contracts[0];
+  const nearestExpiredTimeCubeCont = getNearestDateEntity(contracts, '1', Number(monthlyFeeTimes.one)) || contracts[0];
 
-  const nearestExpiredTimeTessCont = getNearestDateEntity(contracts, '2') || contracts[0];
+  const nearestExpiredTimeTessCont = getNearestDateEntity(contracts, '2', Number(monthlyFeeTimes.one)) || contracts[0];
 
-  const nearestExpiredTimeSquareCont = getNearestDateEntity(contracts, '0') || contracts[0];
+  const nearestExpiredTimeSquareCont =
+    getNearestDateEntity(contracts, '0', Number(monthlyFeeTimes.one)) || contracts[0];
 
   const nearestExpiredContractPendingMonth = checkPendingContract(
     Number(nearestExpiredTimeCont.expireIn),
