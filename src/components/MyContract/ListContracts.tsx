@@ -94,7 +94,8 @@ const ListContracts: React.FC<Props> = ({ data }) => {
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
   const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
-  const { getClaimPermit, claimNodeByNode, claimAllNodes, payMonthlyFee, approveToken } = useInteractiveContract();
+  const { getClaimPermit, claimNodeByNode, claimAllNodes, payMonthlyFee, approveToken, getMonthlyFeePermit } =
+    useInteractiveContract();
   const { createToast } = useToast();
   const [openStatus, setOpenStatus] = useState(false);
   const [status, setStatus] = useState<any>(null);
@@ -197,6 +198,14 @@ const ListContracts: React.FC<Props> = ({ data }) => {
       processModal(contracts.length <= 1 ? `${convertCType(contracts[0].type)} CONTRACT` : 'Monthly Subscription Fee');
       setClaimingType(contracts.length > 1 ? 'payFee' : convertCType(contracts[0].type));
       dispatch(setIsClaimingReward());
+      // check on/off pay monthly fee
+      const isPayMonthlyFeeActive = await getMonthlyFeePermit();
+      if (!isPayMonthlyFeeActive[0]) {
+        processModal('');
+        setClaimingType(null);
+        setStatus(STATUS[3]);
+        return;
+      }
 
       setIsMetamaskConfirmPopupOpening(true);
       const contractIndexes = contracts.map((item) => item.index);
