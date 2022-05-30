@@ -6,3 +6,4 @@ export * from './checkAllContractIsPendingMonthlyFee';
 export * from './calculateNextDueDateTime';
 export * from './convertCType';
 export * from './getIconByMode';
+export * from './getNoFeeContractType';

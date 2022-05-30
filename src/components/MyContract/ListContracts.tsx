@@ -151,6 +151,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimAll = async () => {
     let txHash = '';
+    setIsClaiming(true);
     try {
       processModal('ALL CONTRACTS');
       setClaimingType(ClaimingType.AllContracts);
@@ -251,6 +252,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
 
   const handleClickClaimNodeByNode = async (nodeIndex: number, cType: string) => {
     let txHash = '';
+    setIsClaiming(true);
     try {
       processModal(formatCType(cType));
       setClaimingType(convertCType(cType));

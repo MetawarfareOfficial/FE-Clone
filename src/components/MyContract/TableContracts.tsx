@@ -43,7 +43,12 @@ import { ReactComponent as WarnIcon } from 'assets/images/ic-warn-blue.svg';
 import { ReactComponent as WarnDarkIcon } from 'assets/images/ic-warn-circle-dark.svg';
 import { MineContract } from 'interfaces/MyContract';
 import { useWeb3React } from '@web3-react/core';
-import { checkPendingContract, checkAllContractIsPendingMonthlyFee, convertCType } from 'helpers/myContract';
+import {
+  checkPendingContract,
+  checkAllContractIsPendingMonthlyFee,
+  convertCType,
+  getNoFeeContractType,
+} from 'helpers/myContract';
 import { calculateDueDate } from 'helpers/myContract/calculateDueDate';
 export interface ContractItem {
   claimedRewards: string;
@@ -327,6 +332,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
+  const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
   const [openStatus, setOpenStatus] = useState(false);
   const [openPayFeeModalStatus, setOpenPayFeeModalStatus] = useState(false);
@@ -564,6 +570,8 @@ const TableContracts: React.FC<Props> = ({ data }) => {
     setOpenPayFee(false);
   }, [account]);
 
+  const noPayFeeContract = getNoFeeContractType(monthlyFees);
+
   return (
     <Box>
       <TableWrapper>
@@ -691,7 +699,7 @@ const TableContracts: React.FC<Props> = ({ data }) => {
                             </TooltipCustom>
                           )}
 
-                          {item.type !== '0' ? (
+                          {!noPayFeeContract.map((item) => item.cType).includes(item.type) ? (
                             <>
                               <ButtonClaim
                                 size="small"
