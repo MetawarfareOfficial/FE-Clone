@@ -305,6 +305,14 @@ export const useInteractiveContract = () => {
     }
   };
 
+  const getMonthlyFeePermit = async (): Promise<[boolean]> => {
+    try {
+      return rewardManagerContractWithoutSigner.functions.isMonthFeeActive();
+    } catch (e) {
+      throw new Error('Oop! Something went wrong');
+    }
+  };
+
   const getMintPermit = async (): Promise<[boolean]> => {
     try {
       return contractWithoutSigner.functions.enableMintConts.call({});
@@ -635,6 +643,7 @@ export const useInteractiveContract = () => {
     payMonthlyFee,
     getMonthlyFees,
     getSell0xbTax,
+    getMonthlyFeePermit,
     contractWithSigner,
     provider,
   };

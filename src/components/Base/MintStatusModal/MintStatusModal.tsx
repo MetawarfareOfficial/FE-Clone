@@ -74,7 +74,7 @@ const Wrapper = styled(Dialog)<
   },
 
   '.MuiPaper-root': {
-    minWidth: mode === 'claim_status' ? '317px' : '505px',
+    minWidth: '317px',
     boxShadow: '0px 10px 36px rgba(38, 29, 77, 0.1)',
     borderRadius: '24px',
     padding: '0',
@@ -97,13 +97,9 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ViewIcon = styled(Box)<
-  BoxCustomProps & {
-    mode: ModalMode;
-  }
->(({ denied, mode }) => ({
-  width: mode === 'claim_status' ? '55px' : '77px',
-  height: mode === 'claim_status' ? '55px' : '77px',
+const ViewIcon = styled(Box)<BoxCustomProps>(({ denied }) => ({
+  width: '55px',
+  height: '55px',
   marginRight: '10px',
   borderRadius: '7px',
   overflow: 'hidden',
@@ -114,18 +110,14 @@ const ViewIcon = styled(Box)<
   },
 }));
 
-const HeaderText = styled(Typography)<
-  TypographyProps & {
-    mode: ModalMode;
-  }
->(({ theme, mode }) => ({
+const HeaderText = styled(Typography)<TypographyProps>(({ theme }) => ({
   fontFamily: 'Poppins',
-  fontSize: mode === 'claim_status' ? '18px' : '20px',
+  fontSize: '18px',
   lineHeight: '27px',
   color: theme.palette.mode === 'light' ? '#293247' : '#fff',
   textTransform: 'uppercase',
   fontWeight: '600',
-  maxWidth: mode === 'claim_status' ? '105px' : '190px',
+  maxWidth: '105px',
   [theme.breakpoints.down('sm')]: {
     fontSize: '18px',
   },
@@ -155,9 +147,7 @@ const Content = styled(DialogContent)<
     mode: ModalMode;
   }
 >(({ denied, mode, theme }) => ({
-  padding: denied
-    ? `0px 0px ${mode === 'claim_status' ? '20px' : '53px'} 0px`
-    : `20px 13px ${mode === 'claim_status' ? '20px' : '53px'} 21px`,
+  padding: denied ? `0px 0px 20px 0px` : `20px 13px 20px 21px`,
 
   '.MuiDialogContentText-root': {
     color: '#828282',
@@ -177,8 +167,8 @@ const ViewImage = styled(Box)<
     mode: ModalMode;
   }
 >(({ mode, theme }) => ({
-  width: mode === 'claim_status' ? '84px' : '240px',
-  height: mode === 'claim_status' ? '84px' : '240px',
+  width: '84px',
+  height: '84px',
   margin: '10px auto 0',
 
   img: {
@@ -263,11 +253,11 @@ const MintStatusModal: React.FC<Props> = ({
     >
       <Header denied={text === infoMessage.PERMISSION_DENIED.message}>
         {icon && (
-          <ViewIcon mode={mode} denied={text === infoMessage.PERMISSION_DENIED.message}>
+          <ViewIcon denied={text === infoMessage.PERMISSION_DENIED.message}>
             <img alt="" src={icon} />
           </ViewIcon>
         )}
-        <HeaderText mode={mode}>{name}</HeaderText>
+        <HeaderText>{name}</HeaderText>
 
         <CloseIcon onClick={onClose}>
           <img alt="" src={theme.palette.mode === 'light' ? CloseImg : CloseDarkImg} />

@@ -82,7 +82,7 @@ const ClaimRewards: React.FC<Props> = () => {
     <Wrapper>
       <Title>Monthly subscription fee</Title>
       <Pool>
-        {`Monthly subscription fee applies for CUBE CONTRACT (${monthlyFees.cube} 
+        {`Monthly subscription fee applies for SQUARE CONTRACT (${monthlyFees.square} USDC) CUBE CONTRACT (${monthlyFees.cube} 
         USDC) and TESSERACT CONTRACT (${monthlyFees.tesseract} USDC). 
         If monthly payment is not paid in the 30 days, the unpaid contracts will not be able to claim rewards`}
       </Pool>

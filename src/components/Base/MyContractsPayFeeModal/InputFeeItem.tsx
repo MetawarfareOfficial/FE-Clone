@@ -112,14 +112,11 @@ const ButtonMax = styled(Box)<
   fontSize: '14px',
   lineHeight: '21px',
   textTransform: 'capitalize',
-  marginLeft: 'auto',
+  marginLeft: type === 'pay_all' ? '10px' : 'auto',
   padding: '6px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  [theme.breakpoints.down('xss')]: {
-    marginLeft: type === 'pay_all' ? '10px' : 'auto',
-  },
 }));
 
 const BoxActions = styled(Box)<BoxProps>(() => ({
@@ -163,7 +160,10 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
   },
 
   '.MuiOutlinedInput-root': {},
-
+  '& .Mui-disabled': {
+    opacity: 1,
+    WebkitTextFillColor: theme.palette.mode === 'light' ? '#3864FF' : '#fff',
+  },
   '.MuiInputAdornment-positionStart': {
     border: `1px solid  ${theme.palette.primary.main}`,
     boxSizing: 'border-box',
@@ -326,6 +326,7 @@ const InputFeeItem: React.FC<Props> = ({
           type="text"
           value={months + ' month'}
           inputProps={{ 'aria-label': 'weight' }}
+          disabled={true}
           startAdornment={
             <InputAdornment
               position="start"
