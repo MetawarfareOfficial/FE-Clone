@@ -27,12 +27,15 @@ import {
   calculatePendingFee,
   checkPendingContract,
   getNearestDateEntity,
+  getNoFeeContractType,
 } from 'helpers/myContract';
 import { MineContract } from 'interfaces/MyContract';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useAppSelector } from 'stores/hooks';
 import InputFeeItem from './InputFeeItem';
+import get from 'lodash/get';
+
 export type PopupType = 'pay_all' | 'pay_one';
 interface Props {
   open: boolean;
@@ -368,9 +371,13 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
   const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
+  const noPayFeeContract = getNoFeeContractType(monthlyFees);
+
+  const [squareMonths, setSquareMonths] = useState(1);
   const [cubeMonths, setCubeMonths] = useState(1);
   const [tessMonths, setTessMonths] = useState(1);
   const [contMonths, setContMonths] = useState(1);
+
   const [isFirstTime, setIsFirstTime] = useState(true);
 
   const getIconByMode = (type: ClaimingType | null, mode: string) => {
@@ -410,32 +417,44 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     });
   };
 
+  const squareContracts = contracts.filter((item) => item.type === '0');
   const cubeContracts = contracts.filter((item) => item.type === '1');
   const tesseractContracts = contracts.filter((item) => item.type === '2');
 
   const cubeMonthlyFee = Number(monthlyFees.cube);
   const tessMonthlyFee = Number(monthlyFees.tesseract);
+  const squareMonthlyFee = Number(monthlyFees.square);
 
   const oneContractPayFee = calculateMonthlyFee(
     contracts,
-    contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
+    // contracts[0].type === '1' ? cubeMonthlyFee : tessMonthlyFee,
+    get(
+      noPayFeeContract.filter((item) => item.cType === contracts[0].type),
+      '[0].fee',
+      0,
+    ),
     type,
   );
 
   const totalUsdcHaveToPay =
     type === 'pay_all'
       ? calculateMonthlyFee(cubeContracts, cubeMonthlyFee, type) * cubeMonths +
-        calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type) * tessMonths
+        calculateMonthlyFee(tesseractContracts, tessMonthlyFee, type) * tessMonths +
+        calculateMonthlyFee(squareContracts, squareMonthlyFee, type) * squareMonths
       : oneContractPayFee * contMonths;
 
   const cubeContractsPendingFee = calculatePendingFee(cubeContracts, cubeMonthlyFee, Number(monthlyFeeTimes.one));
 
   const tessContractsPendingFee = calculatePendingFee(tesseractContracts, tessMonthlyFee, Number(monthlyFeeTimes.one));
 
+  const squareContractsPendingFee = calculatePendingFee(squareContracts, squareMonthlyFee, Number(monthlyFeeTimes.one));
+
   const isTokenAmountOverAllowance =
-    Number(usdcTokenInfo.allowance) < totalUsdcHaveToPay + cubeContractsPendingFee + tessContractsPendingFee;
+    Number(usdcTokenInfo.allowance) <
+    totalUsdcHaveToPay + cubeContractsPendingFee + tessContractsPendingFee + squareContractsPendingFee;
   const isTokenAmountOverBalance =
-    Number(usdcTokenInfo.balance) < totalUsdcHaveToPay + cubeContractsPendingFee + tessContractsPendingFee;
+    Number(usdcTokenInfo.balance) <
+    totalUsdcHaveToPay + cubeContractsPendingFee + tessContractsPendingFee + squareContractsPendingFee;
 
   const totalPendingMonths = checkPendingContract(
     Number(contracts[0].expireIn),
@@ -448,6 +467,8 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
   const nearestExpiredTimeCubeCont = getNearestDateEntity(contracts, '1') || contracts[0];
 
   const nearestExpiredTimeTessCont = getNearestDateEntity(contracts, '2') || contracts[0];
+
+  const nearestExpiredTimeSquareCont = getNearestDateEntity(contracts, '0') || contracts[0];
 
   const nearestExpiredContractPendingMonth = checkPendingContract(
     Number(nearestExpiredTimeCont.expireIn),
@@ -462,15 +483,25 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
     false,
     true,
   );
+
   const nearestExpiredTessContractPendingMonth = checkPendingContract(
     Number(nearestExpiredTimeTessCont.expireIn),
     Number(monthlyFeeTimes.one),
     false,
     true,
   );
+
+  const nearestExpiredSquareContractPendingMonth = checkPendingContract(
+    Number(nearestExpiredTimeSquareCont.expireIn),
+    Number(monthlyFeeTimes.one),
+    false,
+    true,
+  );
+
   const oneDaySecond = 60 * 60 * 24;
   const showHourFormat = Number(monthlyFeeTimes.one) < oneDaySecond;
   const timeFormat = showHourFormat ? 'HH DD MMM YYYY' : 'DD MMM YYYY';
+  const noPayFeeContractType = noPayFeeContract.map((item) => item.cType);
   return (
     <Wrapper open={open} keepMounted aria-describedby="alert-dialog-slide-description">
       <Header>
@@ -583,7 +614,24 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
             />
           ) : (
             <>
-              {cubeContracts.length > 0 && (
+              {squareContracts.length > 0 && !noPayFeeContractType.includes('0') && (
+                <InputFeeItem
+                  months={squareMonths}
+                  setMonths={setSquareMonths}
+                  pendingFee={squareContractsPendingFee}
+                  defaultPayFee={calculateMonthlyFee(squareContracts, squareMonthlyFee, type)}
+                  onChange={() => {}}
+                  icon={theme.palette.mode === 'light' ? SquareIcon : SquareDarkIcon}
+                  widthIcon={true}
+                  name={'Square Contract'}
+                  paymentDueDate={
+                    Number(nearestExpiredTimeSquareCont.expireIn) +
+                    Number(nearestExpiredSquareContractPendingMonth) * Number(monthlyFeeTimes.one) +
+                    squareMonths * Number(monthlyFeeTimes.one)
+                  }
+                />
+              )}
+              {cubeContracts.length > 0 && !noPayFeeContractType.includes('1') && (
                 <InputFeeItem
                   months={cubeMonths}
                   setMonths={setCubeMonths}
@@ -600,7 +648,7 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                   }
                 />
               )}
-              {tesseractContracts.length > 0 && (
+              {tesseractContracts.length > 0 && !noPayFeeContractType.includes('2') && (
                 <InputFeeItem
                   months={tessMonths}
                   setMonths={setTessMonths}
