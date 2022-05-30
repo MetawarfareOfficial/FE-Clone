@@ -280,7 +280,6 @@ const ListContracts: React.FC<Props> = ({ data }) => {
         handleTransactionCompleted(response.hash);
       }
     } catch (e: any) {
-      alert(e.message);
       if (txHash !== '') {
         handleTransactionError(txHash);
       } else {

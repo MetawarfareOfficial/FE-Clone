@@ -47,6 +47,7 @@ const App: React.FC<any> = () => {
         breakpoints: {
           values: {
             xs: 0,
+            xxs: 375,
             xss: 450,
             sm: 600,
             md: 900,

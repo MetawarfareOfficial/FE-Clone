@@ -175,6 +175,9 @@ const Header = styled(DialogTitle)<DialogTitleProps>(({ theme }) => ({
 const Content = styled(DialogContent)<DialogContentProps>(({ theme }) => ({
   padding: '20px 13px 20px 21px',
   // marginBottom: '21px',
+  [theme.breakpoints.down('sm')]: {
+    padding: '20px',
+  },
 
   'p.MuiDialogContentText-root': {
     color: theme.palette.mode === 'light' ? '#828282' : 'rgba(255, 255, 255, 0.29)',

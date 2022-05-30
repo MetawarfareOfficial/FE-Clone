@@ -707,11 +707,13 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                 setIsFirstTime(false);
               } else {
                 const selectedContracts =
-                  type === 'pay_all' ? [...cubeContracts, ...tesseractContracts] : [...contracts];
+                  type === 'pay_all' ? [...cubeContracts, ...tesseractContracts, ...squareContracts] : [...contracts];
                 const cubeTimes = getContTime(cubeContracts, cubeMonths);
                 const tessTimes = getContTime(tesseractContracts, tessMonths);
+                const squareTimes = getContTime(squareContracts, squareMonths);
+
                 const oneContTime = getContTime(contracts, contMonths);
-                const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes] : [...oneContTime];
+                const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes, ...squareTimes] : [...oneContTime];
                 const totalMonth =
                   nearestExpiredTimeCont.type === '1'
                     ? Number(nearestExpiredContractPendingMonth) + cubeMonths
@@ -732,11 +734,14 @@ const MyContractsPayFeeModal: React.FC<Props> = ({
                 onApproveToken();
               } else {
                 const selectedContracts =
-                  type === 'pay_all' ? [...cubeContracts, ...tesseractContracts] : [...contracts];
+                  type === 'pay_all' ? [...cubeContracts, ...tesseractContracts, ...squareContracts] : [...contracts];
+
                 const cubeTimes = getContTime(cubeContracts, cubeMonths);
                 const tessTimes = getContTime(tesseractContracts, tessMonths);
+                const squareTimes = getContTime(squareContracts, squareMonths);
+
                 const oneContTime = getContTime(contracts, contMonths);
-                const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes] : [...oneContTime];
+                const times = type === 'pay_all' ? [...cubeTimes, ...tessTimes, ...squareTimes] : [...oneContTime];
                 const totalMonth =
                   nearestExpiredTimeCont.type === '1'
                     ? Number(nearestExpiredContractPendingMonth) + cubeMonths
