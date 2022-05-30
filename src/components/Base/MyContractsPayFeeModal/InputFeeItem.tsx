@@ -100,7 +100,7 @@ const ButtonMax = styled(Box)<
   BoxProps & {
     type: 'pay_one' | 'pay_all';
   }
->(({ theme, type }) => ({
+>(({ type }) => ({
   width: '100px',
   height: '50px',
   boxSizing: 'border-box',
@@ -162,7 +162,7 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
   '.MuiOutlinedInput-root': {},
   '& .Mui-disabled': {
     opacity: 1,
-    WebkitTextFillColor: theme.palette.mode === 'light' ? '#3864FF' : '#fff',
+    WebkitTextFillColor: theme.palette.mode === 'light' ? '#3864FF !important' : '#fff !important',
   },
   '.MuiInputAdornment-positionStart': {
     border: `1px solid  ${theme.palette.primary.main}`,
