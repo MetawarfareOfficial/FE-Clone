@@ -62,12 +62,11 @@ interface BoxCustomProps {
 
 const Wrapper = styled(Dialog)<
   DialogProps & {
-    mode: ModalMode;
+    denied: boolean;
   }
->(({ theme, mode }) => ({
+>(({ theme, denied }) => ({
   background: 'rgba(165, 199, 251, 0.38)',
   zIndex: 1700,
-
   '.MuiDialog-container': {
     background: theme.palette.mode === 'light' ? 'rgba(165, 199, 251, 0.38)' : 'rgba(28, 28, 28, 0.36)',
     backdropFilter: `blur(${theme.palette.mode === 'light' ? '4px' : '13px'})`,
@@ -77,14 +76,11 @@ const Wrapper = styled(Dialog)<
     minWidth: '317px',
     boxShadow: '0px 10px 36px rgba(38, 29, 77, 0.1)',
     borderRadius: '24px',
-    padding: '0',
     margin: '0',
     boxSizing: 'border-box',
     background: theme.palette.mode === 'light' ? '#fff' : '#2C2C2C',
     border: theme.palette.mode === 'light' ? 'unset' : '1px solid #6F6F6F',
-    [theme.breakpoints.down('sm')]: {
-      minWidth: mode === 'claim_status' ? '317px' : '317px',
-    },
+    padding: denied ? '20px 0px' : '0px',
   },
 }));
 
@@ -146,8 +142,8 @@ const Content = styled(DialogContent)<
   DialogContentCustomProps & {
     mode: ModalMode;
   }
->(({ denied, mode, theme }) => ({
-  padding: denied ? `0px 0px 20px 0px` : `20px 13px 20px 21px`,
+>(({ denied }) => ({
+  padding: denied ? `0px` : `20px 13px 20px 21px`,
 
   '.MuiDialogContentText-root': {
     color: '#828282',
@@ -157,16 +153,13 @@ const Content = styled(DialogContent)<
     marginBottom: '8px',
     textTransform: 'capitalize',
   },
-  [theme.breakpoints.down('sm')]: {
-    padding: denied ? `0px 0px 20px 0px` : `20px 13px 20px 21px`,
-  },
 }));
 
 const ViewImage = styled(Box)<
   BoxProps & {
     mode: ModalMode;
   }
->(({ mode, theme }) => ({
+>(({ theme }) => ({
   width: '84px',
   height: '84px',
   margin: '10px auto 0',
@@ -245,7 +238,7 @@ const MintStatusModal: React.FC<Props> = ({
 
   return (
     <Wrapper
-      mode={mode}
+      denied={text === infoMessage.PERMISSION_DENIED.message}
       open={open}
       TransitionComponent={Transition}
       keepMounted
