@@ -80,7 +80,7 @@ const ClaimRewards: React.FC<Props> = () => {
 
   return (
     <Wrapper>
-      <Title>Claim Rewards Tax</Title>
+      <Title>Monthly subscription fee</Title>
       <Pool>
         {`Monthly subscription fee applies for CUBE CONTRACT (${monthlyFees.cube} 
         USDC) and TESSERACT CONTRACT (${monthlyFees.tesseract} USDC). 

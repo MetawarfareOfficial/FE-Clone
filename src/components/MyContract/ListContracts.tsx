@@ -15,7 +15,7 @@ import { infoMessage } from 'messages/infoMessages';
 import { calculateDueDate } from 'helpers/myContract/calculateDueDate';
 import MyContractsPayFeeModal from 'components/Base/MyContractsPayFeeModal';
 import { MineContract } from 'interfaces/MyContract';
-import { convertCType, getIconByMode } from 'helpers/myContract';
+import { convertCType, getIconByMode, getNoFeeContractType } from 'helpers/myContract';
 import { ClaimingType, ClaimingTypeV2 } from './TableContracts';
 
 interface Props {
@@ -92,6 +92,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
   const currentUserAddress = useAppSelector((state) => state.user.account?.address);
   const isClaimingReward = useAppSelector((state) => state.contract.isClaimingReward);
   const monthlyFeeTimes = useAppSelector((state) => state.contract.monthlyFeeTimes);
+  const monthlyFees = useAppSelector((state) => state.contract.monthlyFees);
 
   const { getClaimPermit, claimNodeByNode, claimAllNodes, payMonthlyFee, approveToken } = useInteractiveContract();
   const { createToast } = useToast();
@@ -112,6 +113,8 @@ const ListContracts: React.FC<Props> = ({ data }) => {
   const [isClaiming, setIsClaiming] = useState(true);
   const [nextDueDate, setNextDueDate] = useState<number>();
   const [claimingType, setClaimingType] = useState<ClaimingTypeV2>(null);
+
+  const noPayFeeContract = getNoFeeContractType(monthlyFees);
 
   const handlePayFee = (item: MineContract) => {
     setCurrentSelectedContracts([item]);
@@ -277,6 +280,7 @@ const ListContracts: React.FC<Props> = ({ data }) => {
         handleTransactionCompleted(response.hash);
       }
     } catch (e: any) {
+      alert(e.message);
       if (txHash !== '') {
         handleTransactionError(txHash);
       } else {
@@ -361,8 +365,11 @@ const ListContracts: React.FC<Props> = ({ data }) => {
                 current={item.current}
                 nodeIndex={item.index}
                 claimedReward={item.claimedRewards}
+                expireIn={Number(item.expireIn)}
                 dueDays={
-                  item.type !== '0' ? calculateDueDate(Number(item.expireIn), Number(monthlyFeeTimes.one)) : undefined
+                  !noPayFeeContract.map((item) => item.cType).includes(item.type)
+                    ? calculateDueDate(Number(item.expireIn), Number(monthlyFeeTimes.one))
+                    : undefined
                 }
                 onClaimClick={handleClickClaimNodeByNode}
                 onPayFeeClick={() => {
