@@ -119,7 +119,6 @@ const ButtonMax = styled(Box)<
   alignItems: 'center',
   [theme.breakpoints.down('xss')]: {
     marginLeft: type === 'pay_all' ? '10px' : 'auto',
-    // marginRight: '10px'
   },
 }));
 
@@ -215,6 +214,9 @@ const OutlinedInputCustom = styled(OutlinedInput)<OutlinedInputProps>(({ theme }
       color: '#fff',
       padding: 0,
     },
+  },
+  [theme.breakpoints.down('xxs')]: {
+    maxWidth: '160px',
   },
 }));
 const PaymentDueDate = styled(Typography)<TypographyProps>(() => ({

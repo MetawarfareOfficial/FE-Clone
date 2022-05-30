@@ -3,6 +3,7 @@ import React from 'react';
 declare module '@mui/material/styles' {
   interface BreakpointOverrides {
     xs: true;
+    xxs: true;
     xss: true;
     sm: true;
     md: true;
