@@ -360,7 +360,7 @@ const Text = styled(Typography)<TypographyProps>(() => ({
   margin: '3px',
   textAlign: 'center',
   fontWeight: '500',
-  fontSize: '17px',
+  fontSize: '17px !important',
 }));
 const PendingFeeAmountBox = styled(Box)<BoxProps>(() => ({
   display: 'flex',
