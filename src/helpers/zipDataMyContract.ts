@@ -5,7 +5,7 @@ import { bigNumber2NumberV3 } from 'helpers/formatNumber';
 import { ContractPrice } from 'interfaces/ContractPrice';
 import { formatPrice, truncateNumber } from './formatPrice';
 import sortBy from 'lodash/sortBy';
-
+import orderBy from 'lodash/orderBy';
 import BigNumber from 'bignumber.js';
 
 export const parseDataMyContract = (data: string) => {
@@ -103,5 +103,5 @@ export const zipDataMyContract = (param: ContractResponse) => {
       reduceMonthlyFeePercent: index,
     };
   });
-  return sortBy([...squareContracts, ...cubeContracts, ...tesseractContracts], (item) => Number(item.mintDate));
+  return orderBy([...squareContracts, ...cubeContracts, ...tesseractContracts], ['mintDate'], 'desc');
 };
